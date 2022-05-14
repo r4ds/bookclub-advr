@@ -13,6 +13,28 @@
 
 ### Cohort 1
 
+`r knitr::include_url("https://www.youtube.com/embed/mwiNe083DLU")`
+
+### Cohort 2
+
+`r knitr::include_url("https://www.youtube.com/embed/ZFUr7YRSu2o")`
+
+### Cohort 3
+
+`r knitr::include_url("https://www.youtube.com/embed/UZhrsVz6wi0")`
+
+`r knitr::include_url("https://www.youtube.com/embed/Wt7p71_BuYY")`
+
+### Cohort 4
+
+`r knitr::include_url("https://www.youtube.com/embed/WinIo5mrUZo")`
+
+### Cohort 5
+
+`r knitr::include_url("https://www.youtube.com/embed/VFs-2sl5C70")`
+
+### Cohort 6
+
 `r knitr::include_url("https://www.youtube.com/embed/URL")`
 
 <details>
