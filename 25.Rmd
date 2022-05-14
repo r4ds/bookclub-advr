@@ -1,4 +1,4 @@
-# Introduction
+# Rewriting R code in C++
 
 **Learning objectives:**
 

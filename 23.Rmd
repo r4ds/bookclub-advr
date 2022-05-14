@@ -1,4 +1,4 @@
-# Introduction
+# Measuring performance
 
 **Learning objectives:**
 

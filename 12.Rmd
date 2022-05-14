@@ -1,4 +1,4 @@
-# Introduction
+# Base types
 
 **Learning objectives:**
 

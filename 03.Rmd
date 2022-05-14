@@ -1,4 +1,4 @@
-# Introduction
+# Vectors
 
 **Learning objectives:**
 

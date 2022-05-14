@@ -1,4 +1,4 @@
-# Introduction
+# Function operators
 
 **Learning objectives:**
 

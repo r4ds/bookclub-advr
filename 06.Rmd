@@ -1,4 +1,4 @@
-# Introduction
+# Functions
 
 **Learning objectives:**
 
