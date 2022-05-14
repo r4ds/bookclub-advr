@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.Rdata
+.httr-oauth
+.DS_Store
+_book
+_bookdown_files
+bookclub-BOOKABBR.Rmd
+bookclub-BOOKABBR.html
+bookclub-BOOKABBR.knit.md
+bookclub-BOOKABBR_files
+libs

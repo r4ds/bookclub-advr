@@ -1,0 +1,24 @@
+# CHAPTER TITLE
+
+**Learning objectives:**
+
+- THESE ARE NICE TO HAVE BUT NOT ABSOLUTELY NECESSARY
+
+## SLIDE 1
+
+- ADD SLIDES AS SECTIONS (`##`).
+- TRY TO KEEP THEM RELATIVELY SLIDE-LIKE; THESE ARE NOTES, NOT THE BOOK ITSELF.
+
+## Meeting Videos
+
+### Cohort 1
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+<summary> Meeting chat log </summary>
+
+```
+LOG
+```
+</details>
