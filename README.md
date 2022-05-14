@@ -74,9 +74,10 @@ To present, follow these instructions:
 4. `usethis::pr_init("my-chapter")` (creates a branch for your work, to avoid confusion).
 5. Edit the appropriate chapter file, if necessary. Use `##` to indicate new slides (new sections).
 7. If you use any packages that are not already in the `DESCRIPTION`, add them. You can use `usethis::use_package("myCoolPackage")` to add them quickly!
-8. Commit your changes (either through the command line or using Rstudio's Git tab).
-9. `usethis::pr_push()` (pushes the changes up to github, and opens a "pull request" (PR) to let us know your work is ready).
-10. (If we request changes, make them)
-11. When your PR has been accepted ("merged"), `usethis::pr_finish()` to close out your branch and prepare your local repository for future work.
+8. Build the book! ctrl-shift-b (or command-shift-b) will render the full book, or ctrl-shift-k (command-shift-k) to render just your slide. Please do this to make sure it works before you push your changes up to the main repo!
+9. Commit your changes (either through the command line or using Rstudio's Git tab).
+10. `usethis::pr_push()` (pushes the changes up to github, and opens a "pull request" (PR) to let us know your work is ready).
+11. (If we request changes, make them)
+12. When your PR has been accepted ("merged"), `usethis::pr_finish()` to close out your branch and prepare your local repository for future work.
 
 When your PR is checked into the main branch, the bookdown site will rebuild, adding your slides to [this site](https://r4ds.io/advr).
