@@ -10,53 +10,54 @@ As we read, we are producing [notes about the book](https://r4ds.io/advr).
 
 If you would like to present, please add your name next to a chapter using the [GitHub Web Editor](https://youtu.be/d41oc2OMAuI)!
 
-*Cohort 6: TBD, TBD CST/CDT*
+*Cohort 6: Wednesdays, 13:00 CST/CDT*
 
 <details>
   <summary> Past Meetings </summary>
   (none yet)
 </details>
 
-- 2022-MM-DD: Chapter 1 (Introduction) - FACILITATOR TBD
+- 2022-05-25: Chapter 1 (Introduction) - Federica Gazzelloni
 
 **Foundations**
 
-- 2022-MM-DD: Chapter 2 (Names and values) - Presenter TBD
-- 2022-MM-DD: Chapter 3 (Vectors) - Presenter TBD
-- 2022-MM-DD: Chapter 4 (Subsetting) - Presenter TBD
-- 2022-MM-DD: Chapter 5(Control flow) - Presenter TBD
-- 2022-MM-DD: Chapter 6 (Functions) - Presenter TBD
-- 2022-MM-DD: Chapter 7 (Environments) - Presenter TBD
-- 2022-MM-DD: Chapter 8 (Conditions) - Presenter TBD
+- 2022-06-01: Chapter 2 (Names and values) - Presenter TBD
+- 2022-06-08: Chapter 3 (Vectors) - Presenter TBD
+- 2022-06-15: Chapter 4 (Subsetting) - Presenter TBD
+- 2022-06-22: Chapter 5(Control flow) - Presenter TBD
+- 2022-06-29: Chapter 6 (Functions) - Presenter TBD
+- 2022-07-06: Chapter 7 (Environments) - Presenter TBD
+- 2022-07-13: Chapter 8 (Conditions) - Presenter TBD
 
 **Functional programming**
 
-- 2022-MM-DD: Chapter 9 (Functionals) - Presenter TBD
-- 2022-MM-DD: Chapter 10 (Function factories) - Presenter TBD
-- 2022-MM-DD: Chapter 11 (Function operators) - Presenter TBD
+- 2022-07-20: Chapter 9 (Functionals) - Presenter TBD
+- 2022-07-27: NO MEETING
+- 2022-08-03: Chapter 10 (Function factories) - Presenter TBD
+- 2022-08-10: Chapter 11 (Function operators) - Presenter TBD
 
 **Object-oriented programming**
 
-- 2022-MM-DD: Chapter 12 (Base types) - Presenter TBD
-- 2022-MM-DD: Chapter 13 (S3) - Presenter TBD
-- 2022-MM-DD: Chapter 14 (R6) - Presenter TBD
-- 2022-MM-DD: Chapter 15 (S4) - Presenter TBD
-- 2022-MM-DD: Chapter 16 (Trade-offs) - Presenter TBD
+- 2022-08-17: Chapter 12 (Base types) - Presenter TBD
+- 2022-08-24: Chapter 13 (S3) - Presenter TBD
+- 2022-08-31: Chapter 14 (R6) - Presenter TBD
+- 2022-09-07: Chapter 15 (S4) - Presenter TBD
+- 2022-09-14: Chapter 16 (Trade-offs) - Presenter TBD
 
 **Metaprogramming**
 
-- 2022-MM-DD: Chapter 17 (Big picture) - Presenter TBD
-- 2022-MM-DD: Chapter 18 (Expressions) - Presenter TBD
-- 2022-MM-DD: Chapter 19 (Quasiquotation) - Presenter TBD
-- 2022-MM-DD: Chapter 20 (Evaluation) - Presenter TBD
-- 2022-MM-DD: Chapter 21 (Translating R code) - Presenter TBD
+- 2022-09-21: Chapter 17 (Big picture) - Presenter TBD
+- 2022-09-28: Chapter 18 (Expressions) - Presenter TBD
+- 2022-10-05: Chapter 19 (Quasiquotation) - Presenter TBD
+- 2022-10-12: Chapter 20 (Evaluation) - Presenter TBD
+- 2022-10-19: Chapter 21 (Translating R code) - Presenter TBD
 
 **Techniques**
 
-- 2022-MM-DD: Chapter 22 (Debugging) - Presenter TBD
-- 2022-MM-DD: Chapter 23 (Measuring performance) - Presenter TBD
-- 2022-MM-DD: Chapter 24 (Improving performance) - Presenter TBD
-- 2022-MM-DD: Chapter 24 (Rewriting R code in C++) - Presenter TBD
+- 2022-10-26: Chapter 22 (Debugging) - Presenter TBD
+- 2022-11-02: Chapter 23 (Measuring performance) - Presenter TBD
+- 2022-11-09: Chapter 24 (Improving performance) - Presenter TBD
+- 2022-11-16: Chapter 25 (Rewriting R code in C++) - Presenter TBD
 
 [Previous cohorts](https://github.com/r4ds/bookclub-Advanced_R).
 
