@@ -21,7 +21,7 @@ If you would like to present, please add your name next to a chapter using the [
 
 **Foundations**
 
-- 2022-06-01: Chapter 2 (Names and values) - Presenter TBD
+- 2022-06-01: Chapter 2 (Names and values) - Lucus Wassira
 - 2022-06-08: Chapter 3 (Vectors) - Presenter TBD
 - 2022-06-15: Chapter 4 (Subsetting) - Presenter TBD
 - 2022-06-22: Chapter 5(Control flow) - Presenter TBD
