@@ -11,7 +11,7 @@ As we read, we are producing [notes about the book](https://r4ds.io/advr).
 If you would like to present, please see the sign-up sheet for your cohort (linked below, and pinned in the [#book_club-BOOKABBR](https://rfordatascience.slack.com/archives/BOOKCHANNELID) channel on Slack)!
 
 - Cohorts 1-5: Ended prior to 2022 (and used a [different club format](https://github.com/r4ds/bookclub-Advanced_R))
-- [Cohort 6](https://docs.google.com/spreadsheets/d/1_WFY82UxAdvP4GUdZ2luh15quwdO1n0Km3Q0tfYuqvc/edit?usp=sharing): [Wednesdays, 13:00 CST/CDT](https://www.timeanddate.com/worldclock/converter.html?iso=20220525T180000&p1=24&p2=215)
+- [Cohort 6](https://docs.google.com/spreadsheets/d/1_WFY82UxAdvP4GUdZ2luh15quwdO1n0Km3Q0tfYuqvc/edit?usp=sharing) (started 2022-05-25): [Wednesdays, 13:00 CST/CDT](https://www.timeanddate.com/worldclock/converter.html?iso=20220525T180000&p1=24&p2=215)
 
 <hr>
 
