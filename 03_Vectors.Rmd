@@ -1,14 +1,5 @@
 # Vectors
 
-```{r knitr_opts, echo=FALSE, message=FALSE, warning=FALSE}
-knitr::opts_chunk$set(
-  echo = TRUE,
-  comment = "#>",
-  collapse = TRUE
-)
-```
-
-
 **Learning objectives:**
 
 - Learn about different types of vectors

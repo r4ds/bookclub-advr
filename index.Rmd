@@ -13,6 +13,14 @@ description: "This is the product of the R4DS Online Learning Community's Advanc
 
 # Welcome {-}
 
+```{r knitr_opts, echo=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
 Welcome to the bookclub! 
 
 This is a companion for the book [_Advanced R_](https://adv-r.hadley.nz/) by Hadley Wickham (Chapman & Hall, copyright 2019, [9780815384571](https://www.routledge.com/Advanced-R-Second-Edition/Wickham/p/book/9780815384571)).
