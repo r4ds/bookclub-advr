@@ -2,29 +2,27 @@
 
 **Learning objectives:**
 
-- Learn about different types of vectors
-- Learn how these types relate to one another
+-   Learn about different types of vectors
+-   Learn how these types relate to one another
 
 ## Types of vectors
 
 The family tree of vectors:
 
-![](images/vectors/summary-tree.png)
-Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
+![](images/vectors/summary-tree.png) Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
 
-- **Atomic.** Elements all the same type.
-- **List.** Elements are different Types.
-- **NULL** Null elements. Length zero.
+-   **Atomic.** Elements all the same type.
+-   **List.** Elements are different Types.
+-   **NULL** Null elements. Length zero.
 
 ## Atomic vectors
 
 ### Types
 
-- The vector family tree revisited. 
-- Meet the children of atomic vectors
+-   The vector family tree revisited.
+-   Meet the children of atomic vectors
 
-![](images/vectors/summary-tree-atomic.png)
-Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
+![](images/vectors/summary-tree-atomic.png) Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
 
 ### Length one
 
@@ -73,7 +71,6 @@ lgl_vec <- c(TRUE, FALSE)
 
 ```
 
-
 **2. With other vectors**
 
 ```{r long_vec}
@@ -84,19 +81,19 @@ c(c(1, 2), c(3, 4))
 
 `{rlang}` has [vector constructor functions too](https://rlang.r-lib.org/reference/vector-construction.html):
 
-- `rlang::lgl(...)`
-- `rlang::int(...)`
-- `rlang::dbl(...)`
-- `rlang::chr(...)`
+-   `rlang::lgl(...)`
+-   `rlang::int(...)`
+-   `rlang::dbl(...)`
+-   `rlang::chr(...)`
 
 They look to do both more and less than `c()`.
 
-- More: 
-  - Enforce type
-  - Splice lists
-  - More types: `rlang::bytes()`, `rlang::cpl(...)`
-- Less: 
-  - Stricter rules on names
+-   More:
+    -   Enforce type
+    -   Splice lists
+    -   More types: `rlang::bytes()`, `rlang::cpl(...)`
+-   Less:
+    -   Stricter rules on names
 
 Note: currently has `questioning` lifecycle badge, since these constructors may get moved to `vctrs`
 
@@ -115,14 +112,15 @@ sum(c(1, 2, NA, 3))
 sum(c(1, 2, NA, 3), na.rm = TRUE)
 
 ```
+
 **Types**
 
 Each type has its own NA type
 
-- Logical: `NA`
-- Integer: `NA_integer`
-- Double: `NA_double`
-- Character: `NA_character`
+-   Logical: `NA`
+-   Integer: `NA_integer`
+-   Double: `NA_double`
+-   Character: `NA_character`
 
 This may not matter in many contexts.
 
@@ -134,23 +132,23 @@ But this does matter for operations where types matter like `dplyr::if_else()`.
 
 Test data type:
 
-- Logical: `is.logical()`
-- Integer: `is.integer()`
-- Double: `is.double()`
-- Character: `is.character()`
+-   Logical: `is.logical()`
+-   Integer: `is.integer()`
+-   Double: `is.double()`
+-   Character: `is.character()`
 
 **What type of object is it?**
 
 Don't test objects with these tools:
 
-- `is.vector()`
-- `is.atomic()`
-- `is.numeric()`
+-   `is.vector()`
+-   `is.atomic()`
+-   `is.numeric()`
 
 Instead, maybe, use `{rlang}`
 
-- `rlang::is_vector`
-- `rlang::is_atomic`
+-   `rlang::is_vector`
+-   `rlang::is_atomic`
 
 ```{r test_rlang}
 # vector
@@ -162,7 +160,6 @@ rlang::is_atomic(c(1, 2))
 rlang::is_atomic(list(1, "a"))
 
 ```
-
 
 See more [here](https://rlang.r-lib.org/reference/type-predicates.html)
 
@@ -176,8 +173,8 @@ R can coerce either automatically or explicitly
 
 Two contexts for automatic coercion:
 
-1. Combination
-1. Mathematical
+1.  Combination
+2.  Mathematical
 
 Combination:
 
@@ -199,15 +196,15 @@ sum(has_attribute)
 
 Use `as.*()`
 
-- Logical: `as.logical()`
-- Integer: `as.integer()`
-- Double: `as.double()`
-- Character: `as.character()`
+-   Logical: `as.logical()`
+-   Integer: `as.integer()`
+-   Double: `as.double()`
+-   Character: `as.character()`
 
 But note that coercions may fail in one of two ways, or both:
 
-- With warning/error
-- NAs
+-   With warning/error
+-   NAs
 
 ```{r coerce_error}
 as.integer(c(1, 2, "three"))
@@ -215,16 +212,16 @@ as.integer(c(1, 2, "three"))
 
 ## Attributes
 
-- What
-- How
-- Why
+-   What
+-   How
+-   Why
 
 ### What
 
 Two perspectives:
 
-- Name-value pairs
-- Metadata
+-   Name-value pairs
+-   Metadata
 
 **Name-value pairs**
 
@@ -232,20 +229,20 @@ Formally, attributes have a name and a value.
 
 **Metadata**
 
-- Not data itself
-- But data about the data
+-   Not data itself
+-   But data about the data
 
 ### How
 
 Two operations:
 
-1. Get
-1. Set
+1.  Get
+2.  Set
 
 Two cases:
 
-1. Single attribute
-2. Multiple attributes
+1.  Single attribute
+2.  Multiple attributes
 
 **Single attribute**
 
@@ -261,10 +258,10 @@ attr(x = a, which = "some_attribute_name") <- "some attribute"
 # get attribute
 attr(x = a, which = "some_attribute_name")
 ```
+
 **Multiple attributes**
 
-To set multiple attributes, use `structure()`
-To get multiple attributes, use `attributes()`
+To set multiple attributes, use `structure()` To get multiple attributes, use `attributes()`
 
 ```{r attr_multiple}
 b <- c(4, 5, 6)
@@ -284,8 +281,8 @@ str(attributes(b))
 
 Two common use cases:
 
-- Names
-- Dimensions
+-   Names
+-   Dimensions
 
 **Names**
 
@@ -326,27 +323,26 @@ matrix(1:6, nrow = 2, ncol = 3)
 
 ## S3 atomic vectors
 
-- The vector family tree revisited. 
-- Meet the children of typed atomic vectors
+-   The vector family tree revisited.
+-   Meet the children of typed atomic vectors
 
-![](images/vectors/summary-tree-s3-1.png)
-Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
+![](images/vectors/summary-tree-s3-1.png) Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
 
-This list could (more easily) be expanded to new  vector types with [`{vctrs}`](https://vctrs.r-lib.org/). See [rstudio::conf(2019) talk on the package around 18:27](https://www.rstudio.com/resources/rstudioconf-2019/vctrs-tools-for-making-size-and-type-consistent-functions/). See also [rstudio::conf(2020) talk on new vector types for dealing with non-decimal currencies](https://www.rstudio.com/resources/rstudioconf-2020/vctrs-creating-custom-vector-classes-with-the-vctrs-package/).
+This list could (more easily) be expanded to new vector types with [`{vctrs}`](https://vctrs.r-lib.org/). See [rstudio::conf(2019) talk on the package around 18:27](https://www.rstudio.com/resources/rstudioconf-2019/vctrs-tools-for-making-size-and-type-consistent-functions/). See also [rstudio::conf(2020) talk on new vector types for dealing with non-decimal currencies](https://www.rstudio.com/resources/rstudioconf-2020/vctrs-creating-custom-vector-classes-with-the-vctrs-package/).
 
 What makes S3 atomic vectors different than their parents?
 
 Two things:
 
-1. Class
-2. Attributes (typically)
+1.  Class
+2.  Attributes (typically)
 
 ### Factors
 
 Factors are integer vectors with:
 
-- Class: "factor"
-- Attributes: "levels", or the set of allowed values
+-   Class: "factor"
+-   Attributes: "levels", or the set of allowed values
 
 ```{r factor}
 # Build a factor
@@ -387,8 +383,8 @@ ordered_factor
 
 Dates are:
 
-- Double vectors
-- With class "Date"
+-   Double vectors
+-   With class "Date"
 
 The double component represents the number of days since since `1970-01-01`
 
@@ -406,14 +402,14 @@ attributes(notes_date)
 
 There are 2 Date-time representations in base R:
 
-- POSIXct, where "ct" denotes calendar time
-- POSIXlt, where "lt" designates local time.
+-   POSIXct, where "ct" denotes calendar time
+-   POSIXlt, where "lt" designates local time.
 
 Let's focus on POSIXct because:
 
-- Simplest
-- Built on an atomic vector
-- Most apt to be in a data frame
+-   Simplest
+-   Built on an atomic vector
+-   Most apt to be in a data frame
 
 Let's now build and deconstruct a Date-time
 
@@ -436,14 +432,13 @@ typeof(note_date_time)
 attributes(note_date_time)
 ```
 
-
 ### Durations
 
 Durations are:
 
-- Double vectors
-- Class: "difftime"
-- Attributes: "units", or the unit of duration (e.g., weeks, hours, minutes, seconds, etc.)
+-   Double vectors
+-   Class: "difftime"
+-   Attributes: "units", or the unit of duration (e.g., weeks, hours, minutes, seconds, etc.)
 
 ```{r durations}
 # Construct
@@ -461,8 +456,8 @@ attributes(one_minute)
 
 See also:
 
-- [`lubridate::make_difftime()`](https://lubridate.tidyverse.org/reference/make_difftime.html)
-- [`clock::date_time_build()`](https://clock.r-lib.org/reference/date_time_build.html)
+-   [`lubridate::make_difftime()`](https://lubridate.tidyverse.org/reference/make_difftime.html)
+-   [`clock::date_time_build()`](https://clock.r-lib.org/reference/date_time_build.html)
 
 ## Lists
 
@@ -492,6 +487,7 @@ typeof(simple_list)
 str(simple_list)
 
 ```
+
 Nested lists:
 
 ```{r list_nested}
@@ -528,8 +524,8 @@ str(list_comb2)
 
 Check that is a list:
 
-- `is.list()`
-- `rlang::is_list()``
+-   `is.list()`
+-   \`rlang::is_list()\`\`
 
 The two do the same, except that the latter can check for the number of elements
 
@@ -546,26 +542,24 @@ rlang::is_list(x = list_comb2, n = 4)
 rlang::is_vector(list_comb2)
 ```
 
-
 ### Coercion
 
 ## Data frames and tibbles
 
-- The vector family tree revisited. 
-- Meet the children of lists
+-   The vector family tree revisited.
+-   Meet the children of lists
 
-![](images/vectors/summary-tree-s3-2.png)
-Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
+![](images/vectors/summary-tree-s3-2.png) Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
 
 ### Data frame
 
 A data frame is a:
 
-- Named list of vectors (i.e., column names)
-- Class: "data frame"
-- Attributes:
-  - (column) `names`
-  - `row.names``
+-   Named list of vectors (i.e., column names)
+-   Class: "data frame"
+-   Attributes:
+    -   (column) `names`
+    -   \`row.names\`\`
 
 ```{r data_frame}
 # Construct
@@ -588,23 +582,22 @@ typeof(df)
 attributes(df)
 ```
 
-
 Unlike other lists, the length of each vector must be the same (i.e. as many vector elements as rows in the data frame).
 
 ### Tibble
 
 As compared to data frames, tibbles are data frames that are:
 
-- Lazy
-- Surly
+-   Lazy
+-   Surly
 
 #### Lazy
 
 Tibbles do not:
 
-- Coerce strings
-- Transform non-syntactic names
-- Recycle vectors of length greater than 1
+-   Coerce strings
+-   Transform non-syntactic names
+-   Recycle vectors of length greater than 1
 
 **Coerce strings**
 
@@ -663,13 +656,12 @@ tbl <- tibble::tibble(
 )
 ```
 
-
 #### Surly
 
 Tibbles do only what they're asked and complain if what they're asked doesn't make sense:
 
-- Subsetting always yields a tibble
-- Complains if cannot find column
+-   Subsetting always yields a tibble
+-   Complains if cannot find column
 
 **Subsetting always yields a tibble**
 
@@ -715,15 +707,15 @@ Whether tibble: `tibble::is_tibble`. Note: only tibbles are tibbles. Vanilla dat
 
 ### Coercion
 
-- To data frame: `as.data.frame()`
-- To tibble: `tibble::as_tibble()`
+-   To data frame: `as.data.frame()`
+-   To tibble: `tibble::as_tibble()`
 
 ## `NULL`
 
 Special type of object that:
 
-- Length 0
-- Cannot have attributes
+-   Length 0
+-   Cannot have attributes
 
 ```{r null, error=TRUE}
 typeof(NULL)
@@ -735,7 +727,6 @@ length(NULL)
 x <- NULL
 attr(x, "y") <- 1
 ```
-
 
 ## Meeting Videos
 
@@ -764,9 +755,13 @@ attr(x, "y") <- 1
 `r knitr::include_url("https://www.youtube.com/embed/URL")`
 
 <details>
-<summary> Meeting chat log </summary>
 
-```
-LOG
-```
+<summary>
+
+Meeting chat log
+
+</summary>
+
+    LOG
+
 </details>
