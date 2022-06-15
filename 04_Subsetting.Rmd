@@ -2,12 +2,406 @@
 
 **Learning objectives:**
 
-- THESE ARE NICE TO HAVE BUT NOT ABSOLUTELY NECESSARY
+- Learn about the 6 ways to subset atomic vectors
+- Learn about the 3 subsetting operators: `[[`, `[`, and `$`
+- Learn how subsetting works with different vector types
 
-## SLIDE 1
+## Selecting multiple elements
 
-- ADD SLIDES AS SECTIONS (`##`).
-- TRY TO KEEP THEM RELATIVELY SLIDE-LIKE; THESE ARE NOTES, NOT THE BOOK ITSELF.
+### Atomic Vectors
+
+- 6 ways to subset atomic vectors
+
+Let's take a look with an example vector.
+
+```{r atomic_vector}
+x <- c(3.1, 2.2, 1.3, 4.4)
+```
+
+**Positive integers**
+
+```{r positive_int}
+# return elements at specified positions
+x[c(4, 1)]
+
+# duplicate indices return duplicate values
+x[c(2, 2)]
+
+# real numbers truncate to integers
+x[c(3.2, 3.8)]
+```
+
+**Negative integers**
+
+```{r, eval=FALSE}
+### excludes elements at specified positions
+# x[-c(1, 3)] # same as x[c(-1, -3)]
+
+### mixing positive and negative is a no-no
+# x[c(-1, 3)]
+```
+
+**Logical Vectors**
+
+```{r logical_vec}
+x[c(TRUE, TRUE, FALSE, TRUE)]
+
+x[x < 3]
+```
+
+- **Recyling rules** apply when subsetting this way: x[y]
+- Easy to understand if x or y is 1, best to avoid other lengths
+
+```{r missing}
+# missing value in index will also return NA in output
+x[c(NA, TRUE)]
+```
+
+
+**Nothing**
+
+```{r nothing}
+# returns the original vector
+x[]
+```
+
+**Zero**
+
+```{r zero}
+# returns a zero-length vector
+x[0]
+```
+
+**Character vectors**
+
+```{r character}
+# if name, you can use to return matched elements
+(y <- setNames(x, letters[1:4]))
+
+y[c("d", "b", "a")]
+```
+
+### Lists
+
+- Subsetting works the same way
+- `[` always returns a list, `[[` and `$` let you pull elements out of a list
+
+### Matrices and arrays
+
+You can subset higher dimensional structures in three ways:
+- with multiple vectors
+- with a single vector
+- with a matrix
+
+```{r, eval=FALSE}
+a <- matrix(1:9, nrow = 3)
+colnames(a) <- c("A", "B", "C")
+a[1:2, ]
+#>      A B C
+#> [1,] 1 4 7
+#> [2,] 2 5 8
+a[c(TRUE, FALSE, TRUE), c("B", "A")]
+#>      B A
+#> [1,] 4 1
+#> [2,] 6 3
+a[0, -2]
+#>      A C
+      
+a[1, ]
+#> A B C 
+#> 1 4 7
+
+a[1, 1]
+#> A 
+#> 1     
+```
+
+Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
+
+Matrices and arrays are just special vectors; can subset with a single vector
+(arrays in R stored column wise)
+
+```{r}
+vals <- outer(1:5, 1:5, FUN = "paste", sep = ",")
+vals
+
+vals[c(3, 15)]
+```
+
+### Data frames and tibbles
+
+Data frames act like lists and matrices
+- single index -> list
+- two indices -> matrix
+
+```{r penguins}
+library(palmerpenguins)
+
+# single index
+penguins[1:2]
+
+penguins[c("species","island")]
+
+# two indices
+penguins[1:2, ]
+```
+
+Subsetting a tibble with `[` always returns a tibble
+
+### Preserving dimensionality
+
+- Data frames and tibbles behave differently
+- tibble will default to preserve dimensionality, data frames do not
+- this can lead to unexpected behavior and code breaking in the future
+
+Can use `drop = FALSE` when using a data frame or can use tibbles
+
+## Selecting a single element
+
+`[[` and `$` are used to extract single elements
+
+### `[[]]`
+
+```{r train}
+x <- list(1:3, "a", 4:6)
+```
+
+![](images/subsetting/train-1.png)
+
+![](images/subsetting/train-2.png)
+
+![](images/subsetting/train-3.png)
+
+Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
+
+![](images/subsetting/hadley-tweet.png)
+
+### `$`
+
+- `x$y` is equivalent to `x[["y"]]`
+
+the `$` operator doens't work with stored vals
+
+```{r, eval=FALSE}
+var <- "cyl"
+# Doesn't work - mtcars$var translated to mtcars[["var"]]
+mtcars$var
+#> NULL
+
+# Instead use [[
+mtcars[[var]]
+#>  [1] 6 6 4 6 8 6 8 4 4 6 6 8 8 8 8 8 8 4 4 4 4 8 8 8 8 4 4 4 8 6 8 4
+```
+
+`$` allows partial matching, `[[]]` does not
+
+```{r, eval=FALSE}
+x <- list(abc = 1)
+x$a
+#> [1] 1
+x[["a"]]
+#> NULL
+```
+
+Hadley advises to change Global settings:
+
+```{r, eval=FALSE}
+options(warnPartialMatchDollar = TRUE)
+x$a
+#> Warning in x$a: partial match of 'a' to 'abc'
+#> [1] 1
+```
+
+tibbles don't have this behavior
+```{r}
+penguins$s
+```
+
+### missing and out of bound indices
+- Due to the inconsistency of how R handles such indices, `purrr::pluck()` and `purrr::chuck()` are recommended
+```{r, eval=FALSE}
+x <- list(
+  a = list(1, 2, 3),
+  b = list(3, 4, 5)
+)
+purrr::pluck(x, "a", 1)
+# [1] 1
+purrr::pluck(x, "c", 1)
+# NULL
+purrr::pluck(x, "c", 1, .default = NA)
+# [1] NA
+```
+
+### `@` and `slot()`
+- `@` is `$` for S4 objects (to be revisited in Chapter 15)
+
+- `slot()` is `[[ ]]` for S4 objects
+
+## Subsetting and Assignment
+
+- Subsetting can be combined with assignment to edit values
+
+```{r}
+x <- c("Tigers", "Royals", "White Sox", "Twins", "Indians")
+
+x[5] <- "Guardians"
+
+x
+```
+
+- length of the subset and assignment vector should be the same to avoid recycling
+
+You can use NULL to remove a component
+
+```{r}
+x <- list(a = 1, b = 2)
+x[["b"]] <- NULL
+str(x)
+```
+
+Subsetting with nothing can preserve structure of original object
+
+```{r, eval=FALSE}
+# mtcars[] <- lapply(mtcars, as.integer)
+# is.data.frame(mtcars)
+# [1] TRUE
+# mtcars <- lapply(mtcars, as.integer)
+#> is.data.frame(mtcars)
+# [1] FALSE
+```
+
+## Applications
+
+Applications copied from cohort 2 slide
+
+### Lookup tables (character subsetting)
+```{r, eval=FALSE}
+x <- c("m", "f", "u", "f", "f", "m", "m")
+lookup <- c(m = "Male", f = "Female", u = NA)
+lookup[x]
+#        m        f        u        f        f        m        m 
+#   "Male" "Female"       NA "Female" "Female"   "Male"   "Male"
+```
+
+### Matching and merging by hand (integer subsetting)
+- The `match()` function allows merging a vector with a table
+```{r, eval=FALSE}
+grades <- c("D", "A", "C", "B", "F")
+info <- data.frame(
+  grade = c("A", "B", "C", "D", "F"),
+  desc = c("Excellent", "Very Good", "Average", "Fair", "Poor"),
+  fail = c(F, F, F, F, T)
+)
+id <- match(grades, info$grade)
+id
+# [1] 3 2 2 1 3
+info[id, ]
+#   grade      desc  fail
+# 4     D      Fair FALSE
+# 1     A Excellent FALSE
+# 3     C   Average FALSE
+# 2     B Very Good FALSE
+# 5     F      Poor  TRUE
+```
+
+
+### Random samples and bootstrapping (integer subsetting)
+```{r, eval=FALSE}
+# mtcars[sample(nrow(mtcars), 3), ] # use replace = TRUE to replace
+#                     mpg cyl  disp  hp drat    wt  qsec vs am gear carb
+# Lotus Europa       30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
+# Mazda RX4          21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
+# Cadillac Fleetwood 10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4
+```
+
+
+### Ordering (integer subsetting)
+```{r, eval=FALSE}
+# mtcars[order(mtcars$mpg), ]
+#                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
+# Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4
+# Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4
+# Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4
+# Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4
+# Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4
+# Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
+# ...
+```
+
+
+### Expanding aggregated counts (integer subsetting)
+- We can expand a count column by using `rep()`
+```{r, eval=FALSE}
+df <- tibble::tibble(x = c("Amy", "Julie", "Brian"), n = c(2, 1, 3))
+df[rep(1:nrow(df), df$n), ]
+# A tibble: 6 x 2
+#   x         n
+#   <chr> <dbl>
+# 1 Amy       2
+# 2 Amy       2
+# 3 Julie     1
+# 4 Brian     3
+# 5 Brian     3
+# 6 Brian     3
+```
+
+
+
+###  Removing columns from data frames (character)
+- We can remove a column by subsetting, which does not change the object
+```{r, eval=FALSE}
+df[, 1]
+# A tibble: 3 x 1
+#   x    
+#   <chr>
+# 1 Amy  
+# 2 Julie
+# 3 Brian
+```
+- We can also delete the column using `NULL`
+```{r, eval=FALSE}
+df$n <- NULL
+df
+# A tibble: 3 x 1
+#   x    
+#   <chr>
+# 1 Amy  
+# 2 Julie
+# 3 Brian
+```
+
+
+
+### Selecting rows based on a condition (logical subsetting)
+
+```{r, eval=FALSE}
+# mtcars[mtcars$gear == 5, ]
+#                 mpg cyl  disp  hp drat    wt qsec vs am gear carb
+# Porsche 914-2  26.0   4 120.3  91 4.43 2.140 16.7  0  1    5    2
+# Lotus Europa   30.4   4  95.1 113 3.77 1.513 16.9  1  1    5    2
+# Ford Pantera L 15.8   8 351.0 264 4.22 3.170 14.5  0  1    5    4
+# Ferrari Dino   19.7   6 145.0 175 3.62 2.770 15.5  0  1    5    6
+# Maserati Bora  15.0   8 301.0 335 3.54 3.570 14.6  0  1    5    8
+```
+
+
+
+### Boolean algebra versus sets (logical and integer)
+- `which()` gives the indices of a Boolean vector
+
+```{r, eval=FALSE}
+(x1 <- 1:10 %% 2 == 0) # 1-10 divisible by 2
+#  [1] FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE  TRUE
+(x2 <- which(x1))
+# [1]  2  4  6  8 10
+(y1 <- 1:10 %% 5 == 0) # 1-10 divisible by 5
+#  [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE
+(y2 <- which(y1))
+# [1]  5 10
+x1 & y1
+# [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+```
+
 
 ## Meeting Videos
 
@@ -42,3 +436,6 @@
 LOG
 ```
 </details>
+
+
+

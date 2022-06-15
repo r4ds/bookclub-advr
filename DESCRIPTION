@@ -16,4 +16,5 @@ Imports:
     bookdown,
     rmarkdown,
     tidyverse,
-    DiagrammeR
+    DiagrammeR,
+    palmerpenguins
