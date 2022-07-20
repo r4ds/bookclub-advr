@@ -19,7 +19,7 @@ knitr::include_graphics("images/06_functions.png")
 
 Functions have three parts, `formals()`, `body()`, and `environment()`.
 
-```{r c01, echo=FALSE, fig.align='center', fig.dim="100%"}
+```{r 06-c01, echo=FALSE, fig.align='center', fig.dim="100%"}
 DiagrammeR::mermaid("
    graph LR
      A{formals}-->B(body)
