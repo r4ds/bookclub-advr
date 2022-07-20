@@ -17,4 +17,7 @@ Imports:
     rmarkdown,
     tidyverse,
     DiagrammeR,
-    palmerpenguins
+    palmerpenguins,
+    GillespieSSA,
+    deSolve,
+    reshape2
