@@ -18,6 +18,5 @@ Imports:
     tidyverse,
     DiagrammeR,
     palmerpenguins,
-    GillespieSSA,
     deSolve,
     reshape2

@@ -238,7 +238,6 @@ First we need to load some useful libraries:
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(deSolve)
 library(reshape2)
-library(GillespieSSA)
 ```
 
 
