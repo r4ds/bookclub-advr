@@ -247,12 +247,22 @@ for (i in 1:10) {
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/wg2QZ3rMIqM")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+00:16:34	Federica Gazzelloni:	https://github.com/r4ds/bookclub-Advanced_R
+00:22:28	Federica Gazzelloni:	https://stackoverflow.com/questions/50646133/dplyr-if-else-vs-base-r-ifelse
+00:26:20	Trevin:	case_when() is great, makes it easy to read
+00:54:01	Trevin:	out[I, ]
+00:54:14	Trevin:	out[i, ]
+00:55:03	Trevin:	I think you have to specify number of rows and columns before..
+00:55:30	Trevin:	iterations = 10
+ variables = 2
+
+ output <- matrix(ncol=variables, nrow=iterations)
+00:55:43	Trevin:	https://stackoverflow.com/questions/13442461/populating-a-data-frame-in-r-in-a-loop
 ```
 </details>
