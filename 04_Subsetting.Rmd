@@ -427,13 +427,17 @@ x1 & y1
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/-WjBA6yqW0Q")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+00:36:02	Arthur Shaw:	TIL that the subset operator has parameters. Thanks, Trevin!
+00:38:55	Vaibhav Janve:	its interesting that carriage "a" has two set of wheels instread of 4. I wonder that choice is because its atomic.
+00:40:44	Arthur Shaw:	@Vaibhav, because the load is lighter, the carriage needs fewer axles? ;)  I agree: it's a confusing graphical choice.
+00:41:11	Vaibhav Janve:	lol
+01:05:53	Vaibhav Janve:	Thank you Trevin!
 ```
 </details>
 
