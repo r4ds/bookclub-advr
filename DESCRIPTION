@@ -19,4 +19,5 @@ Imports:
     DiagrammeR,
     palmerpenguins,
     deSolve,
-    reshape2
+    reshape2,
+    emoji,
