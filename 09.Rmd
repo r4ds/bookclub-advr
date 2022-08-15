@@ -57,6 +57,7 @@ library(tidyverse)
 
 # Atomic vectors {-}
 
+
 - has 4 variants to return atomic vectors
     - `map_chr()`
     - `map_dbl()`
