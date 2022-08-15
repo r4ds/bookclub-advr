@@ -31,6 +31,7 @@ __Functionals__ are functions that take function as input and return a vector as
 
 ### Benefits {-}
 
+
 - encourages function logic to be separated from iteration logic
 
 - can collapse into vectors/data frames easily
