@@ -26,7 +26,6 @@ __Functionals__ are functions that take function as input and return a vector as
 - a functional is better than a `for` loop is better than `while` is better than `repeat`
 
 - don't shoehorn it in if a loop is the easiest answer
-- ex: iterating over `eval()`
 
 
 ### Benefits {-}
@@ -92,6 +91,12 @@ map_dbl(.x=mtcars,  .f=~mean(.x, na.rm = TRUE))
 ```{r, eval=FALSE}
 map_dbl(.x=mtcars, .f=mean, na.rm = TRUE)
 ```
+# The benefit of using the map over apply family of function {-}
+- It is written in C
+- It preserves names
+- We always know the return values
+- We can pass in some additional arguments to the function
+
 
 ## `purrr` style
 
