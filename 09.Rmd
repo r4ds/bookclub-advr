@@ -1,6 +1,6 @@
-# Functionals
+# Functionals 
 
-## **Learning objectives:**
+## **Learning objectives:** 
 
 9.2.  **map()**
 
@@ -14,7 +14,7 @@
 
 - Example application
 
-# What are functionals {-}
+## What are functionals {-}
 
 ## Introduction {-}
 
@@ -24,8 +24,6 @@ __Functionals__ are functions that take function as input and return a vector as
 - alternatives to loops
 
 - a functional is better than a `for` loop is better than `while` is better than `repeat`
-
-- don't shoehorn it in if a loop is the easiest answer
 
 
 ### Benefits {-}
@@ -109,12 +107,6 @@ map(df, .f=~.x*3)
 
 modify(.x=df,.f=~.x*3)
 ```
-## The benefit of using the map over apply family of function {-}
-- It is written in C
-- It preserves names
-- We always know the return values
-- We can pass in some additional arguments to the function
-
 
 ## `purrr` style
 
@@ -178,6 +170,13 @@ map2_dbl(
 ```
 
 ---
+
+## The benefit of using the map over apply family of function {-}
+- It is written in C
+- It preserves names
+- We always know the return values
+- We can pass in some additional arguments to the function
+
 
 # `walk()` {-}
 
@@ -274,6 +273,7 @@ list(
 
 ## `reduce()` family
 The reduce() function is a powerful functional that allows you to abstract away from a sequence of functions that are applied in a fixed direction.
+
 reduce takes a vector as its first argument, a function as its second argument, and an optional .init argument, it will then apply this function repeatedly to a list until there is only a single element left.
 
 ```{r,echo=FALSE,warning=FALSE,message=FALSE}
@@ -404,6 +404,32 @@ map_if(my_list, is.list, flatten_int)
 map_if(my_list, is.list, flatten_int) %>% 
   flatten_int()
 ```
+# Dealing with Failures {-}
+## Safely {-}
+
+safely is an adverb, it takes a function (a verb) and returns a modified version. In this case, the modified function will never throw an error. Instead it always returns a list with two elements.
+
+- Result is the original result. If there is an error this will be NULL
+
+- Error is an error object. If the operation was successful this will be NULL.
+
+```{r}
+A <- list(1,10,"a")
+
+map(.x = A,.f = safely(log))
+  
+```
+
+# Possibly {-}
+Possibly always succeeds. It is simpler than safely, because you can give it a default value to return when there is an error.
+
+```{r}
+A <- list(1,10,"a")
+
+ map_dbl(.x =A,.f = possibly(log,otherwise = NA_real_) )
+
+```
+
 # Application {-}
 
 - parsing JSON or XML
