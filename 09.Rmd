@@ -52,7 +52,6 @@ out[[i]] <- f(x[[i]], ...)
 }
 out
 }
-
 - `purrr::map()` is equivalent to `lapply()`
 
 - returns a list and is the most general
