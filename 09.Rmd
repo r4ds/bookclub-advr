@@ -44,6 +44,15 @@ __Functionals__ are functions that take function as input and return a vector as
 knitr::include_graphics(path = 'images/9_2_3_map-arg.png')
 ```
 
+
+simple_map <- function(x, f, ...) {
+out <- vector("list", length(x))
+for (i in seq_along(x)) {
+out[[i]] <- f(x[[i]], ...)
+}
+out
+}
+
 - `purrr::map()` is equivalent to `lapply()`
 
 - returns a list and is the most general
@@ -91,7 +100,17 @@ map_dbl(.x=mtcars,  .f=~mean(.x, na.rm = TRUE))
 ```{r, eval=FALSE}
 map_dbl(.x=mtcars, .f=mean, na.rm = TRUE)
 ```
-# The benefit of using the map over apply family of function {-}
+## Modify {-}
+Sometimes we might want the output to be the same as the input, then in that case we can use the modify function rather than map
+
+```{r}
+df <- data.frame(x=1:3,y=6:4)
+
+map(df, .f=~.x*3)
+
+modify(.x=df,.f=~.x*3)
+```
+## The benefit of using the map over apply family of function {-}
 - It is written in C
 - It preserves names
 - We always know the return values
@@ -184,25 +203,11 @@ plots <- mtcars %>%
 
 paths <- stringr::str_c(names(plots),'.png')
 
-pwalk(list(paths,plots),ggsave,path=tempdir())
+pwalk(.x=list(paths,plots),.f=ggsave,path=tempdir())
   
 
-# I will delete one
-temp <- tempfile()
-
-dir.create(temp)
-
-cyls <- split(mtcars, mtcars$cyl)
-
-paths <- file.path(temp, paste0("cyl-", names(cyls), ".csv"))
-
-walk2(cyls, paths, write.csv)
-
-dir(temp)
-  
-  
 ```
-
+- walk, walk2 and pwalk all invisibly return .x the first argument. This makes them suitable for use in the middle of pipelines.
 
 ---
 
@@ -322,7 +327,9 @@ reduce(
 ```
 
 ```{r}
-df <- list(age=tibble(name='john',age=30),sex=tibble(name=c('john','mary'),sex=c('M','F'),trt=tibble(name='Mary',treatment='A')))
+df <- list(age=tibble(name='john',age=30),
+    sex=tibble(name=c('john','mary'),sex=c('M','F'),
+    trt=tibble(name='Mary',treatment='A')))
 
 
 df |> reduce(.f = full_join)
