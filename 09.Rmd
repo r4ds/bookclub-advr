@@ -1,6 +1,8 @@
 # Functionals 
 
-## **Learning objectives:** 
+## **Learning objectives:** {-}
+
+9.1. **Introduction**
 
 9.2.  **map()**
 
@@ -8,15 +10,14 @@
 
 9.4. **map_** variants
 
-9.5. **reduce()** and **accumulate**family
+9.5. **reduce()** and **accumulate** family of functions
 
 - Some functions that weren't covered
 
-- Example application
 
 ## What are functionals {-}
 
-## Introduction {-}
+## Introduction 
 
 __Functionals__ are functions that take function as input and return a vector as output. Functionals that you probably have used before are: `apply()`, `lapply()` or `tapply()`. 
 
@@ -42,7 +43,7 @@ __Functionals__ are functions that take function as input and return a vector as
 knitr::include_graphics(path = 'images/9_2_3_map-arg.png')
 ```
 
-
+```{r}
 simple_map <- function(x, f, ...) {
 out <- vector("list", length(x))
 for (i in seq_along(x)) {
@@ -50,6 +51,9 @@ out[[i]] <- f(x[[i]], ...)
 }
 out
 }
+```
+# **Benefit of using the map function in purrr** {-}
+
 - `purrr::map()` is equivalent to `lapply()`
 
 - returns a list and is the most general
@@ -57,11 +61,14 @@ out
 - the length of the input == the length of the output
 
 
+
+
+
 ```{r load,echo=FALSE,warning=FALSE,message=FALSE}
 library(tidyverse)
 ```
 
-# Atomic vectors {-}
+# **Atomic vectors** {-}
 
 
 - has 4 variants to return atomic vectors
@@ -81,20 +88,20 @@ map_lgl(.x=c(1, NA, 3), .f=is.na)
 
 # Anonymous functions and shortcuts  {-}
 
- Anonymous functions 
+ **Anonymous functions** 
 ```{r}
 map_dbl(.x=mtcars, .f=function(x) mean(x, na.rm = TRUE)) %>% 
   head()
 ```
 
-- the "twiddle" uses a tilda `~` to set a formula
+- the "twiddle" uses a twiddle `~` to set a formula
 - can use `.x` to reference the input `map(.x = ..., .f = )`
 ```{r, eval=FALSE}
 map_dbl(.x=mtcars,  .f=~mean(.x, na.rm = TRUE))
 ```
 
 - can be simplified further as
-```{r, eval=FALSE}
+```{r}
 map_dbl(.x=mtcars, .f=mean, na.rm = TRUE)
 ```
 ## Modify {-}
@@ -131,6 +138,9 @@ list_df <-
       mutate(timeframe = ifelse(issue <= 152, "first 5 years", "last 5 years")) %>% 
       select_if(~mean(is.na(.)) < 0.2) 
   )
+
+
+
 
 # write to global environment
 iwalk(
@@ -175,6 +185,7 @@ map2_dbl(
 - It is written in C
 - It preserves names
 - We always know the return values
+- We can apply function into multiple input value
 - We can pass in some additional arguments to the function
 
 
@@ -194,14 +205,14 @@ walk(1:3, ~cat(.x, "\n"))
 
 
 We can use pwalk to save a list of plot to disk
-```{r eval=FALSE}
+```{r}
 plots <- mtcars %>% 
   split(.$cyl) %>% 
   map(~ggplot(.,aes(mpg,wt))+geom_point())
 
 paths <- stringr::str_c(names(plots),'.png')
 
-pwalk(.x=list(paths,plots),.f=ggsave,path=tempdir())
+pwalk(.l=list(paths,plots),.f=ggsave,path=tempdir())
   
 
 ```
@@ -215,30 +226,9 @@ pwalk(.x=list(paths,plots),.f=ggsave,path=tempdir())
 
 - These two produce the same result
 
-```{r, eval=FALSE}
-map2_chr(.x = mtcars, .y = names(mtcars), .f = ~ paste(.y, "has a mean of", round(mean(.x), 1)))
-```
-
 ```{r}
 imap_chr(.x = mtcars, .f = ~ paste(.y, "has a mean of", round(mean(.x), 1))) %>% 
-  head()
-
-```
-
----
-
-# `imap()` {-}
-
-- When .x isn't named, the index will be used
-```{r}
-set.seed(1234)
-
-x <- map(1:3, ~ sample(100, 3))
-
-imap_chr(
-  .x = x, 
-  .f = ~ paste("The highest value in set", .y, "is", max(.x))
-)
+head()
 ```
 
 ---
@@ -249,7 +239,7 @@ imap_chr(
 
 - for example `runif()` has the parameters `n`, `min` and `max`
 
-```{r, eval=FALSE}
+```{r}
 params <- tibble::tribble(
   ~ n, ~ min, ~ max,
    1L,     1,    10,
@@ -268,7 +258,7 @@ list(
   min = 10 ^ (0:2), 
   max = 10 ^ (1:3)
 ) %>% 
-  pmap(runif)
+pmap(runif)
 ```
 
 ## `reduce()` family
@@ -404,7 +394,8 @@ map_if(my_list, is.list, flatten_int)
 map_if(my_list, is.list, flatten_int) %>% 
   flatten_int()
 ```
-# Dealing with Failures {-}
+## Dealing with Failures {-}
+
 ## Safely {-}
 
 safely is an adverb, it takes a function (a verb) and returns a modified version. In this case, the modified function will never throw an error. Instead it always returns a list with two elements.
@@ -420,7 +411,7 @@ map(.x = A,.f = safely(log))
   
 ```
 
-# Possibly {-}
+## Possibly {-}
 Possibly always succeeds. It is simpler than safely, because you can give it a default value to return when there is an error.
 
 ```{r}
@@ -429,38 +420,6 @@ A <- list(1,10,"a")
  map_dbl(.x =A,.f = possibly(log,otherwise = NA_real_) )
 
 ```
-
-# Application {-}
-
-- parsing JSON or XML
-
-```{r}
-library(repurrrsive)
-
-repos <- 
-  repurrrsive::gh_repos %>% 
-  purrr::flatten()
-
-
-str(repos[[1]], list.len = 10)
-```
-# Application {-}
-```{r}
-tibble(
-  repo_id = map_int(repos, pluck, "id"),
-  repo_name = map_chr(repos, pluck, "name"),
-  owner_name = 
-    map(repos, pluck, "owner") %>% 
-    map_chr(pluck, "login"),
-  size = map_int(repos, pluck, "size"),
-  issues = map_int(repos, pluck, "open_issues_count"),
-  watchers = map_int(repos, pluck, "watchers_count"),
-  forks = map_int(repos, pluck, "forks_count"),
-  created_at = map_chr(repos, pluck, "created_at")
-) %>% 
-  arrange(desc(watchers))
-```
-
 
 ---
 
