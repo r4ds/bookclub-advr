@@ -94,7 +94,7 @@ rlang::warn("Warning")
 (Hadley's) advice on usage:
 
 - Err on the side of errors. In other words, error rather than warn.
-- But errors make sense in a few cases:
+- But warnings make sense in a few cases:
   - Function is being deprecated. Warn that it is reaching end of life.
   - Function is reasonably sure to recover from issue.
 
