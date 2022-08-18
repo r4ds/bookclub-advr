@@ -17,7 +17,8 @@ description: "This is the product of the R4DS Online Learning Community's Advanc
 knitr::opts_chunk$set(
   echo = TRUE,
   comment = "#>",
-  collapse = TRUE
+  collapse = TRUE,
+  error = TRUE
 )
 ```
 
