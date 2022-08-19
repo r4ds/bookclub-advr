@@ -8,10 +8,19 @@ Authors@R: c(
     role = c("aut", "cre", "cph")
   )
   )
+License: CC BY NC SA 4.0
 URL: https://r4ds.github.io/bookclub-advr, https://github.com/r4ds/bookclub-advr
 Depends:
     R (>= 3.1.0)
 Imports: 
     bookdown,
     rmarkdown,
-    tidyverse
+    tidyverse,
+    DiagrammeR,
+    palmerpenguins,
+    deSolve,
+    reshape2,
+    emoji,
+    lobstr,
+    rlang,
+    glue
