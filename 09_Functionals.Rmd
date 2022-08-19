@@ -1,6 +1,12 @@
 # Functionals 
 
-**Learning objectives:** {-}
+**Learning objectives:**
+
+- Define functionals.
+- Use the `purrr::map()` family of functionals.
+- Use the `purrr::walk()` family of functionals.
+- Use the `purrr::reduce()` and `purrr::accumulate()` family of functionals.
+- Use `purrr::safely()` and `purrr::possibly()` to deal with failure.
 
 9.1. **Introduction**
 
@@ -53,7 +59,7 @@ out
 }
 ```
 
-## **Benefit of using the map function in purrr** {-}
+## Benefit of using the map function in purrr {-}
 
 - `purrr::map()` is equivalent to `lapply()`
 
@@ -69,7 +75,7 @@ out
 library(tidyverse)
 ```
 
-## **Atomic vectors** {-}
+## Atomic vectors {-}
 
 
 - has 4 variants to return atomic vectors
@@ -263,6 +269,7 @@ pmap(runif)
 ```
 
 ## `reduce()` family
+
 The reduce() function is a powerful functional that allows you to abstract away from a sequence of functions that are applied in a fixed direction.
 
 reduce takes a vector as its first argument, a function as its second argument, and an optional .init argument, it will then apply this function repeatedly to a list until there is only a single element left.
