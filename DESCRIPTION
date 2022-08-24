@@ -23,4 +23,7 @@ Imports:
     emoji,
     lobstr,
     rlang,
-    glue
+    glue,
+    scales,
+    ggplot2,
+    patchwork
