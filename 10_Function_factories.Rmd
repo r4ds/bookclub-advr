@@ -495,10 +495,6 @@ rlang::env_unbind(globalenv(), names(funs))
 ```
 
 
-## Conclusion
-
-
-
 
 
 

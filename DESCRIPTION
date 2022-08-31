@@ -26,4 +26,6 @@ Imports:
     glue,
     scales,
     ggplot2,
-    patchwork
+    patchwork,
+    memoise,
+    purrr
