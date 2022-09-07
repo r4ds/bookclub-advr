@@ -28,4 +28,5 @@ Imports:
     ggplot2,
     patchwork,
     memoise,
-    purrr
+    purrr,
+    sloop
