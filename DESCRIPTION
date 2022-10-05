@@ -29,4 +29,7 @@ Imports:
     patchwork,
     memoise,
     purrr,
+    Matrix,
+    R6,
+    zeallot,
     sloop
