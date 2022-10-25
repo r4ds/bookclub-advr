@@ -7,6 +7,8 @@
 - Improve programming skills.
 - Develop a deep understanding of the R language fundamentals.
 - Understand what functional programming means.
+- Understand object-oriented programming as applied in R.
+- Understand metaprogramming while developing in R.
 
 **For this chapter (includes the Welcome and Preface):**
 
@@ -26,23 +28,31 @@ Books suggestions:
 
 > "Use of new packages, particularly rlang, which provides a clean interface to low-level data structures and operations."
 
-
 ```{r, echo=FALSE,out.width="49%",out.height="49%",fig.show='hold',fig.align='center', fig.cap="Twitter: `@hadleywickham` - 6 June 2019"}
-
 knitr::include_graphics(c("images/01-hadley-image1.jpeg","images/01-hadley-image2.jpeg"))
 ```
 
-
-
 ## Overview of the book structure
 
+* The book is composed of five sections. A step by step path towards mastering R techniques.
+* The **Foundations** is the part in which the R components will be examined. It will help understanding how to use all the basics tools to deal with functions and structures.
+* The **Functional programming** goes a little more in dept into programming with R, making functions of functions. Describing function factories and operators.
+* The **Object-oriented programming** - OOP is a five chapter section, all about object oriented systems among S3, R6 and S4.
+* The **Metaprogramming** section introduces you through the programming layers.
+* Finally, the **Techniques** section is dedicated to finding and fixing bugs and improving performances.
 
-The book is composed of five sections. A step by step path towards mastering R techniques.
-The **Foundations** is the part in which the R components will be examined. It will help understanding how to use all the basics tools to deal with functions and structures.
-The **Functional programming** goes a little more in dept into programming with R, making functions of functions. Describing function factories and operators.
-The **Object-oriented programming** - OOP is a five chapter section, all about object oriented systems among S3, R6 and S4.
-The **Metaprogramming** section introduces you through the programming layers.
-Finally, the **Techniques** section is dedicated to finding and fixing bugs and improving performances.
+### What this book is not
+
+* This book is about the R programming language, not R as the data analysis tool. 
+  * Other books cover this topic.
+  * [R for Data Science](https://r4ds.had.co.nz/).
+* We will not be discussing package development at length.
+  * [R Packages](https://r-pkgs.org/).
+* Some experience using R will be helpful.
+  * I encourage all to participate, though.
+
+
+### Organization of the book
 
 ```{r dia-lib,include=FALSE}
 library(DiagrammeR)
@@ -58,7 +68,6 @@ DiagrammeR("
  ")
 ```
 </center>
-
 
 ### Foundations
 
