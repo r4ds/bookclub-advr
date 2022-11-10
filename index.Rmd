@@ -38,9 +38,50 @@ This companion follows the [R4DS Online Learning Community Code of Conduct](http
 - Presentations will usually consist of a review of the material, a discussion, and/or a demonstration of the principles presented in that chapter.
 - More information about how to present is available in the [github repo](https://github.com/r4ds/bookclub-advr).
 - Presentations will be recorded, and will be available on the [R4DS Online Learning Community YouTube Channel](https://r4ds.io/youtube).
+  - Camera is optional, but encouraged.
+- If we need to slow down and discuss, let me or the speaker know.
+  - A lot can be learned from a discussion.
+  - Most likely someone has the same question.
+  - We are all here to learn.
 
 ## Pace {-}
 
 - We'll _try_ to cover 1 chapter/week, but...
 - ...It's ok to split chapters when they feel like too much.
 - We will try to meet every week, but will likely take some breaks for holidays, etc.
+- The session will be exactly one hour. 
+- I encourage the group to adopt a 'go no matter what' mentality.
+
+## Group introductions {-}
+
+- If you feel comfortable sharing:
+  - Who are you?
+  - Where you calling in from? (If you're not comfortable sharing, skip)
+  - How long have you been using R?
+  - What was your introduction to R?
+  - What are you most looking forward to during the group?
+
+## `git` and `GitHub` {-}
+
+- If you are unfamilar with these tools, it's best to use the workflows made easy by the `usethis` package.
+  - [Managing Git(Hub) credentials](https://usethis.r-lib.org/articles/git-credentials.html).
+  - [Pull request helpers](https://usethis.r-lib.org/articles/pr-functions.html).
+  - [Check out the notes `README.md` file for exact steps](https://github.com/r4ds/bookclub-advr#readme).
+  - The community (especially `@jonthegeek`) and myself (`@Collin Berke`) are there to help.
+  - This is a great opportunity to become more comfortable with these tools.
+
+- If you're comforable with `git` and `GitHub`: 
+  - Fork the repo.
+  - Create a branch with an informative name. 
+  - Submit a pull request via the `R4DS` repo of the book. 
+  - PR's are automatically tested and reviewed before being merged.
+
+## Resources to learn more about `git` and GitHub {-}
+
+- There are so many tools to use `git` and interface with `GitHub`.
+  - If you just want to stick with what is familiar, just use the `usethis` package.
+- [Happy Git and GitHub for the useR](https://happygitwithr.com/).
+- [`usethis`'s pull request helpers](https://usethis.r-lib.org/articles/pr-functions.html).
+- [`git`'s documentation](https://git-scm.com/doc).
+- [MShiny Cohort 2 Introduction](https://www.youtube.com/watch?v=beOYuHG9Xng&list=PL3x6DOfs2NGjhwrYvdmrKRNcvXX7X6ldt).
+- [Git for Book Clubs YouTube playlist](https://www.youtube.com/playlist?list=PL3x6DOfs2NGhS_PhklqT6PwK1Fh7blgP2).

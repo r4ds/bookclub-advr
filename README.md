@@ -16,6 +16,7 @@ If you would like to present, please see the sign-up sheet for your cohort (link
 - Cohort 4 (started 2020-10-05, ended 2021-04-26): [meeting videos](https://www.youtube.com/playlist?list=PL3x6DOfs2NGh5cCdh4W2U6Allc6MrUGID)
 - Cohort 5 (started 2021-03-06, ended 2021-08-31): [meeting videos](https://www.youtube.com/playlist?list=PL3x6DOfs2NGjRvoeE6wS7AWqSA6Sigg5R)
 - [Cohort 6](https://docs.google.com/spreadsheets/d/1_WFY82UxAdvP4GUdZ2luh15quwdO1n0Km3Q0tfYuqvc/edit?usp=sharing) (started 2022-05-25): [Wednesdays, 13:00 CST/CDT](https://www.timeanddate.com/worldclock/converter.html?iso=20220525T180000&p1=24&p2=215) | [meeting videos](https://www.youtube.com/playlist?list=PL3x6DOfs2NGjnCxGKeDNJUfPpRFI2hJjv)
+- [Cohort 7](https://docs.google.com/spreadsheets/d/1ScrbEw_-vB9DruaJhjtVY8HLQmuNPqyWeOOjmG6OY1M/edit?usp=sharing) (started 2022-10-24): [Mondays, 16:00 CST/CDT](https://www.timeanddate.com/worldclock/converter.html?iso=20221024T210000&p1=24&p2=1440) | [meeting videos](https://youtube.com/playlist?list=PL3x6DOfs2NGi4I1DhjPufFNbqCry_xQLq)
 
 The slides from the old clubs are in a [separate repository](https://github.com/r4ds/bookclub-Advanced_R).
 
