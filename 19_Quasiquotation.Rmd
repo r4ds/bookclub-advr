@@ -2,12 +2,224 @@
 
 **Learning objectives:**
 
-- THESE ARE NICE TO HAVE BUT NOT ABSOLUTELY NECESSARY
+- What quasiquotation is
+- Why it might be useful
+- How it works
+- What are some common use cases
 
-## SLIDE 1
+## What is quasiquotation?
+ 
+- **Quote.** Stop evaluation of an expression--typically, a function argument. (In `{rlang}` jargon, defuse.)
+- **Unquote.** Evaluate a quoted expression--typically, inside a function. (In `{rlang}` jargon often, inject)
 
-- ADD SLIDES AS SECTIONS (`##`).
-- TRY TO KEEP THEM RELATIVELY SLIDE-LIKE; THESE ARE NOTES, NOT THE BOOK ITSELF.
+## Why use quasiquotation?
+
+- **Make functions tidy.** Provide function arguments bare names.
+```{r}
+#| eval: FALSE
+# `cyl` is written as a bare name--a symbol defined in the global environment
+# but `cyl` only exists in the data frame "environment"
+# so, `{dplyr}` quotes the argument
+dplyr::filter(mtcars, cyl == 4)
+```
+- **Make functions Shiny-friendly.** Provide names of columns as strings.
+```{r}
+#| eval = FALSE
+# imagine that `var` came from `input$var_you_selected`
+# this "quoted" column name is transformed into a bare name below
+my_mean <- function(df, var) {
+  dplyr::mutate(df, mean = mean(.data[[var]], na.rm = TRUE))
+}
+```
+- **Inject user-written into a function's pipeline.** For example: summarize expressions, rename expressions, etc.
+
+## How use quasiquotation?
+
+Let's look at its components:
+
+- Quotate
+- Unquote
+- Quote and unquote, in one go
+
+## Quote
+
+- Expressions
+```{r}
+#| label:quote_expressions
+#| eval:TRUE
+
+# 1. rlang::expr
+
+# for interactive use
+rlang::expr(x+y)
+
+# but not for use in a function
+# see below
+
+# 2. rlang::enexpr
+
+# expr doesn't yield desired result
+f1 <- function(x) rlang::expr(x)
+f1(a + b + c)
+
+# enexpr does, since it maintains reference to environment where x is defined
+f2 <- function(x) rlang::enexpr(x)
+f2(a + b + c)
+```
+- Symbols
+```{r}
+#| label:quote_symbols
+#| eval:TRUE
+
+# captures a list of symbols or strings in ...
+# returns a list of symbols
+f <- function(...) {
+  ensyms(...)
+}
+
+# case 1: input = symbol
+f(x)
+# case 2: input = character string
+f("x")
+```
+
+## Unquote
+
+- One argument
+```{r}
+#| label:unquote_one_arg
+#| eval:TRUE
+
+# quote `-1` as `x`
+x <- rlang::expr(-1)
+# unquote `x` to substitute its unquoted value
+# use bang-bang operator
+rlang::expr(f(!!x, y))
+```
+- Multiple arguments
+```{r}
+#| label:unquote_mult_args
+#| eval:TRUE
+
+# quote multiple args--note the `s`
+xs <- rlang::exprs(1, a, -b)
+# unquote multiple arguments
+# use bang-bang-bang operator
+expr(f(!!!xs, y))
+```
+
+## Quote and unquote
+
+- **Single argument.** Embrace the simplicity of the embrace operator `{{`
+```{r}
+#| label: embrace
+#| eval: FALSE
+
+# The hard way
+my_hard_summarize <- function(data, var) {
+  # defuse (aka quote)
+  var <- rlang::enquo(var)
+  
+  # inject (aka unquote)
+  dplyr::summarize(data, mean = mean(!!var, na.rm = TRUE))
+    
+}
+
+# The easy way
+my_easy_summarize <- function(data, var) {
+
+  # in one move, quote and unquote `var`
+  dplyr::summarize(data, mean = mean({{var}}, na.rm = TRUE))
+    
+}
+
+```
+- **Multiple arguments.** Just pass the (dynamic) dots when you can. Otherwise, quote (e.g., `rlang::enquos`) and splice (`!!!`).
+```{r}
+#| label: dots
+
+# The easy way for easy cases of simple "forwarding"
+my_group_by <- function(.data, ...) {
+  .data %>% dplyr::group_by(...)
+}
+
+mtcars %>% my_group_by(cyl = cyl * 100, am)
+
+# The harder way remains the solution for non-forwarding use cases
+# There is no plural version of the embrace operator `{{`
+```
+
+
+## Usage
+
+- Data masking
+- Tidy selection
+- Metaprogramming
+
+## Data masking
+
+My (data) pronoun is:
+
+- `.data`. Object defined in data frame.
+- `.env`. Object defined in (global) environment
+
+To see why this distinction is needed, consider:
+
+```{r}
+#| label: data_masking
+#| eval: TRUE
+cyl <- 1000
+
+mtcars %>%
+  dplyr::summarise(
+    mean_data = mean(.data$cyl),
+    mean_env = mean(.env$cyl)
+  )
+```
+
+Read more [here](https://rlang.r-lib.org/reference/topic-data-mask.html) and [here](https://rlang.r-lib.org/reference/topic-data-mask-ambiguity.html).
+
+## Tidy selection
+
+```{r}
+#| label: tidy_selection
+#| eval: FALSE
+
+my_cols <- c("wt", "mpg", "not_in_mtcars")
+
+# note: `tidyselect::all_of()` errors if any column not found
+mtcars |> select(all_of(placeholder)) |> glimpse()
+
+# note: `tidyselect::any_of()` excludes requested columns not found
+mtcars |> select(any_of(placeholder)) |> glimpse()
+```
+
+
+## Metaprogramming
+
+A few common patterns:
+
+- **Forwarding.** Defuse and inject. Think embrace operator. See [here](https://rlang.r-lib.org/reference/topic-metaprogramming.html#forwarding-patterns).
+- **Names.** Symbolize and inject. Think: character -> unevaluated symbol -> evaluated symbol. See [here](https://rlang.r-lib.org/reference/topic-metaprogramming.html#names-patterns).
+- **Bridge.** Capture user inputs -> transform into two representations -> evaluate each representation. See [here](https://rlang.r-lib.org/reference/topic-metaprogramming.html#bridge-patterns).
+- **Transformation.** Capture user inputs -> compose unevaluated call -> evaluate call. See more [here](https://rlang.r-lib.org/reference/topic-metaprogramming.html#transformation-patterns)
+
+See more [here](https://rlang.r-lib.org/reference/topic-metaprogramming.html).
+
+## For further study
+
+TLDR:
+
+- Watch videos compiled [here](https://rstudio-conf-2022.github.io/build-tidy-tools/materials/day-2-session-3-tidy-eval.html#/additional-material).
+- Peruse modern solutions in [slides](https://rstudio-conf-2022.github.io/build-tidy-tools/materials/day-2-session-3-tidy-eval.html#/title-slide) from rstudio::conf(2022) workshop on tidy tools.
+
+Have time; will read:
+
+- [Programing with dplyr](https://dplyr.tidyverse.org/articles/programming.html#use-a-variable-from-an-shiny-input)
+- [Using ggplot2 in packages](https://ggplot2.tidyverse.org/articles/ggplot2-in-packages.html)
+- `{rlang}` vignettes
+- Guide to tidy eval. Superceded, but nice place to find use cases and past solutions. Archived repo [here](https://github.com/tidyverse/tidyeval). Book built by someone else [here](https://bookdown.dongzhuoer.com/tidyverse/tidyeval/).
+
 
 ## Meeting Videos
 
