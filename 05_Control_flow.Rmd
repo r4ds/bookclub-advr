@@ -33,7 +33,7 @@ There are two main groups of flow control tools: **choices** and **loops**:
 
 `if()` and `else`
 
-Use `if` to specify a block of code to be executed, if a specified condition is true. Use else to specify a block of code to be executed, if the same condition is false. 
+Use `if` to specify a block of code to be executed, if a specified condition is true. Use `else` to specify a block of code to be executed, if the same condition is false. 
 
 
 
@@ -46,28 +46,6 @@ if (test_expression) {
 ```
 
 (Note braces are only *needed* for compound expressions)
-
-```{r 05-lib,include=FALSE}
-library(DiagrammeR)
-```
-<center>
-```{r echo=FALSE, fig.align='center', fig.dim="100%"}
-DiagrammeR("
-graph TD
-
-D{if}-->E(condition)
-     E-->F(true action)
-E-->G((else))
-     G-->H(false action)
-
-style D fill:#f96
-style G fill:#f96
-style E fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
- 
-
- ",height = '100%', width = '100%')
-```
-</center>
 
 Can be expanded to more alternatives:
 
