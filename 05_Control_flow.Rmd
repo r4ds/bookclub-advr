@@ -2,31 +2,32 @@
 
 **Learning objectives:**
 
-Learn (more deeply?) the **tools** for controlling flow:
+- Learn the **tools** for controlling flow of execution.
 
-- Choices (`if`, `switch`, `ifelse`, `dplyr::if_else`, `dplyr::case_when`)
-- Loops (`for`, `while`)
+- Learn some technical pitfalls and (perhaps lesser known) useful features.
+
 
 ---
 
 ## Introduction
 
-This chapter is about flow control, including some technical details and useful features. 
+There are two main groups of flow control tools: **choices** and **loops**: 
 
-There are two main groups of flow control tools: **choices** and **loops**. These are both very useful for data analysis where iteration cannot be avoided with other (e.g. functional tools)  
+- Choices (`if`, `switch`, `ifelse`, `dplyr::if_else`, `dplyr::case_when`) allow you to run different code depending on the input. 
+    
+- Loops (`for`, `while`) allow you to repeatedly run code 
 
-```{r echo=FALSE,fig.align='center',fig.dim="100%"}
-knitr::include_graphics("images/whatif.png")
-```
 
 ---
 
 
 ## Choices
 
-- `if()`
 
-Use if to specify a block of code to be executed, if a specified condition is true. Use else to specify a block of code to be executed, if the same condition is false. 
+
+`if()` and `else`
+
+Use `if` to specify a block of code to be executed, if a specified condition is true. Use else to specify a block of code to be executed, if the same condition is false. 
 
 
 
@@ -38,7 +39,7 @@ if (test_expression) {
 }
 ```
 
-Note braces are only *needed* for compound expressions
+(Note braces are only *needed* for compound expressions)
 
 ```{r 05-lib,include=FALSE}
 library(DiagrammeR)
@@ -62,7 +63,7 @@ style E fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 ```
 </center>
 
-- Can be expanded to more alternatives:
+Can be expanded to more alternatives:
 
 ```{r, eval=FALSE}
 if (test_expression) {   
@@ -72,6 +73,18 @@ if (test_expression) {
 } else {
   false_action
 }
+```
+
+## Exercise {-}
+Why does this work?
+```
+x <- 1:10
+if (length(x)) "not empty" else "empty"
+#> [1] "not empty"
+
+x <- numeric()
+if (length(x)) "not empty" else "empty"
+#> [1] "empty"
 ```
 
 ## Invalid inputs {-}
@@ -190,6 +203,19 @@ for (i in 1:10) {
     break
 }
 ```
+
+## Exercise {-}
+
+When the following code is evaluated, what can you say about the vector being iterated?
+```
+xs <- c(1, 2, 3)
+for (x in xs) {
+  xs <- c(xs, x * 2)
+}
+xs
+#> [1] 1 2 3 2 4 6
+```
+
 ## Pitfalls {-}
 
 - Preallocate output containers to avoid *slow* code. 
@@ -224,6 +250,9 @@ for (i in seq_along(xs)) {
 
 >Good practice is to use the least-flexible solution to a problem, so you should use `for` wherever possible.
 BUT you shouldn't even use for loops for data analysis tasks as `map()` and `apply()` already provide *less flexible* solutions to most problems. (More in Chapter 9.)
+
+
+
 
 ---
 
