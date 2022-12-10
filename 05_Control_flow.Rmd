@@ -6,6 +6,12 @@
 
 - Learn some technical pitfalls and (perhaps lesser known) useful features.
 
+```{r echo = FALSE, fig.align = 'left', fig.dim = '100%'}
+knitr::include_graphics("images/whatif2.png")
+```
+```{r echo = FALSE, fig.align = 'right', fig.dim = '100%'}
+knitr::include_graphics("images/forloop.png")
+```
 
 ---
 
