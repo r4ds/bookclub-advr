@@ -21,7 +21,7 @@ There are two main groups of flow control tools: **choices** and **loops**:
 
 - Choices (`if`, `switch`, `ifelse`, `dplyr::if_else`, `dplyr::case_when`) allow you to run different code depending on the input. 
     
-- Loops (`for`, `while`) allow you to repeatedly run code 
+- Loops (`for`, `while`, `repeat`) allow you to repeatedly run code 
 
 
 ---
