@@ -13,10 +13,12 @@ URL: https://r4ds.github.io/bookclub-advr, https://github.com/r4ds/bookclub-advr
 Depends:
     R (>= 3.1.0)
 Imports: 
+    bench,
     bookdown,
     deSolve,
     DiagrammeR,
     emoji,
+    ggbeeswarm,
     ggplot2,
     glue,
     lobstr,
@@ -24,6 +26,7 @@ Imports:
     memoise,
     palmerpenguins,
     patchwork,
+    profvis,
     purrr,
     R6,
     reshape2,
