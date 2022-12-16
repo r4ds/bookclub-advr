@@ -7,7 +7,4 @@ on:
 
 jobs:
   pr_check:
-    name: render_book
-    runs-on: ubuntu-latest
-    steps:
-      - run: 'echo "No build required" '
+    uses: r4ds/r4dsactions/.github/workflows/render_check_readme.yml@main
