@@ -10,7 +10,7 @@
 
 In this chapter we'll learn how to rewrite **R** code in **C++** for making it faster! We'll use the **Rcpp package** which provides **API for comparison**.
 
-A close look at C++ will provide an overview of the language and its key conventions to focus on the differences with R. We will also have look at the standard template library STL, the C++ library to use, which provides a set of extremely useful data structures and algorithms.
+A closer look at C++ will provide an overview of the language and its key conventions to focus on the differences with R. We will also have look at the standard template library STL, the C++ library to use, which provides a set of extremely useful data structures and algorithms.
 
 A very interesting part will involve comparing the two codes benchmarking the two implementations yields with `bench::mark()`.
 
@@ -21,6 +21,8 @@ A very interesting part will involve comparing the two codes benchmarking the tw
 <center>![](https://media.giphy.com/media/vLyZk5CJo12Wk/giphy.gif)</center>
 
 ## What C++ can handle
+
+The C language was originally implemented by Dennis Ritchie for Linux at the end of '70s. C++ is the object oriented version of C.
 
 -   Loops that can't be easily vectorised because subsequent iterations depend on previous ones.
 
@@ -232,9 +234,13 @@ And for each function that you want available within R, you need to prefix it wi
 // [[Rcpp::export]]
 ```
 
-Call the files: - in R use `source(echo = TRUE)` - in C++ use `sourceCpp("path/to/file.cpp")`
+To call the files: 
+
+- in R use `source(echo = TRUE)` 
+- in C++ use `sourceCpp("path/to/file.cpp")`
 
 ### Example
+
 
 ```{Rcpp}
 #include <Rcpp.h>
@@ -297,7 +303,7 @@ Dealing with missing values can differs if:
     -   integers
     -   doubles
 -   strings
--   boolean
+-   Boolean
 -   vectors
 
 ## Standard Template Library
@@ -354,7 +360,11 @@ gibbs_r <- function(N, thin) {
 }
 ```
 
-Actions to convert R to C++: - Add type declarations to all variables - Use `(` instead of `[` to index into the matrix - Subscript the results of `rgamma` and `rnorm` to convert from a vector into a scalar.
+Actions to convert R to C++: 
+
+- Add type declarations to all variables 
+- Use `(` instead of `[` to index into the matrix 
+- Subscript the results of `rgamma` and `rnorm` to convert from a vector into a scalar.
 
 ```{Rcpp}
 #include <Rcpp.h>
