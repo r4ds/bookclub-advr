@@ -29,6 +29,7 @@ Imports:
     profvis,
     purrr,
     R6,
+    Rcpp,
     reshape2,
     rlang,
     rmarkdown,
