@@ -245,11 +245,25 @@ Have time; will read:
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/OBodjc80y-E")`
 
 <details>
 <summary> Meeting chat log </summary>
 
+```
+01:02:07	Trevin:	Yeah, that was a great workshop
+01:02:18	Trevin:	Glad they posted the resources online
+01:06:39	Trevin:	Thank you!
+```
+</details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
 ```
 LOG
 ```

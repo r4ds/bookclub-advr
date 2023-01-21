@@ -424,11 +424,15 @@ exp1[[1]]
 
 ### Cohort 6
 
+`r knitr::include_url("https://www.youtube.com/embed/K8w28ee3CR8")`
+
+### Cohort 7
+
 `r knitr::include_url("https://www.youtube.com/embed/URL")`
 
 <details>
-<summary> Meeting chat log </summary>
 
+<summary>Meeting chat log</summary>
 ```
 LOG
 ```

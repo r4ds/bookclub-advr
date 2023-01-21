@@ -345,11 +345,15 @@ See source code [here](https://github.com/tidyverse/lubridate/blob/0bb49b21c8873
 
 ### Cohort 6
 
+`r knitr::include_url("https://www.youtube.com/embed/q1-QUFJsbLA")`
+
+### Cohort 7
+
 `r knitr::include_url("https://www.youtube.com/embed/URL")`
 
 <details>
-<summary> Meeting chat log </summary>
 
+<summary>Meeting chat log</summary>
 ```
 LOG
 ```

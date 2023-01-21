@@ -525,3 +525,29 @@ ggplot(output_full, aes(time, proportion, color = variable, group = variable)) +
 01:08:59	Trevin:	Looking forward to it 🙂
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/tz2z9l41IhU")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:31:54	Ronald Legere:	https://en.wikipedia.org/wiki/First-class_function
+00:42:55	Ronald Legere:	https://en.wikipedia.org/wiki/Immediately_invoked_function_expression
+```
+</details>
+
+`r knitr::include_url("https://www.youtube.com/embed/AbdcI57vbcg")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:54:02	Ron:	Book gives this simple example of when you might want to use prefix form of an infix operator: lapply(list(1:3, 4:5), `+`, 3)
+00:56:49	collinberke:	https://colinfay.me/playing-r-infix-functions/#:~:text=What%20are%20infix%20functions%3F,%2C%20%2B%20%2C%20and%20so%20on.
+01:07:36	Ron:	x[3] <- 33
+01:07:51	Ron:	`[<-`(x,3,value =33)
+```
+</details>
