@@ -276,3 +276,15 @@ stopifnot(all.equal(t1, t3))
 01:04:34	Trevin:	I agree that the chapter is a good jumping off point. Gonna have to dig into some of the listed resources 😄
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+LOG
+```
+</details>

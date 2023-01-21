@@ -258,3 +258,15 @@ rlang::last_trace()
 01:10:29	Oluwafemi Oyedele:	Same here!!!
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+LOG
+```
+</details>

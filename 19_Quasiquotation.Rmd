@@ -256,3 +256,15 @@ Have time; will read:
 01:06:39	Trevin:	Thank you!
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+LOG
+```
+</details>

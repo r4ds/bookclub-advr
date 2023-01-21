@@ -142,3 +142,15 @@ walk2(urls, path, delay_by(download.file, 0.1), quiet = TRUE)
 00:48:34	Oluwafemi Oyedele:	Thank you !!!
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+LOG
+```
+</details>

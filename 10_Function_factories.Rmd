@@ -532,3 +532,15 @@ rlang::env_unbind(globalenv(), names(funs))
 01:02:57	Oluwafemi Oyedele:	I agree with combining the chapter!!!
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+LOG
+```
+</details>

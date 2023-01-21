@@ -545,3 +545,15 @@ with Rcpp modules](https://cran.rstudio.com/web/packages/Rcpp/vignettes/Rcpp-mod
 01:13:02	Arthur Shaw:	Reacted to "When I was looking, ..." with 👍
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+LOG
+```
+</details>

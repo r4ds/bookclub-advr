@@ -473,3 +473,15 @@ A <- list(1,10,"a")
 00:48:29	Arthur Shaw:	Very cool trick !
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+LOG
+```
+</details>

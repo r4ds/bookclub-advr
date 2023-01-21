@@ -54,3 +54,15 @@ base::eval() is sufficient for simple evaluation. Use eval_tidy() when you'd lik
 00:54:18	Federica Gazzelloni:	DBI::dbDisconnect(con)
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+LOG
+```
+</details>

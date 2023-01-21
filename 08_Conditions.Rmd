@@ -529,3 +529,15 @@ See [the sub-section in the book](https://adv-r.hadley.nz/conditions.html#condit
 01:14:27	Federica Gazzelloni:	more info here: https://colinfay.me/learn-shiny-production/
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+LOG
+```
+</details>

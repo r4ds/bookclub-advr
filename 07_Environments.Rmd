@@ -64,3 +64,15 @@
 01:10:53	Oluwafemi Oyedele:	I am ok with next week
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/PUXrijnsWy0")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:06:49	Ryan Honomichl:	https://r4ds.github.io/bookclub-Advanced_R/QandA/docs/environments.html
+```
+</details>

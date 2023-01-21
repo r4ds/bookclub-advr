@@ -181,3 +181,15 @@ plot(lb)
 ### Cohort 6
 
 `r knitr::include_url("https://www.youtube.com/embed/d_pzz_AsoRQ")`
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/URL")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+LOG
+```
+</details>
