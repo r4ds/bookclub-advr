@@ -176,12 +176,19 @@ Use of the operators:
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/vEButxFIvLw")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+00:11:36	Oluwafemi Oyedele:	I have not built anything with them!!!
+00:16:31	Arthur Shaw:	https://cran.r-project.org/web/packages/sp/index.html
+00:19:05	Arthur Shaw:	Apparently Hadley asked the same question we're asking several years ago: https://stackoverflow.com/questions/5437238/which-packages-make-good-use-of-s4-objects
+00:19:16	Trevin:	HA
+00:23:54	Trevin:	Your audio is breaking up Federica
+01:06:58	Federica Gazzelloni:	https://mastering-shiny.org/reactive-motivation.html?q=R6#event-driven
+01:07:37	Federica Gazzelloni:	https://engineering-shiny.org/common-app-caveats.html?q=R6#using-r6-as-data-storage
+01:10:52	Oluwafemi Oyedele:	Thank you !!!
 ```
 </details>

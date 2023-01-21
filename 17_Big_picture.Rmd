@@ -33,12 +33,24 @@
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/Ddd_43gw8nA")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+00:32:31	Oluwafemi Oyedele:	When should eval_tidy() be used instead of eval()?
+base::eval() is sufficient for simple evaluation. Use eval_tidy() when you'd like to support expressions referring to the .data pronoun, or when you need to support quosures.
+00:37:08	Trevin (he/him):	https://rlang.r-lib.org/reference/topic-defuse.html
+00:38:38	Federica Gazzelloni:	https://rlang.r-lib.org/reference/eval_tidy.html
+00:39:57	Arthur Shaw:	Tidy eval book: https://bookdown.dongzhuoer.com/tidyverse/tidyeval/
+00:40:14	Arthur Shaw:	Also very useful resource: https://dplyr.tidyverse.org/articles/programming.html
+00:40:28	Trevin (he/him):	https://ggplot2.tidyverse.org/reference/aes.html
+00:40:37	Federica Gazzelloni:	https://ggplot2.tidyverse.org/reference/tidyeval.html
+00:41:22	Oluwafemi Oyedele:	It is Tidyverse design
+00:49:13	Federica Gazzelloni:	https://www.youtube.com/watch?v=2NixH3QAerQ&list=PL3x6DOfs2NGi9lH7q-phZlPrl6HKXYDbn&index=15
+00:50:13	Federica Gazzelloni:	Minute: 17:04
+00:54:03	Federica Gazzelloni:	con <- DBI::dbConnect(RSQLite::SQLite(), filename = ":memory:")
+00:54:18	Federica Gazzelloni:	DBI::dbDisconnect(con)
 ```
 </details>

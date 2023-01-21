@@ -35,12 +35,19 @@
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/EuTubeJ1VUw")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+00:11:34	Trevin:	https://engineering-shiny.org/common-app-caveats.html?q=R6#using-r6-as-data-storage
+00:39:36	Federica Gazzelloni:	new R7: https://rconsortium.github.io/OOP-WG/
+00:40:04	Federica Gazzelloni:	R7 designed to be a successor to S3 and S4
+00:40:40	Federica Gazzelloni:	R6: https://r6.r-lib.org/articles/Introduction.html
+00:52:44	Trevin:	https://advanced-r-solutions.rbind.io/r6.html#controlling-access
+01:00:34	Federica Gazzelloni:	interesting: https://r-craft.org/r-news/object-oriented-programming-oop-in-r-with-r6-the-complete-guide/
+01:01:58	Trevin:	https://hadley.shinyapps.io/cran-downloads/
+01:02:33	Oluwafemi Oyedele:	Thank you !!!
 ```
 </details>

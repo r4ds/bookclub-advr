@@ -130,12 +130,15 @@ walk2(urls, path, delay_by(download.file, 0.1), quiet = TRUE)
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/EPs57es2MsE")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+00:01:42	Oluwafemi Oyedele:	Hi, Good Evening !!!
+00:05:52	Arthur Shaw:	@federica, love the hex stickers behind you. All from rstudio::conf?
+00:07:12	Arthur Shaw:	I tried doing the same. I had a hard time ordering them. I also thought I'd make the stickers into magnets so that I could rearrange them in future.
+00:48:34	Oluwafemi Oyedele:	Thank you !!!
 ```
 </details>

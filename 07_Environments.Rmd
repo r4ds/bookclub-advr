@@ -33,12 +33,34 @@
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/buUaaOu89EQ")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+00:08:41	Arthur Shaw:	Hello, everyone!
+00:21:31	Federica Gazzelloni:	?walk: Apply a function to each element of a list or atomic vector
+00:23:15	Federica Gazzelloni:	?caller_env: Get properties of the current or caller frame
+00:24:56	Trevin:	purrr::walk(x, function(x, ce, ace = rlang::caller_env()) {
+  .ce <- rlang::caller_env()
+  message("Internal: ")
+  print(.ce)
+  message("Argument: ")
+  print(ace)
+  message("External: ")
+  print(ce)
+  message("Internal: ",paste0(ls(.ce), collapse = "\n"))
+  message("Argument: ",paste0(ls(ace), collapse = "\n"))
+  message("External: ",paste0(ls(ce), collapse = "\n"))
+}, ce = rlang::caller_env())
+00:29:39	Federica Gazzelloni:	??iwalk: Apply a function to each element of a vector, and its index
+00:35:30	Arthur Shaw:	https://magrittr.tidyverse.org/reference/tee.html
+00:36:05	Federica Gazzelloni:	?`%T>%`
+00:46:59	Trevin:	?eval
+01:06:03	Federica Gazzelloni:	https://cran.r-project.org/web/packages/withr/index.html
+01:09:21	Federica Gazzelloni:	https://github.com/r-lib/withr
+01:10:38	Trevin:	I'm okay if we meet next week
+01:10:53	Oluwafemi Oyedele:	I am ok with next week
 ```
 </details>
