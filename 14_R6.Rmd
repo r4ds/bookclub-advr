@@ -2,12 +2,146 @@
 
 **Learning objectives:**
 
-- THESE ARE NICE TO HAVE BUT NOT ABSOLUTELY NECESSARY
+- Discuss how to construct an R6 class.
+- Overview the different mechanisms of an R6 class.
+- Observe various examples of how to use these mechanisms to create R6 classes, objects, fields, and methods.
+- Observe the consequences of R6's reference semantics.
+- Review the book's arguments for using R6 over the base RC system.
 
-## SLIDE 1
+## A review of OOP
 
-- ADD SLIDES AS SECTIONS (`##`).
-- TRY TO KEEP THEM RELATIVELY SLIDE-LIKE; THESE ARE NOTES, NOT THE BOOK ITSELF.
+![](images/14-four-pillars.png)
+
+## Introducing R6 
+
+![](images/16-r6-logo.svg)
+
+* R6 classes are not built into base.
+  * It is a separate package.
+  * You have to install and attach to use.
+  * When used in a package, it needs to be specified as a dependency in the `DESCRIPTION` file.
+
+```{r eval=FALSE}
+install.packages("R6")
+```
+
+```{r}
+library(R6)
+```
+
+* R6 classes have two special properties:
+  1. Uses an encapsulated OOP paradigm.
+     * Methods belong to objects, not generics.
+     * Follow the form `object$method()`.
+  2. R6 objects are mutable.
+     * Modified in place.
+     * They follow reference semantics.
+* R6 is similar to OOP in other languages.
+* However, its use can lead ton non-idiomatic R code.
+  * Tradeoffs - follow an OOP paradigm but sacrafice what users are use to. 
+  * [Microsoft365R](https://github.com/Azure/Microsoft365R).
+
+## Constructing an R6 class, the basics
+
+* Really simple to do, just use the `R6::R6Class()` function.
+
+```{r}
+Accumulator <- R6Class("Accumulator", list(
+  sum = 0,
+  add = function(x = 1) {
+    self$sum <- self$sum + x
+    invisible(self)
+  }
+))
+```
+
+* Two important arguments:
+  1. `classname` - A string used to name the class (not needed but suggested)
+  2. `public` - A list of methods (functions) and fields (anything else)
+* Style conventions to follow:
+  * Class name should follow `UpperCamelCase`.
+  * Methods and fields use `snake_case`.
+  * Always assign the result of `R6Class()` into a variable with the same name as the class.
+* You can use `self$` to access methods and fields of the current object.
+
+## Constructing an R6 object
+
+* Pretty straight forward, just use `$new()`
+
+```{r}
+x <- Accumulator$new()
+```
+
+```{r}
+x$add(4)
+x$sum
+```
+
+## R6 objects and method chaining
+
+* To be able to do this, all side-effect R6 methods should return `self` invisibly.
+
+```{r eval=FALSE}
+x$add(10)$add(10)$sum
+# [1] 24
+```
+
+* To improve readability:
+
+```{r eval=FALSE}
+x$
+  add(10)$
+  add(10)$
+  sum
+# [1] 44
+```
+
+## R6 classes' important methods
+
+* `$print()` - Modifies the default printing method
+* `$initialize()` - Overides the default behaviour of `$new()`
+
+
+## Constructing a bank account class
+
+```{r}
+BankAccount <- R6Class("BankAccount", list(
+  owner = NULL,
+  type = NULL,
+  balance = 0,
+  initialize = function(owner, type) {
+    self$owner <- owner
+    self$type <- type
+  },
+  deposit = function(amount) {
+    self$balance <- self$balance + amount
+    invisible(self)
+  },
+  withdraw = function(amount) {
+    self$balance <- self$balance - amount
+    invisible(self)
+  },
+  print = function(...) {
+    cat("Account owner: ", self$owner, "\n", sep = "")
+    cat("Account type: ", self$type, "\n", sep = "")
+    cat("  Balance: ", self$balance, "\n", sep = "")
+    invisible(self)
+  }
+))
+```
+
+## Simple transactions
+
+```{r}
+collinsavings <- BankAccount$new("Collin", type = "Checking")
+collinsavings$deposit(10)
+collinsavings
+```
+
+```{r}
+collinsavings$withdraw(10)
+collinsavings
+```
 
 ## Meeting Videos
 
