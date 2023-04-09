@@ -7,52 +7,42 @@
 - Brief intro to S7 (the object system formerly known as R7)
 
 
-## Introduction 
+## Introduction
 
 * We have three OOP systems intdoduced so far (S3, S4, R6) 
 
-* At the current time (pre - S7?) Hadley recommends use S3 by defaut 
+* At the current time (pre - S7?) Hadley recommends use S3 by default: It's simple and widely used throughout base R and CRAN.
+
+* If you have experience in other langauges,  *Resist* the temptation to use R6 even though it will feel more familiar!
 
 
 ## S4 versus S3 
 
-**Which class to use S4 or S3? **
+**Which functional object system to use, S4 or S3? **
 
-- **S3** is a flexible class, made of a list with attributes and assigned names, it consists of three main **components**:
+- **S3** is a simple and flexible system.
+   
+   - Good for small teams who need flexibility and immediate payoffs.
+   
+   - Commonly used throughout base R and CRAN 
+   
+   - Flexibility can cause problems, more complex systems might require formal conventions
+   
 
-     - Generic function
-     - method
-     - attributes
-     
+- **S4** is a more formal, strict system. 
 
-     
-- **S4** has a more structured approach, is more formal, more strict, and more verbose. It contains functions for defining methods and **generics**. 
-
-For example to define a class:
-
-     S3: class() <- ...
-     S4: setClass()
-     
-**S4 is a combination of increased complexity**, as well as S3, it allows for inheritance of both classes and methods.   
-     
-S4 is usually good for larger projects, such as **Bioconductor**, and complex systems of interrelated objects:
-
-It minimizes code duplication (an example is the {Matrix} package), and makes it easy to provide a general method that works for all inputs.
-
+   - Good for large projects and large teams
+   
+   - Used by Bioconductor project
+   
+   - Requires significant up front investment in design, but payoff is a robust system that enforces conventions.
+   
+   - S4 Documentation is challenging to use. 
+    
 
 
 ## R6 versus S3
 
-When starting with OOP the S3 class is suggested as a default for its simplicity. Then, the tendency would be to lean towards **R6**.
-
-Example of S3: 
-    
-     plot(data)
-
-Example of R6:
-
-    data$plot
-    
 **R6** is built on **encapsulated objects**, rather than generic functions.   
 
 
@@ -62,39 +52,114 @@ Example of R6:
 knitr::include_graphics("images/16-trade-offs.png")
 ```
 
-### Namespacing {-}
+## Namespacing {-}
 
-**Where methods are in the Space?**
+**Where methods are found?**
 
-- in S3, **Generic functions** are **global**: there is a **global namespace** (same verbs, uniform API). The negatives are related to **homonyms** methods.
+- in S3, **Generic functions** are **global** and live in the **global namespace**
+
+   - Advantage: Uniform API: `summary`, `print`, `predict` etc.
+   
+   - Disadvantage: Must be careful about creating new methods!  Homonyms must be avoided, don't define `plot(bank_heist)`
+ 
 
 - in R6, **Encapsulated methods** are **local**: objects with a **scope**
 
+   - Advantage: No problems with homonyms:  meaning of `bank_heist$plot()` is clear and unambiguous.
+   
+   - Disadvantage: Lack of a uniform API, except by convention.
+   
 
-### Threading state or accumulator programming {-}
-
-
-In S3 the challenge is to return a value and modify the object. This can't be done, it violates set guidelines.
-
-
-As an example, see the **16-example_accumulator_programming.R** in the scripts folder.
+## Threading state {-}
 
 
-Or a way to do **multiple assign** operators with the {zeallot} package.
+In S3 the challenge is to return a value and modify the object. 
+
+
+```{r}
+new_stack <- function(items = list()) {
+  structure(list(items = items), class = "stack")
+}
+
+push <- function(x, y) {
+  x$items <- c(x$items, list(y))
+  x
+}
+```
+
+No problem with that, but what about when we want to pop a value?  We need to return two things.
+
+```{r}
+pop <- function(x) {
+  n <- length(x$items)
+  
+  item <- x$items[[n]]
+  x$items <- x$items[-n]
+  
+  list(item = item, x = x)
+}
+```
+
+The usage is a bit awkward:
+
+```{r}
+s <- new_stack()
+s <- push(s, 10)
+s <- push(s, 20)
+
+out <- pop(s)
+# Update state:
+s <- out$x
+
+print(out$item)
+```
+
+
+In python and other languages we have structured binding to make this less awkward.  R has the {zeallot} package. For more, see this vignette:
 
 ```{r 16-Trade-offs-5, eval=FALSE}
 vignette('unpacking-assignment')
 ```
 
+However, this is all easier in R6 due to the reference semantics!
 
-### Method chaining {-}
+```{r}
+Stack <- R6::R6Class("Stack", list(
+  items = list(),
+  push = function(x) {
+    self$items <- c(self$items, x)
+    invisible(self)
+  },
+  pop = function() {
+    item <- self$items[[self$length()]]
+    self$items <- self$items[-self$length()]
+    item
+  },
+  length = function() {
+    length(self$items)
+  }
+))
+
+s <- Stack$new()
+s$push(10)
+s$push(20)
+s$pop()
+```
+
+
+## Method chaining {-}
 
 Useful to compose functions from left-to-right.
 
 Use of the operators:
 
 - S3: `%>%`
+
 - R6: `$`
+
+```{r}
+s$push(44)$push(32)$pop()
+```
 
 
 ## Umm... what about S7 ? {-}
@@ -113,11 +178,18 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/standards_2x.png")
 
 ## S7 briefly {-}
 
-* S7 is a 'better' version of S3 with some of the 'strictness' of S4
+* S7 is a 'better' version of S3 with some of the 'strictness' of S4.
+
+```
+"A little bit more complex then S3, with almost all of the features, 
+all of the payoff of S4" - rstudio conf 2022, Hadley Wickham
+```
 
 * Compatible with S3: S7 objects are S3 objects!  Can even extend an S3 object with S7
 
-* Somewhat compatable with S4, see [compatability vignette](https://rconsortium.github.io/OOP-WG/articles/compatibility.html) for details. 
+* Somewhat compatible with S4, see [compatability vignette](https://rconsortium.github.io/OOP-WG/articles/compatibility.html) for details. 
+
+* Helpful error messages! 
 
 * Note that it was previously called R7, but it was changed to "S7" to better reflect that it is functional not encapsulated! 
 
@@ -160,7 +232,7 @@ lola
 #>  @ age : num 11
 ```
 
-Properties can be set / read with '@', with automatic validation based on the type!
+Properties can be set / read with '@', with automatic validation ('safety rails') based on the type!
 
 ```{r, eval = FALSE}
 
@@ -174,6 +246,8 @@ lola@age <- "twelve"
 #> Error: <dog>@age must be <integer> or <double>, not <character>
 
 ```
+
+Note thehelpful error message!
 
 Like S3 (and S4) S7 has generics, implemented with `new_generic` and `method` for particular methods:
 
@@ -202,10 +276,22 @@ method(speak, cat) <- function(x) {
 
 fluffy <- cat(name = "Fluffy", age = 5)
 speak(fluffy)
+
+#> [1] "Meow"
 ```
 
-"most usage of S7 with S3 will just work"
+Helpful messages:
 
+```{r, eval = FALSE}
+speak
+
+#> <S7_generic> speak(x, ...) with 2 methods:
+#> 1: method(speak, cat)
+#> 2: method(speak, dog)
+```
+
+
+"most usage of S7 with S3 will just work"
 
 ```{r, eval = FALSE}
 method(print, cat) <- function(...) {
@@ -217,16 +303,28 @@ print(fluffy)
 
 ```
 
-*For inheritence, properties and more,  see the [vignette!](https://rconsortium.github.io/OOP-WG/articles/S7.html)*
+*For validators, inheritance, dynamic properties and more,  see the [vignette!](https://rconsortium.github.io/OOP-WG/articles/S7.html)*
 
 https://rconsortium.github.io/OOP-WG/articles/S7.html
 
 ## So... switch to S7 ? {-}
 
+$$
+\huge
+\textbf{Soon}^{tm}
+$$
+
 * Not yet... still in development! 
 
-* 
+* But consider trying it out:
 
+   * To stay ahead of the curve... S7 will be integrated into base R someday!
+   
+   * To contribute feedback to the S7 team!
+
+   * To get "almost all" of the benefits of S4 without the complexity !  
+   
+* In particular, if you have a new project that might require the complexity of S4, consider S7 instead!
 
 ## Meeting Videos
 
