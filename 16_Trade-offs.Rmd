@@ -4,8 +4,10 @@
 
 - Understand the Trade-offs between S3, R6 and S4
 
+- Brief intro to S7 (the object system formerly known as R7)
 
-## Introduction to trade-offs
+
+## Review of OOP {-}
 
 > “Everything that exists in R is an object”
 >
@@ -62,12 +64,14 @@ knitr::include_graphics("images/16-objects.png")
 ```
 
 
-## Understanding the Trade-offs
+## Introduction 
 
-Here we look to compare and contrast the OOP objects.
+* We have three OOP systems intdoduced so far (S3, S4, R6) 
+
+* At the current time (pre - S7?) Hadley recommends use S3 by defaut 
 
 
-### S4 versus S3
+## S4 versus S3 
 
 **Which class to use S4 or S3? **
 
@@ -94,7 +98,7 @@ It minimizes code duplication (an example is the {Matrix} package), and makes it
 
 
 
-### R6 versus S3
+## R6 versus S3
 
 When starting with OOP the S3 class is suggested as a default for its simplicity. Then, the tendency would be to lean towards **R6**.
 
@@ -115,7 +119,7 @@ Example of R6:
 knitr::include_graphics("images/16-trade-offs.png")
 ```
 
-#### Namespacing
+### Namespacing {-}
 
 **Where methods are in the Space?**
 
@@ -124,7 +128,7 @@ knitr::include_graphics("images/16-trade-offs.png")
 - in R6, **Encapsulated methods** are **local**: objects with a **scope**
 
 
-#### Threading state or accumulator programming
+### Threading state or accumulator programming {-}
 
 
 In S3 the challenge is to return a value and modify the object. This can't be done, it violates set guidelines.
@@ -140,7 +144,7 @@ vignette('unpacking-assignment')
 ```
 
 
-#### Method chaining
+### Method chaining {-}
 
 Useful to compose functions from left-to-right.
 
@@ -168,9 +172,11 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/standards_2x.png")
 
 * S7 is a 'better' version of S3 with some of the 'strictness' of S4
 
-* Note that it was previously called R7, but it was changed to "S7" to better reflect that it is functional not encapsulated!
+* Compatible with S3: S7 objects are S3 objects!  Can even extend an S3 object with S7
 
-* 
+* Somewhat compatable with S4, see [compatability vignette](https://rconsortium.github.io/OOP-WG/articles/compatibility.html) for details. 
+
+* Note that it was previously called R7, but it was changed to "S7" to better reflect that it is functional not encapsulated! 
 
 ## Abbreviated introduction based on the vignette {-}
 
@@ -254,6 +260,23 @@ method(speak, cat) <- function(x) {
 fluffy <- cat(name = "Fluffy", age = 5)
 speak(fluffy)
 ```
+
+"most usage of S7 with S3 will just work"
+
+
+```{r, eval = FALSE}
+method(print, cat) <- function(...) {
+  print("I am a cat.")
+}
+
+print(fluffy)
+#> "I am a cat"
+
+```
+
+*For inheritence, properties and more,  see the [vignette!](https://rconsortium.github.io/OOP-WG/articles/S7.html)*
+
+https://rconsortium.github.io/OOP-WG/articles/S7.html
 
 ## So... switch to S7 ? {-}
 
