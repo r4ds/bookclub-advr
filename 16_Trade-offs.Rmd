@@ -150,6 +150,116 @@ Use of the operators:
 - R6: `$`
 
 
+## Umm... what about S7 ? {-}
+
+```{r standards, echo = FALSE,  fig.cap = "https://xkcd.com/927/"}
+
+knitr::include_graphics("https://imgs.xkcd.com/comics/standards_2x.png")
+
+```
+
+### Primary references: {-}
+
+* Docs: https://rconsortium.github.io/OOP-WG/
+
+* Talk by Hadley Wickham https://www.youtube.com/watch?v=P3FxCvSueag
+
+## S7 briefly {-}
+
+* S7 is a 'better' version of S3 with some of the 'strictness' of S4
+
+* Note that it was previously called R7, but it was changed to "S7" to better reflect that it is functional not encapsulated!
+
+* 
+
+## Abbreviated introduction based on the vignette {-}
+
+To install: 
+```{r, eval=FALSE}
+# install.packages("remotes")
+remotes::install_github("rconsortium/OOP-WG")
+```
+
+
+```{r, eval=FALSE}
+library(S7)
+dog <- new_class("dog", properties = list(
+  name = class_character,
+  age = class_numeric
+))
+dog
+
+
+#> <S7_class>
+#> @ name  :  dog
+#> @ parent: <S7_object>
+#> @ properties:
+#>  $ name: <character>          
+#>  $ age : <integer> or <double>
+```
+
+Note the 'class_character', these are S7 classes corresponding to the base classes.
+
+Now to use it:
+
+```{r, eval = FALSE}
+lola <- dog(name = "Lola", age = 11)
+lola
+
+#> <dog>
+#>  @ name: chr "Lola"
+#>  @ age : num 11
+```
+
+Properties can be set / read with '@', with automatic validation based on the type!
+
+```{r, eval = FALSE}
+
+lola@age <- 12
+lola@age
+
+#> 12
+
+lola@age <- "twelve"
+
+#> Error: <dog>@age must be <integer> or <double>, not <character>
+
+```
+
+Like S3 (and S4) S7 has generics, implemented with `new_generic` and `method` for particular methods:
+
+```{r, eval = FALSE}
+speak <- new_generic("speak", "x")
+
+method(speak, dog) <- function(x) {
+  "Woof"
+}
+  
+speak(lola)
+
+#> [1] "Woof"
+```
+
+If we have another clasee, we can implement the generic for that too:
+
+```{r, eval = FALSE}
+cat <- new_class("cat", properties = list(
+  name = class_character,
+  age = class_double
+))
+method(speak, cat) <- function(x) {
+  "Meow"
+}
+
+fluffy <- cat(name = "Fluffy", age = 5)
+speak(fluffy)
+```
+
+## So... switch to S7 ? {-}
+
+* Not yet... still in development! 
+
+* 
 
 
 ## Meeting Videos
