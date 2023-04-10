@@ -9,11 +9,11 @@
 
 ## Introduction
 
-* We have three OOP systems intdoduced so far (S3, S4, R6) 
+* We have three OOP systems introduced so far (S3, S4, R6) 
 
 * At the current time (pre - S7?) Hadley recommends use S3 by default: It's simple and widely used throughout base R and CRAN.
 
-* If you have experience in other langauges,  *Resist* the temptation to use R6 even though it will feel more familiar!
+* If you have experience in other languages,  *Resist* the temptation to use R6 even though it will feel more familiar!
 
 
 ## S4 versus S3 
@@ -263,7 +263,7 @@ speak(lola)
 #> [1] "Woof"
 ```
 
-If we have another clasee, we can implement the generic for that too:
+If we have another class, we can implement the generic for that too:
 
 ```{r, eval = FALSE}
 cat <- new_class("cat", properties = list(
