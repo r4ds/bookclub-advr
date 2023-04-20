@@ -2,15 +2,18 @@
 
 **Learning objectives:**
 
-- We are going to understand the idea of the abstract syntax tree (AST) which is the tree like structure that underlie all R code.
-
-- We are going to understand the data structures that underlie the AST such as constants, symbols and calls which are collectively known as expression.
-
-- We are going to explore the idea behind parsing, the act of converting the linear sequence of character in code into the AST, and we will use that idea to explore some details of R’s grammar.
-
-- We are going to see how we are going to use recursive functions to compute on the language, i.e. writting functions that compute with expressions.
-
-- We are going to see how to work with three more specialized data structures: **pairlists**, **missing arguments**, and **expression vectors**.
+* Understand the idea of the abstract syntax tree (AST). 
+* Discuss the data structures that underlie the AST:
+  * Constants
+  * Symbols
+  * Calls
+* Explore the idea behind parsing.
+* Explore some details of R's grammar.
+* Disucss the use or recursive functions to compute on the language.
+* Work with three other more specialized data structures:
+  * Pairlists
+  * Missing arguments
+  * Expression vectors
 
 ```{r,message=FALSE,warning=FALSE}
 library(rlang)
@@ -18,52 +21,62 @@ library(lobstr)
 ```
 ## Introduction
 
-- To compute on the language, we first need to understand its structure. This requires some new vocabulary, some new tools, and some new ways of thinking about R code. The first of these is the distinction between an operation and its result.
+> To compute on the language, we first need to understand its structure.
 
+* This requires a few things:
+  * New vocabulary.
+  * New tools to inspect and modify expressions.
+  * Approach the use of the language with new ways of thinking.
+* One of the first new ways of thinking is the distinction between an operation and its result.
 
-```{r,error=TRUE}
+```{r, error=TRUE}
 y <- x * 10
 ```
-- We can capture the intent of the code without executing it using the rlang package.
+
+* We can capture the intent of the code without executing it using the rlang package.
 
 ```{r}
 z <- rlang::expr(y <- x * 10)
 
 z
 ```
-- We can the evaluate the expression using the **base::eval** function.
-```{r}
 
+* We can then evaluate the expression using the **base::eval** function.
+
+```{r}
 x <- 4
 
-base::eval(expr =(y <- x * 10))
+base::eval(expr(y <- x * 10))
+
+y
 ```
 
-**Evaluating multiple expressions**
+### Evaluating multiple expressions 
 
-- We can write multiple expressions at once & it acts similar to source()
+* We can write multiple expressions at once and it acts similar to `source()`.
 
-- expression() returns a vector and can be passed to eval()
+* `expression()` returns a vector and can be passed to `eval()`.
+
 ```{r}
-eval(expression(
-x <- 4,
-x * 10
-))
+eval(expression(x <- 4, x * 10))
 ```
 
-exprs() does not and has to be used in a loop
+`exprs()` does not and has to be used in a loop
+
 ```{r}
-for (i in exprs(x <- 4,x * 10)) {
+for (i in exprs(x <- 4, x * 10)) {
 print(i)
 print(eval(i))
 }
 ```
+
 ## Abstract Syntact Tree (AST)
 
-- Expression is an object that captures the structure of code without evaluating it.
-
-- Expressions are also called abstract syntax trees (ASTs) because the structure of code is hierarchical and can be naturally represented as a tree. Understanding this tree structure is crucial for inspecting and modifying expressions.
-
+* Expressions are objects that capture the structure of code without evaluating it.
+* Expressions are also called abstract syntax trees (ASTs) because the structure of code is hierarchical and can be naturally represented as a tree. 
+* Understanding this tree structure is crucial for inspecting and modifying expressions.
+  * Branches = Calls
+  * Leaves = Symbols and constants
 
 ```{r,eval=FALSE}
 f(x, "y", 1)
@@ -71,14 +84,13 @@ f(x, "y", 1)
 
 ![](images/simple.png)
 
-
-**With lobstr::ast():**
+### With `lobstr::ast():`
 
 ```{r}
 lobstr::ast(f(x, "y", 1))
 ```
 
-- Some function might also contain more call like the example below:
+* Some functions might also contain more calls like the example below:
 
 ```{r,eval=FALSE}
 f(g(1, 2), h(3, 4, i())):
@@ -88,43 +100,52 @@ f(g(1, 2), h(3, 4, i())):
 ```{r}
 lobstr::ast(f(g(1, 2), h(3, 4, i())))
 ```
-- We can read the **hand-drawn diagrams** from left-to-right (ignoring vertical position), and the **lobstr-drawn diagrams** from top-to-bottom (ignoring horizontal position).
-
-- The depth within the tree is determined by the nesting of function calls. This also determines evaluation order, **as evaluation generally proceeds from deepest-to-shallowest, but this is not guaranteed because of lazy evaluation**.
+* Read the **hand-drawn diagrams** from left-to-right (ignoring vertical position)
+* Read the **lobstr-drawn diagrams** from top-to-bottom (ignoring horizontal position).
+* The depth within the tree is determined by the nesting of function calls. 
+* Depth also determines evaluation order, **as evaluation generally proceeds from deepest-to-shallowest, but this is not guaranteed because of lazy evaluation**.
 
 ##  Infix calls
 
-- Infix calls are function in which the function names comes in between the arguments while the prefix calls the function names comes before it arguments.
+> Every call in R can be written in tree form because any call can be written in prefix form.
 
-- Every call in R can be written in tree form because any call can be written in prefix form. Take **y <- x * 10** again: what are the functions that are being called? It is not as easy to spot as f(x, 1) because this expression contains **two infix calls:** **<-** and *. That means that these two lines of code are equivalent:
-
-```{r,eval=FALSE}
+```{r eval=FALSE}
 y <- x * 10
-
 `<-`(y, `*`(x, 10))
 ```
 
-![](images/prefix.png)
+* Since this is a characteristic of the language, regardless if it's a function written in infix or prefix form, can be represented using an AST.
 
+![](images/prefix.png)
 
 ```{r}
 lobstr::ast(y <- x * 10)
 ```
 
-- There is no difference between the ASTs, and if you generate an expression with prefix calls, R will still print it in infix form:
+```{r}
+lobstr::ast(`<-`(y, `*`(x, 10)))
+```
+
+* There is no difference between the ASTs, and if you generate an expression with prefix calls, R will still print it in infix form:
 
 ```{r}
 rlang::expr(`<-`(y, `*`(x, 10)))
 ```
+
 **18.2.4 Exercises**
 
+## Expression components 
+
+* Collectively, the data structures present in the AST are called expressions.
+
 ## Constants
-- Scalar constants are the simplest component of the AST. 
 
-- A constant is either **NULL** or a **length-1** atomic vector (or scalar) like TRUE, 1L, 2.5 or "x". 
-- We can test for a constant with **rlang::is_syntactic_literal()**.
+* Scalar constants are the simplest component of the AST. 
+* A constant is either **NULL** or a **length-1** atomic vector (or scalar) 
+  * `TRUE`, `1L`, `2.5` or `x`. 
+* We can test for a constant with **rlang::is_syntactic_literal()**.
+* Constants are self-quoting in the sense that the expression used to represent a constant is the same constant:
 
-- Constants are self-quoting in the sense that the expression used to represent a constant is the same constant:
 ```{r}
 identical(expr(TRUE), TRUE)
 ```
@@ -139,56 +160,76 @@ identical(expr("x"), "x")
 ```
 
 ## Symbols
-- A symbol represents the name of an object like **x**, **mtcars**, or **mean**. In base R, the terms symbol and name are used interchangeably (i.e. **is.name()** is identical to **is.symbol())**, but this book used symbol consistently because **“name”** has many other meanings.
 
-- You can create a symbol in two ways: by capturing code that references an object with **expr()**, or turning a string into a symbol with **rlang::sym():**
+* A symbol represents the name of an object.
+  * `x`
+  * `mtcars`
+  * `mean`. 
+* In base R, the terms symbol and name are used interchangeably (i.e. `is.name()` is identical to `is.symbol()`), but this book used symbol consistently because **“name”** has many other meanings.
+* You can create a symbol in two ways: 
+  1. by capturing code that references an object with `expr()`.
+  2. turning a string into a symbol with `rlang::sym():`.
+
 ```{r}
 expr(x)
 ```
+
 ```{r}
 sym("x")
 ```
-- Symbol can be turned back into a string with **as.character()** or **rlang::as_string()**. as_string() has the advantage of clearly signalling that you’ll get a character vector of length 1.
+
+* A symbol can be turned back into a string with `as.character()` or `rlang::as_string()`. 
+  `as_string()` has the advantage of clearly signalling that you’ll get a character vector of length 1.
 
 ```{r}
 as_string(expr(x))
 ```
-- We can recognise a symbol because it’s printed without quotes, **str()** tells you that it’s a symbol, and **is.symbol()** is TRUE:
+
+* We can recognise a symbol because it’s printed without quotes
+* `str()` tells you that it’s a symbol, and `is.symbol()` is TRUE:
 
 ```{r}
 str(expr(x))
 ```
+
 ```{r}
 is.symbol(expr(x))
 ```
-- The symbol type is not vectorised, i.e. a symbol is always length 1. If you want multiple symbols, you’ll need to put them in a list, using **rlang::syms()**.
+
+* The symbol type is not vectorised, i.e. a symbol is always length 1. 
+* If you want multiple symbols, you’ll need to put them in a list, using `rlang::syms()`.
 
 ## Calls
 
-- A call object represents a captured function call. 
-
-- Call objects are a special type of list90 where the first component specifies the function to call (usually a symbol), and the remaining elements are the arguments for that call. 
-
-- Call objects create branches in the AST, because calls can be nested inside other calls.
-
-- You can identify a call object when printed because it looks just like a function call. Confusingly **typeof()** and **str()** print **language 91** for call objects, but **is.call()** returns TRUE:
+* A call object represents a captured function call. 
+* Call objects are a special type of list. 
+  * The first component specifies the function to call (usually a symbol). 
+  * The remaining elements are the arguments for that call. 
+* Call objects create branches in the AST, because calls can be nested inside other calls.
+* You can identify a call object when printed because it looks just like a function call. 
+  * Confusingly `typeof()` and `str()` print language for call objects, but `is.call()` returns TRUE:
 
 ```{r}
 lobstr::ast(read.table("important.csv", row.names = FALSE))
 ```
+
 ```{r}
 x <- expr(read.table("important.csv", row.names = FALSE))
 ```
+
 ```{r}
 typeof(x)
 ```
+
 ```{r}
 is.call(x)
 ```
 
 ## Subsetting
 
-- Calls generally behave like lists, i.e. you can use standard subsetting tools. The first element of the call object is the function to call, which is usually a symbol:
+* Calls generally behave like lists.
+* Since they are lists, you can use standard subsetting tools. 
+* The first element of the call object is the function to call, which is usually a symbol:
 
 ```{r}
 x[[1]]
@@ -197,48 +238,61 @@ x[[1]]
 ```{r}
 is.symbol(x[[1]])
 ```
-- The remainder of the elements are the arguments:
+* The remainder of the elements are the arguments:
 
 ```{r}
 as.list(x[-1])
 ```
-- We can extract individual arguments with [[ or, if named, $:
+* We can extract individual arguments with [[ or, if named, $:
+
 ```{r}
 x[[2]]
 ```
+
 ```{r}
 x$row.names
 ```
-- We can determine the number of arguments in a call object by subtracting 1 from its length:
+
+* We can determine the number of arguments in a call object by subtracting 1 from its length:
+
 ```{r}
 length(x) - 1
 ```
-- Extracting specific arguments from calls is challenging because of R’s flexible rules for argument matching: it could potentially be in any location, with the full name, with an abbreviated name, or with no name. 
 
-- To work around this problem, you can use **rlang::call_standardise()** which standardises all arguments to use the full name:
+* Extracting specific arguments from calls is challenging because of R’s flexible rules for argument matching:
+  * It could potentially be in any location, with the full name, with an abbreviated name, or with no name. 
+
+* To work around this problem, you can use **rlang::call_standardise()** which standardises all arguments to use the full name:
+
 ```{r}
 rlang::call_standardise(x)
 ```
-- But If the function uses ... it’s not possible to standardise all arguments.
 
-- Calls can be modified in the same way as lists:
+* But If the function uses ... it’s not possible to standardise all arguments.
+* Calls can be modified in the same way as lists:
+
 ```{r}
 x$header <- TRUE
 x
 ```
+
 ## Function position
-- The first element of the call object is the function position. This contains the function that will be called when the object is evaluated, and is usually a symbol.
+
+* The first element of the call object is the function position. This contains the function that will be called when the object is evaluated, and is usually a symbol.
 
 ```{r}
 lobstr::ast(foo())
 ```
 
-- While R allows you to surround the name of the function with quotes, the parser converts it to a symbol:
+* While R allows you to surround the name of the function with quotes, the parser converts it to a symbol:
 
 ```{r}
 lobstr::ast("foo"())
 ```
-- However, sometimes the function doesn’t exist in the current environment and you need to do some computation to retrieve it: for example, if the function is in another package, is a method of an R6 object, or is created by a function factory. In this case, the function position will be occupied by another call:
+
+* However, sometimes the function doesn’t exist in the current environment and you need to do some computation to retrieve it: 
+  * For example, if the function is in another package, is a method of an R6 object, or is created by a function factory. In this case, the function position will be occupied by another call:
+
 ```{r}
 lobstr::ast(pkg::foo(1))
 ```
@@ -246,24 +300,27 @@ lobstr::ast(pkg::foo(1))
 ```{r}
 lobstr::ast(obj$foo(1))
 ```
+
 ```{r}
 lobstr::ast(foo(1)(2))
 ```
 
 ![](images/call-call.png)
 
-
 ## Constructing
 
-- You can construct a call object from its components using rlang::call2(). The first argument is the name of the function to call (either as a string, a symbol, or another call). The remaining arguments will be passed along to the call:
+* You can construct a call object from its components using rlang::call2(). 
+* The first argument is the name of the function to call (either as a string, a symbol, or another call).
+* The remaining arguments will be passed along to the call:
 
 ```{r}
 call2("mean", x = expr(x), na.rm = TRUE)
 ```
+
 ```{r}
 call2(expr(base::mean), x = expr(x), na.rm = TRUE)
 ```
-- Infix calls created in this way still print as usual.
+* Infix calls created in this way still print as usual.
 
 ```{r}
 call2("<-", expr(x), 10)
@@ -272,17 +329,14 @@ call2("<-", expr(x), 10)
 **18.3.5 Exercises**
 
 ## Parsing and grammar
-- The process by which a computer language takes a string and constructs an expression is called parsing, and is governed by a set of rules known as a grammar.
 
-- We are going to use **lobstr::ast()** to explore some of the details of R’s grammar, and then show how you can transform back and forth between expressions and strings.
-
-  **Operator precedence**
-- Infix functions introduce two sources of ambiguity.
-
-- The first source of ambiguity arises from infix functions: what does 1 + 2 * 3 yield? Do you get 9 (i.e. (1 + 2) * 3), or 7 (i.e. 1 + (2 * 3))? In other words, which of the two possible parse trees below does R use?
+* **Parsing** - The process by which a computer language takes a string and constructs and expression. Parsing is governed by a set of rules known as a grammar. 
+* We are going to use **lobstr::ast()** to explore some of the details of R’s grammar, and then show how you can transform back and forth between expressions and strings.
+* **Operator precedence** - Conventions used by the programming language to resolve ambiguity.
+* Infix functions introduce two sources of ambiguity.
+* The first source of ambiguity arises from infix functions: what does 1 + 2 * 3 yield? Do you get 9 (i.e. (1 + 2) * 3), or 7 (i.e. 1 + (2 * 3))? In other words, which of the two possible parse trees below does R use?
 
 ![](images/ambig-order.png)
-
 
 - Programming languages use conventions called operator precedence to resolve this ambiguity. We can use **ast()** to see what R does:
 
