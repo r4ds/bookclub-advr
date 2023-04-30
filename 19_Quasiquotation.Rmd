@@ -54,7 +54,7 @@ cement(Good, afternoon, !!name)
  
 ## Nonstandard evaluation {-}
 
-* Functions like `dplyr::filter` use nonstandard evaluation and quote some of their arguments to help make code more *tidy*.
+* Functions like `dplyr::filter` use nonstandard evaluation,  and quote some of their arguments to help make code more *tidy*.
 
 ```{r}
 #| eval: FALSE
@@ -138,6 +138,18 @@ print(res)
 lobstr::ast(!!res)
 ```
 
+- If the right-hand side of `!!` is a function call, it will evalute the function and insert the results.
+
+```{r}
+mean_rm <- function(var) {
+  var <- ensym(var)
+  expr(mean(!!var, na.rm = TRUE))
+}
+expr(!!mean_rm(x) + !!mean_rm(y))
+#> mean(x, na.rm = TRUE) + mean(y, na.rm = TRUE)
+```
+
+
 
 - Multiple arguments, use `!!!`
 
@@ -151,53 +163,197 @@ res
 ```{r}
 lobstr::ast(!!res)
 ```
+
+## ... (dot-dot-dot)
+
+* !!! is also useful in other places where you have a list of expressions you want to insert into a call. 
+
+* Two motivating examples:
+
+   * list of dataframes you want to `rbind`  (a list of arbitrary length)
+
+```{r}
+dfs <- list(
+  a = data.frame(x = 1, y = 2),
+  b = data.frame(x = 3, y = 4)
+)
+``` 
+
+  * How to supply an argument name indirectly?
+  
+```{r}
+var <- "x"
+val <- c(4, 3, 9)
+```
+  
+  
+* For the first one, we can use unquote in `dplyr::bind_rows``
+
+```{r}
+dplyr::bind_rows(!!!dfs)
+```
+
+This is known 'splatting' in some other langauges (Ruby, Go, Julia).  Python calls this argument unpacking (`**kwarg`)
+
+* For the second we need to unquote the left side of an `=`. Tidy  eval lets us do this with a special `:=`
+
+```{r}
+tibble::tibble(!!var := val)
+```
+
+* Functions that have these capabilities are said to have *tidy dots* (or *dynamic dots*). To get this capability in your own functions, use `list2`!
+
+## Example of `list2()` {-}
+
+```{r}
+set_attr <- function(.x, ...) {
+  attr <- rlang::list2(...)
+  attributes(.x) <- attr
+  .x
+}
+
+attrs <- list(x = 1, y = 2)
+attr_name <- "z"
+
+1:10 %>%
+  set_attr(w = 0, !!!attrs, !!attr_name := 3) %>% 
+  str()
+```
+### Exercise from 19.6.5 {-}
+
+What is the problem here?
+
+```{r, eval=FALSE}
+set_attr <- function(x, ...) {
+  attr <- rlang::list2(...)
+  attributes(x) <- attr
+  x
+}
+set_attr(1:10, x = 10)
+#> Error in attributes(x) <- attr : attributes must be named
+```
+
+## Exec {-}
+
+What about existing functions that don't support tidy dots?  Use `exec`
+
+```{r}
+arg_name  <- "na.rm"
+arg_val <- TRUE
+exec("mean", 1:10, !!arg_name := arg_val)
+```
+
+Note that you do not unquote arg_val.
+ 
+Also `exec` is useful for mapping over a list of functions:
+
+```{r}
+x <- c(runif(10), NA)
+funs <- c("mean", "median", "sd")
+purrr::map_dbl(funs, exec, x, na.rm = TRUE)
+```
+
+
+
+## dots_list {-}
+
+- `list2()` is a wrapper around `dots_list` with the most common defaults:
+
+   - `.ignore_empty` : Ignores any empty arguments, lets you use trailing commas in a list
+   - `.homonyms` : controls what happens when multiple arguments use the same name, `list2()` uses default of `keep`
+   -  `.preserve_empty` controls what do so with empty arguments if they are not ignored.
+   
+   
+##  Base R `do.call` {-}
+
+`do.call(what, args)` . `what` is a function to call, `args` is a list of arguments to pass to the function.
+
+```{r}
+do.call("rbind", dfs)
+```
  
 
+### Exercise 19.5.5 #1 {-}
 
-## Quote and unquote
+One way to implement `exec` is shown here: Describe how it works. What are the key ideas?
 
-- **Single argument.** Embrace the simplicity of the embrace operator `{{`
 ```{r}
-#| label: embrace
-#| eval: FALSE
+exec_ <- function(f, ..., .env = caller_env()){
+  args <- list2(...)
+  do.call(f, args, envir  = .env)
+}
+```
 
-# The hard way
-my_hard_summarize <- function(data, var) {
-  # defuse (aka quote)
-  var <- rlang::enquo(var)
+## Map-reduce example {-}
+
+Function that will return an expression corresponding to a linear model.
+
+```{r}
+linear <- function(var, val) {
   
-  # inject (aka unquote)
-  dplyr::summarize(data, mean = mean(!!var, na.rm = TRUE))
-    
+  # capture variable as a symbol
+  var <- ensym(var)
+  
+  # Create a list of symbols of the form var[[1]], var[[2], etc]
+  coef_name <- map(seq_along(val[-1]), ~ expr((!!var)[[!!.x]]))
+
+  # map over the coefficients and the names to create the terms
+  summands <- map2(val[-1], coef_name, ~ expr((!!.x * !!.y)))
+  
+  # Dont forget the intercept
+  summands <- c(val[[1]], summands)
+
+  # Reduce!
+  reduce(summands, ~ expr(!!.x + !!.y))
 }
 
-# The easy way
-my_easy_summarize <- function(data, var) {
-
-  # in one move, quote and unquote `var`
-  dplyr::summarize(data, mean = mean({{var}}, na.rm = TRUE))
-    
-}
-
+linear(x, c(10, 5, -4))
+#> 10 + (5 * x[[1L]]) + (-4 * x[[2L]])
 ```
 
 
-- **Multiple arguments.** Just pass the (dynamic) dots when you can. Otherwise, quote (e.g., `rlang::enquos`) and splice (`!!!`).
+## Creating functions example {-}
 
+* `rlang::new_function()` creates a function from its three components and supports tidy evaluation
+
+* Alternative to function factories.
+
+Example:
+```{r}
+power <- function(exponent) {
+  new_function(
+    exprs(x = ), 
+    expr({
+      x ^ !!exponent
+    }), 
+    caller_env()
+  )
+}
+power(0.5)
+ 
+```
+
+Another example, is `graphics::curve` that allows you to plot an expression without creating a function. It could be implemented like this:
 
 ```{r}
-#| label: dots
+curve2 <- function(expr, xlim = c(0, 1), n = 100) {
+  expr <- enexpr(expr)
+  f <- new_function(exprs(x = ), expr)
+  
+  x <- seq(xlim[1], xlim[2], length = n)
+  y <- f(x)
 
-# The easy way for easy cases of simple "forwarding"
-my_group_by <- function(.data, ...) {
-  .data %>% dplyr::group_by(...)
+  plot(x, y, type = "l", ylab = expr_text(expr))
 }
-
-mtcars %>% my_group_by(cyl = cyl * 100, am)
-
-# The harder way remains the solution for non-forwarding use cases
-# There is no plural version of the embrace operator `{{`
+curve2(sin(exp(4 * x)), n = 1000)
 ```
+
+ 
+## Summary {-}
+
+* In this chapter we dove into non-standard evaluation with quasiquotation
+
+* Quasiquotation is useful on its own but in the next chapter we will look at the `quosures` and `data masks` to unleash the full power of *tidy evaluation*!
 
 
 
