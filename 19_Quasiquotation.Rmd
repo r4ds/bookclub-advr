@@ -1,20 +1,61 @@
+```{r, echo= FALSE, message=FALSE}
+library(rlang)
+library(purrr)
+```
+
+
 # Quasiquotation
 
 **Learning objectives:**
 
-- What quasiquotation is
-- Why it might be useful
-- How it works
-- What are some common use cases
+- What quasiquotation means
+- Why it's important
+- Learn some practical uses
 
-## What is quasiquotation?
+## Introduction
+
+- Three pillars of *tidy* evaluation
+   1. Quasiquotation
+   2. Quosures (chapter 20)
+   3. Data masks (Chapter 20)
+
+- Quasiquotation = quotation + unquotation:
+   - **Quote.** Capture unevaluated expression ...("defuse")
+   - **Unquote.** Except for selected parts which we do want to evaluate! ("inject")
+   
+- Functions that use these features are said to use Non-standard evaluation (NSE)
+
+- Note: related to Lisp macros, and also exists in other languages with Lisp heritage, e.g. Julia
+
+## Motivation
+
+
+Simple *concrete* example:
+
+`Cement` is a function that works like `paste` but doesn't need need quotes:
+
+```{r}
+cement <- function(...) {
+  args <- ensyms(...)
+  paste(purrr::map(args, as_string), collapse = " ")
+}
+
+cement(Good, morning, Hadley)
+```
+
+What if we wanted to use variables ?   This is where 'unquoting' comes in!
+
+```{r}
+name = "Bob"
+cement(Good, afternoon, !!name)
+```
+
+
  
-- **Quote.** Stop evaluation of an expression--typically, a function argument. (In `{rlang}` jargon, defuse.)
-- **Unquote.** Evaluate a quoted expression--typically, inside a function. (In `{rlang}` jargon often, inject)
+## Nonstandard evaluation {-}
 
-## Why use quasiquotation?
+* Functions like `dplyr::filter` use nonstandard evaluation and quote some of their arguments to help make code more *tidy*.
 
-- **Make functions tidy.** Provide function arguments bare names.
 ```{r}
 #| eval: FALSE
 # `cyl` is written as a bare name--a symbol defined in the global environment
@@ -22,91 +63,96 @@
 # so, `{dplyr}` quotes the argument
 dplyr::filter(mtcars, cyl == 4)
 ```
-- **Make functions Shiny-friendly.** Provide names of columns as strings.
-```{r}
-#| eval = FALSE
-# imagine that `var` came from `input$var_you_selected`
-# this "quoted" column name is transformed into a bare name below
-my_mean <- function(df, var) {
-  dplyr::mutate(df, mean = mean(.data[[var]], na.rm = TRUE))
-}
+ 
+* You often can detect this if the argument wouldn't work in isolation, for example:
+
+```{r, eval = FALSE}
+library(MASS) # this is fine
+MASS 
+#> Error: object MASS not found
 ```
-- **Inject user-written into a function's pipeline.** For example: summarize expressions, rename expressions, etc.
 
-## How use quasiquotation?
+and 
 
-Let's look at its components:
+```{r, eval = FALSE}
+cyl 
+#> Error: object 'cyl' not found
+```
 
-- Quotate
-- Unquote
-- Quote and unquote, in one go
 
 ## Quote
 
-- Expressions
+- Expression
+
 ```{r}
-#| label:quote_expressions
-#| eval:TRUE
-
-# 1. rlang::expr
-
 # for interactive use
 rlang::expr(x+y)
 
-# but not for use in a function
-# see below
-
-# 2. rlang::enexpr
-
-# expr doesn't yield desired result
-f1 <- function(x) rlang::expr(x)
-f1(a + b + c)
-
-# enexpr does, since it maintains reference to environment where x is defined
+# enexpr works on function arguments (looks at internal promise object)  
 f2 <- function(x) rlang::enexpr(x)
 f2(a + b + c)
 ```
-- Symbols
+- To capture multiple arguments, use `enexprs()`
+
 ```{r}
-#| label:quote_symbols
-#| eval:TRUE
-
-# captures a list of symbols or strings in ...
-# returns a list of symbols
-f <- function(...) {
-  ensyms(...)
-}
-
-# case 1: input = symbol
-f(x)
-# case 2: input = character string
-f("x")
+f <- function(...) enexprs(...)
+f(x=1, y= 10 *z)
 ```
+
+
+- For symbols, there is `ensym` and `ensyms` which check that the argument is a symbol or string.
+
+## Base R method {-}
+
+* Base R methods do not support unquoting.
+
+* Base R equivalent of `expr` is `quote`  
+
+* Base R equivalent of `enexpr` is `substitute` (note that `enexpr` uses `substitute`!)
+
+```{r, eval = FALSE}
+enexpr
+#>function (arg) 
+#>{
+#>    .Call(ffi_enexpr, substitute(arg), parent.frame())
+#>}
+```
+
+
+* `bquote()` provides a limited form of quasiquotation, see section 19.5
+
+* `~`, the formula, is a quoting function, discussed in Section 20.3.4
 
 ## Unquote
 
+- Unquoting allows you to 'splice' together ASTs 
+
 - One argument
 ```{r}
-#| label:unquote_one_arg
-#| eval:TRUE
-
 # quote `-1` as `x`
 x <- rlang::expr(-1)
 # unquote `x` to substitute its unquoted value
 # use bang-bang operator
-rlang::expr(f(!!x, y))
+res = rlang::expr(f(!!x, y))
+print(res)
+lobstr::ast(!!res)
 ```
-- Multiple arguments
-```{r}
-#| label:unquote_mult_args
-#| eval:TRUE
 
-# quote multiple args--note the `s`
+
+- Multiple arguments, use `!!!`
+
+```{r}
 xs <- rlang::exprs(1, a, -b)
 # unquote multiple arguments
 # use bang-bang-bang operator
-expr(f(!!!xs, y))
+res=expr(f(!!!xs, y))
+res
 ```
+```{r}
+lobstr::ast(!!res)
+```
+ 
+
 
 ## Quote and unquote
 
@@ -134,7 +180,11 @@ my_easy_summarize <- function(data, var) {
 }
 
 ```
+
+
 - **Multiple arguments.** Just pass the (dynamic) dots when you can. Otherwise, quote (e.g., `rlang::enquos`) and splice (`!!!`).
+
+
 ```{r}
 #| label: dots
 
