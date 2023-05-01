@@ -125,7 +125,9 @@ enexpr
 
 ## Unquote
 
-- Unquoting allows you to 'splice' together ASTs 
+- Unquoting allows you to merge together ASTs with selective evaluation.
+
+- Use `!!` (*inject* operator)
 
 - One argument
 ```{r}
@@ -151,7 +153,7 @@ expr(!!mean_rm(x) + !!mean_rm(y))
 
 
 
-- Multiple arguments, use `!!!`
+- Multiple arguments, use `!!!`  *Splice*
 
 ```{r}
 xs <- rlang::exprs(1, a, -b)
@@ -170,7 +172,7 @@ lobstr::ast(!!res)
 
 * Two motivating examples:
 
-   * list of dataframes you want to `rbind`  (a list of arbitrary length)
+List of dataframes you want to `rbind`  (a list of arbitrary length)
 
 ```{r}
 dfs <- list(
@@ -179,7 +181,7 @@ dfs <- list(
 )
 ``` 
 
-  * How to supply an argument name indirectly?
+How to supply an argument name indirectly?
   
 ```{r}
 var <- "x"
@@ -187,7 +189,7 @@ val <- c(4, 3, 9)
 ```
   
   
-* For the first one, we can use unquote in `dplyr::bind_rows``
+* For the first one, we can use unquote (splice) in `dplyr::bind_rows``
 
 ```{r}
 dplyr::bind_rows(!!!dfs)
@@ -201,7 +203,7 @@ This is known 'splatting' in some other langauges (Ruby, Go, Julia).  Python cal
 tibble::tibble(!!var := val)
 ```
 
-* Functions that have these capabilities are said to have *tidy dots* (or *dynamic dots*). To get this capability in your own functions, use `list2`!
+* Functions that have these capabilities are said to have *tidy dots* (or apparently now it is called *dynamic dots*). To get this capability in your own functions, use `list2`!
 
 ## Example of `list2()` {-}
 
