@@ -639,6 +639,11 @@ bench::mark(
 -   [cpp-reference](https://en.cppreference.com/w/cpp)
 -   [C++20 for Programmers](https://www.pearson.com/en-us/subject-catalog/p/c20-for-programmers-an-objects-natural-approach/P200000000211/9780137570461) is a newer book that covers modern c++ for people who know programming in another language.
  
+## Op Success!
+
+![Congrats!](images/we-did-it-celebration-meme.jpg)
+
+
 ## Meeting Videos
 
 ### Cohort 1
