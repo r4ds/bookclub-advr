@@ -45,12 +45,13 @@
 
 ### Cohort 7
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/g77Jfl_xrXM")`
 
 <details>
-
 <summary>Meeting chat log</summary>
 ```
-LOG
+00:55:22	collinberke:	https://rlang.r-lib.org/reference/embrace-operator.html?q=enquo#under-the-hood
 ```
 </details>
+
+`r knitr::include_url("https://www.youtube.com/embed/wPLrafScijE")`

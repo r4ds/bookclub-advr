@@ -259,12 +259,13 @@ But Advanced R consistently uses numeric to mean integer or double type.
 
 ### Cohort 7
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/mOpmvc9h_4M")`
 
 <details>
 
 <summary>Meeting chat log</summary>
 ```
-LOG
+00:35:43	Stone: base::InternalMethods
+00:48:04	collinberke: https://cran.r-project.org/doc/manuals/R-exts.html
 ```
 </details>

@@ -314,12 +314,4 @@ There is a solution in the vectors package: `vctrs::vec_restore()`
 
 ### Cohort 7
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
-
-<details>
-
-<summary>Meeting chat log</summary>
-```
-LOG
-```
-</details>
+`r knitr::include_url("https://www.youtube.com/embed/zNLx4q8TCKQ")`

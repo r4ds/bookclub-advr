@@ -854,12 +854,14 @@ exp1[[1]]
 
 ### Cohort 7
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/XPs-TI4BYjk")`
+
+`r knitr::include_url("https://www.youtube.com/embed/8LPw_VTBsmQ")`
 
 <details>
-
 <summary>Meeting chat log</summary>
 ```
-LOG
+00:50:48	Stone:	https://www.r-bloggers.com/2018/10/quasiquotation-in-r-via-bquote/
+00:58:26	iPhone:	See ya next week!
 ```
 </details>

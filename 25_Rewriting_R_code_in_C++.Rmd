@@ -689,12 +689,20 @@ bench::mark(
 
 ### Cohort 7
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/Luu7JsixQgY")`
 
 <details>
 
 <summary>Meeting chat log</summary>
 ```
-LOG
+00:43:02	Gus Lipkin:	I think I found the definition for `mean`
+
+An R call goes to *a which then calls the C function *b
+
+*a: https://github.com/wch/r-source/blob/trunk/src/library/base/R/mean.R
+*b: https://github.com/wch/r-source/blob/trunk/src/library/stats/src/cov.c#L207
+
+It looks like the second pass only happens if `R_FINITE(mean_from_first_pass)` which tries to call `isfinite` from C++ and if it’s not there, it’ll make sure it is a number and is not positive or negative infinity.
+00:49:55	Gus Lipkin:	I feel bad for dropping in on the last chapter and getting Collin’s thanks 😅 I wish I’d joined sooner.
 ```
 </details>
