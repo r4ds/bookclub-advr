@@ -279,12 +279,12 @@ stopifnot(all.equal(t1, t3))
 
 ### Cohort 7
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/rOkrHvN8Uqg")`
 
 <details>
 
 <summary>Meeting chat log</summary>
 ```
-LOG
+00:23:48	Ron Legere:	https://www.mathworks.com/help/matlab/matlab_prog/vectorization.html
 ```
 </details>

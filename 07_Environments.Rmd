@@ -70,9 +70,19 @@
 `r knitr::include_url("https://www.youtube.com/embed/PUXrijnsWy0")`
 
 <details>
-
 <summary>Meeting chat log</summary>
 ```
 00:06:49	Ryan Honomichl:	https://r4ds.github.io/bookclub-Advanced_R/QandA/docs/environments.html
+```
+</details>
+
+`r knitr::include_url("https://www.youtube.com/embed/6xECnY4ro48")`
+
+<details>
+<summary>Meeting chat log</summary>
+```
+00:14:44	collinberke:	https://ivelasq.rbind.io/blog/macos-rig/index.html
+00:21:10	collinberke:	https://github.com/tidyverse/dplyr/blob/main/NAMESPACE
+01:00:21	collinberke:	https://r4ds.hadley.nz/iteration.html
 ```
 </details>

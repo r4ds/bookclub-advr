@@ -48,15 +48,3 @@
 00:58:43	Arthur Shaw:	https://dtplyr.tidyverse.org/articles/translation.html
 ```
 </details>
-
-### Cohort 7
-
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
-
-<details>
-
-<summary>Meeting chat log</summary>
-```
-LOG
-```
-</details>
