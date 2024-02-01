@@ -2,12 +2,52 @@
 
 **Learning objectives:**
 
-- THESE ARE NICE TO HAVE BUT NOT ABSOLUTELY NECESSARY
+- test your knowledge
+- identify objects in R (size, id, ...)
 
-## SLIDE 1
+## Quiz
 
-- ADD SLIDES AS SECTIONS (`##`).
-- TRY TO KEEP THEM RELATIVELY SLIDE-LIKE; THESE ARE NOTES, NOT THE BOOK ITSELF.
+1. How do I create a new column called "3" that contains the sum of 1 and 2?
+```{r}
+df <- data.frame(runif(3), runif(3))
+names(df) <- c(1, 2)
+```
+
+2. How much memory does y occupy?
+hint: use `library(lobstr)` 
+```{r}
+x <- runif(1e6)
+y <- list(x, x, x)
+```
+
+3. On which line does a get copied in the following example?
+```{r}
+a <- c(1, 5, 3, 2)
+b <- a
+b[[1]] <- 10
+```
+
+
+
+## Object’s identifier
+
+```{r}
+x <- c(1, 2, 3)
+obj_addr(x)
+```
+
+
+## Exercises
+
+Do they all point to the same underlying function object? hint: `lobstr::obj_addr()`
+```{r}
+mean
+base::mean
+get("mean")
+evalq(mean)
+match.fun("mean")
+```
+
 
 ## Meeting Videos
 
