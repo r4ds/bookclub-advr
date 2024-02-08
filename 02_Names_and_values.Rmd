@@ -5,31 +5,72 @@
 - test your knowledge
 - identify objects in R (size, id, ...)
 
-## Quiz
+## Practice Session
+
+### Quiz
 
 1. How do I create a new column called "3" that contains the sum of 1 and 2?
 ```{r}
 df <- data.frame(runif(3), runif(3))
+df
+```
+
+
+```{r}
 names(df) <- c(1, 2)
 ```
+```{r}
+df$`3`
+```
+
+
+```{r}
+df$`3` <- df$`1` + df$`2`
+
+df
+```
+
 
 2. How much memory does y occupy?
 hint: use `library(lobstr)` 
 ```{r}
 x <- runif(1e6)
 y <- list(x, x, x)
+
+length(y)
+
 ```
+
+
+```{r}
+library(lobstr)
+lobstr::obj_size(y)
+```
+
 
 3. On which line does a get copied in the following example?
 ```{r}
 a <- c(1, 5, 3, 2)
-b <- a
-b[[1]] <- 10
+a
 ```
 
 
+```{r}
+b <- a
+b
+```
 
-## Object’s identifier
+
+```{r}
+b[[1]] <- 10
+```
+
+```{r}
+b
+```
+
+
+### Object’s identifier
 
 ```{r}
 x <- c(1, 2, 3)
@@ -37,7 +78,7 @@ obj_addr(x)
 ```
 
 
-## Exercises
+### Exercises
 
 Do they all point to the same underlying function object? hint: `lobstr::obj_addr()`
 ```{r}
@@ -47,6 +88,65 @@ get("mean")
 evalq(mean)
 match.fun("mean")
 ```
+
+
+### Copy-on-modify
+```{r}
+x <- c(1, 2, 3)
+cat(tracemem(x), "\n")
+#> <0x7f80c0e0ffc8> 
+```
+
+> untracemem() is the opposite of tracemem(); it turns tracing off.
+
+```{r}
+y <- x
+
+y[[3]] <- 5L
+
+untracemem(x)
+```
+
+### Introduction to functions
+
+How to make a function in r:
+```{r eval=FALSE}
+name <- function(variables) {
+  
+}
+```
+
+```{r}
+f <- function(a) {
+  a
+}
+
+x <- c(1, 2, 3)
+cat(tracemem(x), "\n")
+#> <0x7fe1121693a8>
+
+z <- f(x)
+# there's no copy here!
+
+untracemem(x)
+```
+
+![](images/02-trace.png)
+### Lists
+```{r}
+l1 <- list(1, 2, 3)
+```
+
+### Data Frames
+```{r}
+d1 <- data.frame(x = c(1, 5, 6), y = c(2, 4, 3))
+```
+
+### Character vectors
+```{r}
+x <- c("a", "a", "abc", "d")
+```
+
 
 
 ## Meeting Videos
