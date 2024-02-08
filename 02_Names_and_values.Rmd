@@ -131,7 +131,8 @@ untracemem(x)
 ```
 
 ![](images/02-trace.png)
-### Lists
+
+## Lists {-}
 ```{r}
 l1 <- list(1, 2, 3)
 ```
