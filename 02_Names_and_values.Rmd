@@ -106,7 +106,7 @@ y[[3]] <- 5L
 untracemem(x)
 ```
 
-### Introduction to functions
+## Introduction to functions {-}
 
 How to make a function in r:
 ```{r eval=FALSE}
