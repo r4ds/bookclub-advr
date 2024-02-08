@@ -5,7 +5,6 @@
 - test your knowledge
 - identify objects in R (size, id, ...)
 
-## Practice Session
 
 ### Quiz
 
