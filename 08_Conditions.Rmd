@@ -518,12 +518,32 @@ See [the sub-section in the book](https://adv-r.hadley.nz/conditions.html#condit
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/VwmrbPUQY1k")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+00:19:16	Trevin:	https://style.tidyverse.org/error-messages.html
+00:20:14	Trevin:	More on errors in the design guide: https://design.tidyverse.org/
+01:14:27	Federica Gazzelloni:	more info here: https://colinfay.me/learn-shiny-production/
+```
+</details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/t1N6XdidvNo")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:34:09	Ron:	Someone did: https://cran.r-project.org/web/packages/comprehenr/vignettes/Introduction.html
+00:47:58	collinberke:	https://purrr.tidyverse.org/reference/safely.html
+00:48:24	Ron:	it's a function operator !
+00:49:37	Ron:	\(x) length(unique(x) is not too verbose though
+00:49:39	Ron:	;)
+01:06:50	collinberke:	https://colinfay.me/purrr-mappers/
+01:07:45	collinberke:	https://colinfay.me/purrr-web-mining/
 ```
 </details>

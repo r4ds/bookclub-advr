@@ -265,12 +265,26 @@ stopifnot(all.equal(t1, t3))
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/UaXimKd3vg8")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+00:24:42	Arthur Shaw:	I wonder if there's a task view for R Universe: https://r-universe.dev/search/
+01:01:13	Arthur Shaw:	https://www.alexejgossmann.com/benchmarking_r/
+01:04:34	Trevin:	I agree that the chapter is a good jumping off point. Gonna have to dig into some of the listed resources 😄
+```
+</details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/rOkrHvN8Uqg")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:23:48	Ron Legere:	https://www.mathworks.com/help/matlab/matlab_prog/vectorization.html
 ```
 </details>

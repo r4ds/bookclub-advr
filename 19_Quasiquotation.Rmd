@@ -1,20 +1,61 @@
+```{r, echo= FALSE, message=FALSE}
+library(rlang)
+library(purrr)
+```
+
+
 # Quasiquotation
 
 **Learning objectives:**
 
-- What quasiquotation is
-- Why it might be useful
-- How it works
-- What are some common use cases
+- What quasiquotation means
+- Why it's important
+- Learn some practical uses
 
-## What is quasiquotation?
+## Introduction
+
+- Three pillars of *tidy* evaluation
+   1. Quasiquotation
+   2. Quosures (chapter 20)
+   3. Data masks (Chapter 20)
+
+- Quasiquotation = quotation + unquotation:
+   - **Quote.** Capture unevaluated expression ...("defuse")
+   - **Unquote.** Except for selected parts which we do want to evaluate! ("inject")
+   
+- Functions that use these features are said to use Non-standard evaluation (NSE)
+
+- Note: related to Lisp macros, and also exists in other languages with Lisp heritage, e.g. Julia
+
+## Motivation
+
+
+Simple *concrete* example:
+
+`Cement` is a function that works like `paste` but doesn't need need quotes:
+
+```{r}
+cement <- function(...) {
+  args <- ensyms(...)
+  paste(purrr::map(args, as_string), collapse = " ")
+}
+
+cement(Good, morning, Hadley)
+```
+
+What if we wanted to use variables ?   This is where 'unquoting' comes in!
+
+```{r}
+name = "Bob"
+cement(Good, afternoon, !!name)
+```
+
+
  
-- **Quote.** Stop evaluation of an expression--typically, a function argument. (In `{rlang}` jargon, defuse.)
-- **Unquote.** Evaluate a quoted expression--typically, inside a function. (In `{rlang}` jargon often, inject)
+## Nonstandard evaluation {-}
 
-## Why use quasiquotation?
+* Functions like `dplyr::filter` use nonstandard evaluation,  and quote some of their arguments to help make code more *tidy*.
 
-- **Make functions tidy.** Provide function arguments bare names.
 ```{r}
 #| eval: FALSE
 # `cyl` is written as a bare name--a symbol defined in the global environment
@@ -22,203 +63,300 @@
 # so, `{dplyr}` quotes the argument
 dplyr::filter(mtcars, cyl == 4)
 ```
-- **Make functions Shiny-friendly.** Provide names of columns as strings.
-```{r}
-#| eval = FALSE
-# imagine that `var` came from `input$var_you_selected`
-# this "quoted" column name is transformed into a bare name below
-my_mean <- function(df, var) {
-  dplyr::mutate(df, mean = mean(.data[[var]], na.rm = TRUE))
-}
+ 
+* You often can detect this if the argument wouldn't work in isolation, for example:
+
+```{r, eval = FALSE}
+library(MASS) # this is fine
+MASS 
+#> Error: object MASS not found
 ```
-- **Inject user-written into a function's pipeline.** For example: summarize expressions, rename expressions, etc.
 
-## How use quasiquotation?
+and 
 
-Let's look at its components:
+```{r, eval = FALSE}
+cyl 
+#> Error: object 'cyl' not found
+```
 
-- Quotate
-- Unquote
-- Quote and unquote, in one go
 
 ## Quote
 
-- Expressions
+- Expression
+
 ```{r}
-#| label:quote_expressions
-#| eval:TRUE
-
-# 1. rlang::expr
-
 # for interactive use
 rlang::expr(x+y)
 
-# but not for use in a function
-# see below
-
-# 2. rlang::enexpr
-
-# expr doesn't yield desired result
-f1 <- function(x) rlang::expr(x)
-f1(a + b + c)
-
-# enexpr does, since it maintains reference to environment where x is defined
+# enexpr works on function arguments (looks at internal promise object)  
 f2 <- function(x) rlang::enexpr(x)
 f2(a + b + c)
 ```
-- Symbols
+- To capture multiple arguments, use `enexprs()`
+
 ```{r}
-#| label:quote_symbols
-#| eval:TRUE
-
-# captures a list of symbols or strings in ...
-# returns a list of symbols
-f <- function(...) {
-  ensyms(...)
-}
-
-# case 1: input = symbol
-f(x)
-# case 2: input = character string
-f("x")
+f <- function(...) enexprs(...)
+f(x=1, y= 10 *z)
 ```
+
+
+- For symbols, there is `ensym` and `ensyms` which check that the argument is a symbol or string.
+
+## Base R method {-}
+
+* Base R methods do not support unquoting.
+
+* Base R equivalent of `expr` is `quote`  
+
+* Base R equivalent of `enexpr` is `substitute` (note that `enexpr` uses `substitute`!)
+
+```{r, eval = FALSE}
+enexpr
+#>function (arg) 
+#>{
+#>    .Call(ffi_enexpr, substitute(arg), parent.frame())
+#>}
+```
+
+
+* `bquote()` provides a limited form of quasiquotation, see section 19.5
+
+* `~`, the formula, is a quoting function, discussed in Section 20.3.4
 
 ## Unquote
 
+- Unquoting allows you to merge together ASTs with selective evaluation.
+
+- Use `!!` (*inject* operator)
+
 - One argument
 ```{r}
-#| label:unquote_one_arg
-#| eval:TRUE
-
 # quote `-1` as `x`
 x <- rlang::expr(-1)
 # unquote `x` to substitute its unquoted value
 # use bang-bang operator
-rlang::expr(f(!!x, y))
+res = rlang::expr(f(!!x, y))
+print(res)
+lobstr::ast(!!res)
 ```
-- Multiple arguments
-```{r}
-#| label:unquote_mult_args
-#| eval:TRUE
 
-# quote multiple args--note the `s`
+- If the right-hand side of `!!` is a function call, it will evalute the function and insert the results.
+
+```{r}
+mean_rm <- function(var) {
+  var <- ensym(var)
+  expr(mean(!!var, na.rm = TRUE))
+}
+expr(!!mean_rm(x) + !!mean_rm(y))
+#> mean(x, na.rm = TRUE) + mean(y, na.rm = TRUE)
+```
+
+
+
+- Multiple arguments, use `!!!`  *Splice*
+
+```{r}
 xs <- rlang::exprs(1, a, -b)
 # unquote multiple arguments
 # use bang-bang-bang operator
-expr(f(!!!xs, y))
+res=expr(f(!!!xs, y))
+res
+```
+```{r}
+lobstr::ast(!!res)
 ```
 
-## Quote and unquote
+## ... (dot-dot-dot)
 
-- **Single argument.** Embrace the simplicity of the embrace operator `{{`
+* !!! is also useful in other places where you have a list of expressions you want to insert into a call. 
+
+* Two motivating examples:
+
+List of dataframes you want to `rbind`  (a list of arbitrary length)
+
 ```{r}
-#| label: embrace
-#| eval: FALSE
+dfs <- list(
+  a = data.frame(x = 1, y = 2),
+  b = data.frame(x = 3, y = 4)
+)
+``` 
 
-# The hard way
-my_hard_summarize <- function(data, var) {
-  # defuse (aka quote)
-  var <- rlang::enquo(var)
+How to supply an argument name indirectly?
   
-  # inject (aka unquote)
-  dplyr::summarize(data, mean = mean(!!var, na.rm = TRUE))
-    
-}
-
-# The easy way
-my_easy_summarize <- function(data, var) {
-
-  # in one move, quote and unquote `var`
-  dplyr::summarize(data, mean = mean({{var}}, na.rm = TRUE))
-    
-}
-
-```
-- **Multiple arguments.** Just pass the (dynamic) dots when you can. Otherwise, quote (e.g., `rlang::enquos`) and splice (`!!!`).
 ```{r}
-#| label: dots
-
-# The easy way for easy cases of simple "forwarding"
-my_group_by <- function(.data, ...) {
-  .data %>% dplyr::group_by(...)
-}
-
-mtcars %>% my_group_by(cyl = cyl * 100, am)
-
-# The harder way remains the solution for non-forwarding use cases
-# There is no plural version of the embrace operator `{{`
+var <- "x"
+val <- c(4, 3, 9)
 ```
-
-
-## Usage
-
-- Data masking
-- Tidy selection
-- Metaprogramming
-
-## Data masking
-
-My (data) pronoun is:
-
-- `.data`. Object defined in data frame.
-- `.env`. Object defined in (global) environment
-
-To see why this distinction is needed, consider:
+  
+  
+* For the first one, we can use unquote (splice) in `dplyr::bind_rows``
 
 ```{r}
-#| label: data_masking
-#| eval: TRUE
-cyl <- 1000
+dplyr::bind_rows(!!!dfs)
+```
 
-mtcars %>%
-  dplyr::summarise(
-    mean_data = mean(.data$cyl),
-    mean_env = mean(.env$cyl)
+This is known 'splatting' in some other langauges (Ruby, Go, Julia).  Python calls this argument unpacking (`**kwarg`)
+
+* For the second we need to unquote the left side of an `=`. Tidy  eval lets us do this with a special `:=`
+
+```{r}
+tibble::tibble(!!var := val)
+```
+
+* Functions that have these capabilities are said to have *tidy dots* (or apparently now it is called *dynamic dots*). To get this capability in your own functions, use `list2`!
+
+## Example of `list2()` {-}
+
+```{r}
+set_attr <- function(.x, ...) {
+  attr <- rlang::list2(...)
+  attributes(.x) <- attr
+  .x
+}
+
+attrs <- list(x = 1, y = 2)
+attr_name <- "z"
+
+1:10 %>%
+  set_attr(w = 0, !!!attrs, !!attr_name := 3) %>% 
+  str()
+```
+### Exercise from 19.6.5 {-}
+
+What is the problem here?
+
+```{r, eval=FALSE}
+set_attr <- function(x, ...) {
+  attr <- rlang::list2(...)
+  attributes(x) <- attr
+  x
+}
+set_attr(1:10, x = 10)
+#> Error in attributes(x) <- attr : attributes must be named
+```
+
+## Exec {-}
+
+What about existing functions that don't support tidy dots?  Use `exec`
+
+```{r}
+arg_name  <- "na.rm"
+arg_val <- TRUE
+exec("mean", 1:10, !!arg_name := arg_val)
+```
+
+Note that you do not unquote arg_val.
+ 
+Also `exec` is useful for mapping over a list of functions:
+
+```{r}
+x <- c(runif(10), NA)
+funs <- c("mean", "median", "sd")
+purrr::map_dbl(funs, exec, x, na.rm = TRUE)
+```
+
+
+
+## dots_list {-}
+
+- `list2()` is a wrapper around `dots_list` with the most common defaults:
+
+   - `.ignore_empty` : Ignores any empty arguments, lets you use trailing commas in a list
+   - `.homonyms` : controls what happens when multiple arguments use the same name, `list2()` uses default of `keep`
+   -  `.preserve_empty` controls what do so with empty arguments if they are not ignored.
+   
+   
+##  Base R `do.call` {-}
+
+`do.call(what, args)` . `what` is a function to call, `args` is a list of arguments to pass to the function.
+
+```{r}
+do.call("rbind", dfs)
+```
+ 
+
+### Exercise 19.5.5 #1 {-}
+
+One way to implement `exec` is shown here: Describe how it works. What are the key ideas?
+
+```{r}
+exec_ <- function(f, ..., .env = caller_env()){
+  args <- list2(...)
+  do.call(f, args, envir  = .env)
+}
+```
+
+## Map-reduce example {-}
+
+Function that will return an expression corresponding to a linear model.
+
+```{r}
+linear <- function(var, val) {
+  
+  # capture variable as a symbol
+  var <- ensym(var)
+  
+  # Create a list of symbols of the form var[[1]], var[[2], etc]
+  coef_name <- map(seq_along(val[-1]), ~ expr((!!var)[[!!.x]]))
+
+  # map over the coefficients and the names to create the terms
+  summands <- map2(val[-1], coef_name, ~ expr((!!.x * !!.y)))
+  
+  # Dont forget the intercept
+  summands <- c(val[[1]], summands)
+
+  # Reduce!
+  reduce(summands, ~ expr(!!.x + !!.y))
+}
+
+linear(x, c(10, 5, -4))
+#> 10 + (5 * x[[1L]]) + (-4 * x[[2L]])
+```
+
+
+## Creating functions example {-}
+
+* `rlang::new_function()` creates a function from its three components and supports tidy evaluation
+
+* Alternative to function factories.
+
+Example:
+```{r}
+power <- function(exponent) {
+  new_function(
+    exprs(x = ), 
+    expr({
+      x ^ !!exponent
+    }), 
+    caller_env()
   )
+}
+power(0.5)
+ 
 ```
 
-Read more [here](https://rlang.r-lib.org/reference/topic-data-mask.html) and [here](https://rlang.r-lib.org/reference/topic-data-mask-ambiguity.html).
-
-## Tidy selection
+Another example, is `graphics::curve` that allows you to plot an expression without creating a function. It could be implemented like this:
 
 ```{r}
-#| label: tidy_selection
-#| eval: FALSE
+curve2 <- function(expr, xlim = c(0, 1), n = 100) {
+  expr <- enexpr(expr)
+  f <- new_function(exprs(x = ), expr)
+  
+  x <- seq(xlim[1], xlim[2], length = n)
+  y <- f(x)
 
-my_cols <- c("wt", "mpg", "not_in_mtcars")
-
-# note: `tidyselect::all_of()` errors if any column not found
-mtcars |> select(all_of(placeholder)) |> glimpse()
-
-# note: `tidyselect::any_of()` excludes requested columns not found
-mtcars |> select(any_of(placeholder)) |> glimpse()
+  plot(x, y, type = "l", ylab = expr_text(expr))
+}
+curve2(sin(exp(4 * x)), n = 1000)
 ```
 
+ 
+## Summary {-}
 
-## Metaprogramming
+* In this chapter we dove into non-standard evaluation with quasiquotation
 
-A few common patterns:
+* Quasiquotation is useful on its own but in the next chapter we will look at the `quosures` and `data masks` to unleash the full power of *tidy evaluation*!
 
-- **Forwarding.** Defuse and inject. Think embrace operator. See [here](https://rlang.r-lib.org/reference/topic-metaprogramming.html#forwarding-patterns).
-- **Names.** Symbolize and inject. Think: character -> unevaluated symbol -> evaluated symbol. See [here](https://rlang.r-lib.org/reference/topic-metaprogramming.html#names-patterns).
-- **Bridge.** Capture user inputs -> transform into two representations -> evaluate each representation. See [here](https://rlang.r-lib.org/reference/topic-metaprogramming.html#bridge-patterns).
-- **Transformation.** Capture user inputs -> compose unevaluated call -> evaluate call. See more [here](https://rlang.r-lib.org/reference/topic-metaprogramming.html#transformation-patterns)
-
-See more [here](https://rlang.r-lib.org/reference/topic-metaprogramming.html).
-
-## For further study
-
-TLDR:
-
-- Watch videos compiled [here](https://rstudio-conf-2022.github.io/build-tidy-tools/materials/day-2-session-3-tidy-eval.html#/additional-material).
-- Peruse modern solutions in [slides](https://rstudio-conf-2022.github.io/build-tidy-tools/materials/day-2-session-3-tidy-eval.html#/title-slide) from rstudio::conf(2022) workshop on tidy tools.
-
-Have time; will read:
-
-- [Programing with dplyr](https://dplyr.tidyverse.org/articles/programming.html#use-a-variable-from-an-shiny-input)
-- [Using ggplot2 in packages](https://ggplot2.tidyverse.org/articles/ggplot2-in-packages.html)
-- `{rlang}` vignettes
-- Guide to tidy eval. Superceded, but nice place to find use cases and past solutions. Archived repo [here](https://github.com/tidyverse/tidyeval). Book built by someone else [here](https://bookdown.dongzhuoer.com/tidyverse/tidyeval/).
 
 
 ## Meeting Videos
@@ -245,12 +383,35 @@ Have time; will read:
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/OBodjc80y-E")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+01:02:07	Trevin:	Yeah, that was a great workshop
+01:02:18	Trevin:	Glad they posted the resources online
+01:06:39	Trevin:	Thank you!
+```
+</details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/8LPw_VTBsmQ")`
+
+<details>
+<summary>Meeting chat log</summary>
+```
+00:50:48	Stone:	https://www.r-bloggers.com/2018/10/quasiquotation-in-r-via-bquote/
+00:58:26	iPhone:	See ya next week!
+```
+</details>
+
+`r knitr::include_url("https://www.youtube.com/embed/g77Jfl_xrXM")`
+
+<details>
+<summary>Meeting chat log</summary>
+```
+00:55:22	collinberke:	https://rlang.r-lib.org/reference/embrace-operator.html?q=enquo#under-the-hood
 ```
 </details>

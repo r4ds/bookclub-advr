@@ -775,3 +775,16 @@ attr(x, "y") <- 1
 01:08:50	Ryan Metcalf:	Without further research, this is the "Unix Epoch”. However, varying operating systems use different Epochs.
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/QcdByYHo1ms")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:54:07	Ron:	https://www.tidyverse.org/blog/2021/03/clock-0-1-0/
+01:14:39	Robert Hilly:	https://www.amazon.com/Effective-Pandas-Patterns-Manipulation-Treading/dp/B09MYXXSFM
+```
+</details>

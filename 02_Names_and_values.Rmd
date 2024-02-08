@@ -189,3 +189,26 @@ x <- c("a", "a", "abc", "d")
 01:07:19	Federica Gazzelloni:	Can I use: gc(reset = TRUE) safely?
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/kpAUoGO6elE")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:09:40	Ryan Honomichl:	https://drdoane.com/three-deep-truths-about-r/
+00:12:51	Robert Hilly:	Be right back
+00:36:12	Ryan Honomichl:	brb
+00:41:18	Ron:	I tried mapply and also got different answers
+00:41:44	collinberke:	Interesting, would like to know more what is going on.
+00:49:57	Robert Hilly:	simple_map <- function(x, f, ...) {
+  out <- vector("list", length(x))
+  for (i in seq_along(x)) {
+    out[[i]] <- f(x[[i]], ...)
+  }
+  out
+}
+```
+</details>

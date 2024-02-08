@@ -301,12 +301,17 @@ There is a solution in the vectors package: `vctrs::vec_restore()`
 
 ### Cohort 6
 
-`r knitr::include_url("https://www.youtube.com/embed/URL")`
+`r knitr::include_url("https://www.youtube.com/embed/vzbl2o-MEeQ")`
 
 <details>
 <summary> Meeting chat log </summary>
 
 ```
-LOG
+00:05:30	Oluwafemi Oyedele:	Hi everyone, Good Evening !!!
+00:09:44	Trevin:	I agree Arthur, need to look at that package some more
 ```
 </details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/zNLx4q8TCKQ")`
