@@ -77,7 +77,7 @@ obj_addr(x)
 ```
 
 
-### Exercises
+## Exercises {-}
 
 Do they all point to the same underlying function object? hint: `lobstr::obj_addr()`
 ```{r}
