@@ -6,7 +6,7 @@
 - identify objects in R (size, id, ...)
 
 
-### Quiz
+## Quiz {-}
 
 1. How do I create a new column called "3" that contains the sum of 1 and 2?
 ```{r}
