@@ -3,6 +3,7 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
+
 # Vectors
 
 **Learning objectives:**
@@ -119,7 +120,7 @@ Note: currently has `questioning` lifecycle badge, since these constructors may 
 
 determine the type of a vector with `typeof()` and its length with `length()`
 
-```{r}
+```{r type_length}
 typeof(lgl_var)
 typeof(int_var)
 typeof(dbl_var)
@@ -148,7 +149,7 @@ sum(c(1, 2, NA, 3), na.rm = TRUE)
 
 To search for missing values use `is.na()`
 
-```{r}
+```{r na_search, error=TRUE}
 x <- c(NA, 5, NA, 10)
 x == NA
 is.na(x)
@@ -244,7 +245,7 @@ Use `as.*()`
 -   Double: `as.double()`
 -   Character: `as.character()`
 
-```{r}
+```{r explicit_coercion}
 dbl_var
 as.integer(dbl_var)
 lgl_var
@@ -328,7 +329,7 @@ Most attributes are lost by most operations.  Only two attributes are routinely 
 
 ~~Three~~ Four ways to name:
 
-```{r}
+```{r names}
 # When creating it: 
 x <- c(A = 1, B = 2, C = 3)
 x
@@ -358,7 +359,7 @@ Thematically but not directly related: labelled class vectors with `haven::label
 
 Create matrices and arrays with `matrix()` and `array()`, or by using the assignment form of `dim()`:
 
-```{r}
+```{r dimensions}
 # Two scalar arguments specify row and column sizes
 x <- matrix(1:6, nrow = 2, ncol = 3)
 x
@@ -472,7 +473,7 @@ attributes(notes_date)
 
 The double component represents the number of days since since `1970-01-01`
 
-```{r}
+```{r days_since_1970}
 date <- as.Date("1970-02-01")
 unclass(date)
 ```
@@ -513,7 +514,7 @@ attributes(note_date_time)
 structure(note_date_time, tzone = "Europe/Paris")
 ```
 
-```{r}
+```{r date_time_format}
 date_time <- as.POSIXct("2024-02-22 12:34:56", tz = "EST")
 unclass(date_time)
 ```
@@ -540,7 +541,7 @@ typeof(one_minute)
 attributes(one_minute)
 ```
 
-```{r}
+```{r durations_math}
 time_since_01_01_1970 <- notes_date - date
 time_since_01_01_1970
 ```
@@ -671,7 +672,7 @@ rlang::is_vector(list_comb2)
 
 Use `as.list()`
 
-```{r}
+```{r list_coercion}
 list(1:3)
 as.list(1:3)
 ```
@@ -680,14 +681,13 @@ as.list(1:3)
 
 Although not often used, the dimension attribute can be added to create list-matrices or list-arrays.
 
-```{r}
+```{r list_matrices_arrays}
 l <- list(1:3, "a", TRUE, 1.0)
 dim(l) <- c(2, 2)
 l
 
 l[[1, 1]]
 ```
-
 
 ## Data frames and tibbles
 
@@ -723,7 +723,7 @@ typeof(df)
 attributes(df)
 ```
 
-```{r}
+```{r df_functions}
 rownames(df)
 colnames(df)
 names(df) # Same as colnames(df)
@@ -854,7 +854,7 @@ tbl$col
 
 **`tibble()` allows you to refer to variables created during construction**
 
-```{r}
+```{r df_tibble_diff}
 tibble::tibble(
   x = 1:3,
   y = x * 2 # x refers to the line above
@@ -867,7 +867,7 @@ tibble::tibble(
 - get and set with `rownames()`
 - can use them to subset rows
 
-```{r}
+```{r row_names}
 df3 <- data.frame(
   age = c(35, 27, 18),
   hair = c("blond", "brown", "black"),
@@ -893,7 +893,7 @@ There are three reasons why row names are undesirable:
 
 Data frames and tibbles print differently
 
-```{r}
+```{r df_tibble_print}
 df3
 tibble::as_tibble(df3)
 ```
@@ -923,7 +923,7 @@ Whether tibble: `tibble::is_tibble`. Note: only tibbles are tibbles. Vanilla dat
 
 List-columns are allowed in data frames but you have to do a little extra work by either adding the list-column after creation or wrapping the list in `I()`
 
-```{r}
+```{r list_columns}
 df4 <- data.frame(x = 1:3)
 df4$y <- list(1:2, 1:3, 1:4)
 df4
@@ -940,7 +940,7 @@ df5
 - As long as the number of rows matches the data frame, it’s also possible to have a matrix or data frame as a column of a data frame.
 - same as list-columns, must either addi the list-column after creation or wrapping the list in `I()`
 
-```{r}
+```{r matrix_df_columns}
 dfm <- data.frame(
   x = 1:3 * 10,
   y = I(matrix(1:9, nrow = 3))
