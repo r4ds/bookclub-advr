@@ -8,13 +8,16 @@
 ## Types of Vectors
 
 ![](images/vectors/summary-tree.png) 
+
 Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
 
 Two main types:
+
 -   **Atomic** Elements all the same type.
 -   **List** Elements are different Types.
 
 Closely related but not technically a vector:
+
 -   **NULL** Null elements. Often length zero.
 
 ## Atomic Vectors
@@ -22,6 +25,7 @@ Closely related but not technically a vector:
 ### Types of atomic vectors
 
 ![](images/vectors/summary-tree-atomic.png) 
+
 Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
 
 -   **Logical**: True/False
@@ -380,7 +384,9 @@ Vector | Matrix	| Array
 
 ## **Class** - S3 atomic vectors
 
-![](images/vectors/summary-tree-s3-1.png) Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
+![](images/vectors/summary-tree-s3-1.png) 
+
+Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
 
 **Having a class attribute turns an object into an S3 object.**
 
@@ -685,7 +691,9 @@ l[[1, 1]]
 
 ## Data frames and tibbles
 
-![](images/vectors/summary-tree-s3-2.png) Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
+![](images/vectors/summary-tree-s3-2.png) 
+
+Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
 
 ### Data frame
 
