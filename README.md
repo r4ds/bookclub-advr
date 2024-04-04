@@ -1,10 +1,10 @@
-# R4DS Advanced R Book Club
+# DSLC Advanced R Book Club
 
-Welcome to the R4DS Advanced R Book Club!
+Welcome to the DSLC Advanced R Book Club!
 
 We are working together to read [_Advanced R_](https://adv-r.hadley.nz/) by Hadley Wickham (Chapman & Hall, copyright 2019, [9780815384571](https://www.routledge.com/Advanced-R-Second-Edition/Wickham/p/book/9780815384571)).
-Join the [#book_club-advr](https://rfordatascience.slack.com/archives/C010GJ3VAE5) channel on the [R4DS Slack](https://r4ds.io/join) to participate.
-As we read, we are producing [notes about the book](https://r4ds.io/advr).
+Join the [#book_club-advr](https://rfordatascience.slack.com/archives/C010GJ3VAE5) channel on the [DSLC Slack](https://dslc.io/join) to participate.
+As we read, we are producing [notes about the book](https://dslc.io/advr).
 
 ## Meeting Schedule
 
@@ -48,4 +48,4 @@ Do these steps each time you present another chapter:
 10. When your PR has been accepted ("merged"), `usethis::pr_finish()` to close out your branch and prepare your local repository for future work.
 11. Now that your local copy is up-to-date with the main repo, you need to update your remote fork. Run `gert::git_push("origin")` or click the `Push` button on the `Git` tab of Rstudio.
 
-When your PR is checked into the main branch, the bookdown site will rebuild, adding your slides to [this site](https://r4ds.io/advr).
+When your PR is checked into the main branch, the bookdown site will rebuild, adding your slides to [this site](https://dslc.io/advr).
