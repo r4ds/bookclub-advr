@@ -36,7 +36,7 @@ bench::mark(
   - Google (rseek)
   - Stackoverflow ([R])
   - https://community.rstudio.com/
-  - R4DS community
+  - DSLC community
 
 ## Do as little as possible
 - use a function tailored to a more specific type of input or output, or to a more specific problem
@@ -239,7 +239,7 @@ stopifnot(all.equal(t1, t3))
 * Read general books about optimisation like Mature optimisation
   or the Pragmatic Programmer
   
-* Read more R code. StackOverflow, R Mailing List, R4DS, GitHub, etc.
+* Read more R code. StackOverflow, R Mailing List, DSLC, GitHub, etc.
 
 ## Meeting Videos
 

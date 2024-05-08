@@ -363,13 +363,17 @@ x <- matrix(1:6, nrow = 2, ncol = 3)
 x
 
 # One vector argument to describe all dimensions
-y <- array(1:12, c(2, 3, 2))
+y <- array(1:24, c(2, 3, 4)) # rows, columns, no of arrays
 y
 
 # You can also modify an object in place by setting dim()
 z <- 1:6
-dim(z) <- c(3, 2)
+dim(z) <- c(2, 3) # rows, columns
 z
+
+a <- 1:24
+dim(a) <- c(2, 3, 4) # rows, columns, no of arrays
+a
 ```
 
 ##### Functions for working with vectors, matrices and arrays:
