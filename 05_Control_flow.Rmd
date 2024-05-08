@@ -35,7 +35,12 @@ There are two main groups of flow control tools: **choices** and **loops**:
 
 Use `if` to specify a block of code to be executed, if a specified condition is true. Use `else` to specify a block of code to be executed, if the same condition is false. 
 
+```{r, eval=FALSE}
+if (condition) true_action
+if (condition) true_action else false_action
+```
 
+(Note braces are only *needed* for compound expressions)
 
 ```{r eval=FALSE, include=T}
 if (test_expression) {   
@@ -45,7 +50,6 @@ if (test_expression) {
 }
 ```
 
-(Note braces are only *needed* for compound expressions)
 
 Can be expanded to more alternatives:
 
@@ -59,6 +63,7 @@ if (test_expression) {
 }
 ```
 
+
 ## Exercise {-}
 Why does this work?
 ```
@@ -71,11 +76,89 @@ if (length(x)) "not empty" else "empty"
 #> [1] "empty"
 ```
 
+`if` returns a value which can be assigned
+
+```{r}
+x1 <- if (TRUE) 1 else 2
+x2 <- if (FALSE) 1 else 2
+
+c(x1, x2)
+```
+
+The book recommends assigning the results of an if statement only when the entire expression fits on one line; otherwise it tends to be hard to read.
+
+
+## Single if without else {-}
+
+When you use the single argument form without an else statement, if invisibly (Section 6.7.2) returns NULL if the condition is FALSE. Since functions like c() and paste() drop NULL inputs, this allows for a compact expression of certain idioms:
+
+```{r, eval=FALSE}
+greet <- function(name, birthday = FALSE) {
+  paste0(
+    "Hi ", name,
+    if (birthday) " and HAPPY BIRTHDAY"
+  )
+}
+greet("Maria", FALSE)
+#> [1] "Hi Maria"
+greet("Jaime", TRUE)
+#> [1] "Hi Jaime and HAPPY BIRTHDAY"
+```
+
+
+
+```{r, eval=FALSE}
+format_lane_text <- function(number){
+
+  paste0(
+    number,
+    " lane",
+    if (number > 1) "s",
+    " of sequencing"
+  )
+}
+
+format_lane_text(1)
+#> [1] "1 lane of sequencing"
+format_lane_text(4)
+#> [1] "4 lanes of sequencing"
+```
+
+
+
+
 ## Invalid inputs {-}
 
-- *Condition* must evaluate to a *single* `TRUE` or `FALSE`, otherwise (usually) an error
+- *Condition* must evaluate to a *single* `TRUE` or `FALSE`
 
-- Exception is a logical vector of length greater than 1, which only generates a warning, unless you have `_R_CHECK_LENGTH_1_CONDITION_` set to `TRUE`, which might be the default now?
+A single number gets coerced to a logical type. 
+
+```{r, eval=FALSE}
+if (56) 1
+#> [1] 1
+if (0.3) 1
+#> [1] 1
+if (0) 1
+```
+
+If the condition cannot evaluate to a *single* `TRUE` or `FALSE`, an error is (usually) produced.
+
+```{r, eval=FALSE}
+if ("text") 1
+#> Error in if ("text") 1: argument is not interpretable as logical
+if ("true") 1 
+#> 1
+if (numeric()) 1
+#> Error in if (numeric()) 1: argument is of length zero
+if (NULL) 1
+#> Error in if (NULL) 1 : argument is of length zero
+if (NA) 1
+#> Error in if (NA) 1: missing value where TRUE/FALSE needed
+```
+
+
+Exception is a logical vector of length greater than 1, which only generates a warning, unless you have `_R_CHECK_LENGTH_1_CONDITION_` set to `TRUE`.   
+This seems to have been the default since R-4.2.0
 
 ```{r, eval=FALSE}
 if (c(TRUE, FALSE)) 1
@@ -117,14 +200,30 @@ Rather then string together multiple if - else if chains, you can often use `swi
 
 
 ```{r message=FALSE, warning=FALSE}
-require(stats)
 centre <- function(x, type) {
   switch(type,
-         mean = mean(x),
-         median = median(x),
-         trimmed = mean(x, trim = .1))
+    mean = mean(x),
+    median = median(x),
+    trimmed = mean(x, trim = .1),
+    stop("Invalid `type` value")
+  )
 }
+```
 
+Last component should always throw an error, as unmatched inputs would otherwise invisibly return NULL.
+Book recommends to only use character inputs for `switch()`.
+
+```{r, eval=FALSE}
+vec <- c(1:20,50:55)
+centre(vec, "mean")
+#> [1] 20.19231
+centre(vec, "median")
+#> [1] 13.5
+centre(vec, "trimmed")
+#> [1] 18.77273
+```
+
+```{r, message=FALSE}
 set.seed(123)
 x <- rlnorm(100)
 
@@ -136,22 +235,54 @@ ggplot(data = data.frame(x), aes(x))+
   geom_density()+
   geom_vline(data = centers, 
              mapping = aes(color = type, xintercept = value), 
-             size=0.5,linetype="dashed") +
+             linewidth=0.5,linetype="dashed") +
   xlim(-1,10)+
   theme_bw()
 ```
 
+
+Example from book of "falling through" to next value
+
+```{r}
+legs <- function(x) {
+  switch(x,
+    cow = ,
+    horse = ,
+    dog = 4,
+    human = ,
+    chicken = 2,
+    plant = 0,
+    stop("Unknown input")
+  )
+}
+legs("cow")
+#> [1] 4
+legs("dog")
+#> [1] 4
+```
+
+
+
+
 ## Using `dplyr::case_when` {-}
 
-- `case_when` is a more general `if_else` and can be used often in place multiple chained `if_else` or sapply'ing `switch`.
+- `case_when` is a more general `if_else` and can be used often in place of multiple chained `if_else` or sapply'ing `switch`.
 
 - It uses a special syntax to allow any number of condition-vector pairs:
 
 ```{r message=FALSE, warning=FALSE}
+set.seed(123)
+x <- rlnorm(100)
+
 centers <- data.frame(type = c('mean', 'median', 'trimmed'))
-centers$value = dplyr::case_when(centers$type == 'mean' ~ mean(x),
-                                 centers$type == 'median' ~ median(x),
-                                 centers$type == 'trimmed' ~ mean(x, trim = 0.1))
+
+centers$value = dplyr::case_when(
+  centers$type == 'mean' ~ mean(x),
+  centers$type == 'median' ~ median(x),
+  centers$type == 'trimmed' ~ mean(x, trim = 0.1),
+  .default = 1000
+  )
+
 centers
 ```
 
@@ -167,6 +298,13 @@ centers
 ```{r}
 for(i in 1:5) {
   print(1:i)
+}
+
+x <- numeric(length=5L)
+df <- data.frame(x=1:5)
+
+for(i in 1:5) {
+  df$y[[i]] <- i+1
 }
 ```
 
@@ -235,7 +373,48 @@ for (i in seq_along(xs)) {
 >Good practice is to use the least-flexible solution to a problem, so you should use `for` wherever possible.
 BUT you shouldn't even use for loops for data analysis tasks as `map()` and `apply()` already provide *less flexible* solutions to most problems. (More in Chapter 9.)
 
+```{r}
+for (i in 1:5) {
+  print(i)
+}
 
+
+```
+
+```{r}
+
+x_option <- function(x) {
+  switch(x,
+    a = "option 1",
+    b = "option 2",
+    c = "option 3"#,
+    #stop("Invalid `x` value")
+  )
+}
+
+```
+
+
+
+```{r}
+i <- 1
+
+while(i <=5 ) {
+  print(i)
+  i <- i+1
+}
+```
+
+```{r}
+i <- 1
+
+repeat {
+  print(i)
+  i <- i+1
+  if (i > 5) break
+}
+
+```
 
 
 ---
