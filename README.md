@@ -18,6 +18,7 @@ If you would like to present, please see the sign-up sheet for your cohort (link
 - Cohort 6 (started 2022-05-25, ended 2023-01-18): [meeting videos](https://www.youtube.com/playlist?list=PL3x6DOfs2NGjnCxGKeDNJUfPpRFI2hJjv)
 - Cohort 7 (started 2022-10-24, ended 2023-06-13): [meeting videos](https://youtube.com/playlist?list=PL3x6DOfs2NGi4I1DhjPufFNbqCry_xQLq)
 - Cohort 8 (started 2024-02-01): [Thursdays, 14:00 CST/CDT](https://www.timeanddate.com/worldclock/converter.html?iso=20240201T200000&p1=24&p2=1440) | [meeting videos](https://www.youtube.com/playlist?list=PL3x6DOfs2NGgr9ZNvaqf4Lb6GN9l6g9dK)
+- Cohort 9 (started 2024-05-24): [Fridays, 11:00 CST/CDT](https://www.timeanddate.com/worldclock/converter.html?iso=20240524T160000&p1=24&p2=1440&p3=179) | [meeting videos](https://www.youtube.com/playlist?list=PL3x6DOfs2NGgR7BeG9Jri8wrSgW_X-s4_)
 
 The slides from the old clubs are in a [separate repository](https://github.com/r4ds/bookclub-Advanced_R).
 
