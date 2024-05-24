@@ -18,7 +18,7 @@
 
 Books suggestions:
 
-- [The Structure and Interpretation of Computer Programs (SICP)](https://mitpress.mit.edu/sites/default/files/sicp/index.html)
+- [The Structure and Interpretation of Computer Programs (SICP)](https://mitp-content-server.mit.edu/books/content/sectbyfn/books_pres_0/6515/sicp.zip/full-text/book/book.html)
 - [Concepts, Techniques and Models of Computer Programming](https://mitpress.mit.edu/books/concepts-techniques-and-models-computer-programming)
 - [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/)
 
