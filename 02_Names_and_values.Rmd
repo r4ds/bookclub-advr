@@ -478,29 +478,29 @@ mem_used()
   *memory fragmentation* [less memory actually available they you might think]
 
 
-## Meeting Videos
+## Meeting Videos {-}
 
-### Cohort 1
+### Cohort 1 {-}
 
 (no video recorded)
 
-### Cohort 2
+### Cohort 2 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/pCiNj2JRK50")`
 
-### Cohort 3
+### Cohort 3 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/-bEXdOoxO_E")`
 
-### Cohort 4
+### Cohort 4 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/gcVU_F-L6zY")`
 
-### Cohort 5
+### Cohort 5 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/aqcvKox9V0Q")`
 
-### Cohort 6
+### Cohort 6 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/O4Oo_qO7SIY")`
 
@@ -519,7 +519,7 @@ mem_used()
 ```
 </details>
 
-### Cohort 7
+### Cohort 7 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/kpAUoGO6elE")`
 
@@ -532,4 +532,12 @@ mem_used()
 00:36:12	Ryan Honomichl:	brb
 00:41:18	Ron:	I tried mapply and also got different answers
 00:41:44	collinberke:	Interesting, would like to know more what is going on.
-00:49:57	Robert Hilly:	simple_map <- f
+00:49:57	Robert Hilly:	simple_map <- function(x, f, ...) {
+  out <- vector("list", length(x))
+  for (i in seq_along(x)) {
+    out[[i]] <- f(x[[i]], ...)
+  }
+  out
+}
+```
+</details>
