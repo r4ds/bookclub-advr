@@ -123,6 +123,7 @@ Note that `.x` is the **name** of the first argument in `map()` (`.f` is the nam
 
 # the task
 map_dbl(mtcars, function(x) length(unique(x)))
+map_dbl(mtcars, function(unicorn) length(unique(unicorn)))
 map_dbl(mtcars, ~length(unique(.x)))
 map_dbl(mtcars, ~length(unique(..1)))
 map_dbl(mtcars, ~length(unique(.)))
@@ -131,6 +132,18 @@ map_dbl(mtcars, ~length(unique(.)))
 map_dbl(mtcars, length)
 map_dbl(mtcars, length(unique))
 map_dbl(mtcars, 1)
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+rm(x)
+```
+
+```{r}
+#| error: true
 
 #error
 map_dbl(mtcars, length(unique()))
@@ -250,6 +263,15 @@ walk(1:3, ~cat(.x, "\n"))
 ```
 
 
+`cat()` does have a result, it's just usually returned invisibly.
+
+```{r}
+cat("hello")
+
+(cat("hello"))
+```
+
+
 We can use `pwalk()` to save a list of plot to disk.  Note that the "p" in `pwalk()` means that we have more than 1 (or 2) variables to pipe into the function.  Also note that the name of the first argument in all of the "p" functions is now `.l` (instead of `.x`).
 
 ```{r}
@@ -340,6 +362,8 @@ The `reduce()` function is a powerful functional that allows you to abstract awa
 
 `reduce()` takes a vector as its first argument, a function as its second argument, and an optional `.init` argument last.  It will then apply the function repeatedly to the vector until there is only a single element left.
 
+(Hint: start at the top of the image and read down.)
+
 ```{r,echo=FALSE,warning=FALSE,message=FALSE}
 knitr::include_graphics(path = 'images/reduce-init.png')
 ```
@@ -422,7 +446,7 @@ accumulate2(
 ```
 
 
-## Not covered: `map_df*()` variants {-}
+## `map_df*()` variants {-}
 
 - `map_dfr()` = row bind the results
 
@@ -447,7 +471,7 @@ map((1:2) * 10, col_stats) |> list_rbind()
 
 ---
 
-## Not covered: `pluck()` {-}
+## `pluck()` {-}
 
 - `pluck()` will pull a single element from a list
 
@@ -472,7 +496,7 @@ map(my_list, pluck, 1)
 map_dbl(my_list, pluck, 1)
 ```
 
-The `map()` functions also have shortcuts for extracting elements from vectors (powered by `purrr::pluck()`).
+The `map()` functions also have shortcuts for extracting elements from vectors (powered by `purrr::pluck()`).  Note that `map(my_list, 3)` is a shortcut for `map(my_list, pluck, 3)`.
 
 ```{r}
 #| error: true
