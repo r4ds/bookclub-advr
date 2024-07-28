@@ -120,7 +120,6 @@ Note that `.x` is the **name** of the first argument in `map()` (`.f` is the nam
 
 ```{r}
 #| error: true
-
 # the task
 map_dbl(mtcars, function(x) length(unique(x)))
 map_dbl(mtcars, function(unicorn) length(unique(unicorn)))
@@ -138,20 +137,15 @@ map_dbl(mtcars, 1)
 #| echo: false
 #| message: false
 #| warning: false
-
 rm(x)
 ```
 
 ```{r}
 #| error: true
-
 #error
 map_dbl(mtcars, length(unique()))
 map_dbl(mtcars, ~length(unique(x)))
-
-
 ```
-
 
 
 ## Modify {-}
@@ -215,8 +209,6 @@ There are many variants
 ![](images/map_variants.png)
 
 
-
-
 ## `map2_*()` {-}
 
 - raise each value `.x` by 2
@@ -261,7 +253,6 @@ map(1:3, ~cat(.x, "\n"))
 ```{r}
 walk(1:3, ~cat(.x, "\n"))
 ```
-
 
 `cat()` does have a result, it's just usually returned invisibly.
 
@@ -523,7 +514,6 @@ map_chr(my_list, "z")
 map_chr(my_list, "z", .default = NA)
 #> [1] "a" "b" NA
 ```
-
 
 
 ## Not covered: `flatten()` {-}
