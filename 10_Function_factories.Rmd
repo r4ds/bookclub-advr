@@ -7,23 +7,17 @@
 - Learn about non-obvious combination of function features
 - Generate a family of functions from data
 
-
-
-## Introduction
-
-
-In this chapter we'll talk about function factories. 
-
-A type of functions that make other functions. 
-
-We'll tackle some challegenges in understanding how to make a workflow of functions. 
-
+```{r, message = FALSE}
+library(rlang)
+library(ggplot2)
+library(scales)
+```
 
 
 ## What is a function factory?
 
 
-A **function factory** is a function that makes functions
+A **function factory** is a function that makes (returns) functions
 
 Factory made function are **manufactured functions**.
 
@@ -50,124 +44,98 @@ cube <- power1(3)
 ```
 `power1()` is the function factory and `square()` and `cube()` are manufactured functions.
 
+## Important to remember
 
-**What we know already: Function Features**
+1. R has First-class functions (can be created with `function()` and `<-`)
 
-1.  first-class functions 
-```{r 10-ex2, eval=FALSE}
-name <- function(variables) {
-  
-}
-```
+> R functions are objects in their own right, a language property often called “first-class functions”  
+> -- [Section 6.2.3](https://adv-r.hadley.nz/functions.html?q=first%20class#first-class-functions)
 
-2.  function environment `fn_env()`
+2. Functions capture (enclose) environment in which they are created
+
 ```{r 10-ex3}
-y <- 1
-f <- function(x) x + y
-rlang::fn_env(f)
+f <- function(x) function(y) x + y
+fn_env(f)    # The function f()
+fn_env(f())  # The function created by f()
 ```
 
-3.  function execution environment
+3. Functions create a new environment on each run
 ```{r 10-ex4}
-h <- function(x) {
-  # 1.
-  a <- 2 # 2. assingned value in the environment
-  x + a
+f <- function(x) {
+  function() x + 1
 }
-y <- h(1) # 3.
+ff <- f(1)
+ff()
+ff()
 ```
 
 
+## Fundamentals - Environment
 
-A **function factory** is defined as a **functional programming tools**, as well as **functionals**, and **function operators**.
+- Environment when function is created defines arguments in the function
+- Use `env_print(fun)` and `fn_env()` to explore
 
-An application would be to tackle the understanding of:
-
-- **Box-Cox transformation**
-- **maximum likelihood** problems
-- **bootstrap resamples**
-
-
-### Factory fundamentals
-
-- Environments
-- Force calculation
-- Super assignments
-- Cleaning up
-
-
-```{r 10-lib}
-library(rlang)
-library(ggplot2)
-library(scales)
-```
-
-Looking at manufactored functions, in our example the `square()` function, and imagine to do not know anything about it. The environment can be investigated with `env_print()` function. Two different enviroments can be found, with the same **parent**. 
-
-```{r 10-6}
-rlang::env_print(square)
-```
-
-To know more about it, **exp** is visible as the engine of the function, the computed value (`square <- power1(2)`) can be retrieved like this:
-```{r 10-7}
+```{r}
+env_print(square)
 fn_env(square)$exp
 ```
-```{r 10-8, echo=FALSE, fig.align="center", fig.dim="50%"}
-knitr::include_graphics("images/10-3-procedure.png")
-```
 
-To make sure every argument is evaluated, whenever x is assigned to a different value.
-```{r 10-9, eval=FALSE}
-force()
-```
+![Blue indicates environment, arrows bindings](images/10-3-procedure.png){width=50% fig-align=center}
 
-```{r 10-10}
-power1 <- function(exp) {
-  function(x) {
-    x ^ exp
-  }
-}
+## Fundamentals - Forcing
+
+- Lazy evaluation means arguments only evaluated when used
+- "[can] lead to a real head-scratcher of a bug"
+
+```{r}
+x <- 2
 square <- power1(x)
-x <- 2
-square(2)
-```
-Assign a value to the variable x, while it goes in the environment, see what's happen to our function:
-```{r 10-11}
 x <- 3
-square(2)
+square(4)
 ```
 
-This is not necessarely wrong, but what if we'd like to set a variable **x** which can assume other values in the environment?
+- *Only applies if passing object as argument*
+- Here argument `2` evaluated when function called
 
-```{r 10-12}
-power2 <- function(exp) {
-  force(exp)
-  function(x) {
-    x ^ exp
-  }
+```{r}
+square <- power1(2)
+x <- 3
+square(4)
+```
+
+So use `force()`! (Unless you want it to change with the `x` in the parent environment)
+
+## Forcing - Reiterated
+
+Only required if the argument is **not** evaluated before the new function is created:
+```{r}
+power1 <- function(exp) {
+  stopifnot(is.numeric(exp))
+  function(x) x ^ exp
 }
 
 x <- 2
-square <- power2(x)
-square(2)
-```
-Look what's happen now:
-```{r 10-13}
+square <- power1(x)
 x <- 3
-square(2)
-```
-Even if we assigned a new value to **x** and it is stored in the environment, our function doesn't take consideration of it and keep doing its calculation based on the first variable assignment.
-
-**The super assignment operator**
-
-```{r 10-14, eval=FALSE}
-<<-
+square(4)
 ```
 
-Another way is to set the function to **mantain the state**, in a way that each invocation will be completely independent, and a new *environment* is created, because considered as a **fresh start** (6.4.3).
+## Fundamentals - Stateful functions
+
+Because
+
+- The enclosing environment is unique and constant, and
+- We have `<<-` (super assignment)
+
+We can *change* that enclosing environment and keep track of that state
+across iterations (!)
+
+- `<-` Assignment in *current* environment
+- `<<-` Assignment in *parent* environment
+
 ```{r 10-15}
 new_counter <- function() {
-  i <- 0 # first assignment inside the function (fresh start)
+  i <- 0        
   function() {
     i <<- i + 1 # second assignment (super assignment)
     i
@@ -176,41 +144,207 @@ new_counter <- function() {
 
 counter_one <- new_counter()
 counter_two <- new_counter()
-counter_one()
-counter_one()
-counter_two()
+c(counter_one(), counter_one(), counter_one())
+c(counter_two(), counter_two(), counter_two())
 ```
 
 
 > "As soon as your function starts managing the state of multiple variables, it’s better to switch to R6"
 
+## Fundamentals - Garbage collection
+
+- Because environment is attached to (enclosed by) function, temporary objects
+don't go away.
+
 **Cleaning up** using `rm()` inside a function:
 ```{r 10-16}
-f1 <- function(n) {
+f_dirty <- function(n) {
   x <- runif(n)
   m <- mean(x)
   function() m
 }
 
-g1 <- f1(1e6)
-lobstr::obj_size(g1)
-#> 8,013,104 B
-
-f2 <- function(n) {
+f_clean <- function(n) {
   x <- runif(n)
   m <- mean(x)
-  rm(x)
+  rm(x)            # <---- Important part!
   function() m
 }
 
-g2 <- f2(1e6)
-lobstr::obj_size(g2)
-#> 12,944 B
+lobstr::obj_size(f_dirty(1e6))
+lobstr::obj_size(f_clean(1e6))
+
 ```
 
 
+## Useful Examples - Histograms and binwidth
 
-### Example of: Graphical factories
+**Useful when...**  
+
+- You need to pass a function  
+- You don't want to have to re-write the function every time 
+  (the *default* behaviour of the function should be flexible)
+
+
+For example, these bins are not appropriate
+```{r}
+#| fig-asp: 0.3
+sd <- c(1, 5, 15)
+n <- 100
+df <- data.frame(x = rnorm(3 * n, sd = sd), sd = rep(sd, n))
+
+ggplot(df, aes(x)) + 
+  geom_histogram(binwidth = 2) + 
+  facet_wrap(~ sd, scales = "free_x") + 
+  labs(x = NULL)
+```
+
+We could just make a function...
+```{r}
+#| fig-asp: 0.3
+binwidth_bins <- function(x) (max(x) - min(x)) / 20
+
+ggplot(df, aes(x = x)) + 
+  geom_histogram(binwidth = binwidth_bins) + 
+  facet_wrap(~ sd, scales = "free_x") + 
+  labs(x = NULL)
+```
+
+But if we want to change the number of bins (20) we'd have to re-write the function
+each time.
+
+If we use a factory, we don't have to do that.
+```{r}
+#| fig-asp: 0.3
+binwidth_bins <- function(n) {
+  force(n)
+  function(x) (max(x) - min(x)) / n
+}
+
+ggplot(df, aes(x = x)) + 
+  geom_histogram(binwidth = binwidth_bins(20)) + 
+  facet_wrap(~ sd, scales = "free_x") + 
+  labs(x = NULL, title = "20 bins")
+
+ggplot(df, aes(x = x)) + 
+  geom_histogram(binwidth = binwidth_bins(5)) + 
+  facet_wrap(~ sd, scales = "free_x") + 
+  labs(x = NULL, title = "5 bins")
+```
+
+> Similar benefit in Box-cox example
+
+## Useful Examples - Wrapper
+
+**Useful when...**
+
+- You want to create a function that wraps a bunch of other functions
+
+For example, `ggsave()` wraps a bunch of different graphics device functions: 
+
+```{r}
+# (Even more simplified)
+plot_dev <- function(ext, dpi = 96) {
+  force(dpi)
+  
+  switch(
+    ext,
+    svg = function(filename, ...) svglite::svglite(file = filename, ...),
+    png = function(...) grDevices::png(..., res = dpi, units = "in"),
+    jpg = ,
+    jpeg = function(...) grDevices::jpeg(..., res = dpi, units = "in"),
+    stop("Unknown graphics extension: ", ext, call. = FALSE)
+  )
+}
+```
+
+Then `ggsave()` uses
+
+```
+ggsave <- function(...) {
+  dev <- plot_dev(device, filename, dpi = dpi)
+  ...
+  dev(filename = filename, width = dim[1], height = dim[2], bg = bg, ...)
+  ...
+}
+```
+
+Otherwise, would have to do something like like a bunch of if/else statements.
+
+## Useful Examples - Optimizing
+
+**Useful when...**
+
+- Want to pass function on to `optimise()`/`optimize()`
+- Want to perform pre-computations to speed things up
+- Want to re-use this for other datasets
+
+(*Skipping to final results from section*)
+
+Here, using MLE want to to find the most likely value of lambda for a Poisson distribution
+and this data.
+```{r}
+x1 <- c(41, 30, 31, 38, 29, 24, 30, 29, 31, 38)
+```
+
+We'll create a function that creates a lambda assessment function for a given 
+data set.
+
+```{r}
+ll_poisson <- function(x) {
+  n <- length(x)
+  sum_x <- sum(x)
+  c <- sum(lfactorial(x))
+
+  function(lambda) {
+    log(lambda) * sum_x - n * lambda - c
+  }
+}
+```
+
+We can use this on different data sets, but here use ours `x1`
+```{r}
+ll <- ll_poisson(x1)
+ll(10)  # Log-probility of a lambda = 10
+```
+
+Use `optimise()` rather than trial and error
+```{r}
+optimise(ll, c(0, 100), maximum = TRUE)
+```
+
+Result: Highest log-probability is -30.3, best lambda is 32.1
+
+
+## Function factories + functionals
+
+Combine functionals and function factories to turn data into many functions.
+
+```{r}
+names <- list(
+  square = 2, 
+  cube = 3, 
+  root = 1/2, 
+  cuberoot = 1/3, 
+  reciprocal = -1
+)
+funs <- purrr::map(names, power1)
+names(funs)
+funs$root(64)
+funs$square(3)
+```
+
+Avoid the prefix with
+
+- `with()` - `with(funs, root(100))`
+  - Temporary, clear, short-term
+- `attach()` - `attach(funs)` / `detach(funs)`
+  - Added to search path (like package function), cannot be overwritten, but can be attached multiple times!
+- `rlang::env_bind` - `env_bind(globalenv(), !!!funs)` / `env_unbind(gloablenv(), names(funs))`
+  - Added to global env (like created function), can be overwritten
+
+<!--
+## EXTRA - Previous set of slides
 
 Graphical factories **useful function factories**, such as:
 
@@ -495,7 +629,7 @@ rlang::env_unbind(globalenv(), names(funs))
 ```
 
 
-
+-->
 
 
 ## Meeting Videos
