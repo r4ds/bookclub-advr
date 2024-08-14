@@ -22,7 +22,7 @@ utils::sessionInfo()
 
 ## Why OOP is hard in R
 
-- Multiple OOP systems exist: S3, R6, S4, and (now/soon) R7.
+- Multiple OOP systems exist: S3, R6, S4, and (now/soon) S7.
 - Multiple preferences: some users prefer one system; others, another.
 - R's OOP systems are different enough that prior OOP experience may not transfer well.
 
