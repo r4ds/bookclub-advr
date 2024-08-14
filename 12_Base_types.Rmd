@@ -5,15 +5,31 @@
 - Understand what OOP means--at the very least for R
 - Know how to discern an object's nature--base or OO--and type
 
+![John Chambers, creator of S programming language](images/base_types/john_chambers_about_objects.png)
+
+<details>
+<summary>Session Info</summary>
+```{r}
+library("DiagrammeR")
+```
+
+```{r}
+utils::sessionInfo()
+```
+
+</details>
+
+
 ## Why OOP is hard in R
 
-- Multiple OOP systems exist: S3, R6, S4, and (now/soon) R7.
+- Multiple OOP systems exist: S3, R6, S4, and (now/soon) S7.
 - Multiple preferences: some users prefer one system; others, another.
 - R's OOP systems are different enough that prior OOP experience may not transfer well.
 
-## What is OOP in general?
+[![XKCD 927](images/base_types/standards.png)](https://xkcd.com/927/)
 
-### Two big ideas
+
+## OOP: Big Ideas
 
 1. **Polymorphism.** Function has a single interface (outside), but contains (inside) several class-specific implementations.
 ```{r, eval=FALSE}
@@ -28,18 +44,33 @@ some_function <- function(x) {
   } ...
 }
 ```
+
+<details>
+<summary>Example of polymorphism</summary>
+
+```{r polymorphism_example}
+# data frame
+summary(mtcars[,1:4])
+
+# statistical model
+lin_fit <- lm(mpg ~ hp, data = mtcars)
+summary(lin_fit)
+```
+
+</details>
+
 2. **Encapsulation.** Function "encapsulates"--that is, encloses in an inviolate capsule--both data and how it acts on data. Think of a REST API: a client interacts with with an API only through a set of discrete endpoints (i.e., things to get or set), but the server does not otherwise give access to its internal workings or state. Like with an API, this creates a separation of concerns: OOP functions take inputs and yield results; users only consume those results.
 
-### A few practical ideas
+## OOP: Properties
 
-#### Objects have class
+### Objects have class
 
 - Class defines:
   - Method (i.e., what can be done with object)
   - Fields (i.e., data that defines an instance of the class)
 - Objects are an instance of a class
 
-#### Class is inherited
+### Class is inherited
 
 - Class is defined:
   - By an object's class (e.g., ordered factor)
@@ -49,9 +80,7 @@ some_function <- function(x) {
   - If an object doesn't have a method, use the method of the parent class
   - The process of finding a method, is called dispatch
 
-## What about OOP in R?
-
-### Two main paradigms
+## OOP in R: Two Paradigms
 
 **1. Encapsulated OOP**
 
@@ -68,9 +97,42 @@ some_function <- function(x) {
 - From the outside, look like regular functions: `generic(object, arg2, arg3)`
 - From the inside, components are also functions
 
-### Overview of the systems
+### Concept Map
 
-In base R:
+```{r, echo = FALSE, eval = TRUE}
+DiagrammeR::mermaid("
+graph LR
+
+OOP --> encapsulated_OOP
+OOP --> functional_OOP
+
+functional_OOP --> S3
+functional_OOP --> S4
+
+encapsulated_OOP --> R6
+encapsulated_OOP --> RC
+")
+```
+
+<details>
+<summary>Mermaid code</summary>
+```{r, echo = TRUE, eval = FALSE}
+DiagrammeR::mermaid("
+graph LR
+
+OOP --> encapsulated_OOP
+OOP --> functional_OOP
+
+functional_OOP --> S3
+functional_OOP --> S4
+
+encapsulated_OOP --> R6
+encapsulated_OOP --> RC
+")
+```
+</details>
+
+## OOP in base R
 
 - **S3**
   - Paradigm: functional OOP
@@ -79,7 +141,7 @@ In base R:
   - Downsides: no guarantees
 - **S4**
   - Paradigm: functional OOP
-  - Noteworthy: rewrite of S3
+  - Noteworthy: rewrite of S3, used by `Bioconductor`
   - Use case: "more guarantees and greater encapsulation" than S3
   - Downsides: higher setup cost than S3
 - **RC**
@@ -88,7 +150,7 @@ In base R:
   - Use cases: problems that are hard to tackle with functional OOP (in S3 and S4)
   - Downsides: harder to reason about (because of modify-in-place logic)
 
-In packages:
+## OOP in packages
 
 - **R6**
   - Paradigm: encapsulated OOP
@@ -104,7 +166,7 @@ In packages:
   - Paradigm: hybrid functional and encapsulated (?)
 - **proto**
   - Paradigm: prototype OOP
-  - Noteworthy: OOP style used in ggplot2
+  - Noteworthy: OOP style used in `ggplot2`
 
 ## How can you tell if an object is base or OOP?
 
@@ -127,6 +189,12 @@ is.object(mtcars)
 sloop::otype(mtcars)
 ```
 
+### sloop
+
+* **S** **L**anguage **O**bject-**O**riented **P**rogramming
+
+[![XKCD 927](images/base_types/sloop_john_b.png)](https://en.wikipedia.org/wiki/Sloop_John_B)
+
 ### Class
 
 OO objects have a "class" attribute:
@@ -135,7 +203,7 @@ OO objects have a "class" attribute:
 # base object has no class
 attr(1:10, "class")
 
-# OO object has one or more class
+# OO object has one or more classes
 attr(mtcars, "class")
 ```
 
@@ -187,6 +255,57 @@ typeof(quote(a))
 typeof(quote(a + 1))
 typeof(formals(my_fun))
 ```
+
+### Concept Map
+
+![Base types in R](images/base_types/base_types_Sankey_graph.png)
+
+<details>
+<summary>Sankey graph code</summary>
+
+The graph above was made with [SankeyMATIC](https://sankeymatic.com/)
+
+```
+// toggle "Show Values"
+// set Default Flow Colors from "each flow's Source"
+
+base\ntypes [8] vectors
+base\ntypes [3] functions
+base\ntypes [1] environments
+base\ntypes [1] S4 OOP
+base\ntypes [3] language\ncomponents
+base\ntypes [6] C components
+
+vectors [1] NULL
+vectors [1] logical
+vectors [1] integer
+vectors [1] double
+vectors [1] complex
+vectors [1] character
+vectors [1] list
+vectors [1] raw
+
+functions [1] closure
+functions [1] special
+functions [1] builtin
+
+environments [1] environment
+
+S4 OOP [1] S4
+
+language\ncomponents [1] symbol
+language\ncomponents [1] language
+language\ncomponents [1] pairlist
+
+C components [1] externalptr
+C components [1] weakref
+C components [1] bytecode
+C components [1] promise
+C components [1] ...
+C components [1] any
+```
+
+</details>
 
 ## Be careful about the numeric type
 
