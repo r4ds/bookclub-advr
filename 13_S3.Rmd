@@ -1,5 +1,7 @@
 # S3
 
+## Introcudion
+
 ## Basics
 
 - Has class
@@ -9,7 +11,7 @@
 
 ## Classes
 
-### Theory
+**Theory:**
 
 What is class?
 
@@ -36,7 +38,7 @@ Some advice on style:
   - Advice: Consider using/including package name to avoid collision with name of another class (e.g., `blob`, which defines a single class; haven has `labelled` and `haven_labelled`)
   - Convention: letters and `_`; avoid `.` since it might be confused as separator between generic and class name
 
-### Practice
+**Practice:**
 
 How to compose a class in practice?
 
@@ -112,6 +114,17 @@ validate_factor <- function(x) {
 validate_factor(new_factor(1:5, "a"))
 ```
 
+Maybe there is a typo in the `validate_factor()` function? Do the integers need to start at 1 and be consecutive?  
+
+* If not, then `length(levels) < max(values)` should be `length(levels) < length(values)`, right?
+* If so, why do the integers need to start at 1 and be consecutive?  And if they need to be as such, we should tell the user, right?
+
+```{r}
+validate_factor(new_factor(1:3, levels = c("a", "b", "c")))
+validate_factor(new_factor(10:12, levels = c("a", "b", "c")))
+```
+
+
 ### Helpers
 
 Some desired virtues:
@@ -121,9 +134,57 @@ Some desired virtues:
 - Issue error informative, user-facing error messages
 - Adopt thoughtful/useful defaults or type conversion
 
+
+Exercise 5 in 13.3.4
+
+Q: Read the documentation for `utils::as.roman()`. How would you write a constructor for this class? Does it need a validator? What might a helper do?
+
+A: This function transforms numeric input into Roman numbers. It is built on the integer type, which results in the following constructor.
+ 
+ 
+```{r}
+new_roman <- function(x = integer()) {
+  stopifnot(is.integer(x))
+  structure(x, class = "roman")
+}
+```
+
+The documentation tells us, that only values between 1 and 3899 are uniquely represented, which we then include in our validation function.
+
+```{r}
+validate_roman <- function(x) {
+  values <- unclass(x)
+  
+  if (any(values < 1 | values > 3899)) {
+    stop(
+      "Roman numbers must fall between 1 and 3899.",
+      call. = FALSE
+    )
+  }
+  x
+}
+```
+
+For convenience, we allow the user to also pass real values to a helper function.
+
+```{r}
+roman <- function(x = integer()) {
+  x <- as.integer(x)
+  
+  validate_roman(new_roman(x))
+}
+
+# Test
+roman(c(1, 753, 2024))
+
+roman(0)
+```
+
+
+
 ## Generics and methods
 
-### Generic functions
+**Generic functions:**
 
 - Consist of a call to `UseMethod()`
 - Pass arguments from the generic to the dispatched method "auto-magically"
@@ -166,11 +227,35 @@ Two rules:
 - Only write a method if you own the generic. Otherwise, bad manners.
 - Method must have same arguments as its generic--with one important exception: `...`
 
-### Examples caught in the wild
+**Example from text:**
+
+I thought it would be good for us to work through this problem.
+
+> Carefully read the documentation for `UseMethod()` and explain why the following code returns the results that it does. What two usual rules of function evaluation does `UseMethod()` violate?
+
+```{r}
+g <- function(x) {
+  x <- 10
+  y <- 10
+  UseMethod("g")
+}
+g.default <- function(x) c(x = x, y = y)
+
+x <- 1
+y <- 1
+g(x)
+g.default(x)
+```
+
+
+
+**Examples caught in the wild:**
 
 - [`haven::zap_label`](https://github.com/tidyverse/haven/blob/main/R/zap_label.R), which removes column labels
 - [`dplyr::mutate`](https://github.com/tidyverse/dplyr/blob/main/R/mutate.R)
 - [`tidyr::pivot_longer`](https://github.com/tidyverse/tidyr/blob/main/R/pivot-long.R)
+
+## Object styles
 
 ## Inheritance
 
@@ -185,12 +270,12 @@ class(Sys.time())
 ```{r}
 sloop::s3_dispatch(print(ordered("x")))
 ```
-3. Method can delegate to another method via `NextMethod()`, which is indicated by `<-` as below:
+3. Method can delegate to another method via `NextMethod()`, which is indicated by `->` as below:
 ```{r}
 sloop::s3_dispatch(ordered("x")[1])
 ```
 
-### NextMethod()
+### `NextMethod()`
 
 Consider `secret` class that masks each character of the input with `x` in output
 
@@ -205,17 +290,30 @@ print.secret <- function(x, ...) {
   invisible(x)
 }
 
-x <- new_secret(c(15, 1, 456))
-x
+y <- new_secret(c(15, 1, 456))
+y
 ```
 
-Notice that the `[` method is problematic in that it does not preserve the `secret` class
+Notice that the `[` method is problematic in that it does not preserve the `secret` class.  Additionally, it returns `15` as the first element instead of `xx`.
 
 ```{r}
-sloop::s3_dispatch(x[1])
+sloop::s3_dispatch(y[1])
+y[1]
 ```
 
 Fix this with a `[.secret` method:
+
+The first fix (not run) is inefficient because it creates a copy of `y`.
+
+```{r eval = FALSE}
+# not run
+`[.secret` <- function(x, i) {
+  x <- unclass(x)
+  new_secret(x[i])
+}
+```
+
+`NextMethod()` is more efficient.
 
 ```{r}
 `[.secret` <- function(x, i) {
@@ -225,11 +323,13 @@ Fix this with a `[.secret` method:
 }
 ```
 
-Notice that `[.secret` is selected for dispatch, but that the method delegates to the internal `[`
+Notice that `[.secret` is selected for dispatch, but that the method delegates to the internal `[`.
 
 ```{r}
-sloop::s3_dispatch(x[1])
+sloop::s3_dispatch(y[1])
+y[1]
 ```
+
 
 ### Allowing subclassing
 
