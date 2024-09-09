@@ -18,7 +18,7 @@
 
 ## S4 versus S3 
 
-**Which functional object system to use, S4 or S3? **
+**Which functional object system to use, S3 or S4? **
 
 - **S3** is a simple and flexible system.
    
@@ -37,7 +37,7 @@
    
    - Requires significant up front investment in design, but payoff is a robust system that enforces conventions.
    
-   - S4 Documentation is challenging to use. 
+   - S4 documentation is challenging to use. 
     
 
 
@@ -52,7 +52,7 @@
 knitr::include_graphics("images/16-trade-offs.png")
 ```
 
-## Namespacing {-}
+## 16.3.1 Namespacing {-}
 
 **Where methods are found?**
 
@@ -70,7 +70,7 @@ knitr::include_graphics("images/16-trade-offs.png")
    - Disadvantage: Lack of a uniform API, except by convention.
    
 
-## Threading state {-}
+## 16.3.2 Threading state {-}
 
 
 In S3 the challenge is to return a value and modify the object. 
@@ -147,7 +147,7 @@ s$pop()
 ```
 
 
-## Method chaining {-}
+## 16.6.3 Method chaining {-}
 
 Useful to compose functions from left-to-right.
 
@@ -172,7 +172,7 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/standards_2x.png")
 
 ### Primary references: {-}
 
-* Docs: https://rconsortium.github.io/OOP-WG/
+* Docs: https://rconsortium.github.io/S7/
 
 * Talk by Hadley Wickham https://www.youtube.com/watch?v=P3FxCvSueag
 
@@ -187,7 +187,7 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham
 
 * Compatible with S3: S7 objects are S3 objects!  Can even extend an S3 object with S7
 
-* Somewhat compatible with S4, see [compatability vignette](https://rconsortium.github.io/OOP-WG/articles/compatibility.html) for details. 
+* Somewhat compatible with S4, see [compatability vignette](https://rconsortium.github.io/S7/articles/compatibility.html) for details. 
 
 * Helpful error messages! 
 
@@ -195,10 +195,9 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham
 
 ## Abbreviated introduction based on the vignette {-}
 
-To install: 
+To install (it's now on CRAN): 
 ```{r, eval=FALSE}
-# install.packages("remotes")
-remotes::install_github("rconsortium/OOP-WG")
+install.packages("S7")
 ```
 
 
@@ -219,9 +218,9 @@ dog
 #>  $ age : <integer> or <double>
 ```
 
-Note the 'class_character', these are S7 classes corresponding to the base classes.
+Note the `class_character`, these are S7 classes corresponding to the base classes.
 
-Now to use it:
+Now to use it to create an object of class _dog_:
 
 ```{r, eval = FALSE}
 lola <- dog(name = "Lola", age = 11)
@@ -232,7 +231,7 @@ lola
 #>  @ age : num 11
 ```
 
-Properties can be set / read with '@', with automatic validation ('safety rails') based on the type!
+Properties can be set/read with `@`, with automatic validation ('safety rails') based on the type!
 
 ```{r, eval = FALSE}
 
@@ -247,7 +246,7 @@ lola@age <- "twelve"
 
 ```
 
-Note thehelpful error message!
+Note the helpful error message!
 
 Like S3 (and S4) S7 has generics, implemented with `new_generic` and `method` for particular methods:
 
@@ -303,9 +302,9 @@ print(fluffy)
 
 ```
 
-*For validators, inheritance, dynamic properties and more,  see the [vignette!](https://rconsortium.github.io/OOP-WG/articles/S7.html)*
+*For validators, inheritance, dynamic properties and more,  see the [vignette!](https://rconsortium.github.io/S7/articles/S7.html)*
 
-https://rconsortium.github.io/OOP-WG/articles/S7.html
+https://rconsortium.github.io/S7/articles/S7.html
 
 ## So... switch to S7 ? {-}
 
@@ -314,7 +313,7 @@ $$
 \textbf{Soon}^{tm}
 $$
 
-* Not yet... still in development! 
+* Not yet... still in development! ![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)
 
 * But consider trying it out:
 
@@ -326,7 +325,28 @@ $$
    
 * In particular, if you have a new project that might require the complexity of S4, consider S7 instead!
 
-## Meeting Videos
+## OOP system comparison {-}
+
+| Characteristic | S3 | S4 | S7 | R6 |
+|-------|------|------|------|------|
+| _Package_ | base R | base R  | [S7](https://rconsortium.github.io/S7/)  | [R6](https://r6.r-lib.org/)  |
+| _Programming type_ | Functional | Functional | Functional | Encapulated |
+| _Complexity_ | Low  | High  | Medium  | High  |
+| _Payoff_ | Low  | High  | High  | High  |
+| _Team size_ | Small | Small-large | Large  | ?  |
+| _Namespace_ | Global | Global?  | Global?  | Local  |
+| _Modify in place_ | No | No  | No  | Yes  |
+| _Method chaining_ | `|>` | ?  | ?  | `$`  |
+| _Get/set component_ | `$` | `@` | `@` | `$` |
+| _Create class_ | `class()` or `structure()` with `class` argument | `setClass()` | `new_class()` | `R6Class()` |
+| _Create validator_ | `function()` | `setValidity()` or `validator` argument in `setClass()` | `validator` argument in `new_class()` | `$validate()` |
+| _Create generic_ | `UseMethod()` | `setGeneric()` | `new_generic()` | NA |
+| _Create method_ | `function()` assigned to `generic.method` | `setMethod()` | `method()` | `R6Class()` |
+| _Create object_ | `class()` or `structure()` with `class` argument or constructor function | `new()` | Use registered method function | `$new()` |
+| _Additional components_ | attributes  | slots  | properties  |  |
+|  |  |  |  |  |
+
+## Meeting Videos {-}
 
 ### Cohort 1
 
