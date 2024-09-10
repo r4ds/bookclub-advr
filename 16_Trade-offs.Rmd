@@ -7,7 +7,7 @@
 - Brief intro to S7 (the object system formerly known as R7)
 
 
-## Introduction
+## Introduction {-}
 
 * We have three OOP systems introduced so far (S3, S4, R6) 
 
@@ -16,9 +16,9 @@
 * If you have experience in other languages,  *Resist* the temptation to use R6 even though it will feel more familiar!
 
 
-## S4 versus S3 
+## S4 versus S3 {-}
 
-**Which functional object system to use, S4 or S3? **
+**Which functional object system to use, S3 or S4? **
 
 - **S3** is a simple and flexible system.
    
@@ -37,20 +37,22 @@
    
    - Requires significant up front investment in design, but payoff is a robust system that enforces conventions.
    
-   - S4 Documentation is challenging to use. 
+   - S4 documentation is challenging to use. 
     
 
 
-## R6 versus S3
+## R6 versus S3 {-}
 
 **R6** is built on **encapsulated objects**, rather than generic functions.   
 
 
 **Big differences: general trade-offs**
 
-```{r 16-Trade-offs-4, echo=FALSE,fig.align='center'}
-knitr::include_graphics("images/16-trade-offs.png")
-```
+* A generic is a regular function so it lives in the global namespace. An R6 method belongs to an object so it lives in a local namespace. This influences how we think about naming.
+
+* R6's reference semantics allow methods to simultaneously return a value and modify an object. This solves a painful problem called "threading state".
+
+* You invoke an R6 method using `$`, which is an infix operator. If you set up your methods correctly you can use chains of method calls as an alternative to the pipe.
 
 ## Namespacing {-}
 
@@ -153,7 +155,7 @@ Useful to compose functions from left-to-right.
 
 Use of the operators:
 
-- S3: `%>%`
+- S3: `|>` or `%>%`
 
 - R6: `$`
 
@@ -172,9 +174,9 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/standards_2x.png")
 
 ### Primary references: {-}
 
-* Docs: https://rconsortium.github.io/OOP-WG/
+* Docs: <https://rconsortium.github.io/S7/>
 
-* Talk by Hadley Wickham https://www.youtube.com/watch?v=P3FxCvSueag
+* Talk by Hadley Wickham <https://www.youtube.com/watch?v=P3FxCvSueag>
 
 ## S7 briefly {-}
 
@@ -184,10 +186,11 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/standards_2x.png")
 "A little bit more complex then S3, with almost all of the features, 
 all of the payoff of S4" - rstudio conf 2022, Hadley Wickham
 ```
+* S3 + S4 = S7
 
 * Compatible with S3: S7 objects are S3 objects!  Can even extend an S3 object with S7
 
-* Somewhat compatible with S4, see [compatability vignette](https://rconsortium.github.io/OOP-WG/articles/compatibility.html) for details. 
+* Somewhat compatible with S4, see [compatability vignette](https://rconsortium.github.io/S7/articles/compatibility.html) for details. 
 
 * Helpful error messages! 
 
@@ -195,10 +198,9 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham
 
 ## Abbreviated introduction based on the vignette {-}
 
-To install: 
+To install (it's now on CRAN): 
 ```{r, eval=FALSE}
-# install.packages("remotes")
-remotes::install_github("rconsortium/OOP-WG")
+install.packages("S7")
 ```
 
 
@@ -219,9 +221,9 @@ dog
 #>  $ age : <integer> or <double>
 ```
 
-Note the 'class_character', these are S7 classes corresponding to the base classes.
+Note the `class_character`, these are S7 classes corresponding to the base classes.
 
-Now to use it:
+Now to use it to create an object of class _dog_:
 
 ```{r, eval = FALSE}
 lola <- dog(name = "Lola", age = 11)
@@ -232,7 +234,7 @@ lola
 #>  @ age : num 11
 ```
 
-Properties can be set / read with '@', with automatic validation ('safety rails') based on the type!
+Properties can be set/read with `@`, with automatic validation ('safety rails') based on the type!
 
 ```{r, eval = FALSE}
 
@@ -247,7 +249,7 @@ lola@age <- "twelve"
 
 ```
 
-Note thehelpful error message!
+Note the helpful error message!
 
 Like S3 (and S4) S7 has generics, implemented with `new_generic` and `method` for particular methods:
 
@@ -303,9 +305,8 @@ print(fluffy)
 
 ```
 
-*For validators, inheritance, dynamic properties and more,  see the [vignette!](https://rconsortium.github.io/OOP-WG/articles/S7.html)*
+*For validators, inheritance, dynamic properties and more,  see the [vignette!](https://rconsortium.github.io/S7/articles/S7.html)*
 
-https://rconsortium.github.io/OOP-WG/articles/S7.html
 
 ## So... switch to S7 ? {-}
 
@@ -314,7 +315,7 @@ $$
 \textbf{Soon}^{tm}
 $$
 
-* Not yet... still in development! 
+* Not yet... still in development! ![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)
 
 * But consider trying it out:
 
@@ -326,29 +327,50 @@ $$
    
 * In particular, if you have a new project that might require the complexity of S4, consider S7 instead!
 
-## Meeting Videos
+## OOP system comparison {-}
 
-### Cohort 1
+| Characteristic | S3 | S4 | S7 | R6 |
+|-------|------|------|------|------|
+| _Package_ | base R | base R  | [S7](https://rconsortium.github.io/S7/)  | [R6](https://r6.r-lib.org/)  |
+| _Programming type_ | Functional | Functional | Functional | Encapulated |
+| _Complexity_ | Low  | High  | Medium  | High  |
+| _Payoff_ | Low  | High  | High  | High  |
+| _Team size_ | Small | Small-large | Large  | ?  |
+| _Namespace_ | Global | Global?  | Global?  | Local  |
+| _Modify in place_ | No | No  | No  | Yes  |
+| _Method chaining_ | `|>` | `|>`?  | `|>`?  | `$`  |
+| _Get/set component_ | `$` | `@` | `@` | `$` |
+| _Create class_ | `class()` or `structure()` with `class` argument | `setClass()` | `new_class()` | `R6Class()` |
+| _Create validator_ | `function()` | `setValidity()` or `validator` argument in `setClass()` | `validator` argument in `new_class()` | `$validate()` |
+| _Create generic_ | `UseMethod()` | `setGeneric()` | `new_generic()` | NA |
+| _Create method_ | `function()` assigned to `generic.method` | `setMethod()` | `method()` | `R6Class()` |
+| _Create object_ | `class()` or `structure()` with `class` argument or constructor function | `new()` | Use registered method function | `$new()` |
+| _Additional components_ | attributes  | slots  | properties  |  |
+|  |  |  |  |  |
+
+## Meeting Videos {-}
+
+### Cohort 1 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/W1uc8HbyZvI")`
 
-### Cohort 2
+### Cohort 2 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/bzo37PHCM1I")`
 
-### Cohort 3
+### Cohort 3 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/_byYFTQHp1Y")`
 
-### Cohort 4
+### Cohort 4 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/vdKDPBcOc6Y")`
 
-### Cohort 5
+### Cohort 5 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/3EvqtVYTFVM")`
 
-### Cohort 6
+### Cohort 6 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/vEButxFIvLw")`
 
@@ -367,6 +389,6 @@ $$
 ```
 </details>
 
-### Cohort 7
+### Cohort 7 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/2vxnzqWp-OU")`
