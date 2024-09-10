@@ -54,7 +54,7 @@
 
 * You invoke an R6 method using `$`, which is an infix operator. If you set up your methods correctly you can use chains of method calls as an alternative to the pipe.
 
-## 16.3.1 Namespacing {-}
+## Namespacing {-}
 
 **Where methods are found?**
 
