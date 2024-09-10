@@ -48,9 +48,11 @@
 
 **Big differences: general trade-offs**
 
-```{r 16-Trade-offs-4, echo=FALSE,fig.align='center'}
-knitr::include_graphics("images/16-trade-offs.png")
-```
+* A generic is a regular function so it lives in the global namespace. An R6 method belongs to an object so it lives in a local namespace. This influences how we think about naming.
+
+* R6's reference semantics allow methods to simultaneously return a value and modify an object. This solves a painful problem called "threading state".
+
+* You invoke an R6 method using `$`, which is an infix operator. If you set up your methods correctly you can use chains of method calls as an alternative to the pipe.
 
 ## 16.3.1 Namespacing {-}
 
@@ -153,7 +155,7 @@ Useful to compose functions from left-to-right.
 
 Use of the operators:
 
-- S3: `%>%`
+- S3: `|>` or `%>%`
 
 - R6: `$`
 
@@ -172,9 +174,9 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/standards_2x.png")
 
 ### Primary references: {-}
 
-* Docs: https://rconsortium.github.io/S7/
+* Docs: <https://rconsortium.github.io/S7/>
 
-* Talk by Hadley Wickham https://www.youtube.com/watch?v=P3FxCvSueag
+* Talk by Hadley Wickham <https://www.youtube.com/watch?v=P3FxCvSueag>
 
 ## S7 briefly {-}
 
@@ -184,6 +186,7 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/standards_2x.png")
 "A little bit more complex then S3, with almost all of the features, 
 all of the payoff of S4" - rstudio conf 2022, Hadley Wickham
 ```
+* S3 + S4 = S7
 
 * Compatible with S3: S7 objects are S3 objects!  Can even extend an S3 object with S7
 
@@ -304,7 +307,6 @@ print(fluffy)
 
 *For validators, inheritance, dynamic properties and more,  see the [vignette!](https://rconsortium.github.io/S7/articles/S7.html)*
 
-https://rconsortium.github.io/S7/articles/S7.html
 
 ## So... switch to S7 ? {-}
 
@@ -336,7 +338,7 @@ $$
 | _Team size_ | Small | Small-large | Large  | ?  |
 | _Namespace_ | Global | Global?  | Global?  | Local  |
 | _Modify in place_ | No | No  | No  | Yes  |
-| _Method chaining_ | `|>` | ?  | ?  | `$`  |
+| _Method chaining_ | `|>` | `|>`?  | `|>`?  | `$`  |
 | _Get/set component_ | `$` | `@` | `@` | `$` |
 | _Create class_ | `class()` or `structure()` with `class` argument | `setClass()` | `new_class()` | `R6Class()` |
 | _Create validator_ | `function()` | `setValidity()` or `validator` argument in `setClass()` | `validator` argument in `new_class()` | `$validate()` |
