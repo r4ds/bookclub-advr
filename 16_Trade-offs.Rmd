@@ -389,6 +389,6 @@ $$
 ```
 </details>
 
-### Cohort 7
+### Cohort 7 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/2vxnzqWp-OU")`
