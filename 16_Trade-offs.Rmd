@@ -7,7 +7,7 @@
 - Brief intro to S7 (the object system formerly known as R7)
 
 
-## Introduction
+## Introduction {-}
 
 * We have three OOP systems introduced so far (S3, S4, R6) 
 
