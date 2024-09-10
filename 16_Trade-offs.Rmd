@@ -350,7 +350,7 @@ $$
 
 ## Meeting Videos {-}
 
-### Cohort 1
+### Cohort 1 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/W1uc8HbyZvI")`
 
