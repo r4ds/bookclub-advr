@@ -149,7 +149,7 @@ s$pop()
 ```
 
 
-## 16.6.3 Method chaining {-}
+## Method chaining {-}
 
 Useful to compose functions from left-to-right.
 
