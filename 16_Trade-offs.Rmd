@@ -72,7 +72,7 @@
    - Disadvantage: Lack of a uniform API, except by convention.
    
 
-## 16.3.2 Threading state {-}
+## Threading state {-}
 
 
 In S3 the challenge is to return a value and modify the object. 
