@@ -41,7 +41,7 @@
     
 
 
-## R6 versus S3
+## R6 versus S3 {-}
 
 **R6** is built on **encapsulated objects**, rather than generic functions.   
 
