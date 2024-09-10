@@ -358,7 +358,7 @@ $$
 
 `r knitr::include_url("https://www.youtube.com/embed/bzo37PHCM1I")`
 
-### Cohort 3
+### Cohort 3 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/_byYFTQHp1Y")`
 
