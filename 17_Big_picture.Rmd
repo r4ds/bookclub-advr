@@ -4,10 +4,156 @@
 
 - THESE ARE NICE TO HAVE BUT NOT ABSOLUTELY NECESSARY
 
-## SLIDE 1
+```{r}
+library(rlang)
+library(lobstr)
+```
 
-- ADD SLIDES AS SECTIONS (`##`).
-- TRY TO KEEP THEM RELATIVELY SLIDE-LIKE; THESE ARE NOTES, NOT THE BOOK ITSELF.
+
+## Code is data
+
+- **expression** - Captured code (*call*, *symbol*, *constant*, or *pairlist*)
+- Use `rlang::expr()`[^1] to capture code directly
+
+```{r}
+expr(mean(x, na.rm = TRUE))
+```
+
+- Use `rlang::enexpr()` to capture code indirectly
+    - `capture_it()` 'automatically quotes first argument'
+
+```{r}
+capture_it <- function(x) {
+  enexpr(x)
+}
+capture_it(a + b + c)
+```
+
+- 'Captured' code can be modified (like a list)!
+    - First element is the function, next elements are the arguments
+
+```{r}
+f <- expr(f(x = 1, y = 2))
+names(f)
+
+ff <- fff <- f   # Create two copies
+
+ff$z <- 3        # Add an argument to one
+fff[[2]] <- NULL # Remove an argument from another
+
+f
+ff
+fff
+```
+
+> More next week!
+
+[^1]: Equivalent to `base::bquote()`
+
+## Code is a tree
+
+- **Abstract syntax tree** (AST) - Almost every language represents code as a tree
+- Use `lobstr::ast()` to inspect these code trees
+
+```{r}
+ast(f1(f2(a, b), f3(1)))
+ast(1 + 2 * 3)
+```
+
+
+## Code can generate code
+
+- `rlang::call2()` creates function call
+
+```{r}
+call2("f", 1, 2, 3)
+```
+
+- Going backwards from the tree, can use functions to create calls
+
+```{r}
+call2("f1", call2("f2", "a", "b"), call2("f3", 1))
+call2("+", 1, call2("*", 2, 3))
+```
+
+- `!!` bang-bang - **unquote operator**
+    - inserts previously defined expressions into the current one
+
+```{r}
+xx <- expr(x + x)
+yy <- expr(y + y)
+expr(xx / yy)     # Nope!
+
+expr(!!xx / !!yy) # Yup!
+```
+
+```{r}
+cv <- function(var) {
+  var <- enexpr(var)            # Get user's expression
+  expr(sd(!!var) / mean(!!var)) # Insert user's expression
+}
+
+cv(x)
+cv(x + y)
+```
+
+- Avoid `paste()` for building code
+    - Problems with non-syntactic names and precedence among expressions
+
+> "You might think this is an esoteric concern, but not worrying about it when generating SQL code in web applications led to SQL injection attacks that have collectively cost billions of dollars."
+
+## Evaluation runs code
+
+- **evaluate** - run/execute an expression
+- need expresion and environment
+- `eval()` uses current environment if not set
+- manual evaluation means you can tweak the environment!
+
+```{r}
+xy <- expr(x + y)
+
+eval(xy, env(x = 1, y = 10))
+eval(xy, env(x = 2, y = 100))
+```
+
+
+## Customizing evaluations with functions
+- Can also bind names to functions in supplied environment
+- Allows overriding function behaviour
+- This is how dplyr generates SQL for working with databases
+
+For example...
+```{r}
+string_math <- function(x) {
+  e <- env(
+    caller_env(),
+    `+` = function(x, y) paste(x, y),
+    `*` = function(x, y) strrep(x, y)
+  )
+
+  eval(enexpr(x), e)
+}
+
+cohort <- 9
+string_math("Hello" + "cohort" + cohort)
+string_math(("dslc" + "awesome---") * cohort)
+```
+
+
+## Customizing evaluation wtih data
+
+```{r}
+
+```
+
+
+## Quosures
+
+
+
+
+
+
 
 ## Meeting Videos
 
