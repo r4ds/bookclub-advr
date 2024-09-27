@@ -140,7 +140,7 @@ string_math(("dslc" + "is" + "awesome---") * cohort)
 ```
 
 
-## Customizing evaluation wtih data
+## Customizing evaluation with data
 
 - Look for variables inside data frame
 - **Data mask** - typically a data frame
@@ -198,6 +198,49 @@ with2(df, x + a)
 > "Whenever you use a data mask, you must always use `enquo()` instead of `enexpr()`.
 
 This comes back in Chapter 20.
+
+### Which environment is bundled?
+- The environment where the expression is created (i.e. the parent of where
+  `enquo()` is called)
+
+Here, the global environment
+
+```{r}
+with2 <- function(df, expr) {
+  a <- 1000
+  eq <- enquo(expr)
+  message("with2() Parent/Calling environment: ")
+  print(rlang::caller_env())
+  message("with2() environment: ")
+  print(rlang::current_env())
+  message("Quosure details: ")
+  print(eq)  # Print the details of the quosure
+  eval_tidy(eq, df)
+}
+
+a <- 10000
+df <- data.frame(x = 1:3)
+with2(df, x + a)
+```
+
+
+Here, the `fun1()` environment
+```{r}
+fun1 <- function(df) {
+  a <- 10
+  message("fun1() Parent/Calling environment: ")
+  print(rlang::caller_env())
+  message("fun1() environment: ")
+  print(rlang::current_env())
+  with2(df, x + a)
+}
+
+a <- 10000
+df <- data.frame(x = 1:3)
+fun1(df)
+```
+
+
 
 
 ## Meeting Videos
