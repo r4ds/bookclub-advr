@@ -19,6 +19,7 @@
 library(rlang)
 library(lobstr)
 ```
+
 ## Introduction
 
 > To compute on the language, we first need to understand its structure.
@@ -53,15 +54,19 @@ y
 
 ### Evaluating multiple expressions 
 
-* We can write multiple expressions at once and it acts similar to `source()`.
+* The function `expression()` allows for multiple expressions, and in some ways it acts similarly to the way files are `source()`d in.  That is, we `eval()`uate all of the expressions at once.
 
 * `expression()` returns a vector and can be passed to `eval()`.
 
 ```{r}
-eval(expression(x <- 4, x * 10))
+z <- expression(x <- 4, x * 10)
+
+eval(z)
+is.atomic(z)
+is.vector(z)
 ```
 
-`exprs()` does not and has to be used in a loop
+* `exprs()` does not evaluate everything at once.  To evaluate each expression, the individual expressions must be evaluated in a loop.
 
 ```{r}
 for (i in exprs(x <- 4, x * 10)) {
@@ -70,7 +75,7 @@ print(eval(i))
 }
 ```
 
-## Abstract Syntact Tree (AST)
+## Abstract Syntax Tree (AST)
 
 * Expressions are objects that capture the structure of code without evaluating it.
 * Expressions are also called abstract syntax trees (ASTs) because the structure of code is hierarchical and can be naturally represented as a tree. 
@@ -105,16 +110,18 @@ lobstr::ast(f(g(1, 2), h(3, 4, i())))
 * The depth within the tree is determined by the nesting of function calls. 
 * Depth also determines evaluation order, **as evaluation generally proceeds from deepest-to-shallowest, but this is not guaranteed because of lazy evaluation**.
 
-##  Infix calls
+###  Infix calls
 
 > Every call in R can be written in tree form because any call can be written in prefix form.
 
-```{r eval=FALSE}
+An infix operator is a function where the function name is placed between its arguments. Prefix form is when then function name comes before the arguments, which are enclosed in parentheses. [Note that the name infix comes from the words prefix and suffix.]
+
+```{r}
 y <- x * 10
 `<-`(y, `*`(x, 10))
 ```
 
-* Since this is a characteristic of the language, regardless if it's a function written in infix or prefix form, all function calls can be represented using an AST.
+* A characteristic of the language is that infix functions can always be written as prefix functions; therefore, all function calls can be represented using an AST.
 
 ![](images/prefix.png)
 
@@ -126,13 +133,13 @@ lobstr::ast(y <- x * 10)
 lobstr::ast(`<-`(y, `*`(x, 10)))
 ```
 
-* There is no difference between the ASTs, and if you generate an expression with prefix calls, R will still print it in infix form:
+* There is no difference between the ASTs for the infix version vs the prefix version, and if you generate an expression with prefix calls, R will still print it in infix form:
 
 ```{r}
 rlang::expr(`<-`(y, `*`(x, 10)))
 ```
 
-## Expression components 
+## Expression 
 
 * Collectively, the data structures present in the AST are called expressions.
 * These include:
@@ -141,35 +148,32 @@ rlang::expr(`<-`(y, `*`(x, 10)))
   3. Calls 
   4. Pairlists
 
-## Constants
+### Constants
 
 * Scalar constants are the simplest component of the AST. 
 * A constant is either **NULL** or a **length-1** atomic vector (or scalar) 
-  * e.g., `TRUE`, `1L`, `2.5` or `x`. 
-* We can test for a constant with **rlang::is_syntactic_literal()**.
+  * e.g., `TRUE`, `1L`, `2.5`, `"x"`, or `"hello"`. 
+* We can test for a constant with `rlang::is_syntactic_literal()`.
 * Constants are self-quoting in the sense that the expression used to represent a constant is the same constant:
 
 ```{r}
 identical(expr(TRUE), TRUE)
-# [1] TRUE
 identical(expr(1), 1)
-# [1] TRUE
 identical(expr(2L), 2L)
-# [1] TRUE
 identical(expr("x"), "x")
-# [1] TRUE
+identical(expr("hello"), "hello")
 ```
 
-## Symbols
+### Symbols
 
 * A symbol represents the name of an object.
   * `x`
   * `mtcars`
-  * `mean`. 
-* In base R, the terms symbol and name are used interchangeably (i.e. `is.name()` is identical to `is.symbol()`), but this book used symbol consistently because **“name”** has many other meanings.
+  * `mean`
+* In base R, the terms symbol and name are used interchangeably (i.e., `is.name()` is identical to `is.symbol()`), but this book used symbol consistently because **"name"** has many other meanings.
 * You can create a symbol in two ways: 
   1. by capturing code that references an object with `expr()`.
-  2. turning a string into a symbol with `rlang::sym():`.
+  2. turning a string into a symbol with `rlang::sym()`.
 
 ```{r}
 expr(x)
@@ -186,8 +190,13 @@ sym("x")
 as_string(expr(x))
 ```
 
-* We can recognise a symbol because it’s printed without quotes
-* `str()` tells you that it’s a symbol, and `is.symbol()` is TRUE:
+* We can recognize a symbol because it is printed without quotes
+
+```{r}
+expr(x)
+```
+
+* `str()` tells you that it is a symbol, and `is.symbol()` is TRUE:
 
 ```{r}
 str(expr(x))
@@ -197,18 +206,26 @@ str(expr(x))
 is.symbol(expr(x))
 ```
 
-* The symbol type is not vectorised, i.e. a symbol is always length 1. 
+* The symbol type is not vectorised, i.e., a symbol is always length 1. 
 * If you want multiple symbols, you’ll need to put them in a list, using `rlang::syms()`.
 
-## Calls
+Note that `as_string()` will not work on expressions which are not symbols.
+
+```{r}
+#| error: true
+as_string(expr(x+y))
+```
+
+
+### Calls
 
 * A call object represents a captured function call. 
 * Call objects are a special type of list. 
-  * The first component specifies the function to call (usually a symbol). 
+  * The first component specifies the function to call (usually a symbol, i.e., the name fo the function). 
   * The remaining elements are the arguments for that call. 
 * Call objects create branches in the AST, because calls can be nested inside other calls.
 * You can identify a call object when printed because it looks just like a function call. 
-* Confusingly `typeof()` and `str()` print language for call objects, but `is.call()` returns TRUE:
+* Confusingly `typeof()` and `str()` print language for call objects (where we might expect it to return that it is a "call" object), but `is.call()` returns TRUE:
 
 ```{r}
 lobstr::ast(read.table("important.csv", row.names = FALSE))
@@ -226,10 +243,10 @@ typeof(x)
 is.call(x)
 ```
 
-## Subsetting
+### Subsetting
 
 * Calls generally behave like lists.
-* Since they are list like, you can use standard subsetting tools. 
+* Since they are list-like, you can use standard subsetting tools. 
 * The first element of the call object is the function to call, which is usually a symbol:
 
 ```{r}
@@ -242,6 +259,7 @@ is.symbol(x[[1]])
 * The remainder of the elements are the arguments:
 
 ```{r}
+is.symbol(x[-1])
 as.list(x[-1])
 ```
 * We can extract individual arguments with [[ or, if named, $:
@@ -263,7 +281,7 @@ length(x) - 1
 * Extracting specific arguments from calls is challenging because of R’s flexible rules for argument matching:
   * It could potentially be in any location, with the full name, with an abbreviated name, or with no name. 
 
-* To work around this problem, you can use **rlang::call_standardise()** which standardises all arguments to use the full name:
+* To work around this problem, you can use `rlang::call_standardise()` which standardizes all arguments to use the full name:
 
 ```{r}
 rlang::call_standardise(x)
@@ -277,7 +295,7 @@ x$header <- TRUE
 x
 ```
 
-## Function position
+### Function position
 
 * The first element of the call object is the function position. This contains the function that will be called when the object is evaluated, and is usually a symbol.
 
@@ -294,6 +312,7 @@ lobstr::ast("foo"())
 * However, sometimes the function doesn’t exist in the current environment and you need to do some computation to retrieve it: 
   * For example, if the function is in another package, is a method of an R6 object, or is created by a function factory. In this case, the function position will be occupied by another call:
 
+
 ```{r}
 lobstr::ast(pkg::foo(1))
 ```
@@ -308,9 +327,9 @@ lobstr::ast(foo(1)(2))
 
 ![](images/call-call.png)
 
-## Constructing
+### Constructing
 
-* You can construct a call object from its components using rlang::call2(). 
+* You can construct a call object from its components using `rlang::call2()`. 
 * The first argument is the name of the function to call (either as a string, a symbol, or another call).
 * The remaining arguments will be passed along to the call:
 
@@ -331,29 +350,29 @@ call2("<-", expr(x), 10)
 ## Parsing and grammar
 
 * **Parsing** - The process by which a computer language takes a string and constructs an expression. Parsing is governed by a set of rules known as a grammar. 
-* We are going to use **lobstr::ast()** to explore some of the details of R’s grammar, and then show how you can transform back and forth between expressions and strings.
+* We are going to use `lobstr::ast()` to explore some of the details of R’s grammar, and then show how you can transform back and forth between expressions and strings.
 * **Operator precedence** - Conventions used by the programming language to resolve ambiguity.
 * Infix functions introduce two sources of ambiguity.
-* The first source of ambiguity arises from infix functions: what does 1 + 2 * 3 yield? Do you get 9 (i.e. (1 + 2) * 3), or 7 (i.e. 1 + (2 * 3))? In other words, which of the two possible parse trees below does R use?
+* The first source of ambiguity arises from infix functions: what does 1 + 2 * 3 yield? Do you get 9 (i.e., (1 + 2) * 3), or 7 (i.e., 1 + (2 * 3))? In other words, which of the two possible parse trees below does R use?
 
 ![](images/ambig-order.png)
 
-* Programming languages use conventions called operator precedence to resolve this ambiguity. We can use **ast()** to see what R does:
+* Programming languages use conventions called operator precedence to resolve this ambiguity. We can use `ast()` to see what R does:
 
 ```{r}
 lobstr::ast(1 + 2 * 3)
 ```
 
-* PEMDAS is pretty clear on what to do. Other operator precedence isn't as clear. 
+* PEMDAS (or BEDMAS or BODMAS, depending on where in the world you grew up) is pretty clear on what to do. Other operator precedence isn't as clear. 
 * There’s one particularly surprising case in R: 
-  * ! has a much lower precedence (i.e. it binds less tightly) than you might expect. 
+  * ! has a much lower precedence (i.e., it binds less tightly) than you might expect. 
   * This allows you to write useful operations like:
 
 ```{r}
 lobstr::ast(!x %in% y)
 ```
 * **R has over 30 infix operators divided into 18 precedence** groups. 
-* While the details are described in **?Syntax**, very few people have memorised the complete ordering.
+* While the details are described in `?Syntax`, very few people have memorized the complete ordering.
 * If there’s any confusion, use parentheses!
 
 ```{r}
@@ -361,7 +380,7 @@ lobstr::ast(!x %in% y)
 lobstr::ast((1 + 2) * 3)
 ```
 
-## Associativity
+### Associativity
 
 * The second source of ambiguity is introduced by repeated usage of the same infix function. 
 
@@ -377,100 +396,79 @@ lobstr::ast((1 + 2) * 3)
 
 * In this case it doesn't matter. Other places it might, like in `ggplot2`. 
 
-* In R, most operators are left-associative, i.e. the operations on the left are evaluated first:
+* In R, most operators are left-associative, i.e., the operations on the left are evaluated first:
 
 ```{r}
 lobstr::ast(1 + 2 + 3)
 ```
 
-* There's two exceptions to this rule:
+* There are two exceptions to the left-associative rule:
   1. exponentiation
   2. assignment
 
-```{r eval=FALSE}
+```{r}
 lobstr::ast(2 ^ 2 ^ 3)
-# █─`^`
-# ├─2
-# └─█─`^`
-#   ├─2
-#   └─3
 ```
 
 ```{r}
 lobstr::ast(x <- y <- z)
-# █─`<-`
-# ├─x
-# └─█─`<-`
-#   ├─y
-#   └─z
 ```
 
-## Parsing and deparsing
+### Parsing and deparsing
 
-* Parsing - turning characters you've typed into an AST.
+* Parsing - turning characters you've typed into an AST (i.e., from strings to expressions).
 * R usually takes care of parsing code for us. 
 * But occasionally you have code stored as a string, and you want to parse it yourself. 
-* You can do so using **rlang::parse_expr()**:
+* You can do so using `rlang::parse_expr()`:
 
-```{r eval=FALSE}
+```{r}
 x1 <- "y <- x + 10"
 x1
-# [1] "y <- x + 10"
 is.call(x1)
-# [1] FALSE
 ```
 
-```{r eval=FALSE}
+```{r}
 x2 <- rlang::parse_expr(x1)
 x2
-# y <- x + 10
 is.call(x2)
-# [1] TRUE
 ```
 
-* **parse_expr()** always returns a single expression.
-* If you have multiple expression separated by ; or \n, you’ll need to use **rlang::parse_exprs()**. It returns a list of expressions:
+* `parse_expr()` always returns a single expression.
+* If you have multiple expression separated by `;` or `,`, you’ll need to use `rlang::parse_exprs()` which is the plural version of `rlang::parse_expr()`. It returns a list of expressions:
 
 ```{r}
 x3 <- "a <- 1; a + 1"
 ```
 
-```{r eval=FALSE}
+```{r}
 rlang::parse_exprs(x3)
-# [[1]]
-# a <- 1
-# 
-# [[2]]
-# a + 1
-# 
 ```
 
-* If you do this a lot, **quasiquotation** may be a safer approach.
-  * More about this in Chapter 19.
+* If you find yourself parsing strings into expressions often, **quasiquotation** may be a safer approach.
+  * More about quasiquaotation in Chapter 19.
 * The inverse of parsing is deparsing.
 * **Deparsing** - given an expression, you want the string that would generate it. 
-* This happens automatically when you print an expression.
-* You can get the string with **rlang::expr_text()**:
+* Deparsing happens automatically when you print an expression.
+* You can get the string with `rlang::expr_text()`:
 * Parsing and deparsing are not symmetric.
-  * Parsing creates the AST.
+  * Parsing creates the AST which means that we lose backticks around ordinary names, comments, and whitespace.
 
 ```{r}
-z <- expr(y <- x + 10)
-```
- 
-```{r}
-expr_text(z)
+cat(expr_text(expr({
+  # This is a comment
+  x <-             `x` + 1
+})))
 ```
 
 ## Using the AST to solve more complicated problems
 
 * Here we focus on what we learned to perform recursion on the AST.
 * Two parts of a recursive function:
-  * Recursive case
-  * Base case
-* These two parts correspond well to tree like data structures.
+  * Recursive case: handles the nodes in the tree. Typically, you’ll do something to each child of a node, usually calling the recursive function again, and then combine the results back together again. For expressions, you’ll need to handle calls and pairlists (function arguments).
+  * Base case: handles the leaves of the tree. The base cases ensure that the function eventually terminates, by solving the simplest cases directly. For expressions, you need to handle symbols and constants in the base case.
 
-## Two helper functions
+
+### Two helper functions
 
 * First, we need an `epxr_type()` function to return the type of expression element as a string.
 
@@ -490,13 +488,10 @@ expr_type <- function(x) {
 }
 ```
 
-```{r eval=FALSE}
+```{r}
 expr_type(expr("a"))
-# [1] "constant"
 expr_type(expr(x))
-# [1] "symbol"
 expr_type(expr(f(1, 2)))
-# [1] "call"
 ```
 
 * Second, we need a wrapper function to handle exceptions.
@@ -512,7 +507,7 @@ switch_expr <- function(x, ...) {
 
 * Lastly, we can write a basic template that walks the AST using the `switch()` statement.
 
-```{r, eval=FALSE}
+```{r,}
 recurse_call <- function(x) {
   switch_expr(x,
     # Base cases
@@ -526,7 +521,7 @@ recurse_call <- function(x) {
 }
 ```
 
-## Specific use cases for `recurse_call()`
+### Specific use cases for `recurse_call()`
 
 ### Example 1: Finding F and T
 
@@ -534,17 +529,15 @@ recurse_call <- function(x) {
 * Say we want to walk the AST to find times when we use `F` and `T`.
 * Start off by finding the type of `T` vs `TRUE`.
 
-```{r eval=FALSE}
+```{r}
 expr_type(expr(TRUE))
-# [1] "constant"
 
 expr_type(expr(T))
-# [1] "symbol"
 ```
 
 * With this knowledge, we can now write the base cases of our recursive function.
 * The logic is as follows:
-  * A constant is never a logical abberviation and a symbol is an abbreviation if it's "F" or "T":
+  * A constant is never a logical abbreviation and a symbol is an abbreviation if it is "F" or "T":
 
 ```{r}
 logical_abbr_rec <- function(x) {
@@ -555,11 +548,9 @@ logical_abbr_rec <- function(x) {
 }
 ```
 
-```{r eval=FALSE}
+```{r}
 logical_abbr_rec(expr(TRUE))
-# [1] FALSE
 logical_abbr_rec(expr(T))
-# [1] TRUE
 ```
 
 * It's best practice to write another wrapper, assuming every input you receive will be an expression.
@@ -570,12 +561,10 @@ logical_abbr <- function(x) {
 }
 
 logical_abbr(T)
-# [1] TRUE
 logical_abbr(FALSE)
-# [1] FALSE
 ```
 
-### Next step: code for the recursive cases
+#### Next step: code for the recursive cases
 
 * Here we want to do the same thing for calls and for pairlists.
 * Here's the logic: recursively apply the function to each subcomponent, and return `TRUE` if any subcomponent contains a logical abbreviation.
@@ -596,22 +585,17 @@ logical_abbr_rec <- function(x) {
 }
 
 logical_abbr(mean(x, na.rm = T))
-# [1] TRUE
 
 logical_abbr(function(x, na.rm = T) FALSE)
-# [1] TRUE
 ```
 
-## Example 2: Finding all variables created by assignment
+### Example 2: Finding all variables created by assignment
 
 * Listing all the variables is a little more complicated. 
 * Figure out what assignment looks like based on the AST.
 
-```{r eval=FALSE}
+```{r}
 ast(x <- 10)
-# █─`<-`
-# ├─x
-# └─10
 ```
 
 * Now we need to decide what data structure we're going to use for the results.
@@ -620,7 +604,7 @@ ast(x <- 10)
 
 ### Dealing with the base cases
 
-```{r eval=FALSE}
+```{r}
 find_assign_rec <- function(x) {
   switch_expr(x,
     constant = ,
@@ -630,9 +614,9 @@ find_assign_rec <- function(x) {
 find_assign <- function(x) find_assign_rec(enexpr(x))
 
 find_assign("x")
-#> character(0)
+
 find_assign(x)
-#> character(0)
+
 ```
 
 ### Dealing with the recursive cases
@@ -645,12 +629,11 @@ flat_map_chr <- function(.x, .f, ...) {
 }
 
 flat_map_chr(letters[1:3], ~ rep(., sample(3, 1)))
-#> [1] "a" "b" "b" "b" "c" "c" "c"
 ```
 
 * Here is the code needed to identify calls.
 
-```{r eval=FALSE}
+```{r}
 find_assign_rec <- function(x) {
   switch_expr(x,
     # Base cases
@@ -670,14 +653,14 @@ find_assign_rec <- function(x) {
 }
 
 find_assign(a <- 1)
-#> [1] "a"
+
 find_assign({
   a <- 1
   {
     b <- 2
   }
 })
-#> [1] "a" "b"
+
 ```
 
 ### Make the function more robust
@@ -685,7 +668,7 @@ find_assign({
 * Throw cases at it that we think might break the function. 
 * Write a function to handle these cases.
 
-```{r eval=FALSE}
+```{r}
 find_assign_call <- function(x) {
   if (is_call(x, "<-") && is_symbol(x[[2]])) {
     lhs <- as_string(x[[2]])
@@ -711,9 +694,9 @@ find_assign_rec <- function(x) {
 }
 
 find_assign(a <- b <- c <- 1)
-#> [1] "a" "b" "c"
+
 find_assign(system.time(x <- print(y <- 5)))
-#> [1] "x" "y"
+
 ```
 
 * This approach certainly is more complicated, but it's important to start simple and move up.
@@ -724,7 +707,7 @@ find_assign(system.time(x <- print(y <- 5)))
 * Missing arguments 
 * Expression vectors
 
-##  Pairlists
+###  Pairlists
 
 * Pairlists are a remnant of R’s past and have been replaced by lists almost everywhere. 
 * The only place you are likely to see pairlists in R is when working with calls to the function, as the formal arguments to a function are stored in a pairlist:
@@ -732,10 +715,12 @@ find_assign(system.time(x <- print(y <- 5)))
 ```{r}
 f <- expr(function(x, y = 10) x + y)
 ```
+
 ```{r}
 args <- f[[2]]
 args
 ```
+
 ```{r}
 typeof(args)
 ```
@@ -753,7 +738,7 @@ length(pl)
 pl$x
 ```
 
-## Missing arguments
+### Missing arguments
 
 * Empty symbols
 * To create an empty symbol, you need to use `missing_arg()` or `expr()`.
@@ -768,43 +753,39 @@ typeof(missing_arg())
 
 ```{r}
 is_missing(missing_arg())
-# [1] TRUE
 ```
 
 * These are usually present in function formals:
 
 ```{r}
 f <- expr(function(x, y = 10) x + y)
-# function(x, y = 10) x + y
+
 args <- f[[2]]
-# $x
-# 
-# 
-# $y
-# [1] 10
-# 
+
+
 is_missing(args[[1]])
-#> [1] TRUE
 ```
 
-## Expression vectors
+### Expression vectors
 
 * An expression vector is just a list of expressions.
-  * The only difference is that calling eval() on an expression evaluates each individual expression. 
+  * The only difference is that calling `eval()` on an expression evaluates each individual expression. 
   * Instead, it might be more advantageous to use a list of expressions.
 
 * Expression vectors are only produced by two base functions: 
   `expression()` and `parse()`:
 
 ```{r}
-exp1 <- parse(text = c("
+exp1 <- parse(text = c(" 
 x <- 4
 x
 "))
+exp1
 ```
 
 ```{r}
 exp2 <- expression(x <- 4, x)
+exp2
 ```
 
 ```{r}
@@ -812,10 +793,6 @@ typeof(exp1)
 typeof(exp2)
 ```
 
-```{r}
-exp1
-exp2
-```
 
 - Like calls and pairlists, expression vectors behave like lists:
 
