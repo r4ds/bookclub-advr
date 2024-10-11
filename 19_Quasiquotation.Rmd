@@ -344,7 +344,7 @@ vars <- data.frame(x = c("hp", "hp"),
 x_sym <- syms(vars$x)
 y_sym <- syms(vars$y)
 
-formulae <- map2(x_sym, y_sym, \(x, y) formula(expr(!!y ~ !!x)))
+formulae <- map2(x_sym, y_sym, \(x, y) expr(!!y ~ !!x))
 formulae
 models <- map(formulae, \(f) expr(lm(!!f, data = mtcars)))
 summary(eval(models[[1]]))
@@ -357,7 +357,7 @@ lm_df <- function(df, data) {
   y_sym <- map(df$y, as.symbol)
   data <- enexpr(data)
   
-  formulae <- map2(x_sym, y_sym, \(x, y) formula(expr(!!y ~ !!x)))
+  formulae <- map2(x_sym, y_sym, \(x, y) expr(!!y ~ !!x))
   models <- map(formulae, \(f) expr(lm(!!f, !!data)))
   
   map(models, \(m) summary(eval(m)))
