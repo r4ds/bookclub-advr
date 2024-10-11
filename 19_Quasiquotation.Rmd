@@ -1,9 +1,3 @@
-```{r, echo= FALSE, message=FALSE}
-library(rlang)
-library(purrr)
-```
-
-
 # Quasiquotation
 
 **Learning objectives:**
@@ -12,27 +6,36 @@ library(purrr)
 - Why it's important
 - Learn some practical uses
 
+```{r, message=FALSE}
+library(rlang)
+library(purrr)
+```
+
 ## Introduction
 
-- Three pillars of *tidy* evaluation
+Three pillars of *tidy* evaluation
+
    1. Quasiquotation
    2. Quosures (chapter 20)
    3. Data masks (Chapter 20)
 
-- Quasiquotation = quotation + unquotation:
-   - **Quote.** Capture unevaluated expression ...("defuse")
-   - **Unquote.** Except for selected parts which we do want to evaluate! ("inject")
-   
-- Functions that use these features are said to use Non-standard evaluation (NSE)
+**Quasiquotation = quotation + unquotation**
 
+- **Quote.** Capture unevaluated expression... ("defuse")  
+- **Unquote.** Evaluate selections of quoted expression! ("inject")
+- Functions that use these features are said to use Non-standard evaluation (NSE)
 - Note: related to Lisp macros, and also exists in other languages with Lisp heritage, e.g. Julia
+
+> On it's own, Quasiquotation good for programming, but combined with other tools, 
+> important for data analysis.
 
 ## Motivation
 
-
 Simple *concrete* example:
 
-`Cement` is a function that works like `paste` but doesn't need need quotes:
+`cement()` is a function that works like `paste()` but doesn't need need quotes
+
+(Think of automatically adding 'quotes' to the arguments)
 
 ```{r}
 cement <- function(...) {
@@ -43,209 +46,251 @@ cement <- function(...) {
 cement(Good, morning, Hadley)
 ```
 
-What if we wanted to use variables ?   This is where 'unquoting' comes in!
+What if we wanted to use variables? What is an object and what should be quoted?
+
+This is where 'unquoting' comes in!
 
 ```{r}
-name = "Bob"
-cement(Good, afternoon, !!name)
+name <- "Bob"
+cement(Good, afternoon, !!name) # Bang-bang!
+```
+
+## Vocabulary {-}
+
+Can think of `cement()` and `paste()` as being 'mirror-images' of each other.
+
+- `paste()` - define what to quote - **Evaluates** arguments
+- `cement()` - define what to unquote - **Quotes** arguments
+
+**Quoting function** similar to, but more precise than, **Non-standard evaluation (NSE)**
+
+- Tidyverse functions - e.g., `dplyr::mutate()`, `tidyr::pivot_longer()`
+- Base functions - e.g., `library()`, `subset()`, `with()`
+
+**Quoting function** arguments cannot be evaluated outside of function:
+```{r, error = TRUE}
+cement(Good, afternoon, Cohort) # No problem
+Good      # Error!
+```
+
+**Non-quoting (standard) function** arguments can be evaluated:
+```{r}
+paste("Good", "afternoon", "Cohort")
+"Good"
 ```
 
 
- 
-## Nonstandard evaluation {-}
+## Quoting
 
-* Functions like `dplyr::filter` use nonstandard evaluation,  and quote some of their arguments to help make code more *tidy*.
+**Capture expressions without evaluating them**
+
+```{r, echo = FALSE}
+data.frame(
+  t = rep(c("One", "Many"), 3),
+  Developer = c("`expr()`","`exprs()`", 
+                "`quote()`", "`substitute()`",
+                "", ""),
+  User = c("`enexpr()`", "`enexprs()`", 
+           "`alist()`", "`as.list(substitute(...()))`",
+           "`ensym()`", "`ensyms()`"),
+  type = c("Expression", "Expression", "R Base", "R Base", "Symbol", "Symbol")) |>
+  dplyr::group_by(type) |>
+  gt::gt() |>
+  gt::tab_row_group(label = "R Base (Quotation)", rows = type == "R Base")|>
+  gt::tab_row_group(label = "Symbol (Quasiquotation)", rows = type == "Symbol") |>
+  gt::tab_row_group(label = "Expression (Quasiquotation)", rows = type == "Expression")|>
+  gt::cols_label(t = "") |>
+  gt::tab_options(row_group.font.weight = "bold") |>
+  gt::tab_style(style = gt::cell_text(align = "center", weight = "bold"), 
+                locations = gt::cells_column_labels()) |>
+  gt::tab_style(style = gt::cell_borders(style = "hidden"), locations = gt::cells_body()) |>
+  gt::tab_style(style = gt::cell_borders(sides = "top", style = "solid"),
+                locations = gt::cells_body(rows = c(1, 3, 5))) |>
+    gt::tab_style(style = gt::cell_borders(sides = "bottom", style = "solid"),
+                locations = gt::cells_body(rows = c(2, 4))) |>
+  gt::cols_align("center", columns = -1) |>
+  gt::fmt_markdown() |>
+  gt::cols_width(t ~ px(100))
+```
+
+- Non-base functions are from **rlang**
+- **Developer** - From you, direct, fixed, interactive
+- **User** - From the user, indirect, varying, programmatic
+
+Also: 
+
+- `bquote()` provides a limited form of quasiquotation
+- `~`, the formula, is a quoting function (see [Section 20.3.4](https://adv-r.hadley.nz/evaluation.html#quosure-impl))
+
+### `expr()` and `exprs()` {-}
+```{r}
+expr(x + y)
+exprs(exp1 = x + y, exp2 = x * y)
+```
+
+### `enexpr()`^[`enexpr()` = **en**rich `expr()`] and `enexprs()` {-}
+```{r}
+f <- function(x) enexpr(x)
+f(a + b + c)
+
+f2 <- function(x, y) enexprs(exp1 = x, exp2 = y)
+f2(x = a + b, y = c + d)
+```
+
+### `ensym()` and `ensyms()` {-}
+
+- **[Remember](https://adv-r.hadley.nz/expressions.html#symbols):** Symbol represents the name of an object. Can only be length 1.
+- These are stricter than `enexpr/s()`
 
 ```{r}
-#| eval: FALSE
-# `cyl` is written as a bare name--a symbol defined in the global environment
-# but `cyl` only exists in the data frame "environment"
-# so, `{dplyr}` quotes the argument
-dplyr::filter(mtcars, cyl == 4)
-```
- 
-* You often can detect this if the argument wouldn't work in isolation, for example:
+f <- function(x) ensym(x)
+f(a)
 
-```{r, eval = FALSE}
-library(MASS) # this is fine
-MASS 
-#> Error: object MASS not found
-```
-
-and 
-
-```{r, eval = FALSE}
-cyl 
-#> Error: object 'cyl' not found
+f2 <- function(x, y) ensyms(sym1 = x, sym2 = y)
+f2(x = a, y = "b")
 ```
 
 
-## Quote
+## Unquoting
 
-- Expression
+**Selectively evaluate parts of an expression**
 
+- Merges ASTs with template
+- 1 argument `!!` (**unquote**, **bang-bang**)
+  - Unquoting a *function call* evaluates and returns results
+  - Unquoting a *function (name)* replaces the function (alternatively use `call2()`)
+- \>1 arguments `!!!` (**unquote-splice**, **bang-bang-bang**, **triple bang**)
+- `!!` and `!!!` only work like this inside quoting function using rlang
+
+### Basic unquoting {-}
+
+**One argument**
 ```{r}
-# for interactive use
-rlang::expr(x+y)
-
-# enexpr works on function arguments (looks at internal promise object)  
-f2 <- function(x) rlang::enexpr(x)
-f2(a + b + c)
+x <- expr(a + b)
+y <- expr(c / d)
 ```
-- To capture multiple arguments, use `enexprs()`
 
+```{r, collapse = TRUE}
+expr(f(x, y))      # No unquoting
+expr(f(!!x, !!y))  # Unquoting
+```
+
+**Multiple arguments**
 ```{r}
-f <- function(...) enexprs(...)
-f(x=1, y= 10 *z)
+z <- exprs(a + b, c + d)
+w <- exprs(exp1 = a + b, exp2 = c + d)
+```
+
+```{r, collapse = TRUE}
+expr(f(z))      # No unquoting
+expr(f(!!!z))   # Unquoting
+expr(f(!!!w))   # Unquoting when named
 ```
 
 
-- For symbols, there is `ensym` and `ensyms` which check that the argument is a symbol or string.
+### Special usages or cases {-}
 
-## Base R method {-}
-
-* Base R methods do not support unquoting.
-
-* Base R equivalent of `expr` is `quote`  
-
-* Base R equivalent of `enexpr` is `substitute` (note that `enexpr` uses `substitute`!)
-
-```{r, eval = FALSE}
-enexpr
-#>function (arg) 
-#>{
-#>    .Call(ffi_enexpr, substitute(arg), parent.frame())
-#>}
+For example, get the AST of an expression
+```{r, collapse = TRUE}
+lobstr::ast(x)
+lobstr::ast(!!x)
 ```
 
 
-* `bquote()` provides a limited form of quasiquotation, see section 19.5
+Unquote *function call*
+```{r, collapse = TRUE}
+expr(f(!!mean(c(100, 200, 300)), y))
+```
 
-* `~`, the formula, is a quoting function, discussed in Section 20.3.4
+Unquote *function*
+```{r, collapse = TRUE}
+f <- expr(sd)
+expr((!!f)(x))
+expr((!!f)(!!x + !!y))
+```
 
-## Unquote
+## Non-quoting
 
-- Unquoting allows you to merge together ASTs with selective evaluation.
+Only `bquote()` provides a limited form of quasiquotation.
 
-- Use `!!` (*inject* operator)
+The rest of base selectively uses or does not use quoting (rather than unquoting). 
 
-- One argument
+Four basic forms of quoting/non-quoting:
+
+1. **Pair of functions** - Quoting and non-quoting
+    - e.g., `$` (quoting) and `[[` (non-quoting)
+2. **Pair of Arguments** - Quoting and non-quoting
+    - e.g., `rm(...)` (quoting) and `rm(list = c(...))` (non-quoting)
+3. **Arg to control quoting**
+    - e.g., `library(rlang)` (quoting) and `library(pkg, character.only = TRUE)` (where `pkg <- "rlang"`)
+4. **Quote if evaluation fails**
+    - `help(var)` - Quote, show help for var
+    - `help(var)` (where `var <- "mean"`) - No quote, show help for mean
+    - `help(var)` (where `var <- 10`) - Quote fails, show help for var
+
+
+## ... (dot-dot-dot) [When using ... with quoting]
+
+- Sometimes need to supply an *arbitrary* list of expressions or arguments in a function (`...`)
+- But need a way to use these when we don't necessarily have the names
+- Remember `!!` and `!!!` only work with functions that use rlang
+- Can use `list2(...)` to turn `...` into "tidy dots" which *can* be unquoted and spliced
+- Require `list2()` if going to be passing or using `!!` or `!!!` in `...`
+- `list2()` is a wrapper around `dots_list()` with the most common defaults
+
+**No need for `list2()`**
+```{r, collapse = TRUE}
+d <- function(...) data.frame(list(...))
+d(x = c(1:3), y = c(2, 4, 6))
+```
+
+**Require `list2()`**
+```{r, collapse = TRUE, error = TRUE}
+vars <- list(x = c(1:3), y = c(2, 4, 6))
+d(!!!vars)
+d2 <- function(...) data.frame(list2(...))
+d2(!!!vars)
+# Same result but x and y evaluated later
+vars_expr <- exprs(x = c(1:3), y = c(2, 4, 6))
+d2(!!!vars_expr)  
+```
+
+Getting argument names (symbols) from variables
 ```{r}
-# quote `-1` as `x`
-x <- rlang::expr(-1)
-# unquote `x` to substitute its unquoted value
-# use bang-bang operator
-res = rlang::expr(f(!!x, y))
-print(res)
-lobstr::ast(!!res)
+nm <- "z"
+val <- letters[1:4]
+d2(x = 1:4, !!nm := val)
 ```
 
-- If the right-hand side of `!!` is a function call, it will evalute the function and insert the results.
+## `exec()` [Making your own ...] {-}
 
-```{r}
-mean_rm <- function(var) {
-  var <- ensym(var)
-  expr(mean(!!var, na.rm = TRUE))
+What if your function doesn't have tidy dots?
+
+
+Can't use `!!` or `:=` if doesn't support rlang or dynamic dots
+```{r, collapse=TRUE, error = TRUE}
+my_mean <- function(x, arg_name, arg_val) {
+  mean(x, !!arg_name := arg_val)
 }
-expr(!!mean_rm(x) + !!mean_rm(y))
-#> mean(x, na.rm = TRUE) + mean(y, na.rm = TRUE)
+
+my_mean(c(NA, 1:10), arg_name = "na.rm", arg_val = TRUE)     
+```
+
+Let's use the ... from `exec()`
+```{r, eval = FALSE}
+exec(.fn, ..., .env = caller_env())
 ```
 
 
-
-- Multiple arguments, use `!!!`  *Splice*
-
-```{r}
-xs <- rlang::exprs(1, a, -b)
-# unquote multiple arguments
-# use bang-bang-bang operator
-res=expr(f(!!!xs, y))
-res
-```
-```{r}
-lobstr::ast(!!res)
-```
-
-## ... (dot-dot-dot)
-
-* !!! is also useful in other places where you have a list of expressions you want to insert into a call. 
-
-* Two motivating examples:
-
-List of dataframes you want to `rbind`  (a list of arbitrary length)
-
-```{r}
-dfs <- list(
-  a = data.frame(x = 1, y = 2),
-  b = data.frame(x = 3, y = 4)
-)
-``` 
-
-How to supply an argument name indirectly?
-  
-```{r}
-var <- "x"
-val <- c(4, 3, 9)
-```
-  
-  
-* For the first one, we can use unquote (splice) in `dplyr::bind_rows``
-
-```{r}
-dplyr::bind_rows(!!!dfs)
-```
-
-This is known 'splatting' in some other langauges (Ruby, Go, Julia).  Python calls this argument unpacking (`**kwarg`)
-
-* For the second we need to unquote the left side of an `=`. Tidy  eval lets us do this with a special `:=`
-
-```{r}
-tibble::tibble(!!var := val)
-```
-
-* Functions that have these capabilities are said to have *tidy dots* (or apparently now it is called *dynamic dots*). To get this capability in your own functions, use `list2`!
-
-## Example of `list2()` {-}
-
-```{r}
-set_attr <- function(.x, ...) {
-  attr <- rlang::list2(...)
-  attributes(.x) <- attr
-  .x
+```{r, collapse=TRUE}
+my_mean <- function(x, arg_name, arg_val) {
+  exec("mean", x, !!arg_name := arg_val)
 }
 
-attrs <- list(x = 1, y = 2)
-attr_name <- "z"
-
-1:10 %>%
-  set_attr(w = 0, !!!attrs, !!attr_name := 3) %>% 
-  str()
-```
-### Exercise from 19.6.5 {-}
-
-What is the problem here?
-
-```{r, eval=FALSE}
-set_attr <- function(x, ...) {
-  attr <- rlang::list2(...)
-  attributes(x) <- attr
-  x
-}
-set_attr(1:10, x = 10)
-#> Error in attributes(x) <- attr : attributes must be named
+my_mean(c(NA, 1:10), arg_name = "na.rm", arg_val = TRUE)     
 ```
 
-## Exec {-}
-
-What about existing functions that don't support tidy dots?  Use `exec`
-
-```{r}
-arg_name  <- "na.rm"
-arg_val <- TRUE
-exec("mean", 1:10, !!arg_name := arg_val)
-```
-
-Note that you do not unquote arg_val.
+Note that you do not unquote `arg_val`.
  
 Also `exec` is useful for mapping over a list of functions:
 
@@ -255,23 +300,18 @@ funs <- c("mean", "median", "sd")
 purrr::map_dbl(funs, exec, x, na.rm = TRUE)
 ```
 
-
-
-## dots_list {-}
-
-- `list2()` is a wrapper around `dots_list` with the most common defaults:
-
-   - `.ignore_empty` : Ignores any empty arguments, lets you use trailing commas in a list
-   - `.homonyms` : controls what happens when multiple arguments use the same name, `list2()` uses default of `keep`
-   -  `.preserve_empty` controls what do so with empty arguments if they are not ignored.
-   
    
 ##  Base R `do.call` {-}
 
-`do.call(what, args)` . `what` is a function to call, `args` is a list of arguments to pass to the function.
+`do.call(what, args)`
 
-```{r}
-do.call("rbind", dfs)
+- `what` is a function to call
+- `args` is a list of arguments to pass to the function.
+
+```{r, collapse = TRUE}
+nrow(mtcars)
+mtcars3 <- do.call("rbind", list(mtcars, mtcars, mtcars))
+nrow(mtcars3)
 ```
  
 
@@ -286,76 +326,48 @@ exec_ <- function(f, ..., .env = caller_env()){
 }
 ```
 
-## Map-reduce example {-}
+## Case Studies (side note)
 
-Function that will return an expression corresponding to a linear model.
+Sometimes you want to run a bunch of models, without having to copy/paste each one.
 
-```{r}
-linear <- function(var, val) {
-  
-  # capture variable as a symbol
-  var <- ensym(var)
-  
-  # Create a list of symbols of the form var[[1]], var[[2], etc]
-  coef_name <- map(seq_along(val[-1]), ~ expr((!!var)[[!!.x]]))
+BUT, you also want the summary function to show the appropriate model call, 
+not one with hidden variables (e.g., `lm(y ~ x, data = data)`). 
 
-  # map over the coefficients and the names to create the terms
-  summands <- map2(val[-1], coef_name, ~ expr((!!.x * !!.y)))
-  
-  # Dont forget the intercept
-  summands <- c(val[[1]], summands)
+We can achieve this by building expressions and unquoting as needed:
 
-  # Reduce!
-  reduce(summands, ~ expr(!!.x + !!.y))
-}
+```{r, collapse = TRUE}
+library(purrr)
 
-linear(x, c(10, 5, -4))
-#> 10 + (5 * x[[1L]]) + (-4 * x[[2L]])
+vars <- data.frame(x = c("hp", "hp"),
+                   y = c("mpg", "cyl"))
+
+x_sym <- syms(vars$x)
+y_sym <- syms(vars$y)
+
+formulae <- map2(x_sym, y_sym, \(x, y) formula(expr(!!y ~ !!x)))
+formulae
+models <- map(formulae, \(f) expr(lm(!!f, data = mtcars)))
+summary(eval(models[[1]]))
 ```
 
-
-## Creating functions example {-}
-
-* `rlang::new_function()` creates a function from its three components and supports tidy evaluation
-
-* Alternative to function factories.
-
-Example:
-```{r}
-power <- function(exponent) {
-  new_function(
-    exprs(x = ), 
-    expr({
-      x ^ !!exponent
-    }), 
-    caller_env()
-  )
-}
-power(0.5)
- 
-```
-
-Another example, is `graphics::curve` that allows you to plot an expression without creating a function. It could be implemented like this:
-
-```{r}
-curve2 <- function(expr, xlim = c(0, 1), n = 100) {
-  expr <- enexpr(expr)
-  f <- new_function(exprs(x = ), expr)
+As a function:
+```{r, collapse = TRUE}
+lm_df <- function(df, data) {
+  x_sym <- map(df$x, as.symbol)
+  y_sym <- map(df$y, as.symbol)
+  data <- enexpr(data)
   
-  x <- seq(xlim[1], xlim[2], length = n)
-  y <- f(x)
-
-  plot(x, y, type = "l", ylab = expr_text(expr))
+  formulae <- map2(x_sym, y_sym, \(x, y) formula(expr(!!y ~ !!x)))
+  models <- map(formulae, \(f) expr(lm(!!f, !!data)))
+  
+  map(models, \(m) summary(eval(m)))
 }
-curve2(sin(exp(4 * x)), n = 1000)
+
+vars <- data.frame(x = c("hp", "hp"),
+                   y = c("mpg", "cyl"))
+lm_df(vars, data = mtcars)
 ```
 
- 
-## Summary {-}
-
-* In this chapter we dove into non-standard evaluation with quasiquotation
-
-* Quasiquotation is useful on its own but in the next chapter we will look at the `quosures` and `data masks` to unleash the full power of *tidy evaluation*!
 
 
 
