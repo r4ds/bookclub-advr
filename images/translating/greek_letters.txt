@@ -1,0 +1,12 @@
+ alpha 	   nu  	 nu
+   beta  	 beta 	   xi  Xi   	 xi  Xi
+   gamma  Gamma   	 gamma  Gamma
+   delta  Delta   	 delta  Delta 	   pi  Pi   	 pi  Pi
+   epsilon  varepsilon   	 epsilon  varepsilon  	   rho  varrho    	 rho  varrho 
+   zeta   	 zeta  	   sigma  Sigma    	 sigma  Sigma
+   eta   	 eta  	   tau   	 tau 
+   theta  vartheta  Theta   	 theta  vartheta  Theta 	   upsilon  Upsilon   	 upsilon  Upsilon
+   iota   	 iota  	   phi  varphi  Phi   	 phi  varphi  Phi
+   kappa   	 kappa  	   chi   	 chi 
+   lambda  Lambda     	 lambda  Lambda 	   psi  Psi   	 psi  Psi
+   mu   	 mu  	   omega  Omega   	 omega  Omega 
