@@ -673,7 +673,9 @@ to_math <- function(x) {
 to_math(sin(pi) + f(a))
 ```
 
+## Finishing the Example
 
+(TO DO)
 
 
 
