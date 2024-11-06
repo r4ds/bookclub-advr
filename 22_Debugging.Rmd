@@ -182,27 +182,27 @@ There are other ways for a function to fail apart from throwing an error:
 
 ## Meeting Videos {-}
 
-### Cohort 1
+### Cohort 1 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/ROMefwMuqXU")`
 
-### Cohort 2
+### Cohort 2 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/N43p4txxxlY")`
 
-### Cohort 3
+### Cohort 3 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/Jdb00nepeWQ")`
 
-### Cohort 4
+### Cohort 4 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/tOql7ZD6P58")`
 
-### Cohort 5
+### Cohort 5 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/EqsSWUQ6ZW0")`
 
-### Cohort 6
+### Cohort 6 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/YvT-knh1baA")`
 
@@ -227,6 +227,6 @@ There are other ways for a function to fail apart from throwing an error:
 ```
 </details>
 
-### Cohort 7
+### Cohort 7 {-}
 
 `r knitr::include_url("https://www.youtube.com/embed/T_uFW9xXoJk")`
