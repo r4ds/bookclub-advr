@@ -176,7 +176,7 @@ There are other ways for a function to fail apart from throwing an error:
 
 - Jenny Bryan's ["Object of type closure is not subsettable"](https://github.com/jennybc/debugging#readme) talk from rstudio::conf 2020
 
-- Jenny Bryan and Jim Hester's book: ["What They Forgot to Teach You About R"](https://rstats.wtf/) Ch11
+- Jenny Bryan and Jim Hester's book: ["What They Forgot to Teach You About R"](https://rstats.wtf/debugging-r) Ch12
 
 - Hadley's video on a [minimal reprex for a shiny app](https://www.youtube.com/watch?v=9w8ANOAlWy4) 
 
