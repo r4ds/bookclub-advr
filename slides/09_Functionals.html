@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-c8b544e1eab81f7563542c0a8b71d1e9.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.28">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
 
   <title>Advanced R Book Club – functionals</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -166,7 +166,7 @@
 <h2>Map</h2>
 <p><code>map()</code> has two arguments, a vector and a function. It performs the function on each element of the vector and returns a list. We can also pass in some additional argument into the function.</p>
 
-<img data-src="images/9_2_3_map-arg.png" width="448" class="r-stretch"></section>
+<img data-src="images/9_2_3_map-arg.png" class="r-stretch"></section>
 <section id="benefit-of-using-the-map-function-in-purrr" class="slide level2 unnumbered">
 <h2>Benefit of using the map function in purrr</h2>
 <ul>
@@ -402,13 +402,13 @@
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [[1]]
-#&gt; [1] "C:\\Users\\jonth\\AppData\\Local\\Temp\\RtmpqgTG1V/4.png"
+#&gt; [1] "/tmp/RtmpSuGrw4/4.png"
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] "C:\\Users\\jonth\\AppData\\Local\\Temp\\RtmpqgTG1V/6.png"
+#&gt; [1] "/tmp/RtmpSuGrw4/6.png"
 #&gt; 
 #&gt; [[3]]
-#&gt; [1] "C:\\Users\\jonth\\AppData\\Local\\Temp\\RtmpqgTG1V/8.png"</code></pre>
+#&gt; [1] "/tmp/RtmpSuGrw4/8.png"</code></pre>
 </div>
 </div>
 <ul>
@@ -454,13 +454,13 @@
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [[1]]
-#&gt; [1] 6.714985
+#&gt; [1] 1.488141
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 14.41521 25.00888
+#&gt; [1] 84.07527 53.48027
 #&gt; 
 #&gt; [[3]]
-#&gt; [1] 670.5933 154.3326 710.4403</code></pre>
+#&gt; [1] 177.7308 603.6642 696.3334</code></pre>
 </div>
 </div>
 <ul>
@@ -469,13 +469,13 @@
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [[1]]
-#&gt; [1] 8.329229
+#&gt; [1] 9.709789
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 72.8779 87.9302
+#&gt; [1] 52.76837 20.42744
 #&gt; 
 #&gt; [[3]]
-#&gt; [1] 964.1500 393.3151 524.7130</code></pre>
+#&gt; [1] 674.5247 437.3185 448.1970</code></pre>
 </div>
 </div>
 <ul>
@@ -501,40 +501,40 @@
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [[1]]
-#&gt; [1] 4.146767
+#&gt; [1] 8.362425
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 36.09242
+#&gt; [1] 66.15931
 #&gt; 
 #&gt; [[3]]
 #&gt; [1] 10
 #&gt; 
 #&gt; [[4]]
-#&gt; [1] 85.77328
+#&gt; [1] 71.48286
 #&gt; 
 #&gt; [[5]]
-#&gt; [1] 5.588621 5.509534
+#&gt; [1] 7.305291 5.946457
 #&gt; 
 #&gt; [[6]]
-#&gt; [1] 30.17971 28.77136
+#&gt; [1] 42.49153 87.86923
 #&gt; 
 #&gt; [[7]]
 #&gt; [1] 10 10
 #&gt; 
 #&gt; [[8]]
-#&gt; [1] 88.74597 89.22501
+#&gt; [1] 37.16084 89.73025
 #&gt; 
 #&gt; [[9]]
-#&gt; [1] 9.315767 8.734138 5.620906
+#&gt; [1] 4.807937 6.007281 2.348217
 #&gt; 
 #&gt; [[10]]
-#&gt; [1] 29.501861  7.977664 27.539606
+#&gt; [1] 41.90999 52.65002 75.42063
 #&gt; 
 #&gt; [[11]]
 #&gt; [1] 10 10 10
 #&gt; 
 #&gt; [[12]]
-#&gt; [1] 87.88273 69.08732 17.19467</code></pre>
+#&gt; [1] 21.03136 96.55221 11.14827</code></pre>
 </div>
 </div>
 </section>
@@ -544,7 +544,7 @@
 <p><code>reduce()</code> takes a vector as its first argument, a function as its second argument, and an optional <code>.init</code> argument last. It will then apply the function repeatedly to the vector until there is only a single element left.</p>
 <p>(Hint: start at the top of the image and read down.)</p>
 
-<img data-src="images/reduce-init.png" width="508" class="r-stretch"><p>Let me really quickly demonstrate <code>reduce()</code> in action.</p>
+<img data-src="images/reduce-init.png" class="r-stretch"><p>Let me really quickly demonstrate <code>reduce()</code> in action.</p>
 <p>Say you wanted to add up the numbers 1 through 5 using only the plus operator <code>+</code>. You could do something like:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -1150,80 +1150,42 @@ Meeting chat log
       });
     </script>
     
-
     <script>
-
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-
       // slide changes (different for each slide format).
-
       (function () {
-
         // dispatch for htmlwidgets
-
         function fireSlideEnter() {
-
           const event = window.document.createEvent("Event");
-
           event.initEvent("slideenter", true, true);
-
           window.document.dispatchEvent(event);
-
         }
-
-    
 
         function fireSlideChanged(previousSlide, currentSlide) {
-
           fireSlideEnter();
 
-    
-
           // dispatch for shiny
-
           if (window.jQuery) {
-
             if (previousSlide) {
-
               window.jQuery(previousSlide).trigger("hidden");
-
             }
-
             if (currentSlide) {
-
               window.jQuery(currentSlide).trigger("shown");
-
             }
-
           }
-
         }
-
-    
 
         // hookup for slidy
-
         if (window.w3c_slidy) {
-
           window.w3c_slidy.add_observer(function (slide_num) {
-
             // slide_num starts at position 1
-
             fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-
           });
-
         }
 
-    
-
       })();
-
     </script>
-
-    
 
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {

@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-c8b544e1eab81f7563542c0a8b71d1e9.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.28">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
 
   <title>Advanced R Book Club – function_factories</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -142,11 +142,11 @@
 <p>A <strong>function factory</strong> is a function that makes (returns) functions</p>
 <p>Factory made function are <strong>manufactured functions</strong>.</p>
 
-<img data-src="images/10-1-factories.png" alt="https://epsis.com/no/operations-centers-focus-on-ways-of-working/" width="512" class="r-stretch quarto-figure-center"><p class="caption">Function factory | Credits: epsis.com</p></section>
+<img data-src="images/10-1-factories.png" alt="https://epsis.com/no/operations-centers-focus-on-ways-of-working/" class="r-stretch quarto-figure-center"><p class="caption">Function factory | Credits: epsis.com</p></section>
 <section id="how-does-a-function-factory-work" class="slide level2">
 <h2>How does a function factory work?</h2>
 
-<img data-src="images/10-2-how.jpg" width="130" class="r-stretch quarto-figure-center"><p class="caption">How does it work? | Credits: kakaakigas.com/how-it-works/</p><p><code>power1()</code> is the function factory and <code>square()</code> and <code>cube()</code> are manufactured functions.</p>
+<img data-src="images/10-2-how.jpg" class="r-stretch quarto-figure-center"><p class="caption">How does it work? | Credits: kakaakigas.com/how-it-works/</p><p><code>power1()</code> is the function factory and <code>square()</code> and <code>cube()</code> are manufactured functions.</p>
 </section>
 <section id="important-to-remember" class="slide level2">
 <h2>Important to remember</h2>
@@ -165,7 +165,7 @@
 <pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x0000018806c9d7a8&gt;</code></pre>
+<pre><code>#&gt; &lt;environment: 0x5574be246210&gt;</code></pre>
 </div>
 </div>
 <ol start="3" type="1">
@@ -188,7 +188,7 @@
 </ul>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x0000018806608cf0&gt;
+<pre><code>#&gt; &lt;environment: 0x5574bdd7bdf8&gt;
 #&gt; Parent: &lt;environment: global&gt;
 #&gt; Bindings:
 #&gt; • exp: &lt;lazy&gt;</code></pre>
@@ -499,7 +499,7 @@ The **Box-Cox** transformation towards normality:
 ::: {.cell-output .cell-output-stdout}
 
 ```
-#> [1] 22.8 17.3 17.8 16.4 15.0 30.4
+#> [1] 30.4 27.3 15.5 19.2 13.3 10.4
 ```
 
 
@@ -508,7 +508,7 @@ The **Box-Cox** transformation towards normality:
 ::: {.cell-output .cell-output-stdout}
 
 ```
-#> [1] 18.1 15.5 10.4 21.4 30.4 17.8
+#> [1] 27.3 15.8 21.4 17.3 14.3 21.4
 ```
 
 
@@ -520,7 +520,7 @@ The **Box-Cox** transformation towards normality:
 ::: {.cell-output .cell-output-stdout}
 
 ```
-#> [1] 19.55574 23.21712 31.30793 16.19729 15.92756 15.33090
+#> [1] 19.55574 18.94718 25.24238 16.19729 18.84990 20.89654
 ```
 
 
@@ -529,7 +529,7 @@ The **Box-Cox** transformation towards normality:
 ::: {.cell-output .cell-output-stdout}
 
 ```
-#> [1] 18.73946 23.66597 25.24238 16.19729 18.84990 21.25762
+#> [1] 24.57996 20.81963 24.68581 20.05240 19.20000 19.66013
 ```
 
 
@@ -679,8 +679,8 @@ Combine functionals and function factories to turn data into many functions.
 ```
 #> function (x) 
 #> x^exp
-#> <bytecode: 0x00000188024a47e8>
-#> <environment: 0x0000018802da6120>
+#> <bytecode: 0x5574bb560950>
+#> <environment: 0x5574be006780>
 ```
 
 
@@ -985,80 +985,42 @@ Meeting chat log
       });
     </script>
     
-
     <script>
-
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-
       // slide changes (different for each slide format).
-
       (function () {
-
         // dispatch for htmlwidgets
-
         function fireSlideEnter() {
-
           const event = window.document.createEvent("Event");
-
           event.initEvent("slideenter", true, true);
-
           window.document.dispatchEvent(event);
-
         }
-
-    
 
         function fireSlideChanged(previousSlide, currentSlide) {
-
           fireSlideEnter();
 
-    
-
           // dispatch for shiny
-
           if (window.jQuery) {
-
             if (previousSlide) {
-
               window.jQuery(previousSlide).trigger("hidden");
-
             }
-
             if (currentSlide) {
-
               window.jQuery(currentSlide).trigger("shown");
-
             }
-
           }
-
         }
-
-    
 
         // hookup for slidy
-
         if (window.w3c_slidy) {
-
           window.w3c_slidy.add_observer(function (slide_num) {
-
             // slide_num starts at position 1
-
             fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-
           });
-
         }
 
-    
-
       })();
-
     </script>
-
-    
 
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {

@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-c8b544e1eab81f7563542c0a8b71d1e9.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.28">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
 
   <title>Advanced R Book Club – function_operators</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -190,7 +190,7 @@ knitr::include_graphics("images/11-maths_example.png")
 
 ::: {.cell layout-align="center"}
 ::: {.cell-output-display}
-![Credits: www.nextptr.com](images/11-function_operators.png){fig-align='center' width=350}
+![Credits: www.nextptr.com](images/11-function_operators.png){fig-align='center'}
 :::
 :::
 
@@ -209,34 +209,34 @@ knitr::include_graphics("images/11-maths_example.png")
 <p>Caching computations: avoid repeated computations!</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 5.381879</code></pre>
+<pre><code>#&gt; [1] 1.411976</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.01    0.00    1.02</code></pre>
+#&gt;   0.001   0.000   1.001</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 2.716199</code></pre>
+<pre><code>#&gt; [1] 9.477699</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.00    0.00    1.03</code></pre>
+#&gt;   0.002   0.000   1.003</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 5.763852</code></pre>
+<pre><code>#&gt; [1] 6.849112</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.00    0.00    1.04</code></pre>
+#&gt;   0.001   0.000   1.002</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 5.763852</code></pre>
+<pre><code>#&gt; [1] 6.849112</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;       0       0       0</code></pre>
+#&gt;   0.013   0.000   0.013</code></pre>
 </div>
 </div>
 <blockquote>
@@ -256,7 +256,7 @@ The source code looks like this:</p>
 #&gt;     check_bool(quiet)
 #&gt;     function(...) capture_error(.f(...), otherwise, quiet)
 #&gt; }
-#&gt; &lt;bytecode: 0x0000017078958c08&gt;
+#&gt; &lt;bytecode: 0x55854ea21110&gt;
 #&gt; &lt;environment: namespace:purrr&gt;</code></pre>
 </div>
 </div>
@@ -272,7 +272,7 @@ The source code looks like this:</p>
 #&gt;         list(result = otherwise, error = e)
 #&gt;     })
 #&gt; }
-#&gt; &lt;bytecode: 0x00000170789a2d98&gt;
+#&gt; &lt;bytecode: 0x55854ea5d8e0&gt;
 #&gt; &lt;environment: namespace:purrr&gt;</code></pre>
 </div>
 </div>
@@ -287,7 +287,7 @@ The source code looks like this:</p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.00    0.00    0.09</code></pre>
+#&gt;     0.0     0.0     0.1</code></pre>
 </div>
 </div>
 <p>And another to add a dot after nth invocation:</p>
@@ -563,80 +563,42 @@ Meeting chat log
       });
     </script>
     
-
     <script>
-
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-
       // slide changes (different for each slide format).
-
       (function () {
-
         // dispatch for htmlwidgets
-
         function fireSlideEnter() {
-
           const event = window.document.createEvent("Event");
-
           event.initEvent("slideenter", true, true);
-
           window.document.dispatchEvent(event);
-
         }
-
-    
 
         function fireSlideChanged(previousSlide, currentSlide) {
-
           fireSlideEnter();
 
-    
-
           // dispatch for shiny
-
           if (window.jQuery) {
-
             if (previousSlide) {
-
               window.jQuery(previousSlide).trigger("hidden");
-
             }
-
             if (currentSlide) {
-
               window.jQuery(currentSlide).trigger("shown");
-
             }
-
           }
-
         }
-
-    
 
         // hookup for slidy
-
         if (window.w3c_slidy) {
-
           window.w3c_slidy.add_observer(function (slide_num) {
-
             // slide_num starts at position 1
-
             fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-
           });
-
         }
 
-    
-
       })();
-
     </script>
-
-    
 
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {

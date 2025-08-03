@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-c8b544e1eab81f7563542c0a8b71d1e9.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.28">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
 
   <title>Advanced R Book Club – names_and_values</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -142,17 +142,17 @@
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;           1         2
-#&gt; 1 0.4687742 0.9792203
-#&gt; 2 0.9657349 0.4831075
-#&gt; 3 0.9624871 0.6572021</code></pre>
+#&gt; 1 0.2324135 0.3540858
+#&gt; 2 0.9333135 0.5745319
+#&gt; 3 0.9213667 0.5882987</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;           1         2        3
-#&gt; 1 0.4687742 0.9792203 1.447994
-#&gt; 2 0.9657349 0.4831075 1.448842
-#&gt; 3 0.9624871 0.6572021 1.619689</code></pre>
+<pre><code>#&gt;           1         2         3
+#&gt; 1 0.2324135 0.3540858 0.5864993
+#&gt; 2 0.9333135 0.5745319 1.5078454
+#&gt; 3 0.9213667 0.5882987 1.5096654</code></pre>
 </div>
 </div>
 <p><strong>What makes these names challenging?</strong></p>
@@ -188,10 +188,10 @@
 </ul>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x29e77411b38"</code></pre>
+<pre><code>#&gt; [1] "0x557b69a851a8"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x29e77411b38"</code></pre>
+<pre><code>#&gt; [1] "0x557b69a851a8"</code></pre>
 </div>
 </div>
 <h3 class="unnumbered" id="exercises">Exercises</h3>
@@ -203,19 +203,19 @@
 <h5 class="unnumbered" id="do-the-following-all-point-to-the-same-underlying-function-object-hint-lobstrobj_addr">2. Do the following all point to the same underlying function object? hint: <code>lobstr::obj_addr()</code></h5>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x29e718b1738"</code></pre>
+<pre><code>#&gt; [1] "0x557b671191c0"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x29e718b1738"</code></pre>
+<pre><code>#&gt; [1] "0x557b671191c0"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x29e718b1738"</code></pre>
+<pre><code>#&gt; [1] "0x557b671191c0"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x29e718b1738"</code></pre>
+<pre><code>#&gt; [1] "0x557b671191c0"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x29e718b1738"</code></pre>
+<pre><code>#&gt; [1] "0x557b671191c0"</code></pre>
 </div>
 </div>
 <blockquote>
@@ -231,12 +231,12 @@
 </ul>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;0000029E7528F1D8&gt;</code></pre>
+<pre><code>#&gt; &lt;0x557b65fa14c8&gt;</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x0000029e7528f1d8 -&gt; 0x0000029e7569fc78]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
+<pre><code>#&gt; tracemem[0x557b65fa14c8 -&gt; 0x557b678d9808]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
 </div>
 </div>
 <p>Turn off <code>tracemem()</code> with <code>untracemem()</code></p>
@@ -252,10 +252,10 @@
 </ul>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1:0x29e75b97548] &lt;dbl&gt;</code></pre>
+<pre><code>#&gt; [1:0x557b68182688] &lt;dbl&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1:0x29e75b97548] &lt;dbl&gt;</code></pre>
+<pre><code>#&gt; [1:0x557b68182688] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <!-- ![](images/02-trace.png) -->
@@ -280,15 +280,15 @@
 </ul>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x29e7655ccc8] &lt;list&gt; 
-#&gt; ├─[2:0x29e766340b0] &lt;dbl&gt; 
-#&gt; ├─[3:0x29e7661de00] &lt;dbl&gt; 
-#&gt; └─[4:0x29e7661dc40] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x557b69230108] &lt;list&gt; 
+#&gt; ├─[2:0x557b6922a8a8] &lt;dbl&gt; 
+#&gt; ├─[3:0x557b6922a6e8] &lt;dbl&gt; 
+#&gt; └─[4:0x557b6922a528] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [5:0x29e7655b968] &lt;list&gt; 
-#&gt; ├─[2:0x29e766340b0] 
-#&gt; ├─[3:0x29e7661de00] 
-#&gt; └─[6:0x29e7661c970] &lt;dbl&gt;</code></pre>
+#&gt; █ [5:0x557b6926b2f8] &lt;list&gt; 
+#&gt; ├─[2:0x557b6922a8a8] 
+#&gt; ├─[3:0x557b6922a6e8] 
+#&gt; └─[6:0x557b6923c988] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 
@@ -303,25 +303,25 @@
 <p>Only the modified column changes</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x29e76c8ac08] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x29e776aa5f8] &lt;dbl&gt; 
-#&gt; └─y = [3:0x29e776aa5a8] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x557b69669618] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x557b6a13c778] &lt;dbl&gt; 
+#&gt; └─y = [3:0x557b6a13c728] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [4:0x29e76e34208] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x29e776aa5f8] 
-#&gt; └─y = [5:0x29e77b7fdc8] &lt;dbl&gt;</code></pre>
+#&gt; █ [4:0x557b6976b718] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x557b6a13c778] 
+#&gt; └─y = [5:0x557b6a3ada88] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>All columns change</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x29e76c8ac08] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x29e776aa5f8] &lt;dbl&gt; 
-#&gt; └─y = [3:0x29e776aa5a8] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x557b69669618] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x557b6a13c778] &lt;dbl&gt; 
+#&gt; └─y = [3:0x557b6a13c728] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [4:0x29e770b0a88] &lt;df[,2]&gt; 
-#&gt; ├─x = [5:0x29e783905a8] &lt;dbl&gt; 
-#&gt; └─y = [6:0x29e78390558] &lt;dbl&gt;</code></pre>
+#&gt; █ [4:0x557b69d322b8] &lt;df[,2]&gt; 
+#&gt; ├─x = [5:0x557b68e46a58] &lt;dbl&gt; 
+#&gt; └─y = [6:0x557b68e46a08] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 </section>
@@ -342,11 +342,11 @@
 <h5 class="unnumbered" id="why-are-there-two-copies">2. Why are there two copies?</h5>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "&lt;0000029E739B18C8&gt;"</code></pre>
+<pre><code>#&gt; [1] "&lt;0x557b67f95d68&gt;"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x0000029e739b18c8 -&gt; 0x0000029e739a7748]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x0000029e739a7748 -&gt; 0x0000029e73f72b38]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
+<pre><code>#&gt; tracemem[0x557b67f95d68 -&gt; 0x557b67f8aec8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x557b67f8aec8 -&gt; 0x557b67de62e8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
 </div>
 </div>
 <blockquote>
@@ -358,12 +358,12 @@ b &lt;- obj 1, obj 1<br>
 c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x29e7526a548] &lt;list&gt; 
-#&gt; ├─█ [2:0x29e73926888] &lt;list&gt; 
-#&gt; │ ├─[3:0x29e6af93310] &lt;int&gt; 
-#&gt; │ └─[3:0x29e6af93310] 
-#&gt; ├─[3:0x29e6af93310] 
-#&gt; └─[4:0x29e73d06fc8] &lt;int&gt;</code></pre>
+<pre><code>#&gt; █ [1:0x557b659b1a88] &lt;list&gt; 
+#&gt; ├─█ [2:0x557b678ad5e8] &lt;list&gt; 
+#&gt; │ ├─[3:0x557b66bb1b60] &lt;int&gt; 
+#&gt; │ └─[3:0x557b66bb1b60] 
+#&gt; ├─[3:0x557b66bb1b60] 
+#&gt; └─[4:0x557b66ab8208] &lt;int&gt;</code></pre>
 </div>
 </div>
 <h5 class="unnumbered" id="what-happens-here">4. What happens here?</h5>
@@ -374,10 +374,10 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 </ul>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x29e75233548] &lt;list&gt; 
-#&gt; ├─[2:0x29e7562b268] &lt;int&gt; 
-#&gt; └─█ [3:0x29e75950118] &lt;list&gt; 
-#&gt;   └─[2:0x29e7562b268]</code></pre>
+<pre><code>#&gt; █ [1:0x557b6693d4b8] &lt;list&gt; 
+#&gt; ├─[2:0x557b6817baf8] &lt;int&gt; 
+#&gt; └─█ [3:0x557b6832d3b0] &lt;list&gt; 
+#&gt;   └─[2:0x557b6817baf8]</code></pre>
 </div>
 </div>
 
@@ -491,28 +491,28 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <p><strong>Data frame - Copied every time!</strong></p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;0000029E75B0D268&gt;</code></pre>
+<pre><code>#&gt; &lt;0x557b6a02e378&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x0000029e75b0d268 -&gt; 0x0000029e76dab7a8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x0000029e76dab7a8 -&gt; 0x0000029e76daabd8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x0000029e76daabd8 -&gt; 0x0000029e76daab68]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x0000029e76daab68 -&gt; 0x0000029e76daaaf8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x0000029e76daaaf8 -&gt; 0x0000029e76daaa88]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x0000029e76daaa88 -&gt; 0x0000029e76daaa18]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x0000029e76daaa18 -&gt; 0x0000029e76daa9a8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x0000029e76daa9a8 -&gt; 0x0000029e76daa938]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x0000029e76daa938 -&gt; 0x0000029e76daa8c8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x0000029e76daa8c8 -&gt; 0x0000029e76daa858]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
+<pre><code>#&gt; tracemem[0x557b6a02e378 -&gt; 0x557b6aadc198]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x557b6aadc198 -&gt; 0x557b6aadb5c8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x557b6aadb5c8 -&gt; 0x557b6aadb558]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x557b6aadb558 -&gt; 0x557b6aadb4e8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x557b6aadb4e8 -&gt; 0x557b6aadb478]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x557b6aadb478 -&gt; 0x557b6aadb408]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x557b6aadb408 -&gt; 0x557b6aadb398]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x557b6aadb398 -&gt; 0x557b6aadb328]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x557b6aadb328 -&gt; 0x557b6aadb2b8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x557b6aadb2b8 -&gt; 0x557b6aadb248]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
 </div>
 </div>
 <p><strong>List (uses internal C code) - Copied once!</strong></p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;0000029E73B5B5B8&gt;</code></pre>
+<pre><code>#&gt; &lt;0x557b68e3a768&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x0000029e73b5b5b8 -&gt; 0x0000029e7845c6c8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
+<pre><code>#&gt; tracemem[0x557b68e3a768 -&gt; 0x557b6ad4b908]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
 </div>
 </div>
 <h4 class="unnumbered" id="benchmark-this-exercise-2">Benchmark this (Exercise #2)</h4>
@@ -523,8 +523,8 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 data.frame     52µs   68.1µs    13672.     410KB     200.
-#&gt; 2 list         25.5µs   32.4µs    28415.     391KB     276.</code></pre>
+#&gt; 1 data.frame   73.7µs   83.2µs    11211.     410KB     158.
+#&gt; 2 list         19.8µs     25µs    37438.     391KB     393.</code></pre>
 </div>
 </div>
 <p><strong>Try with 20 columns</strong></p>
@@ -533,8 +533,8 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 data.frame  139.5µs  188.1µs     5033.     400KB     52.4
-#&gt; 2 list         27.2µs   39.6µs    23843.     392KB    236.</code></pre>
+#&gt; 1 data.frame    243µs  265.7µs     3727.     400KB     37.4
+#&gt; 2 list           26µs   31.7µs    31153.     392KB    289.</code></pre>
 </div>
 </div>
 <p><strong>WOW!</strong></p>
@@ -581,11 +581,11 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;           used (Mb) gc trigger (Mb) max used (Mb)
-#&gt; Ncells  802899 42.9    1476558 78.9  1476558 78.9
-#&gt; Vcells 4524804 34.6   10146329 77.5 10146329 77.5</code></pre>
+#&gt; Ncells  738202 39.5    1383041 73.9  1383041 73.9
+#&gt; Vcells 4424022 33.8   10146329 77.5 10146281 77.5</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 81.16 MB</code></pre>
+<pre><code>#&gt; 76.73 MB</code></pre>
 </div>
 </div>
 <ul>
@@ -868,80 +868,42 @@ Meeting chat log
       });
     </script>
     
-
     <script>
-
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-
       // slide changes (different for each slide format).
-
       (function () {
-
         // dispatch for htmlwidgets
-
         function fireSlideEnter() {
-
           const event = window.document.createEvent("Event");
-
           event.initEvent("slideenter", true, true);
-
           window.document.dispatchEvent(event);
-
         }
-
-    
 
         function fireSlideChanged(previousSlide, currentSlide) {
-
           fireSlideEnter();
 
-    
-
           // dispatch for shiny
-
           if (window.jQuery) {
-
             if (previousSlide) {
-
               window.jQuery(previousSlide).trigger("hidden");
-
             }
-
             if (currentSlide) {
-
               window.jQuery(currentSlide).trigger("shown");
-
             }
-
           }
-
         }
-
-    
 
         // hookup for slidy
-
         if (window.w3c_slidy) {
-
           window.w3c_slidy.add_observer(function (slide_num) {
-
             // slide_num starts at position 1
-
             fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-
           });
-
         }
 
-    
-
       })();
-
     </script>
-
-    
 
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {

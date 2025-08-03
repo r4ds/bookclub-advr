@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-c8b544e1eab81f7563542c0a8b71d1e9.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.28">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
 
   <title>Advanced R Book Club – measuring_performance</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -121,25 +121,15 @@
     }
   </style>
   <link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
-
   <script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
-
   <script src="../site_libs/jquery-3.7.1/jquery.min.js"></script>
-
   <script src="../site_libs/d3-3.5.6/d3.min.js"></script>
-
   <link href="../site_libs/profvis-0.3.6.9000/profvis.css" rel="stylesheet">
-
   <script src="../site_libs/profvis-0.3.6.9000/profvis.js"></script>
-
   <script src="../site_libs/profvis-0.3.6.9000/scroll.js"></script>
-
   <link href="../site_libs/highlight-11.10.0/textmate.css" rel="stylesheet">
-
   <script src="../site_libs/highlight-11.10.0/highlight.min.js"></script>
-
   <script src="../site_libs/profvis-binding-0.4.0/profvis.js"></script>
-
 </head>
 <body class="quarto-dark">
   <div class="reveal">
@@ -162,7 +152,7 @@
 <p>“Before you can make your code faster, you first need to figure out what’s making it slow.”</p>
 </blockquote>
 
-<img data-src="images/23_code_faster.jpeg" width="348" class="r-stretch quarto-figure-center"><p class="caption">SLOW DOWN TO LEARN HOW TO CODE FASTER | credits: packtpub.com</p><ul>
+<img data-src="images/23_code_faster.jpeg" class="r-stretch quarto-figure-center"><p class="caption">SLOW DOWN TO LEARN HOW TO CODE FASTER | credits: packtpub.com</p><ul>
 <li><strong>profile</strong> your code: measure the run-time of each line of code using realistic inputs</li>
 <li><strong>experiment</strong> with alternatives to find faster code</li>
 <li><strong>microbenchmark</strong> to measure the difference in performance.</li>
@@ -193,16 +183,16 @@ profile f(), with utils::Rprof()</code></pre>
 utils::summaryRprof()</code></pre>
 <div class="cell">
 <div class="cell-output-display">
-<div class="profvis html-widget html-fill-item" id="htmlwidget-59553a5923af4784f365" style="width:100%;height:600px;"></div>
-<script type="application/json" data-for="htmlwidget-59553a5923af4784f365">{"x":{"message":{"prof":{"time":[1,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,8,9,9,9,10,10,10,11,11,11,12,12,12,13,13,13,14,14,14,14,15,15,15,15,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,22,22,22,23,23,23,24,24,24,25,25,25,26,26,26],"depth":[3,2,1,2,1,2,1,2,1,2,1,2,1,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1],"label":["Rprof","profvis",".main","pause","f","pause","f","pause","f","pause","f","pause","f","pause","f","pause","g","f","pause","g","f","pause","g","f","pause","g","f","pause","g","f","pause","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","f","pause","h","f","pause","h","f","pause","h","f","pause","h","f","pause","h","f"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"memalloc":[10.11620330810547,10.11620330810547,10.11620330810547,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641,10.12497711181641],"meminc":[0,0,0,0.0087738037109375,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"interval":10,"files":[],"prof_output":"C:\\Users\\jonth\\AppData\\Local\\Temp\\RtmpkZH6bM\\file4ba864a73712.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
+<div class="profvis html-widget html-fill-item" id="htmlwidget-0b2b9250f1b35e2e7f4c" style="width:100%;height:600px;"></div>
+<script type="application/json" data-for="htmlwidget-0b2b9250f1b35e2e7f4c">{"x":{"message":{"prof":{"time":[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,10,11,11,11,12,12,12,13,13,13,14,14,14,15,15,15,16,16,16,17,17,17,18,18,18,19,19,19,20,20,20,20,21,21,21,21,22,22,22,22,23,23,23,23,24,24,24,24,25,25,25,25,26,26,26,26,27,27,27,27,28,28,28,28,29,29,29,29,30,30,30,31,31,31,32,32,32,33,33,33,34,34,34,35,35,35,36,36,36,37,37,37,38,38,38,39,39,39],"depth":[2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,4,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1,3,2,1],"label":["pause","f","pause","f","pause","f","pause","f","pause","f","pause","f","pause","f","pause","f","pause","f","pause","g","f","pause","g","f","pause","g","f","pause","g","f","pause","g","f","pause","g","f","pause","g","f","pause","g","f","pause","g","f","pause","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","g","f","pause","h","f","pause","h","f","pause","h","f","pause","h","f","pause","h","f","pause","h","f","pause","h","f","pause","h","f","pause","h","f","pause","h","f"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"memalloc":[9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812,9.352249145507812],"meminc":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"interval":10,"files":[],"prof_output":"/tmp/RtmpVcwBgE/file23a845afa11.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p><strong>Memory profiling and the garbage collector</strong></p>
 <p>Profiling a loop that modifies an existing variable:</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="profvis html-widget html-fill-item" id="htmlwidget-272695ff24c50d787057" style="width:100%;height:600px;"></div>
-<script type="application/json" data-for="htmlwidget-272695ff24c50d787057">{"x":{"message":{"prof":{"time":[1,1,1,2,2,3,3,3,4,4,6,6],"depth":[3,2,1,2,1,3,2,1,2,1,2,1],"label":["Rprof","profvis::profvis",".main","c",".main","<GC>","c",".main","c",".main","c",".main"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null],"memalloc":[10.77430725097656,10.77430725097656,10.77430725097656,42.62553405761719,42.62553405761719,63.98202514648438,63.98202514648438,63.98202514648438,49.26554107666016,49.26554107666016,63.43059539794922,63.43059539794922],"meminc":[0,0,0,31.85122680664062,0,21.35649108886719,0,0,-14.71648406982422,0,14.16505432128906,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null]},"interval":10,"files":[],"prof_output":"C:\\Users\\jonth\\AppData\\Local\\Temp\\RtmpkZH6bM\\file4ba897033fa.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
+<div class="profvis html-widget html-fill-item" id="htmlwidget-3725c2df983e4e410c50" style="width:100%;height:600px;"></div>
+<script type="application/json" data-for="htmlwidget-3725c2df983e4e410c50">{"x":{"message":{"prof":{"time":[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8],"depth":[2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1],"label":["c",".main","c",".main","c",".main","c",".main","c",".main","c",".main","c",".main","c",".main"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"memalloc":[31.96668243408203,31.96668243408203,45.80649566650391,45.80649566650391,59.70252990722656,59.70252990722656,26.35543823242188,26.35543823242188,59.43119812011719,59.43119812011719,27.59661865234375,27.59661865234375,61.46578979492188,61.46578979492188,34.45256042480469,34.45256042480469],"meminc":[0,0,13.83981323242188,0,13.89603424072266,0,-33.34709167480469,0,33.07575988769531,0,-31.83457946777344,0,33.86917114257812,0,-27.01322937011719,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"interval":10,"files":[],"prof_output":"/tmp/RtmpVcwBgE/file23a856dab381.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>You can figure out what is the source of the problem by looking at the memory column. In this case, <strong>copy-on-modify</strong> acts in each iteration of the loop creating another copy of x.</p>
@@ -223,7 +213,7 @@ utils::summaryRprof()</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="images/23_microbenchmarking.jpeg" width="159"></p>
+<p><img data-src="images/23_microbenchmarking.jpeg"></p>
 <figcaption>Credits: Google search-engine</figcaption>
 </figure>
 </div>
@@ -236,8 +226,8 @@ utils::summaryRprof()</code></pre>
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 sqrt(x)       200ns    300ns  2144036.      848B        0
-#&gt; 2 x^0.5         2.3µs    2.9µs   339643.      848B        0</code></pre>
+#&gt; 1 sqrt(x)    360.07ns 381.03ns  2551193.      848B        0
+#&gt; 2 x^0.5        1.92µs   1.97µs   497781.      848B        0</code></pre>
 </div>
 </div>
 <ul>
@@ -502,80 +492,42 @@ utils::summaryRprof()</code></pre>
       });
     </script>
     
-
     <script>
-
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-
       // slide changes (different for each slide format).
-
       (function () {
-
         // dispatch for htmlwidgets
-
         function fireSlideEnter() {
-
           const event = window.document.createEvent("Event");
-
           event.initEvent("slideenter", true, true);
-
           window.document.dispatchEvent(event);
-
         }
-
-    
 
         function fireSlideChanged(previousSlide, currentSlide) {
-
           fireSlideEnter();
 
-    
-
           // dispatch for shiny
-
           if (window.jQuery) {
-
             if (previousSlide) {
-
               window.jQuery(previousSlide).trigger("hidden");
-
             }
-
             if (currentSlide) {
-
               window.jQuery(currentSlide).trigger("shown");
-
             }
-
           }
-
         }
-
-    
 
         // hookup for slidy
-
         if (window.w3c_slidy) {
-
           window.w3c_slidy.add_observer(function (slide_num) {
-
             // slide_num starts at position 1
-
             fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-
           });
-
         }
 
-    
-
       })();
-
     </script>
-
-    
 
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {

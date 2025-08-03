@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-c8b544e1eab81f7563542c0a8b71d1e9.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.28">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
 
   <title>Advanced R Book Club – functions</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -121,21 +121,13 @@
     }
   </style>
   <script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
-
   <script src="../site_libs/d3-3.3.8/d3.min.js"></script>
-
   <script src="../site_libs/dagre-0.4.0/dagre-d3.min.js"></script>
-
   <link href="../site_libs/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
-
   <script src="../site_libs/mermaid-0.3.0/dist/mermaid.slim.min.js"></script>
-
   <link href="../site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
-
   <script src="../site_libs/chromatography-0.1/chromatography.js"></script>
-
   <script src="../site_libs/DiagrammeR-binding-1.0.11/DiagrammeR.js"></script>
-
 </head>
 <body class="quarto-dark">
   <div class="reveal">
@@ -156,12 +148,12 @@
 <h2>How to make a simple function in R</h2>
 <p>Let’s imagine the structure of a function:</p>
 
-<img data-src="images/06_functions.png" width="133" class="r-stretch quarto-figure-center"><p class="caption">The black dot on the left is the environment. The two blocks to the right are the function arguments.</p><p><strong>Function components</strong></p>
+<img data-src="images/06_functions.png" class="r-stretch quarto-figure-center"><p class="caption">The black dot on the left is the environment. The two blocks to the right are the function arguments.</p><p><strong>Function components</strong></p>
 <p>Functions have three parts, <code>formals()</code>, <code>body()</code>, and <code>environment()</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="htmlwidget-97f58c8a773ca7cf01bf" style="width:100%;height:100%;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-97f58c8a773ca7cf01bf">{"x":{"diagram":"\n   graph LR\n     A{formals}-->B(body)\n     B-->C(environment)\nstyle A fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-eb0689b3134f485900f4" style="width:100%;height:100%;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-eb0689b3134f485900f4">{"x":{"diagram":"\n   graph LR\n     A{formals}-->B(body)\n     B-->C(environment)\nstyle A fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p><strong>Example</strong></p>
@@ -264,17 +256,17 @@
 <h2>Function composition</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.292362</code></pre>
+<pre><code>#&gt; [1] 0.2925195</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.292362</code></pre>
+<pre><code>#&gt; [1] 0.2925195</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.292362</code></pre>
+<pre><code>#&gt; [1] 0.2925195</code></pre>
 </div>
 </div>
 </section>
@@ -322,7 +314,7 @@
 <p>Everything that exists is an object. Everything that happens is a function call. — John Chambers</p>
 </blockquote>
 
-<img data-src="images/06_forms.png" width="584" class="r-stretch"></section>
+<img data-src="images/06_forms.png" class="r-stretch"></section>
 <section id="case-study-sir-model-function" class="slide level2">
 <h2>Case Study: SIR model function</h2>
 <p>This is an interesting example taken from a course on Coursera: <a href="https://www.coursera.org/specializations/infectious-disease-modelling">Infectious disease modelling-ICL</a></p>
@@ -399,7 +391,7 @@
 #&gt;             times, func, parms, ...))
 #&gt;     return(out)
 #&gt; }
-#&gt; &lt;bytecode: 0x000001c1de5b5b60&gt;
+#&gt; &lt;bytecode: 0x56163d191e08&gt;
 #&gt; &lt;environment: namespace:deSolve&gt;</code></pre>
 </div>
 </div>
@@ -451,7 +443,7 @@
 #&gt; {
 #&gt;     UseMethod("melt", data)
 #&gt; }
-#&gt; &lt;bytecode: 0x000001c1dd849200&gt;
+#&gt; &lt;bytecode: 0x56163c891980&gt;
 #&gt; &lt;environment: namespace:reshape2&gt;</code></pre>
 </div>
 </div>
@@ -504,7 +496,7 @@
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  [1] [             aperm         as.data.frame as_tibble     Axis         
+<pre><code>#&gt;  [1] [             aperm         as_tibble     as.data.frame Axis         
 #&gt;  [6] coerce        initialize    lines         melt          plot         
 #&gt; [11] points        print         show          slotsFromS3   summary      
 #&gt; [16] tail         
@@ -545,7 +537,7 @@
 #&gt;         return(df)
 #&gt;     }
 #&gt; }
-#&gt; &lt;bytecode: 0x000001c1dfc044d8&gt;
+#&gt; &lt;bytecode: 0x5616388b81f8&gt;
 #&gt; &lt;environment: namespace:reshape2&gt;</code></pre>
 </div>
 </div>
@@ -889,80 +881,42 @@ Meeting chat log
       });
     </script>
     
-
     <script>
-
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-
       // slide changes (different for each slide format).
-
       (function () {
-
         // dispatch for htmlwidgets
-
         function fireSlideEnter() {
-
           const event = window.document.createEvent("Event");
-
           event.initEvent("slideenter", true, true);
-
           window.document.dispatchEvent(event);
-
         }
-
-    
 
         function fireSlideChanged(previousSlide, currentSlide) {
-
           fireSlideEnter();
 
-    
-
           // dispatch for shiny
-
           if (window.jQuery) {
-
             if (previousSlide) {
-
               window.jQuery(previousSlide).trigger("hidden");
-
             }
-
             if (currentSlide) {
-
               window.jQuery(currentSlide).trigger("shown");
-
             }
-
           }
-
         }
-
-    
 
         // hookup for slidy
-
         if (window.w3c_slidy) {
-
           window.w3c_slidy.add_observer(function (slide_num) {
-
             // slide_num starts at position 1
-
             fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-
           });
-
         }
 
-    
-
       })();
-
     </script>
-
-    
 
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {

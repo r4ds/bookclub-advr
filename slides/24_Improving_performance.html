@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-c8b544e1eab81f7563542c0a8b71d1e9.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.28">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
 
   <title>Advanced R Book Club – improving_performance</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -158,8 +158,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression      min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean1(x)      123µs  141.3µs     7018.
-#&gt; 2 mean2(x)     60.3µs   67.5µs    14500.</code></pre>
+#&gt; 1 mean1(x)      415µs    420µs     2368.
+#&gt; 2 mean2(x)      186µs    187µs     5280.</code></pre>
 </div>
 </div>
 </section>
@@ -207,8 +207,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression           min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)            2.4µs    3.7µs   268005.
-#&gt; 2 mean.default(x)    800ns    1.1µs   808898.</code></pre>
+#&gt; 1 mean(x)           2.97µs   3.18µs   305315.
+#&gt; 2 mean.default(x)   1.87µs   1.96µs   477967.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -216,9 +216,9 @@
 <pre><code>#&gt; # A tibble: 3 × 4
 #&gt;   expression              min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)               2.3µs    3.3µs   294550.
-#&gt; 2 mean.default(x)       800ns    1.3µs   754010.
-#&gt; 3 .Internal(mean(x))    100ns    200ns  4364334.</code></pre>
+#&gt; 1 mean(x)              2.98µs   3.19µs   304833.
+#&gt; 2 mean.default(x)      1.88µs   1.96µs   487265.
+#&gt; 3 .Internal(mean(x)) 460.07ns 481.03ns  2055765.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -226,9 +226,9 @@
 <pre><code>#&gt; # A tibble: 3 × 4
 #&gt;   expression              min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)              14.2µs   16.4µs    59900.
-#&gt; 2 mean.default(x)      12.7µs   15.6µs    63597.
-#&gt; 3 .Internal(mean(x))     12µs   13.4µs    74163.</code></pre>
+#&gt; 1 mean(x)              43.5µs   44.1µs    22441.
+#&gt; 2 mean.default(x)      41.8µs   42.8µs    23122.
+#&gt; 3 .Internal(mean(x))   38.4µs   41.2µs    24050.</code></pre>
 </div>
 </div>
 </section>
@@ -243,8 +243,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression         min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;    &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 as.data.frame  516.7µs    682µs     1431.
-#&gt; 2 quick_df         2.9µs    4.3µs   224063.</code></pre>
+#&gt; 1 as.data.frame   1.01ms   1.04ms      951.
+#&gt; 2 quick_df        6.27µs   6.85µs   137260.</code></pre>
 </div>
 </div>
 <p><em>Caveat!</em> This method is fast because it’s dangerous!</p>
@@ -273,10 +273,10 @@
 <pre><code>#&gt; # A tibble: 4 × 4
 #&gt;   expression      min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 loop10       13.1µs   17.5µs    56060.
-#&gt; 2 loop100     373.5µs  465.9µs     2147.
-#&gt; 3 vec10         2.4µs      3µs   317577.
-#&gt; 4 vec100       13.5µs   17.8µs    56963.</code></pre>
+#&gt; 1 loop10      19.97µs  20.98µs    46587.
+#&gt; 2 loop100    528.76µs 547.97µs     1822.
+#&gt; 3 vec10        3.53µs   3.76µs   258533.
+#&gt; 4 vec100      22.05µs  23.17µs    42822.</code></pre>
 </div>
 </div>
 </section>
@@ -285,32 +285,32 @@
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.30    0.03    0.36</code></pre>
+#&gt;   0.408   0.000   0.408</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.08    0.00    0.08</code></pre>
+#&gt;   0.113   0.000   0.113</code></pre>
 </div>
 </div>
 <p>Add functionality to save values</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.08    0.01    0.09</code></pre>
+#&gt;   0.128   0.002   0.130</code></pre>
 </div>
 </div>
 <p>If you look at the source code of <code>stats:::t.test.default()</code>, you’ll see that it does a lot more than just compute the t-statistic.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.00    0.01    0.03</code></pre>
+#&gt;   0.024   0.000   0.024</code></pre>
 </div>
 </div>
 <p>This gives us a six-fold speed improvement!</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.02    0.00    0.01</code></pre>
+#&gt;    0.01    0.00    0.01</code></pre>
 </div>
 </div>
 <p>1000 times faster than when we started!</p>
@@ -581,80 +581,42 @@ Meeting chat log
       });
     </script>
     
-
     <script>
-
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
-
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
-
       // slide changes (different for each slide format).
-
       (function () {
-
         // dispatch for htmlwidgets
-
         function fireSlideEnter() {
-
           const event = window.document.createEvent("Event");
-
           event.initEvent("slideenter", true, true);
-
           window.document.dispatchEvent(event);
-
         }
-
-    
 
         function fireSlideChanged(previousSlide, currentSlide) {
-
           fireSlideEnter();
 
-    
-
           // dispatch for shiny
-
           if (window.jQuery) {
-
             if (previousSlide) {
-
               window.jQuery(previousSlide).trigger("hidden");
-
             }
-
             if (currentSlide) {
-
               window.jQuery(currentSlide).trigger("shown");
-
             }
-
           }
-
         }
-
-    
 
         // hookup for slidy
-
         if (window.w3c_slidy) {
-
           window.w3c_slidy.add_observer(function (slide_num) {
-
             // slide_num starts at position 1
-
             fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
-
           });
-
         }
 
-    
-
       })();
-
     </script>
-
-    
 
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
