@@ -20,12 +20,6 @@ title: Introduction
 - Describe the overall structure of the book.
 - Decide whether this book is right for you.
 
-Books suggestions:
-
-- [The Structure and Interpretation of Computer Programs (SICP)](https://mitp-content-server.mit.edu/books/content/sectbyfn/books_pres_0/6515/sicp.zip/full-text/book/book.html)
-- [Concepts, Techniques and Models of Computer Programming](https://mitpress.mit.edu/books/concepts-techniques-and-models-computer-programming)
-- [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/)
-
 # What's new?
 
 ## Hadley's goals
