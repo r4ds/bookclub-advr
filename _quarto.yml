@@ -18,14 +18,13 @@ website:
     contents:
       - index.qmd
       - file: slides/00-club_intro.qmd
-        target: advr_club-club_intro
+        target: advr_club-slides
       - section: "Getting started"
         contents:
-          - file: slides/01-introduction.qmd
-            target: advr_club-slides
-            contents:
-              - text: Meeting videos
-                file: videos/01.qmd
+        - section: slides/01-introduction.qmd
+          target: advr_club-slides
+          contents:
+          - file: videos/01.qmd
       - section: "Foundations"
         contents:
           - file: slides/02_Names_and_values.Rmd
