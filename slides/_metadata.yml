@@ -1,0 +1,16 @@
+format:
+  revealjs:
+    theme: [dark, custom.scss]
+    footer: <a href="/" target="advr_club-index">DSLC.io/advr</a> | <a href="https://DSLC.io" target="_blank">DSLC.io</a>
+    link-external-newwindow: true
+    transition: slide
+    incremental: false
+execute:
+  eval: true
+  r:
+    echo: true
+  mermaid:
+    echo: false
+knitr:
+  opts_chunk:
+    comment: "#>"

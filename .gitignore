@@ -3,11 +3,10 @@
 .Rdata
 .httr-oauth
 .DS_Store
-_book
-_bookdown_files
-bookclub-advr.Rmd
-bookclub-advr.html
-bookclub-advr.knit.md
-bookclub-advr_files
-libs
+
+# Ignore things during render.
 *.html
+*.rmarkdown
+/.quarto/
+/_site/
+/site_libs/

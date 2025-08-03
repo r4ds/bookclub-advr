@@ -31,7 +31,7 @@ Three types of conditions:
 
 How to throw errors
 
-```{r throwing_errors}
+```{r throwing_errors, error = TRUE}
 # with base R
 stop("... in the name of love...")
 
@@ -45,12 +45,12 @@ Composing error messages
 
 - Mechanics.
   - `stop()` pastes together arguments
-```{r}
+```{r, error = TRUE}
 some_val <- 1
 stop("Your value is: ", some_val, call. = FALSE)
 ```
   - `abort()` requires `{glue}`
-```{r}
+```{r, error = TRUE}
 some_val <- 1
 rlang::abort(glue::glue("Your value is: {some_val}"))
 ```
@@ -390,7 +390,7 @@ tryCatch(f(), message = function(cnd) lobstr::cst())
 
 The `base::log()` function provides a minimal error message.
 
-```{r}
+```{r, error = TRUE}
 log(letters)
 log(1:10, base = letters)
 ```
@@ -416,7 +416,7 @@ my_log <- function(x, base = exp(1)) {
 
 Consider the difference:
 
-```{r}
+```{r, error = TRUE}
 my_log(letters)
 my_log(1:10, base = letters)
 ```
@@ -461,7 +461,7 @@ my_log <- function(x, base = exp(1)) {
 
 See the result for the end user:
 
-```{r}
+```{r, error = TRUE}
 my_log(letters)
 my_log(1:10, base = letters)
 ```
@@ -470,7 +470,7 @@ my_log(1:10, base = letters)
 
 Use class of condition object to allow for different handling of different types of errors
 
-```{r}
+```{r, error = TRUE}
 tryCatch(
   error_bad_argument = function(cnd) "bad_argument",
   error = function(cnd) "other error",

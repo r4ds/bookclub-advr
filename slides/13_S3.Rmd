@@ -69,7 +69,7 @@ new_difftime <- function(x = double(), units = "secs") {
 
 Contrast a constructor, aimed at quickly creating instances of a class, which only checks type of inputs ...
 
-```{r}
+```{r, error = TRUE}
 new_factor <- function(x = integer(), levels = character()) {
   stopifnot(is.integer(x))
   stopifnot(is.character(levels))
@@ -88,7 +88,7 @@ new_factor(1:5, "a")
 
 ... with a validator, aimed at emitting errors if inputs pose problems, which makes more expensive checks
 
-```{r}
+```{r, error = TRUE}
 validate_factor <- function(x) {
   values <- unclass(x)
   levels <- attr(x, "levels")
@@ -119,7 +119,7 @@ Maybe there is a typo in the `validate_factor()` function? Do the integers need 
 * If not, then `length(levels) < max(values)` should be `length(levels) < length(values)`, right?
 * If so, why do the integers need to start at 1 and be consecutive?  And if they need to be as such, we should tell the user, right?
 
-```{r}
+```{r, error = TRUE}
 validate_factor(new_factor(1:3, levels = c("a", "b", "c")))
 validate_factor(new_factor(10:12, levels = c("a", "b", "c")))
 ```
@@ -167,7 +167,7 @@ validate_roman <- function(x) {
 
 For convenience, we allow the user to also pass real values to a helper function.
 
-```{r}
+```{r, error = TRUE}
 roman <- function(x = integer()) {
   x <- as.integer(x)
   

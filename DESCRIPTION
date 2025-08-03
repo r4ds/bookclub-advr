@@ -1,6 +1,7 @@
+Type: Book
 Package: bookclub-advr
 Title: Advanced R Book Club
-Version: 0.0.1
+Version: 0.0.10
 Authors@R: c(
   person(
     "Data Science Learning Community",
@@ -9,9 +10,9 @@ Authors@R: c(
   )
   )
 License: CC BY NC SA 4.0
-URL: https://r4ds.github.io/bookclub-advr, https://github.com/r4ds/bookclub-advr
+URL: https://DSLC.io/advr, https://github.com/r4ds/bookclub-advr
 Depends:
-    R (>= 3.1.0)
+    R (>= 4.1.0)
 Imports: 
     bench,
     bookdown,

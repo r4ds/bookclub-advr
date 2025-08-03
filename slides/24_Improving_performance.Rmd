@@ -152,7 +152,7 @@ X <- matrix(rnorm(m * n, mean = 10, sd = 3), nrow = m)
 grp <- rep(1:2, each = n / 2)
 ```
 
-```{r, cache = TRUE}
+```{r}
 # formula interface
 system.time(
   for (i in 1:m) {
@@ -176,7 +176,7 @@ compT <- function(i){
 system.time(t1 <- purrr::map_dbl(1:m, compT))
 ```
 
-If you look at the source code of stats:::t.test.default(), you’ll see that it does a lot more than just compute the t-statistic.
+If you look at the source code of `stats:::t.test.default()`, you’ll see that it does a lot more than just compute the t-statistic.
 
 ```{r}
 # Do less work

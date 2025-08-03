@@ -1,0 +1,31 @@
+/*-- scss:defaults --*/
+
+/*-- Fonts --*/
+$presentation-font-size-root: 36px;
+
+/*-- Headings --*/
+$presentation-h1-font-size: 2em;
+
+/*-- new vars --*/
+$highlight-font-color: #A0E9FF;
+
+/*-- scss:rules --*/
+
+.reveal .footer {
+  font-size: .6em !important;
+}
+
+.reveal .slide strong {
+  font-weight: 900;
+  color: $highlight-font-color;
+}
+
+.reveal .slide h3 {
+  color: $highlight-font-color;
+}
+
+/*-- Hide
+.reveal .footer {
+  font-size: 30px !important;
+}
+--*/

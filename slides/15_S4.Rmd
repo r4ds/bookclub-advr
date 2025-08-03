@@ -107,7 +107,7 @@ Person("Someone")
 S4 objects
 
 - Check class of slot at creation
-```{r}
+```{r, error = TRUE}
 Person(mtcars)
 ```
 
@@ -123,7 +123,7 @@ That's where validation comes in--at two stages:
 
 #### At creation
 
-```{r}
+```{r, error = TRUE}
 setValidity("Person", function(object) {
   if (length(object@name) != length(object@age)) {
     "@name and @age must be same length"
@@ -137,7 +137,7 @@ Person("Hadley", age = c(30, 37))
 
 #### At modification
 
-```{r}
+```{r, error = TRUE}
 # get value
 setGeneric("name", function(x) standardGeneric("name"))
 setMethod("name", "Person", function(x) x@name)
