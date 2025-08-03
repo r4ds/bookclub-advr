@@ -1,12 +1,18 @@
 on:
-  pull_request:
+  push:
     branches: main
     paths-ignore:
       - 'README.md'
+  workflow_dispatch:
+
+name: Render and deploy site
 
 jobs:
-  render_site:
+  render:
+    if: startsWith(github.repository, 'r4ds/')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -22,7 +28,9 @@ jobs:
       - name: Set up DESCRIPTION dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
 
-      - name: Render
-        uses: quarto-dev/quarto-actions/render@v2
+      - name: Render & Publish
+        uses: quarto-dev/quarto-actions/publish@v2
         with:
-          to: html
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

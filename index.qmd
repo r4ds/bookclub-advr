@@ -1,0 +1,16 @@
+---
+title: Welcome
+date: now
+date-format: "YYYY-MM-DD HH:mm"
+---
+
+This is a companion for [_Advanced R_](https://adv-r.hadley.nz/) by Hadley Wickham (Chapman & Hall, copyright 2019, [9780815384571](https://www.routledge.com/Advanced-R-Second-Edition/Wickham/p/book/9780815384571)).
+
+Each chapter title to the left is a link to a slide deck.
+
+-   These slides are being developed *by this club.*
+-   Each deck will open in its own tab.
+-   You may want to type "s" at the start of each deck to open the *s*peaker notes.
+-   [Join the Data Science Learning Community](https://dslc.io/join) to participate in the discussion!
+    
+We follow the [Data Science Learning Community Code of Conduct](https://dslc.io/conduct).
