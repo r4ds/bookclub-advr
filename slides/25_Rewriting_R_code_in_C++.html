@@ -165,7 +165,7 @@ Like how?
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (x, y, z) 
-#&gt; .Call(&lt;pointer: 0x7f5f12060530&gt;, x, y, z)</code></pre>
+#&gt; .Call(&lt;pointer: 0x7fc0bc4ec530&gt;, x, y, z)</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 6</code></pre>
@@ -202,7 +202,7 @@ Like how?
 <h2>Vector Input, Scalar output:</h2>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 52.30308</code></pre>
+<pre><code>#&gt; [1] 51.15312</code></pre>
 </div>
 </div>
 <p>Translation:</p>
@@ -220,9 +220,9 @@ Like how?
 <pre><code>#&gt; # A tibble: 3 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 sum(x)       2.02µs   2.05µs   466025.        0B        0
-#&gt; 2 sumC(x)      4.39µs   4.47µs   215454.        0B        0
-#&gt; 3 sumR(x)     26.08µs  26.32µs    37128.        0B        0</code></pre>
+#&gt; 1 sum(x)       2.03µs   2.05µs   473276.        0B        0
+#&gt; 2 sumC(x)       4.4µs   4.48µs   214417.        0B        0
+#&gt; 3 sumR(x)      26.7µs  27.04µs    36241.        0B        0</code></pre>
 </div>
 </div>
 </section>
@@ -234,8 +234,8 @@ Like how?
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression          min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt;     &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 pdistR(0.5, y)   4.76ms   4.88ms      204.    7.63MB     104.
-#&gt; 2 pdistC(0.5, y)   3.95ms   4.06ms      246.    7.63MB     120.</code></pre>
+#&gt; 1 pdistR(0.5, y)   4.95ms   5.36ms      187.    7.63MB     95.4
+#&gt; 2 pdistC(0.5, y)   4.08ms   4.17ms      239.    7.63MB    118.</code></pre>
 </div>
 </div>
 </section>
@@ -259,7 +259,7 @@ rcode here
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 mean(x)       393µs    418µs     2378.        0B        0
+#&gt; 1 mean(x)       393µs    419µs     2375.        0B        0
 #&gt; 2 meanC(x)      372µs    373µs     2658.        0B        0</code></pre>
 </div>
 </div>
@@ -398,8 +398,8 @@ rcode here
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression              min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 gibbs_r(100, 10)     2.63ms   2.71ms      367.  103.31KB     17.3
-#&gt; 2 gibbs_cpp(100, 10) 239.07µs 256.09µs     3878.    1.61KB     25.2</code></pre>
+#&gt; 1 gibbs_r(100, 10)     2.67ms   2.74ms      363.  103.31KB     17.4
+#&gt; 2 gibbs_cpp(100, 10) 241.49µs 258.72µs     3825.    1.61KB     23.5</code></pre>
 </div>
 </div>
 </section>
@@ -422,9 +422,9 @@ rcode here
 <pre><code>#&gt; # A tibble: 3 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 vacc1        1.53ms   1.59ms      628.    7.86KB    26.8 
-#&gt; 2 vacc2       41.99µs  44.97µs    20887.  146.67KB    39.6 
-#&gt; 3 vacc3       13.29µs   13.7µs    71913.   11.98KB     7.19</code></pre>
+#&gt; 1 vacc1        1.57ms   1.65ms      601.    7.86KB     27.6
+#&gt; 2 vacc2       43.04µs  45.17µs    20804.  146.67KB     37.8
+#&gt; 3 vacc3       13.38µs  13.78µs    71248.   11.98KB     14.3</code></pre>
 </div>
 </div>
 </section>

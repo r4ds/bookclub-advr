@@ -158,8 +158,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression      min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean1(x)      415µs    420µs     2368.
-#&gt; 2 mean2(x)      186µs    187µs     5280.</code></pre>
+#&gt; 1 mean1(x)      404µs    420µs     2368.
+#&gt; 2 mean2(x)      186µs    187µs     5278.</code></pre>
 </div>
 </div>
 </section>
@@ -207,8 +207,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression           min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)           2.97µs   3.18µs   305315.
-#&gt; 2 mean.default(x)   1.87µs   1.96µs   477967.</code></pre>
+#&gt; 1 mean(x)           3.01µs   3.24µs   299172.
+#&gt; 2 mean.default(x)    1.9µs   1.98µs   471292.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -216,9 +216,9 @@
 <pre><code>#&gt; # A tibble: 3 × 4
 #&gt;   expression              min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)              2.98µs   3.19µs   304833.
-#&gt; 2 mean.default(x)      1.88µs   1.96µs   487265.
-#&gt; 3 .Internal(mean(x)) 460.07ns 481.03ns  2055765.</code></pre>
+#&gt; 1 mean(x)              3.02µs   3.25µs   298521.
+#&gt; 2 mean.default(x)       1.9µs   1.99µs   477561.
+#&gt; 3 .Internal(mean(x))    461ns 481.03ns  2050511.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -226,9 +226,9 @@
 <pre><code>#&gt; # A tibble: 3 × 4
 #&gt;   expression              min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)              43.5µs   44.1µs    22441.
-#&gt; 2 mean.default(x)      41.8µs   42.8µs    23122.
-#&gt; 3 .Internal(mean(x))   38.4µs   41.2µs    24050.</code></pre>
+#&gt; 1 mean(x)              42.9µs   44.1µs    22420.
+#&gt; 2 mean.default(x)      41.4µs   42.8µs    23120.
+#&gt; 3 .Internal(mean(x))   38.3µs   41.2µs    24027.</code></pre>
 </div>
 </div>
 </section>
@@ -243,8 +243,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression         min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;    &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 as.data.frame   1.01ms   1.04ms      951.
-#&gt; 2 quick_df        6.27µs   6.85µs   137260.</code></pre>
+#&gt; 1 as.data.frame   1.04ms   1.08ms      915.
+#&gt; 2 quick_df        6.31µs      7µs   134516.</code></pre>
 </div>
 </div>
 <p><em>Caveat!</em> This method is fast because it’s dangerous!</p>
@@ -273,10 +273,10 @@
 <pre><code>#&gt; # A tibble: 4 × 4
 #&gt;   expression      min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 loop10      19.97µs  20.98µs    46587.
-#&gt; 2 loop100    528.76µs 547.97µs     1822.
-#&gt; 3 vec10        3.53µs   3.76µs   258533.
-#&gt; 4 vec100      22.05µs  23.17µs    42822.</code></pre>
+#&gt; 1 loop10       20.5µs  21.74µs    44834.
+#&gt; 2 loop100    533.71µs 549.01µs     1795.
+#&gt; 3 vec10        3.57µs   3.77µs   258567.
+#&gt; 4 vec100      21.95µs  23.08µs    43003.</code></pre>
 </div>
 </div>
 </section>
@@ -285,32 +285,32 @@
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;   0.408   0.000   0.408</code></pre>
+#&gt;   0.409   0.000   0.409</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;   0.113   0.000   0.113</code></pre>
+#&gt;   0.114   0.000   0.114</code></pre>
 </div>
 </div>
 <p>Add functionality to save values</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;   0.128   0.002   0.130</code></pre>
+#&gt;   0.133   0.000   0.134</code></pre>
 </div>
 </div>
 <p>If you look at the source code of <code>stats:::t.test.default()</code>, you’ll see that it does a lot more than just compute the t-statistic.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;   0.024   0.000   0.024</code></pre>
+#&gt;   0.025   0.001   0.025</code></pre>
 </div>
 </div>
 <p>This gives us a six-fold speed improvement!</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.01    0.00    0.01</code></pre>
+#&gt;   0.009   0.000   0.009</code></pre>
 </div>
 </div>
 <p>1000 times faster than when we started!</p>

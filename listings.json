@@ -1,0 +1,20 @@
+[
+  {
+    "listing": "/02.html",
+    "items": [
+      "/slides/02.html"
+    ]
+  },
+  {
+    "listing": "/01.html",
+    "items": [
+      "/slides/01.html",
+      "/videos/01/07.html",
+      "/videos/01/06.html",
+      "/videos/01/05.html",
+      "/videos/01/04.html",
+      "/videos/01/03.html",
+      "/videos/01/02.html"
+    ]
+  }
+]
