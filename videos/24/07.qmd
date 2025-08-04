@@ -1,0 +1,10 @@
+---
+title: Cohort 7
+---
+{{< video https://www.youtube.com/embed/rOkrHvN8Uqg >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:23:48	Ron Legere:	https://www.mathworks.com/help/matlab/matlab_prog/vectorization.html
+```
+</details>

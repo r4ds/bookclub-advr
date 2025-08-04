@@ -1,0 +1,12 @@
+---
+title: Cohort 7
+---
+{{< video https://www.youtube.com/embed/WDehjcuc7xs >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:18:21	collinberke: Jenny Bryan debugging: https://www.youtube.com/watch?v=vgYS-F8opgE
+00:31:10	collinberke: https://purrr.tidyverse.org/reference/slowly.html
+00:47:43	Robert Hilly: By guys!
+```
+</details>

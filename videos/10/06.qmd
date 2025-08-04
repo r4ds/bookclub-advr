@@ -1,0 +1,11 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/FUoYwYFqT7Q >}}
+<details>
+<summary> Meeting chat log </summary>
+```
+01:02:25	Trevin:	I'm good with combining 👍
+01:02:57	Oluwafemi Oyedele:	I agree with combining the chapter!!!
+```
+</details>

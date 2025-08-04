@@ -1,0 +1,17 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/hyVK08jXiYw >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:10:13	Arthur Shaw:	Did things freeze for anyone else?
+00:55:40	Federica Gazzelloni:	https://en.cppreference.com/w/cpp/container
+00:57:44	Federica Gazzelloni:	https://dirk.eddelbuettel.com/blog/2011/07/14/
+01:07:33	Trevin:	I don’t have experience
+01:07:54	Oluwafemi Oyedele:	Same here!!!
+01:11:57	Arthur Shaw:	Does anyone know any packages that use C++? The one that comes to mind for me is haven, which uses a C++ library
+01:12:30	Trevin:	When I was looking, one that stood out to me was rstan
+01:13:02	Arthur Shaw:	Reacted to "When I was looking, ..." with 👍
+```
+</details>

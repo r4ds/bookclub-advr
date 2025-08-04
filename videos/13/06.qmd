@@ -1,0 +1,11 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/vzbl2o-MEeQ >}}
+<details>
+<summary> Meeting chat log </summary>
+```
+00:05:30	Oluwafemi Oyedele:	Hi everyone, Good Evening !!!
+00:09:44	Trevin:	I agree Arthur, need to look at that package some more
+```
+</details>

@@ -1,0 +1,11 @@
+---
+title: Cohort 7
+---
+{{< video https://www.youtube.com/embed/QcdByYHo1ms >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:54:07	Ron:	https://www.tidyverse.org/blog/2021/03/clock-0-1-0/
+01:14:39	Robert Hilly:	https://www.amazon.com/Effective-Pandas-Patterns-Manipulation-Treading/dp/B09MYXXSFM
+```
+</details>

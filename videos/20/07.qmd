@@ -1,0 +1,11 @@
+---
+title: Cohort 7
+---
+{{< video https://www.youtube.com/embed/g77Jfl_xrXM >}}
+{{< video https://www.youtube.com/embed/wPLrafScijE >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:55:22	collinberke:	https://rlang.r-lib.org/reference/embrace-operator.html?q=enquo#under-the-hood
+```
+</details>

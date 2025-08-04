@@ -1,0 +1,12 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/UaXimKd3vg8 >}}
+<details>
+<summary> Meeting chat log </summary>
+```
+00:24:42	Arthur Shaw:	I wonder if there's a task view for R Universe: https://r-universe.dev/search/
+01:01:13	Arthur Shaw:	https://www.alexejgossmann.com/benchmarking_r/
+01:04:34	Trevin:	I agree that the chapter is a good jumping off point. Gonna have to dig into some of the listed resources 😄
+```
+</details>

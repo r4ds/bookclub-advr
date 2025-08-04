@@ -1,0 +1,16 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/HmDlvnp6uNQ >}}
+<details>
+<summary> Meeting chat log </summary>
+```
+00:15:49	Matt Dupree:	did anyone else lose audio?
+00:15:59	Federica Gazzelloni:	not me
+00:16:02	Arthur Shaw:	Not me either
+00:16:04	Trevin:	okay for me
+00:16:27	Matt Dupree:	gonna try rejoining
+00:43:14	Matt Dupree:	oh i didn't know they invisibly returned .x! That's useful!
+00:48:29	Arthur Shaw:	Very cool trick !
+```
+</details>
