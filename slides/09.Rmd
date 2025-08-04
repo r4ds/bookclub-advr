@@ -1,0 +1,630 @@
+---
+engine: knitr
+title: Functionals
+---
+
+## Learning objectives:
+
+- Define functionals.
+- Use the `purrr::map()` family of functionals.
+- Use the `purrr::walk()` family of functionals.
+- Use the `purrr::reduce()` and `purrr::accumulate()` family of functionals.
+- Use `purrr::safely()` and `purrr::possibly()` to deal with failure.
+
+9.1. **Introduction**
+
+9.2.  **map()**
+
+9.3. **purrr** style
+
+9.4. **map_** variants
+
+9.5. **reduce()** and **accumulate** family of functions
+
+- Some functions that weren't covered
+
+
+## What are functionals {-}
+
+## Introduction 
+
+__Functionals__ are functions that take function as input and return a vector as output. Functionals that you probably have used before are: `apply()`, `lapply()` or `tapply()`. 
+
+
+- alternatives to loops
+
+- a functional is better than a `for` loop is better than `while` is better than `repeat`
+
+
+### Benefits {-}
+
+
+- encourages function logic to be separated from iteration logic
+
+- can collapse into vectors/data frames easily
+
+
+## Map
+
+`map()` has two arguments, a vector and a function. It performs the function on each element of the vector and returns a list. We can also pass in some additional argument into the function.
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+knitr::include_graphics(path = 'images/9_2_3_map-arg.png')
+```
+
+```{r}
+simple_map <- function(x, f, ...) {
+out <- vector("list", length(x))
+for (i in seq_along(x)) {
+out[[i]] <- f(x[[i]], ...)
+}
+out
+}
+```
+
+## Benefit of using the map function in purrr {-}
+
+- `purrr::map()` is equivalent to `lapply()`
+
+- returns a list and is the most general
+
+- the length of the input == the length of the output
+
+- `map()` is more flexible, with additional arguments allowed
+
+- `map()` has a host of extensions
+
+
+
+```{r load,echo=FALSE,warning=FALSE,message=FALSE}
+library(tidyverse)
+```
+
+## Atomic vectors {-}
+
+
+- has 4 variants to return atomic vectors
+    - `map_chr()`
+    - `map_dbl()`
+    - `map_int()`
+    - `map_lgl()`
+
+```{r}
+triple <- function(x) x * 3
+map(.x=1:3, .f=triple)
+
+map_dbl(.x=1:3, .f=triple)
+
+map_lgl(.x=c(1, NA, 3), .f=is.na)
+```
+
+## Anonymous functions and shortcuts  {-}
+
+ **Anonymous functions** 
+```{r}
+map_dbl(.x=mtcars, .f=function(x) mean(x, na.rm = TRUE)) |> 
+  head()
+```
+
+- the "twiddle" uses a twiddle `~` to set a formula
+- can use `.x` to reference the input `map(.x = ..., .f = )`
+```{r, eval=FALSE}
+map_dbl(.x=mtcars,  .f=~mean(.x, na.rm = TRUE))
+```
+
+- can be simplified further as
+```{r}
+map_dbl(.x=mtcars, .f=mean, na.rm = TRUE)
+```
+
+- what happens when we try a handful of variants of the task at hand?  (how many unique values are there for each variable?)
+
+Note that `.x` is the **name** of the first argument in `map()` (`.f` is the name of the second argument).
+
+```{r}
+#| error: true
+# the task
+map_dbl(mtcars, function(x) length(unique(x)))
+map_dbl(mtcars, function(unicorn) length(unique(unicorn)))
+map_dbl(mtcars, ~length(unique(.x)))
+map_dbl(mtcars, ~length(unique(..1)))
+map_dbl(mtcars, ~length(unique(.)))
+
+# not the task
+map_dbl(mtcars, length)
+map_dbl(mtcars, length(unique))
+map_dbl(mtcars, 1)
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+rm(x)
+```
+
+```{r}
+#| error: true
+#error
+map_dbl(mtcars, length(unique()))
+map_dbl(mtcars, ~length(unique(x)))
+```
+
+
+## Modify {-}
+
+Sometimes we might want the output to be the same as the input, then in that case we can use the modify function rather than map
+
+```{r}
+df <- data.frame(x=1:3,y=6:4)
+
+map(df, .f=~.x*3)
+
+modify(.x=df,.f=~.x*3)
+```
+
+Note that `modify()` always returns the same type of output (which is not necessarily true with `map()`).  Additionally, `modify()` does not actually change the value of `df`.
+
+```{r}
+df
+```
+
+
+## `purrr` style
+
+```{r}
+mtcars |> 
+  map(head, 20) |> # pull first 20 of each column
+  map_dbl(mean) |> # mean of each vector
+  head()
+```
+
+An example from `tidytuesday`
+```{r, eval=FALSE}
+#| warning: false
+#| message: false
+
+tt <- tidytuesdayR::tt_load("2020-06-30")
+
+# filter data & exclude columns with lost of nulls
+list_df <- 
+  map(
+    .x = tt[1:3], 
+    .f = 
+      ~ .x |> 
+      filter(issue <= 152 | issue > 200) |> 
+      mutate(timeframe = ifelse(issue <= 152, "first 5 years", "last 5 years")) |> 
+      select_if(~mean(is.na(.x)) < 0.2) 
+  )
+
+
+# write to global environment
+iwalk(
+  .x = list_df,
+  .f = ~ assign(x = .y, value = .x, envir = globalenv())
+)
+```
+
+## `map_*()` variants 
+
+There are many variants
+
+![](images/map_variants.png)
+
+
+## `map2_*()` {-}
+
+- raise each value `.x` by 2
+
+```{r}
+map_dbl(
+  .x = 1:5, 
+  .f = function(x) x ^ 2
+)
+```
+
+- raise each value `.x` by another value `.y`
+
+```{r}
+map2_dbl(
+  .x = 1:5, 
+  .y = 2:6, 
+  .f = ~ (.x ^ .y)
+)
+```
+
+
+## The benefit of using the map over apply family of function {-}
+- It is written in C
+- It preserves names
+- We always know the return value type
+- We can apply the function for multiple input values
+- We can pass additional arguments into the function
+
+
+## `walk()` {-}
+
+
+- We use `walk()` when we want to call a function for it side effect(s) rather than its return value, like generating plots, `write.csv()`, or `ggsave()`. If you don't want a return value, `map()` will print more info than you may want.
+
+
+```{r}
+map(1:3, ~cat(.x, "\n"))
+```
+
+- for these cases, use `walk()` instead
+```{r}
+walk(1:3, ~cat(.x, "\n"))
+```
+
+`cat()` does have a result, it's just usually returned invisibly.
+
+```{r}
+cat("hello")
+
+(cat("hello"))
+```
+
+
+We can use `pwalk()` to save a list of plot to disk.  Note that the "p" in `pwalk()` means that we have more than 1 (or 2) variables to pipe into the function.  Also note that the name of the first argument in all of the "p" functions is now `.l` (instead of `.x`).
+
+```{r}
+plots <- mtcars |>  
+  split(mtcars$cyl) |>  
+  map(~ggplot(.x, aes(mpg,wt)) +
+        geom_point())
+
+paths <- stringr::str_c(names(plots), '.png')
+
+pwalk(.l = list(paths,plots), .f = ggsave, path = tempdir())
+pmap(.l = list(paths,plots), .f = ggsave, path = tempdir())
+  
+```
+
+- walk, walk2 and pwalk all invisibly return .x the first argument. This makes them suitable for use in the middle of pipelines.
+
+- note: I don't think that it is "`.x`" (or "`.l`") that they are returning invisibly.  But I'm not sure what it is.  Hadley says:
+
+> purrr provides the walk family of functions that ignore the return values of the `.f` and instead return `.x` invisibly.
+
+But not in the first `cat()` example, it is the `NULL` values that get returned invisibly (those aren't the same as `.x`).
+
+## `imap()` {-}
+
+- `imap()` is like `map2()`except that `.y` is derived from `names(.x)` if named or `seq_along(.x)` if not.
+
+- These two produce the same result
+
+```{r}
+imap_chr(.x = mtcars, 
+         .f = ~ paste(.y, "has a mean of", round(mean(.x), 1))) |> 
+head()
+
+map2_chr(.x = mtcars, 
+         .y = names(mtcars),
+         .f = ~ paste(.y, "has a mean of", round(mean(.x), 1))) |> 
+head()
+```
+
+
+## `pmap()` {-}
+
+- you can pass a named list or dataframe as arguments to a function
+
+- for example `runif()` has the parameters `n`, `min` and `max`
+
+```{r}
+params <- tibble::tribble(
+  ~ n, ~ min, ~ max,
+   1L,     1,    10,
+   2L,    10,   100,
+   3L,   100,  1000
+)
+
+pmap(params, runif)
+```
+
+- could also be
+
+```{r}
+list(
+  n = 1:3, 
+  min = 10 ^ (0:2), 
+  max = 10 ^ (1:3)
+) |> 
+pmap(runif)
+```
+
+- I like to use `expand_grid()` when I want all possible parameter combinations.
+
+```{r}
+expand_grid(n = 1:3,
+            min = 10 ^ (0:1),
+            max = 10 ^ (1:2))
+
+expand_grid(n = 1:3,
+            min = 10 ^ (0:1),
+            max = 10 ^ (1:2)) |> 
+pmap(runif)
+```
+
+
+
+## `reduce()` family
+
+The `reduce()` function is a powerful functional that allows you to abstract away from a sequence of functions that are applied in a fixed direction.
+
+`reduce()` takes a vector as its first argument, a function as its second argument, and an optional `.init` argument last.  It will then apply the function repeatedly to the vector until there is only a single element left.
+
+(Hint: start at the top of the image and read down.)
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+knitr::include_graphics(path = 'images/reduce-init.png')
+```
+
+
+Let me really quickly demonstrate `reduce()` in action.
+
+Say you wanted to add up the numbers 1 through 5 using only the plus operator `+`. You could do something like:
+
+```{r}
+1 + 2 + 3 + 4 + 5
+
+```
+
+Which is the same as:
+
+```{r}
+reduce(1:5, `+`)
+```
+
+And if you want the start value to be something that is not the first argument of the vector, pass that value to the .init argument:
+
+```{r}
+
+identical(
+  0.5 + 1 + 2 + 3 + 4 + 5,
+  reduce(1:5, `+`, .init = 0.5)
+)
+
+```
+
+## ggplot2 example with reduce {-}
+
+```{r}
+ggplot(mtcars, aes(hp, mpg)) + 
+  geom_point(size = 8, alpha = .5, color = "yellow") +
+  geom_point(size = 4, alpha = .5, color = "red") +
+  geom_point(size = 2, alpha = .5, color = "blue")
+
+```
+
+Let us use the `reduce()` function.  Note that `reduce2()` takes two arguments, but the first value (`..1`) is given by the `.init` value.
+
+```{r}
+reduce2(
+  c(8, 4, 2),
+  c("yellow", "red", "blue"),
+  ~ ..1 + geom_point(size = ..2, alpha = .5, color = ..3),
+  .init = ggplot(mtcars, aes(hp, mpg))
+)
+
+```
+
+```{r}
+df <- list(age=tibble(name='john',age=30),
+    sex=tibble(name=c('john','mary'),sex=c('M','F'),
+    trt=tibble(name='Mary',treatment='A')))
+
+df
+
+df |> reduce(.f = full_join)
+
+reduce(.x = df,.f = full_join)
+```
+
+- to see all intermediate steps, use **accumulate()**
+
+```{r}
+set.seed(1234)
+accumulate(1:5, `+`)
+```
+
+```{r}
+accumulate2(
+  c(8, 4, 2),
+  c("yellow", "red", "blue"),
+  ~ ..1 + geom_point(size = ..2, alpha = .5, color = ..3),
+  .init = ggplot(mtcars, aes(hp, mpg))
+)
+```
+
+
+## `map_df*()` variants {-}
+
+- `map_dfr()` = row bind the results
+
+- `map_dfc()` = column bind the results
+
+- Note that `map_dfr()` has been superseded by `map() |> list_rbind()` and `map_dfc()` has been superseded by `map() |> list_cbind()`
+
+```{r}
+col_stats <- function(n) {
+  head(mtcars, n) |> 
+    summarise_all(mean) |> 
+    mutate_all(floor) |> 
+    mutate(n = paste("N =", n))
+}
+
+map((1:2) * 10, col_stats)
+
+map_dfr((1:2) * 10, col_stats)
+
+map((1:2) * 10, col_stats) |> list_rbind()
+```
+
+---
+
+## `pluck()` {-}
+
+- `pluck()` will pull a single element from a list
+
+I like the example from the book because the starting object is not particularly easy to work with (as many JSON objects might not be).
+
+```{r}
+my_list <- list(
+  list(-1, x = 1, y = c(2), z = "a"),
+  list(-2, x = 4, y = c(5, 6), z = "b"),
+  list(-3, x = 8, y = c(9, 10, 11))
+)
+my_list
+```
+
+Notice that the "first element" means something different in standard `pluck()` versus `map`ped `pluck()`.
+
+```{r}
+pluck(my_list, 1)
+
+map(my_list, pluck, 1)
+
+map_dbl(my_list, pluck, 1)
+```
+
+The `map()` functions also have shortcuts for extracting elements from vectors (powered by `purrr::pluck()`).  Note that `map(my_list, 3)` is a shortcut for `map(my_list, pluck, 3)`.
+
+```{r}
+#| error: true
+
+# Select by name
+map_dbl(my_list, "x")
+
+# Or by position
+map_dbl(my_list, 1)
+
+# Or by both
+map_dbl(my_list, list("y", 1))
+
+# You'll get an error if you try to retrieve an inside item that doesn't have 
+# a consistent format and you want a numeric output
+map_dbl(my_list, list("y"))
+
+
+# You'll get an error if a component doesn't exist:
+map_chr(my_list, "z")
+#> Error: Result 3 must be a single string, not NULL of length 0
+
+# Unless you supply a .default value
+map_chr(my_list, "z", .default = NA)
+#> [1] "a" "b" NA
+```
+
+
+## Not covered: `flatten()` {-}
+
+- `flatten()` will turn a list of lists into a simpler vector.
+
+```{r}
+my_list <-
+  list(
+    a = 1:3,
+    b = list(1:3)
+  )
+
+my_list
+
+map_if(my_list, is.list, pluck)
+  
+map_if(my_list, is.list, flatten_int)
+
+map_if(my_list, is.list, flatten_int) |> 
+  flatten_int()
+```
+
+## Dealing with Failures {-}
+
+## Safely {-}
+
+`safely()` is an adverb.  It takes a function (a verb) and returns a modified version. In this case, the modified function will never throw an error. Instead it always returns a list with two elements.
+
+- `result` is the original result. If there is an error this will be NULL
+
+- `error` is an error object. If the operation was successful the "`error`" will be NULL.
+
+```{r}
+A <- list(1, 10, "a")
+
+map(.x = A, .f = safely(log))
+  
+```
+
+## Possibly {-}
+
+`possibly()` always succeeds. It is simpler than `safely()`, because you can give it a default value to return when there is an error.
+
+```{r}
+A <- list(1,10,"a")
+
+map_dbl(.x = A, .f = possibly(log, otherwise = NA_real_) )
+
+```
+
+
+## Meeting Videos
+
+### Cohort 1
+
+`r knitr::include_url("https://www.youtube.com/embed/o0a6aJ4kCkU")`
+
+### Cohort 2
+
+`r knitr::include_url("https://www.youtube.com/embed/YrZ13_4vUMw")`
+
+### Cohort 3
+
+`r knitr::include_url("https://www.youtube.com/embed/DUHXo527mHs")`
+
+### Cohort 4
+
+`r knitr::include_url("https://www.youtube.com/embed/SpDpmhW62Ns")`
+
+### Cohort 5
+
+`r knitr::include_url("https://www.youtube.com/embed/tYqFMtmhmiI")`
+
+### Cohort 6
+
+`r knitr::include_url("https://www.youtube.com/embed/HmDlvnp6uNQ")`
+
+<details>
+<summary> Meeting chat log </summary>
+
+```
+00:15:49	Matt Dupree:	did anyone else lose audio?
+00:15:59	Federica Gazzelloni:	not me
+00:16:02	Arthur Shaw:	Not me either
+00:16:04	Trevin:	okay for me
+00:16:27	Matt Dupree:	gonna try rejoining
+00:43:14	Matt Dupree:	oh i didn't know they invisibly returned .x! That's useful!
+00:48:29	Arthur Shaw:	Very cool trick !
+```
+</details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/t1N6XdidvNo")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:34:09	Ron:	Someone did: https://cran.r-project.org/web/packages/comprehenr/vignettes/Introduction.html
+00:47:58	collinberke:	https://purrr.tidyverse.org/reference/safely.html
+00:48:24	Ron:	it's a function operator !
+00:49:37	Ron:	\(x) length(unique(x) is not too verbose though
+00:49:39	Ron:	;)
+01:06:50	collinberke:	https://colinfay.me/purrr-mappers/
+01:07:45	collinberke:	https://colinfay.me/purrr-web-mining/
+```
+</details>
+
+`r knitr::include_url("https://www.youtube.com/embed/6gY3KZWYC00")`

@@ -1,0 +1,12 @@
+title: "{number}. {title}"
+listing: 
+  - contents: "slides/{number_wide}.qmd"
+    id: slides
+    type: grid
+  - contents: "videos/{number_wide}"
+    id: videos
+    type: grid
+    grid-columns: 2
+    sort: "filename desc"
+header-includes:
+  - '<script src="listing_new_window.js" defer></script>'

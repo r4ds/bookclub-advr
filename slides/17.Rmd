@@ -1,0 +1,311 @@
+---
+engine: knitr
+title: Big picture
+---
+
+## Learning objectives:
+
+- Become familiar with some metaprogramming principals and how they relate to each other
+- Review vocabulary associated with metaprogramming
+
+```{r}
+library(rlang)
+library(lobstr)
+```
+
+
+## Code is data
+
+- **expression** - Captured code (*call*, *symbol*, *constant*, or *pairlist*)
+- Use `rlang::expr()`[^1] to capture code directly
+
+```{r}
+expr(mean(x, na.rm = TRUE))
+```
+
+- Use `rlang::enexpr()` to capture code indirectly
+
+```{r}
+capture_it <- function(x) { # 'automatically quotes first argument'
+  enexpr(x)
+}
+capture_it(a + b + c)
+```
+
+- 'Captured' code can be modified (like a list)!
+    - First element is the function, next elements are the arguments
+
+```{r}
+f <- expr(f(x = 1, y = 2))
+names(f)
+
+ff <- fff <- f   # Create two copies
+
+ff$z <- 3        # Add an argument to one
+fff[[2]] <- NULL # Remove an argument from another
+
+f
+ff
+fff
+```
+
+> More on this next week!
+
+[^1]: Equivalent to `base::bquote()`
+
+## Code is a tree
+
+- **Abstract syntax tree** (AST) - Almost every language represents code as a tree
+- Use `lobstr::ast()` to inspect these code trees
+
+```{r}
+ast(f1(f2(a, b), f3(1)))
+ast(1 + 2 * 3)
+```
+
+
+## Code can generate code
+
+- `rlang::call2()` creates function call
+
+```{r}
+call2("f", 1, 2, 3)
+```
+
+- Going backwards from the tree, can use functions to create calls
+
+```{r}
+call2("f1", call2("f2", "a", "b"), call2("f3", 1))
+call2("+", 1, call2("*", 2, 3))
+```
+
+- `!!` bang-bang - **unquote operator**
+    - inserts previously defined expressions into the current one
+
+```{r}
+xx <- expr(x + x)
+yy <- expr(y + y)
+expr(xx / yy)     # Nope!
+
+expr(!!xx / !!yy) # Yup!
+```
+
+```{r}
+cv <- function(var) {
+  var <- enexpr(var)            # Get user's expression
+  expr(sd(!!var) / mean(!!var)) # Insert user's expression
+}
+
+cv(x)
+cv(x + y)
+```
+
+- Avoid `paste()` for building code
+    - Problems with non-syntactic names and precedence among expressions
+
+> "You might think this is an esoteric concern, but not worrying about it when generating SQL code in web applications led to SQL injection attacks that have collectively cost billions of dollars."
+
+## Evaluation runs code
+
+- **evaluate** - run/execute an expression
+- need both expression and environment
+- `eval()` uses current environment if not set
+- manual evaluation means you can tweak the environment!
+
+```{r}
+xy <- expr(x + y)
+
+eval(xy, env(x = 1, y = 10))
+eval(xy, env(x = 2, y = 100))
+```
+
+
+## Customizing evaluations with functions
+- Can also bind names to functions in supplied environment
+- Allows overriding function behaviour
+- This is how dplyr generates SQL for working with databases
+
+For example...
+```{r}
+string_math <- function(x) {
+  e <- env(
+    caller_env(),
+    `+` = function(x, y) paste(x, y),
+    `*` = function(x, y) strrep(x, y)
+  )
+
+  eval(enexpr(x), e)
+}
+
+cohort <- 9
+string_math("Hello" + "cohort" + cohort)
+string_math(("dslc" + "is" + "awesome---") * cohort)
+```
+
+
+## Customizing evaluation with data
+
+- Look for variables inside data frame
+- **Data mask** - typically a data frame
+- use `rlang::eval_tidy()` rather than `eval()`
+
+```{r}
+df <- data.frame(x = 1:5, y = sample(5))
+eval_tidy(expr(x + y), df)
+```
+
+Catch user input with `enexpr()`...
+
+```{r}
+with2 <- function(df, expr) {
+  eval_tidy(enexpr(expr), df)
+}
+
+with2(df, x + y)
+```
+
+But there's a bug!
+
+- Evaluates in environment inside `with2()`, but the expression likely refers
+  to objects in the Global environment
+  
+```{r}
+with2 <- function(df, expr) {
+  a <- 1000
+  eval_tidy(enexpr(expr), df)
+}
+
+df <- data.frame(x = 1:3)
+a <- 10
+with2(df, x + a)
+```
+
+- Solved with Quosures...
+  
+## Quosures
+
+- **Quosures** bundles expression with an environment
+- Use `enquo()` instead of `enexpr()` (with `eval_tidy()`)
+
+```{r}
+with2 <- function(df, expr) {
+  a <- 1000
+  eval_tidy(enquo(expr), df)
+}
+
+df <- data.frame(x = 1:3)
+a <- 10
+with2(df, x + a)
+```
+
+> "Whenever you use a data mask, you must always use `enquo()` instead of `enexpr()`.
+
+This comes back in Chapter 20.
+
+### Which environment is bundled?
+- The environment where the expression is created (i.e. the parent of where
+  `enquo()` is called)
+
+Here, the global environment
+
+```{r}
+with2 <- function(df, expr) {
+  a <- 1000
+  eq <- enquo(expr)
+  message("with2() Parent/Calling environment: ")
+  print(rlang::caller_env())
+  message("with2() environment: ")
+  print(rlang::current_env())
+  message("Quosure details: ")
+  print(eq)  # Print the details of the quosure
+  eval_tidy(eq, df)
+}
+
+a <- 10000
+df <- data.frame(x = 1:3)
+with2(df, x + a)
+```
+
+
+Here, the `fun1()` environment
+```{r}
+fun1 <- function(df) {
+  a <- 10
+  message("fun1() Parent/Calling environment: ")
+  print(rlang::caller_env())
+  message("fun1() environment: ")
+  print(rlang::current_env())
+  with2(df, x + a)
+}
+
+a <- 10000
+df <- data.frame(x = 1:3)
+fun1(df)
+```
+
+
+
+
+## Meeting Videos
+
+### Cohort 1
+
+`r knitr::include_url("https://www.youtube.com/embed/10gRbFMoh7g")`
+
+### Cohort 2
+
+`r knitr::include_url("https://www.youtube.com/embed/vKKDU6x3BE8")`
+
+### Cohort 3
+
+`r knitr::include_url("https://www.youtube.com/embed/5RLCRFli6QI")`
+
+### Cohort 4
+
+`r knitr::include_url("https://www.youtube.com/embed/9MDC12hgOWQ")`
+
+### Cohort 5
+
+`r knitr::include_url("https://www.youtube.com/embed/FSm2_TJmhm0")`
+
+### Cohort 6
+
+`r knitr::include_url("https://www.youtube.com/embed/Ddd_43gw8nA")`
+
+<details>
+<summary> Meeting chat log </summary>
+
+```
+00:32:31	Oluwafemi Oyedele:	When should eval_tidy() be used instead of eval()?
+base::eval() is sufficient for simple evaluation. Use eval_tidy() when you'd like to support expressions referring to the .data pronoun, or when you need to support quosures.
+00:37:08	Trevin (he/him):	https://rlang.r-lib.org/reference/topic-defuse.html
+00:38:38	Federica Gazzelloni:	https://rlang.r-lib.org/reference/eval_tidy.html
+00:39:57	Arthur Shaw:	Tidy eval book: https://bookdown.dongzhuoer.com/tidyverse/tidyeval/
+00:40:14	Arthur Shaw:	Also very useful resource: https://dplyr.tidyverse.org/articles/programming.html
+00:40:28	Trevin (he/him):	https://ggplot2.tidyverse.org/reference/aes.html
+00:40:37	Federica Gazzelloni:	https://ggplot2.tidyverse.org/reference/tidyeval.html
+00:41:22	Oluwafemi Oyedele:	It is Tidyverse design
+00:49:13	Federica Gazzelloni:	https://www.youtube.com/watch?v=2NixH3QAerQ&list=PL3x6DOfs2NGi9lH7q-phZlPrl6HKXYDbn&index=15
+00:50:13	Federica Gazzelloni:	Minute: 17:04
+00:54:03	Federica Gazzelloni:	con <- DBI::dbConnect(RSQLite::SQLite(), filename = ":memory:")
+00:54:18	Federica Gazzelloni:	DBI::dbDisconnect(con)
+```
+</details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/MX2vNlvIUFo")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:11:09	Ryan Honomichl:	https://medium.com/analytics-vidhya/become-a-better-r-programmer-with-the-awesome-lobstr-package-af97fcd22602
+00:33:03	Ryan Honomichl:	https://rlang.r-lib.org/reference/enquo.html
+00:37:30	Ryan Honomichl:	https://rlang.r-lib.org/reference/topic-multiple-columns.html
+00:41:00	Ryan Honomichl:	brb
+00:44:37	Ron Legere:	https://www.rdocumentation.org/packages/srvyr/versions/1.2.0
+00:44:58	Ron Legere:	http://gdfe.co/srvyr/
+00:51:51	Stone:	https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html
+```
+</details>

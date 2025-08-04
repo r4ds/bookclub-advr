@@ -1,0 +1,29 @@
+part,number,title,number_wide
+Getting Started,1,Introduction,01
+Foundations,2,Names and values,02
+Foundations,3,Vectors,03
+Foundations,4,Subsetting,04
+Foundations,5,Control flow,05
+Foundations,6,Functions,06
+Foundations,7,Environments,07
+Foundations,8,Conditions,08
+Functional programming,9,Functionals,09
+Functional programming,10,Function factories,10
+Functional programming,11,Function operators,11
+Object-oriented programming,12,OOP Introduction & Base types,12
+Object-oriented programming,13,S3,13
+Object-oriented programming,15,S4,15
+Object-oriented programming,15b,S7,15b
+Object-oriented programming,14,R6,14
+Object-oriented programming,16,OOP Trade-offs,16
+Metaprogramming,17,Metaprogramming big picture,17
+Metaprogramming,18,Expressions,18
+Metaprogramming,19,Quasiquotation,19
+Metaprogramming,20,Evaluation,20
+Metaprogramming,21,Translating R code,21
+Techniques,22,Debugging,22
+Techniques,23,Measuring performance,23
+Techniques,24,Improving performance,24
+Techniques,25,Rewriting R code in C++,25
+Techniques,25b,C for R,25b
+Techniques,25c,Rust for R,25c

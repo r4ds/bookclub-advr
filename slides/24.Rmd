@@ -1,0 +1,292 @@
+---
+engine: knitr
+title: Improving performance
+---
+
+## Overview
+
+1. Code organization
+2. Check for existing solutions
+3. Do as little as possible
+4. Vectorise
+5. Avoid Copies
+
+## Organizing code
+
+- Write a function for each approach
+```{r}
+mean1 <- function(x) mean(x)
+mean2 <- function(x) sum(x) / length(x)
+```
+- Keep old functions that you've tried, even the failures
+- Generate a representative test case
+```{r}
+x <- runif(1e5)
+```
+- Use `bench::mark` to compare the different versions (and include unit tests)
+```{r}
+bench::mark(
+  mean1(x),
+  mean2(x)
+)[c("expression", "min", "median", "itr/sec", "n_gc")]
+```
+
+## Check for Existing Solution
+- CRAN task views (http://cran.rstudio.com/web/views/)
+- Reverse dependencies of Rcpp (https://cran.r-project.org/web/packages/Rcpp/)
+- Talk to others!
+  - Google (rseek)
+  - Stackoverflow ([R])
+  - https://community.rstudio.com/
+  - DSLC community
+
+## Do as little as possible
+- use a function tailored to a more specific type of input or output, or to a more specific problem
+  - `rowSums()`, `colSums()`, `rowMeans()`, and `colMeans()` are faster than equivalent invocations that use `apply()` because they are vectorised
+  - `vapply()` is faster than `sapply()` because it pre-specifies the output type
+  - `any(x == 10)` is much faster than `10 %in% x` because testing equality is simpler than testing set inclusion
+- Some functions coerce their inputs into a specific type. If your input is not the right type, the function has to do extra work
+  - e.g. `apply()` will always turn a dataframe into a matrix
+- Other examples
+  - `read.csv()`: specify known column types with `colClasses`. (Also consider
+  switching to `readr::read_csv()` or `data.table::fread()` which are 
+  considerably faster than `read.csv()`.)
+
+  - `factor()`: specify known levels with `levels`.
+
+  - `cut()`: don't generate labels with `labels = FALSE` if you don't need them,
+  or, even better, use `findInterval()` as mentioned in the "see also" section
+  of the documentation.
+  
+  - `unlist(x, use.names = FALSE)` is much faster than `unlist(x)`.
+
+  - `interaction()`: if you only need combinations that exist in the data, use
+  `drop = TRUE`.
+  
+## Avoiding Method Dispatch
+```{r}
+x <- runif(1e2)
+bench::mark(
+  mean(x),
+  mean.default(x)
+)[c("expression", "min", "median", "itr/sec", "n_gc")]
+```
+
+```{r}
+x <- runif(1e2)
+bench::mark(
+  mean(x),
+  mean.default(x),
+  .Internal(mean(x))
+)[c("expression", "min", "median", "itr/sec", "n_gc")]
+```
+
+```{r}
+x <- runif(1e4)
+bench::mark(
+  mean(x),
+  mean.default(x),
+  .Internal(mean(x))
+)[c("expression", "min", "median", "itr/sec", "n_gc")]
+```
+
+## Avoiding Input Coercion
+- `as.data.frame()` is quite slow because it coerces each element into a data frame and then `rbind()`s them together
+- instead, if you have a named list with vectors of equal length, you can directly transform it into a data frame
+
+```{r}
+quickdf <- function(l) {
+  class(l) <- "data.frame"
+  attr(l, "row.names") <- .set_row_names(length(l[[1]]))
+  l
+}
+l <- lapply(1:26, function(i) runif(1e3))
+names(l) <- letters
+bench::mark(
+  as.data.frame = as.data.frame(l),
+  quick_df      = quickdf(l)
+)[c("expression", "min", "median", "itr/sec", "n_gc")]
+```
+
+*Caveat!* This method is fast because it's dangerous!
+
+## Vectorise
+- vectorisation means finding the existing R function that is implemented in C and most closely applies to your problem
+- Vectorised functions that apply to many scenarios
+  - `rowSums()`, `colSums()`, `rowMeans()`, and `colMeans()`
+  - Vectorised subsetting can lead to big improvements in speed
+  - `cut()` and `findInterval()` for converting continuous variables to categorical
+  - Be aware of vectorised functions like `cumsum()` and `diff()`
+  - Matrix algebra is a general example of vectorisation
+
+## Avoiding copies
+
+- Whenever you use c(), append(), cbind(), rbind(), or paste() to create a bigger object, R must first allocate space for the new object and then copy the old object to its new home.
+
+```{r}
+random_string <- function() {
+  paste(sample(letters, 50, replace = TRUE), collapse = "")
+}
+strings10 <- replicate(10, random_string())
+strings100 <- replicate(100, random_string())
+collapse <- function(xs) {
+  out <- ""
+  for (x in xs) {
+    out <- paste0(out, x)
+  }
+  out
+}
+bench::mark(
+  loop10  = collapse(strings10),
+  loop100 = collapse(strings100),
+  vec10   = paste(strings10, collapse = ""),
+  vec100  = paste(strings100, collapse = ""),
+  check = FALSE
+)[c("expression", "min", "median", "itr/sec", "n_gc")]
+```
+
+## Case study: t-test
+
+```{r}
+m <- 1000
+n <- 50
+X <- matrix(rnorm(m * n, mean = 10, sd = 3), nrow = m)
+grp <- rep(1:2, each = n / 2)
+```
+
+```{r}
+# formula interface
+system.time(
+  for (i in 1:m) {
+    t.test(X[i, ] ~ grp)$statistic
+  }
+)
+# provide two vectors
+system.time(
+  for (i in 1:m) {
+    t.test(X[i, grp == 1], X[i, grp == 2])$statistic
+  }
+)
+```
+
+Add functionality to save values
+
+```{r}
+compT <- function(i){
+  t.test(X[i, grp == 1], X[i, grp == 2])$statistic
+}
+system.time(t1 <- purrr::map_dbl(1:m, compT))
+```
+
+If you look at the source code of `stats:::t.test.default()`, you’ll see that it does a lot more than just compute the t-statistic.
+
+```{r}
+# Do less work
+my_t <- function(x, grp) {
+  t_stat <- function(x) {
+    m <- mean(x)
+    n <- length(x)
+    var <- sum((x - m) ^ 2) / (n - 1)
+    list(m = m, n = n, var = var)
+  }
+  g1 <- t_stat(x[grp == 1])
+  g2 <- t_stat(x[grp == 2])
+  se_total <- sqrt(g1$var / g1$n + g2$var / g2$n)
+  (g1$m - g2$m) / se_total
+}
+system.time(t2 <- purrr::map_dbl(1:m, ~ my_t(X[.,], grp)))
+stopifnot(all.equal(t1, t2))
+```
+
+This gives us a six-fold speed improvement!
+
+```{r}
+# Vectorise it
+rowtstat <- function(X, grp){
+  t_stat <- function(X) {
+    m <- rowMeans(X)
+    n <- ncol(X)
+    var <- rowSums((X - m) ^ 2) / (n - 1)
+    list(m = m, n = n, var = var)
+  }
+  g1 <- t_stat(X[, grp == 1])
+  g2 <- t_stat(X[, grp == 2])
+  se_total <- sqrt(g1$var / g1$n + g2$var / g2$n)
+  (g1$m - g2$m) / se_total
+}
+system.time(t3 <- rowtstat(X, grp))
+stopifnot(all.equal(t1, t3))
+```
+
+1000 times faster than when we started!
+
+## Other techniques
+* [Read R blogs](http://www.r-bloggers.com/) to see what performance
+  problems other people have struggled with, and how they have made their
+  code faster.
+
+* Read other R programming books, like The Art of R Programming or Patrick Burns'
+  [_R Inferno_](http://www.burns-stat.com/documents/books/the-r-inferno/) to
+  learn about common traps.
+
+* Take an algorithms and data structure course to learn some
+  well known ways of tackling certain classes of problems. I have heard
+  good things about Princeton's
+  [Algorithms course](https://www.coursera.org/course/algs4partI) offered on
+  Coursera.
+  
+* Learn how to parallelise your code. Two places to start are
+  Parallel R and Parallel Computing for Data Science
+
+* Read general books about optimisation like Mature optimisation
+  or the Pragmatic Programmer
+  
+* Read more R code. StackOverflow, R Mailing List, DSLC, GitHub, etc.
+
+## Meeting Videos
+
+### Cohort 1
+
+(no video)
+
+### Cohort 2
+
+`r knitr::include_url("https://www.youtube.com/embed/fSdAqlkeq6I")`
+
+### Cohort 3
+
+`r knitr::include_url("https://www.youtube.com/embed/yCkvUcT7wW8")`
+
+### Cohort 4
+
+`r knitr::include_url("https://www.youtube.com/embed/LCaqvuv3JNg")`
+
+### Cohort 5
+
+`r knitr::include_url("https://www.youtube.com/embed/pOaiDK7J7EE")`
+
+### Cohort 6
+
+`r knitr::include_url("https://www.youtube.com/embed/UaXimKd3vg8")`
+
+<details>
+<summary> Meeting chat log </summary>
+
+```
+00:24:42	Arthur Shaw:	I wonder if there's a task view for R Universe: https://r-universe.dev/search/
+01:01:13	Arthur Shaw:	https://www.alexejgossmann.com/benchmarking_r/
+01:04:34	Trevin:	I agree that the chapter is a good jumping off point. Gonna have to dig into some of the listed resources 😄
+```
+</details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/rOkrHvN8Uqg")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:23:48	Ron Legere:	https://www.mathworks.com/help/matlab/matlab_prog/vectorization.html
+```
+</details>

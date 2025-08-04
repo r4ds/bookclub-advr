@@ -1,0 +1,363 @@
+---
+engine: knitr
+title: S4
+---
+
+## Introduction
+
+Object consists of:
+
+- Slots. Like fields in R6.
+- Methods. Accessed through generics. Dispatched to particular methods.
+
+Uses functions to define classes and their methods:
+
+- `setClass()`. Define class and its components. 
+- `setGenerics()`. Define generic functions. Used to dispatch.
+- `setMethods()`. Define methods
+
+## Basics overview
+
+### Set class
+
+Define the class:
+
+```{r}
+setClass("Person", 
+  slots = c(
+    name = "character", 
+    age = "numeric"
+  )
+)
+```
+
+Create an instance of the class
+
+```{r}
+john <- new("Person", name = "John Smith", age = NA_real_)
+```
+
+
+### Set generics
+
+Define generic functions for setting and getting the age slot
+
+```{r}
+# get the value
+setGeneric("age", function(x) standardGeneric("age"))
+# set the value
+setGeneric("age<-", function(x, value) standardGeneric("age<-"))
+```
+
+### Set methods
+
+Define methods for the generics:
+
+```{r}
+# get the value
+setMethod("age", "Person", function(x) x@age)
+# set the value
+setMethod("age<-", "Person", function(x, value) {
+  x@age <- value
+  x
+})
+
+# set the value
+age(john) <- 50
+# get the value
+age(john)
+```
+
+To give a flavor, there is only one method per slot. In more realistic cases, there might be several methods.
+
+## Details on defining the class
+
+### Inheritance
+
+```{r, eval=FALSE}
+setClass("Employee", 
+  contains = "Person", 
+  slots = c(
+    boss = "Person"
+  ),
+  prototype = list(
+    boss = new("Person")
+  )
+)
+```
+
+### Instantiation
+
+Create an instance of the class at two levels:
+
+- For developer (you): `methods::new()`
+- For user: constructor function
+
+```{r}
+# how user constructs an instance
+Person <- function(name, age = NA) {
+  age <- as.double(age)
+  
+  # how the developer constructs an instance
+  new("Person", name = name, age = age)
+}
+
+Person("Someone")
+```
+
+### Validation
+
+S4 objects
+
+- Check class of slot at creation
+```{r, error = TRUE}
+Person(mtcars)
+```
+
+- Do **not** check other things
+```{r}
+Person("Hadley", age = c(30, 37))
+```
+
+That's where validation comes in--at two stages:
+
+1. At creation
+2. At modification
+
+#### At creation
+
+```{r, error = TRUE}
+setValidity("Person", function(object) {
+  if (length(object@name) != length(object@age)) {
+    "@name and @age must be same length"
+  } else {
+    TRUE
+  }
+})
+
+Person("Hadley", age = c(30, 37))
+```
+
+#### At modification
+
+```{r, error = TRUE}
+# get value
+setGeneric("name", function(x) standardGeneric("name"))
+setMethod("name", "Person", function(x) x@name)
+
+# set value--and assess whether resulting object is valid
+setGeneric("name<-", function(x, value) standardGeneric("name<-"))
+setMethod("name<-", "Person", function(x, value) {
+  x@name <- value
+  validObject(x)
+  x
+})
+
+# normal name; no problem
+name(john) <- "Jon Smythe"
+name(john)
+
+# invalid name; error thrown
+name(john) <- letters
+```
+
+
+## Details on generics and methods
+
+### Dictate dispatch via signature
+
+Specify function arguments to be used in determining method.
+
+```{r}
+setGeneric("myGeneric", 
+  function(x, ..., verbose = TRUE) standardGeneric("myGeneric"),
+  signature = "x"
+)
+```
+
+### Define generics
+
+General form:
+
+```{r, eval=FALSE}
+setMethod("myGeneric", "Person", function(x) {
+  # method implementation
+})
+```
+
+Example to print object:
+
+```{r}
+setMethod("show", "Person", function(object) {
+  cat(is(object)[[1]], "\n",
+      "  Name: ", object@name, "\n",
+      "  Age:  ", object@age, "\n",
+      sep = ""
+  )
+})
+john
+```
+
+Example to access slot:
+
+```{r}
+setGeneric("name", function(x) standardGeneric("name"))
+setMethod("name", "Person", function(x) x@name)
+
+name(john)
+```
+
+
+This is how end users should access slots.
+
+## Example: `lubridate::period()`
+
+### Define the class
+
+```{r, eval=FALSE}
+setClass("Period",
+  # inherits from these classes
+  contains = c("Timespan", "numeric"),
+  # has slots for time components
+  slots = c(
+    year = "numeric", 
+    month = "numeric", 
+    day = "numeric",
+    hour = "numeric", 
+    minute = "numeric"
+  ),
+  # defines prototype as period of zero duration for all slots
+  prototype = prototype(year = 0, month = 0, day = 0, hour = 0, minute = 0),
+  # check validity with `check_period` function; see section below
+  validity = check_period
+)
+```
+
+See source code [here](https://github.com/tidyverse/lubridate/blob/0bb49b21c88736240219dc67e7ed0eb3df15d9b1/R/periods.r#L90)
+
+### Validate object
+
+Check whether object is valid--notably if all arugments have the same length and are integers.
+
+```{r, eval=FALSE}
+check_period <- function(object) {
+  # start with an empty vector of error messages
+  errors <- character()
+
+  # check length of object's data
+  length(object@.Data) -> n
+  # check length of each slot
+  lengths <- c(
+    length(object@year), 
+    length(object@month),
+    length(object@day), 
+    length(object@hour), 
+    length(object@minute)
+  )
+
+  # if length of any slot is different than overall length, compose error message
+  if (any(lengths != n)) {
+    msg <- paste("Inconsistent lengths: year = ", lengths[1],
+      ", month = ", lengths[2],
+      ", day = ", lengths[3],
+      ", hour = ", lengths[4],
+      ", minute = ", lengths[5],
+      ", second = ", n,
+      sep = ""
+    )
+    # add just-composed error to vector of error messages
+    errors <- c(errors, msg)
+  }
+
+  values <- c(object@year, object@month, object@day, object@hour, object@minute)
+  values <- na.omit(values)
+  if (sum(values - trunc(values))) {
+    msg <- "periods must have integer values"
+    errors <- c(errors, msg)
+  }
+
+  if (length(errors) == 0) {
+    TRUE
+  } else {
+    errors
+  }
+}
+```
+
+
+See source code [here](https://github.com/tidyverse/lubridate/blob/0bb49b21c88736240219dc67e7ed0eb3df15d9b1/R/periods.r#L6).
+
+### Set methods
+
+Show period:
+
+```{r, eval=FALSE}
+#' @export
+setMethod("show", signature(object = "Period"), function(object) {
+  if (length(object@.Data) == 0) {
+    cat("<Period[0]>\n")
+  } else {
+    print(format(object))
+  }
+})
+
+#' @export
+format.Period <- function(x, ...) {
+  if (length(x) == 0) {
+    return(character())
+  }
+
+  show <- paste(
+    x@year, "y ", x@month, "m ", x@day, "d ",
+    x@hour, "H ", x@minute, "M ", x@.Data, "S",
+    sep = ""
+  )
+  start <- regexpr("[-1-9]|(0\\.)", show)
+  show <- ifelse(start > 0, substr(show, start, nchar(show)), "0S")
+
+  show[is.na(x)] <- NA
+  show
+}
+```
+
+See source code [here](https://github.com/tidyverse/lubridate/blob/0bb49b21c88736240219dc67e7ed0eb3df15d9b1/R/periods.r#L195)
+
+## Meeting Videos
+
+### Cohort 1
+
+`r knitr::include_url("https://www.youtube.com/embed/a1jzpWiksyA")`
+
+### Cohort 2
+
+`r knitr::include_url("https://www.youtube.com/embed/bzo37PHCM1I")`
+
+### Cohort 3
+
+`r knitr::include_url("https://www.youtube.com/embed/WWnJ5Cl-aTE")`
+
+`r knitr::include_url("https://www.youtube.com/embed/_byYFTQHp1Y")`
+
+### Cohort 4
+
+`r knitr::include_url("https://www.youtube.com/embed/M8Poajmj-HU")`
+
+### Cohort 5
+
+`r knitr::include_url("https://www.youtube.com/embed/unNfE1fDFEY")`
+
+### Cohort 6
+
+`r knitr::include_url("https://www.youtube.com/embed/q1-QUFJsbLA")`
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/puvaJtv9gQw")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+01:09:37	Ron Legere:	https://en.wikipedia.org/wiki/Composition_over_inheritance
+```
+</details>
