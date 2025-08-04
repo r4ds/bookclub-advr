@@ -1,0 +1,16 @@
+---
+title: "2. Names and values"
+listing: 
+  - contents: "slides/02.qmd"
+    id: slides
+    type: grid
+  - contents: "videos/02"
+    id: videos
+    type: grid
+    grid-columns: 2
+    sort: "filename desc"
+header-includes:
+  - '<script src="listing_new_window.js" defer></script>'
+---
+
+{{< include _chapter_body.qmd >}}

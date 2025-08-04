@@ -21,14 +21,10 @@ website:
         target: advr_club-slides
       - section: "Getting started"
         contents:
-        - section: slides/01-introduction.qmd
-          target: advr_club-slides
-          contents:
-          - file: videos/01.qmd
+        - 01.qmd
       - section: "Foundations"
         contents:
-          - file: slides/02_Names_and_values.Rmd
-            target: advr_club-slides
+          - 02.qmd
           - file: slides/03_Vectors.Rmd
             target: advr_club-slides
           - file: slides/04_Subsetting.Rmd

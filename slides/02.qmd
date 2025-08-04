@@ -1,6 +1,9 @@
-# Names and values
+---
+engine: knitr
+title: Names and values
+---
 
-**Learning objectives:**
+## Learning objectives
 
 - To be able to understand distinction between an *object* and its *name*
 - With this knowledge, to be able write faster code using less memory
@@ -12,9 +15,9 @@ library(lobstr)
 ```
 
 
-### Quiz {-}
+## Quiz
 
-##### 1. How do I create a new column called `3` that contains the sum of `1` and `2`? {-}
+### 1. How do I create a new column called `3` that contains the sum of `1` and `2`?
 
 ```{r}
 df <- data.frame(runif(3), runif(3))
@@ -32,7 +35,7 @@ df
 > You need to use backticks (`) when the name of an object doesn't start with a 
 > a character or '.' [or . followed by a number] (non-syntactic names).
 
-##### 2. How much memory does `y` occupy? {-}
+### 2. How much memory does `y` occupy?
 
 ```{r}
 x <- runif(1e6)
@@ -51,7 +54,7 @@ lobstr::obj_size(y)
 object.size(y)
 ```
 
-##### 3. On which line does `a` get copied in the following example? {-}
+### 3. On which line does `a` get copied in the following example?
 ```{r}
 a <- c(1, 5, 3, 2)
 b <- a
@@ -60,7 +63,7 @@ b[[1]] <- 10
 
 > Not until `b` is modified, the third line
 
-## Binding basics {-}
+## Binding basics
 
 - Create values and *bind* a name to them
 - Names have values (rather than values have names)
@@ -75,9 +78,9 @@ obj_addr(y)
 ```
 
 
-### Exercises {-}
+### Exercises
 
-##### 1. Explain the relationships {-}
+##### 1. Explain the relationships
 ```{r}
 a <- 1:10
 b <- a
@@ -90,7 +93,7 @@ d <- 1:10
 > `d` is a name that refers to the *second* value of `1:10`.
 
 
-##### 2. Do the following all point to the same underlying function object? hint: `lobstr::obj_addr()` {-}
+##### 2. Do the following all point to the same underlying function object? hint: `lobstr::obj_addr()`
 ```{r}
 obj_addr(mean)
 obj_addr(base::mean)
@@ -101,7 +104,7 @@ obj_addr(match.fun("mean"))
 
 > Yes!
 
-## Copy-on-modify {-}
+## Copy-on-modify
 
 - If you modify a value bound to multiple names, it is 'copy-on-modify'
 - If you modify a value bound to a single name, it is 'modify-in-place'
@@ -123,7 +126,7 @@ Turn off `tracemem()` with `untracemem()`
 > Can also use `ref(x)` to get the address of the value bound to a given name
 
 
-## Functions {-}
+## Functions
 
 - Copying also applies within functions
 - If you copy (but don't modify) `x` within `f()`, no copy is made
@@ -142,7 +145,7 @@ ref(z)
 
 <!-- ![](images/02-trace.png) -->
 
-## Lists {-}
+## Lists
 
 - A list overall, has it's own reference (id)
 - List *elements* also each point to other values
@@ -166,7 +169,7 @@ ref(l1, l2)
 
 ![](images/02-l-modify-2.png){width=50%}
 
-## Data Frames {-}
+## Data Frames
 
 - Data frames are lists of vectors
 - So copying and modifying a column *only affects that column*
@@ -190,7 +193,7 @@ d3[1, ] <- d3[1, ] * 3
 ref(d1, d3)
 ```
 
-## Character vectors {-}
+## Character vectors
 
 - R has a **global string pool**
 - Elements of character vectors point to unique strings in the pool
@@ -201,13 +204,13 @@ x <- c("a", "a", "abc", "d")
 
 ![](images/02-character-2.png)
 
-## Exercises {-}
+## Exercises
 
-##### 1. Why is `tracemem(1:10)` not useful? {-}
+##### 1. Why is `tracemem(1:10)` not useful?
 
 > Because it tries to trace a value that is not bound to a name
 
-##### 2. Why are there two copies? {-}
+##### 2. Why are there two copies?
 ```{r}
 x <- c(1L, 2L, 3L)
 tracemem(x)
@@ -216,7 +219,7 @@ x[[3]] <- 4
 
 > Because we convert an *integer* vector (using 1L, etc.) to a *double* vector (using just 4)- 
 
-##### 3. What is the relationships among these objects? {-}
+##### 3. What is the relationships among these objects?
 
 ```{r}
 a <- 1:10      
@@ -233,7 +236,7 @@ ref(c)
 ```
 
 
-##### 4. What happens here? {-}
+##### 4. What happens here?
 ```{r}
 x <- list(1:10)
 x[[2]] <- x
@@ -250,7 +253,7 @@ ref(x)
 
 ![](images/02-copy_on_modify_fig2.png){width=50%}
 
-## Object Size {-}
+## Object Size
 
 - Use `lobstr::obj_size()` 
 - Lists may be smaller than expected because of referencing the same value
@@ -258,14 +261,14 @@ ref(x)
 - Difficult to predict how big something will be
   - Can only add sizes together if they share no references in common
 
-### Alternative Representation {-}
+### Alternative Representation
 - As of R 3.5.0 - ALTREP
 - Represent some vectors compactly
     - e.g., 1:1000 - not 10,000 values, just 1 and 1,000
 
-### Exercises {-}
+### Exercises
 
-##### 1. Why are the sizes so different? {-}
+##### 1. Why are the sizes so different?
 
 ```{r}
 y <- rep(list(runif(1e4)), 100)
@@ -278,7 +281,7 @@ obj_size(y)    # ~80   kB
 > 
 > "This function merely provides a rough indication: it should be reasonably accurate for atomic vectors, but **does not detect if elements of a list are shared**, for example.
 
-##### 2. Why is the size misleading? {-}
+##### 2. Why is the size misleading?
 
 ```{r}
 funs <- list(mean, sd, var)
@@ -288,7 +291,7 @@ obj_size(funs)
 > Because they reference functions from base and stats, which are always available.
 > Why bother looking at the size? What use is that?
 
-##### 3. Predict the sizes {-}
+##### 3. Predict the sizes
 
 ```{r}
 a <- runif(1e6) # 8 MB
@@ -335,13 +338,13 @@ obj_size(a, b)
 ```
 
 
-## Modify-in-place {-}
+## Modify-in-place
 
 - Modifying usually creates a copy except for
     - Objects with a single binding (performance optimization)
     - Environments (special)
 
-### Objects with a single binding {-}
+### Objects with a single binding
 
 - Hard to know if copy will occur
 - If you have 2+ bindings and remove them, R can't follow how many are removed (so will always think there are more than one)
@@ -350,7 +353,7 @@ obj_size(a, b)
 - Best to use `tracemem()` to check rather than guess.
 
 
-#### Example - lists vs. data frames in for loop {-}
+#### Example - lists vs. data frames in for loop
 
 **Setup**  
 
@@ -381,7 +384,7 @@ for (i in seq_along(medians)) {
 untracemem(y)
 ```
 
-#### Benchmark this (Exercise #2) {-}
+#### Benchmark this (Exercise #2)
 
 **First wrap in a function**
 ```{r}
@@ -419,7 +422,7 @@ bench::mark(
 **WOW!**
 
 
-### Environmments {-}
+### Environmments
 - Always modified in place (**reference semantics**)
 - Interesting because if you modify the environment, all existing bindings have the same reference
 - If two names point to the same environment, and you update one, you update both!
@@ -433,9 +436,9 @@ e2$c
 
 - This means that environments can contain themselves (!)
 
-### Exercises {-}
+### Exercises
 
-##### 1. Why isn't this circular? {-}
+##### 1. Why isn't this circular?
 ```{r}
 x <- list()
 x[[1]] <- x
@@ -443,9 +446,9 @@ x[[1]] <- x
 
 > Because the binding to the list() object moves from `x` in the first line to `x[[1]]` in the second.
 
-##### 2. (see "Objects with a single binding") {-}
+##### 2. (see "Objects with a single binding")
 
-##### 3. What happens if you attempt to use tracemem() on an environment? {-}
+##### 3. What happens if you attempt to use tracemem() on an environment?
 
 ```{r}
 #| error: true
@@ -456,7 +459,7 @@ tracemem(e1)
 > Because environments always modified in place, there's no point in tracing them
 
 
-## Unbinding and the garbage collector {-}
+## Unbinding and the garbage collector
 
 - If you delete the 'name' bound to an object, the object still exists
 - R runs a "garbage collector" (GC) to remove these objects when it needs more memory
@@ -478,29 +481,29 @@ mem_used()
   *memory fragmentation* [less memory actually available they you might think]
 
 
-## Meeting Videos {-}
+## Meeting Videos
 
-### Cohort 1 {-}
+### Cohort 1
 
 (no video recorded)
 
-### Cohort 2 {-}
+### Cohort 2
 
 `r knitr::include_url("https://www.youtube.com/embed/pCiNj2JRK50")`
 
-### Cohort 3 {-}
+### Cohort 3
 
 `r knitr::include_url("https://www.youtube.com/embed/-bEXdOoxO_E")`
 
-### Cohort 4 {-}
+### Cohort 4
 
 `r knitr::include_url("https://www.youtube.com/embed/gcVU_F-L6zY")`
 
-### Cohort 5 {-}
+### Cohort 5
 
 `r knitr::include_url("https://www.youtube.com/embed/aqcvKox9V0Q")`
 
-### Cohort 6 {-}
+### Cohort 6
 
 `r knitr::include_url("https://www.youtube.com/embed/O4Oo_qO7SIY")`
 
@@ -519,7 +522,7 @@ mem_used()
 ```
 </details>
 
-### Cohort 7 {-}
+### Cohort 7
 
 `r knitr::include_url("https://www.youtube.com/embed/kpAUoGO6elE")`
 
