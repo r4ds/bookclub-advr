@@ -1,0 +1,16 @@
+---
+title: Cohort 7
+---
+{{< video https://www.youtube.com/embed/MX2vNlvIUFo >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:11:09	Ryan Honomichl:	https://medium.com/analytics-vidhya/become-a-better-r-programmer-with-the-awesome-lobstr-package-af97fcd22602
+00:33:03	Ryan Honomichl:	https://rlang.r-lib.org/reference/enquo.html
+00:37:30	Ryan Honomichl:	https://rlang.r-lib.org/reference/topic-multiple-columns.html
+00:41:00	Ryan Honomichl:	brb
+00:44:37	Ron Legere:	https://www.rdocumentation.org/packages/srvyr/versions/1.2.0
+00:44:58	Ron Legere:	http://gdfe.co/srvyr/
+00:51:51	Stone:	https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html
+```
+</details>

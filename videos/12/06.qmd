@@ -1,0 +1,13 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/rfidR7tI_nQ >}}
+<details>
+<summary> Meeting chat log </summary>
+```
+00:35:02	Trevin:	sloop (“sail the seas of OOP”)
+00:42:40	Ryan Metcalf:	Awesome input Trevin! I jumped to the vignette, but didn't see the reference directly.
+01:00:01	Trevin:	If you're interested there may be a new “R Packages" cohort starting up soon (also a new version of the book coming out soonish as well?)
+01:08:23	Oluwafemi Oyedele:	Thank you !!!
+```
+</details>

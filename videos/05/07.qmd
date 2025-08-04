@@ -1,0 +1,16 @@
+---
+title: Cohort 7
+---
+{{< video https://www.youtube.com/embed/W9CoQ15NlOc >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:40:18	Ryan Honomichl:	What type of vector does each of the following calls to ifelse() return?
+* "ifelse returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE."
+00:42:11	Ryan Honomichl:	"I recommend assigning the results of an if statement only when the entire expression fits on one line; otherwise it tends to be hard to read"
+00:42:46	Ryan Honomichl:	* When you use the single argument form without an `else` statement, `if` invisibly returns NULL if the condition is FALSE. 
+-   Since functions like c() and paste() drop NULL inputs, this allows for a compact expression of certain idioms
+00:54:15	collinberke:	https://docs.google.com/spreadsheets/d/1ScrbEw_-vB9DruaJhjtVY8HLQmuNPqyWeOOjmG6OY1M/edit?usp=sharing
+00:58:46	collinberke:	https://www.youtube.com/@safe4democracy/videos
+```
+</details>

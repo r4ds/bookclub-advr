@@ -1,0 +1,18 @@
+---
+title: Cohort 7
+---
+{{< video https://www.youtube.com/embed/8LPw_VTBsmQ >}}
+{{< video https://www.youtube.com/embed/g77Jfl_xrXM >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:50:48	Stone:	https://www.r-bloggers.com/2018/10/quasiquotation-in-r-via-bquote/
+00:58:26	iPhone:	See ya next week!
+```
+</details>
+<details>
+<summary>Meeting chat log</summary>
+```
+00:55:22	collinberke:	https://rlang.r-lib.org/reference/embrace-operator.html?q=enquo#under-the-hood
+```
+</details>

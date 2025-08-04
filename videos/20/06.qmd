@@ -1,0 +1,10 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/8FT2BA18Ghg >}}
+<details>
+<summary> Meeting chat log </summary>
+```
+01:00:42	Trevin:	They just want to help you present that’s all
+```
+</details>

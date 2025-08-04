@@ -1,0 +1,15 @@
+---
+title: Cohort 7
+---
+{{< video https://www.youtube.com/embed/Q4FA0BB_PeY >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:06:57	Ron Legere:	https://arxiv.org/abs/2303.12712
+00:07:07	Ron Legere:	^^ shows some of the power and limitations
+00:39:41	collinberke:	https://www.youtube.com/watch?v=3GEFd8rZQgY&list=WL&index=11
+00:49:20	iPhone:	Sorry fellas need to jump early. See you next week!
+01:05:21	collinberke:	https://github.com/r4ds/bookclub-advr
+01:09:30	Ron Legere:	makeActiveBinding
+```
+</details>

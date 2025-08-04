@@ -1,0 +1,4 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/K8w28ee3CR8 >}}

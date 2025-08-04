@@ -1,0 +1,14 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/_-uwFjO5CyM >}}
+<details>
+<summary> Meeting chat log </summary>
+```
+00:30:16	Arthur Shaw:	https://www.w3schools.com/html/html_entities.asp
+00:32:29	Arthur Shaw:	Beta symbol in HTML: &Beta;
+00:56:55	Arthur Shaw:	https://dbplyr.tidyverse.org/articles/translation-function.html
+00:57:48	Arthur Shaw:	https://dtplyr.tidyverse.org/index.html
+00:58:43	Arthur Shaw:	https://dtplyr.tidyverse.org/articles/translation.html
+```
+</details>

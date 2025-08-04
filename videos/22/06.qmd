@@ -1,0 +1,23 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/YvT-knh1baA >}}
+<details>
+<summary> Meeting chat log </summary>
+```
+00:12:43	Trevin Flickinger:	Hello everyone!
+00:13:03	Oluwafemi Oyedele:	Hello, Good evening!!!
+00:22:10	Trevin Flickinger:	My connection is slow so I’ll be in the chat
+00:32:45	Trevin Flickinger:	If you start with “continue” it should error out after the first call
+00:56:18	Trevin Flickinger:	Sys.frame(-1) shows it goes back one frame
+00:59:55	fg:	thanks
+01:03:11	Arthur Shaw:	Anyone else lose the presentation?
+01:03:20	fg:	yes
+01:03:22	fg:	?
+01:04:26	Trevin Flickinger:	I thought that was my internet connection
+01:05:07	Trevin Flickinger:	Thank you!
+01:08:42	Trevin Flickinger:	I need to use debug( ) more as well
+01:10:15	Trevin Flickinger:	21st works for me
+01:10:29	Oluwafemi Oyedele:	Same here!!!
+```
+</details>

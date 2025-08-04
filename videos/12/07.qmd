@@ -1,0 +1,11 @@
+---
+title: Cohort 7
+---
+{{< video https://www.youtube.com/embed/mOpmvc9h_4M >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:35:43	Stone: base::InternalMethods
+00:48:04	collinberke: https://cran.r-project.org/doc/manuals/R-exts.html
+```
+</details>

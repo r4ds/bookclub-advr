@@ -1,0 +1,12 @@
+---
+title: Cohort 6
+---
+{{< video https://www.youtube.com/embed/VwmrbPUQY1k >}}
+<details>
+<summary> Meeting chat log </summary>
+```
+00:19:16	Trevin:	https://style.tidyverse.org/error-messages.html
+00:20:14	Trevin:	More on errors in the design guide: https://design.tidyverse.org/
+01:14:27	Federica Gazzelloni:	more info here: https://colinfay.me/learn-shiny-production/
+```
+</details>

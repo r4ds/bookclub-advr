@@ -1,0 +1,5 @@
+---
+title: Cohort 3
+---
+{{< video https://www.youtube.com/embed/UZhrsVz6wi0 >}}
+{{< video https://www.youtube.com/embed/Wt7p71_BuYY >}}

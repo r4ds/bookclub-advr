@@ -1,0 +1,17 @@
+---
+title: Cohort 7
+---
+{{< video https://www.youtube.com/embed/t1N6XdidvNo >}}
+{{< video https://www.youtube.com/embed/6gY3KZWYC00 >}}
+<details>
+<summary>Meeting chat log</summary>
+```
+00:34:09	Ron:	Someone did: https://cran.r-project.org/web/packages/comprehenr/vignettes/Introduction.html
+00:47:58	collinberke:	https://purrr.tidyverse.org/reference/safely.html
+00:48:24	Ron:	it's a function operator !
+00:49:37	Ron:	\(x) length(unique(x) is not too verbose though
+00:49:39	Ron:	;)
+01:06:50	collinberke:	https://colinfay.me/purrr-mappers/
+01:07:45	collinberke:	https://colinfay.me/purrr-web-mining/
+```
+</details>
