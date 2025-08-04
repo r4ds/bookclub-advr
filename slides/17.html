@@ -422,7 +422,7 @@
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">y =</span> <span class="fu">sample</span>(<span class="dv">5</span>))</span>
 <span id="cb40-2"><a></a><span class="fu">eval_tidy</span>(<span class="fu">expr</span>(x <span class="sc">+</span> y), df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 4 7 4 6 9</code></pre>
+<pre><code>#&gt; [1] 2 4 6 9 9</code></pre>
 </div>
 </div>
 <p>Catch user input with <code>enexpr()</code>…</p>
@@ -433,7 +433,7 @@
 <span id="cb42-4"><a></a></span>
 <span id="cb42-5"><a></a><span class="fu">with2</span>(df, x <span class="sc">+</span> y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 4 7 4 6 9</code></pre>
+<pre><code>#&gt; [1] 2 4 6 9 9</code></pre>
 </div>
 </div>
 <p>But there’s a bug!</p>
@@ -511,7 +511,7 @@
 <pre><code>#&gt; with2() environment:</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x000001c9abd33460&gt;</code></pre>
+<pre><code>#&gt; &lt;environment: 0x0000018dede5ddd0&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; Quosure details:</code></pre>
@@ -549,19 +549,19 @@
 <pre><code>#&gt; fun1() environment:</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x000001c9a4d3e0e8&gt;</code></pre>
+<pre><code>#&gt; &lt;environment: 0x0000018df3e748f8&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; with2() Parent/Calling environment:</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x000001c9a4d3e0e8&gt;</code></pre>
+<pre><code>#&gt; &lt;environment: 0x0000018df3e748f8&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; with2() environment:</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x000001c9a4d50b60&gt;</code></pre>
+<pre><code>#&gt; &lt;environment: 0x0000018df3ebc698&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; Quosure details:</code></pre>
@@ -569,66 +569,12 @@
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;quosure&gt;
 #&gt; expr: ^x + a
-#&gt; env:  0x000001c9a4d3e0e8</code></pre>
+#&gt; env:  0x0000018df3e748f8</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 11 12 13</code></pre>
 </div>
 </div>
-</section>
-<section id="meeting-videos" class="slide level2">
-<h2>Meeting Videos</h2>
-<h3 id="cohort-1">Cohort 1</h3>
-<iframe src="https://www.youtube.com/embed/10gRbFMoh7g" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-2">Cohort 2</h3>
-<iframe src="https://www.youtube.com/embed/vKKDU6x3BE8" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-3">Cohort 3</h3>
-<iframe src="https://www.youtube.com/embed/5RLCRFli6QI" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-4">Cohort 4</h3>
-<iframe src="https://www.youtube.com/embed/9MDC12hgOWQ" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-5">Cohort 5</h3>
-<iframe src="https://www.youtube.com/embed/FSm2_TJmhm0" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-6">Cohort 6</h3>
-<iframe src="https://www.youtube.com/embed/Ddd_43gw8nA" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:32:31    Oluwafemi Oyedele:  When should eval_tidy() be used instead of eval()?
-base::eval() is sufficient for simple evaluation. Use eval_tidy() when you'd like to support expressions referring to the .data pronoun, or when you need to support quosures.
-00:37:08    Trevin (he/him):    https://rlang.r-lib.org/reference/topic-defuse.html
-00:38:38    Federica Gazzelloni:    https://rlang.r-lib.org/reference/eval_tidy.html
-00:39:57    Arthur Shaw:    Tidy eval book: https://bookdown.dongzhuoer.com/tidyverse/tidyeval/
-00:40:14    Arthur Shaw:    Also very useful resource: https://dplyr.tidyverse.org/articles/programming.html
-00:40:28    Trevin (he/him):    https://ggplot2.tidyverse.org/reference/aes.html
-00:40:37    Federica Gazzelloni:    https://ggplot2.tidyverse.org/reference/tidyeval.html
-00:41:22    Oluwafemi Oyedele:  It is Tidyverse design
-00:49:13    Federica Gazzelloni:    https://www.youtube.com/watch?v=2NixH3QAerQ&amp;list=PL3x6DOfs2NGi9lH7q-phZlPrl6HKXYDbn&amp;index=15
-00:50:13    Federica Gazzelloni:    Minute: 17:04
-00:54:03    Federica Gazzelloni:    con &lt;- DBI::dbConnect(RSQLite::SQLite(), filename = ":memory:")
-00:54:18    Federica Gazzelloni:    DBI::dbDisconnect(con)</code></pre>
-</details>
-<h3 id="cohort-7">Cohort 7</h3>
-<iframe src="https://www.youtube.com/embed/MX2vNlvIUFo" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:11:09    Ryan Honomichl: https://medium.com/analytics-vidhya/become-a-better-r-programmer-with-the-awesome-lobstr-package-af97fcd22602
-00:33:03    Ryan Honomichl: https://rlang.r-lib.org/reference/enquo.html
-00:37:30    Ryan Honomichl: https://rlang.r-lib.org/reference/topic-multiple-columns.html
-00:41:00    Ryan Honomichl: brb
-00:44:37    Ron Legere: https://www.rdocumentation.org/packages/srvyr/versions/1.2.0
-00:44:58    Ron Legere: http://gdfe.co/srvyr/
-00:51:51    Stone:  https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html</code></pre>
-</details>
 
 
 </section>

@@ -319,34 +319,34 @@ knitr::include_graphics("images/11-maths_example.png")
 <span id="cb10-4"><a></a>}</span>
 <span id="cb10-5"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">slow_function</span>(<span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 5.929748</code></pre>
+<pre><code>#&gt; [1] 3.054764</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.00    0.00    1.01</code></pre>
+#&gt;    0.02    0.00    1.02</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">slow_function</span>(<span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 8.725902</code></pre>
+<pre><code>#&gt; [1] 3.644634</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.00    0.00    1.01</code></pre>
+#&gt;    0.00    0.00    1.03</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>fast_function <span class="ot">&lt;-</span> memoise<span class="sc">::</span><span class="fu">memoise</span>(slow_function)</span>
 <span id="cb16-2"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">fast_function</span>(<span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 6.995218</code></pre>
+<pre><code>#&gt; [1] 7.451108</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;       0       0       1</code></pre>
+#&gt;    0.00    0.00    1.01</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">fast_function</span>(<span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 6.995218</code></pre>
+<pre><code>#&gt; [1] 7.451108</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
@@ -371,7 +371,7 @@ The source code looks like this:</p>
 #&gt;     check_bool(quiet)
 #&gt;     function(...) capture_error(.f(...), otherwise, quiet)
 #&gt; }
-#&gt; &lt;bytecode: 0x0000023950891460&gt;
+#&gt; &lt;bytecode: 0x00000183867aacf0&gt;
 #&gt; &lt;environment: namespace:purrr&gt;</code></pre>
 </div>
 </div>
@@ -388,7 +388,7 @@ The source code looks like this:</p>
 #&gt;         list(result = otherwise, error = e)
 #&gt;     })
 #&gt; }
-#&gt; &lt;bytecode: 0x0000023950926580&gt;
+#&gt; &lt;bytecode: 0x0000018386817b60&gt;
 #&gt; &lt;environment: namespace:purrr&gt;</code></pre>
 </div>
 </div>
@@ -460,47 +460,6 @@ The source code looks like this:</p>
 <ol start="2" type="1">
 <li>Should you memoise file.download? Why or why not?</li>
 </ol>
-</section>
-<section id="meeting-videos" class="slide level2">
-<h2>Meeting Videos</h2>
-<h3 id="cohort-1">Cohort 1</h3>
-<iframe src="https://www.youtube.com/embed/zzUY03gt_pA" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-2">Cohort 2</h3>
-<iframe src="https://www.youtube.com/embed/fD1QJB2pHik" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-3">Cohort 3</h3>
-<iframe src="https://www.youtube.com/embed/Re6y5CQzwG4" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-4">Cohort 4</h3>
-<iframe src="https://www.youtube.com/embed/rVooJFdbePs" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-5">Cohort 5</h3>
-<iframe src="https://www.youtube.com/embed/XOurCfeJLGc" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-6">Cohort 6</h3>
-<iframe src="https://www.youtube.com/embed/EPs57es2MsE" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:01:42    Oluwafemi Oyedele:  Hi, Good Evening !!!
-00:05:52    Arthur Shaw:    @federica, love the hex stickers behind you. All from rstudio::conf?
-00:07:12    Arthur Shaw:    I tried doing the same. I had a hard time ordering them. I also thought I'd make the stickers into magnets so that I could rearrange them in future.
-00:48:34    Oluwafemi Oyedele:  Thank you !!!</code></pre>
-</details>
-<h3 id="cohort-7">Cohort 7</h3>
-<iframe src="https://www.youtube.com/embed/WDehjcuc7xs" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:18:21    collinberke: Jenny Bryan debugging: https://www.youtube.com/watch?v=vgYS-F8opgE
-00:31:10    collinberke: https://purrr.tidyverse.org/reference/slowly.html
-00:47:43    Robert Hilly: By guys!</code></pre>
-</details>
 
 
 </section>

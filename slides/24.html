@@ -236,8 +236,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression      min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean1(x)    122.6µs  131.7µs     7224.
-#&gt; 2 mean2(x)     60.4µs   67.4µs    13986.</code></pre>
+#&gt; 1 mean1(x)    146.4µs  166.8µs     5839.
+#&gt; 2 mean2(x)     67.1µs   75.7µs    12950.</code></pre>
 </div>
 </div>
 </section>
@@ -290,8 +290,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression           min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)            2.4µs    3.1µs   284100.
-#&gt; 2 mean.default(x)    800ns    1.2µs   822341.</code></pre>
+#&gt; 1 mean(x)            2.8µs    3.1µs   295383.
+#&gt; 2 mean.default(x)    900ns    1.1µs   839532.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -305,9 +305,9 @@
 <pre><code>#&gt; # A tibble: 3 × 4
 #&gt;   expression              min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)               2.5µs    3.5µs   270278.
-#&gt; 2 mean.default(x)       900ns    1.2µs   837472.
-#&gt; 3 .Internal(mean(x))    100ns    200ns  4738440.</code></pre>
+#&gt; 1 mean(x)               2.7µs    2.9µs   310733.
+#&gt; 2 mean.default(x)       900ns    1.1µs   849192.
+#&gt; 3 .Internal(mean(x))    100ns    200ns  4495392.</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -321,9 +321,9 @@
 <pre><code>#&gt; # A tibble: 3 × 4
 #&gt;   expression              min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)              14.2µs     16µs    60044.
-#&gt; 2 mean.default(x)      12.7µs   14.6µs    65783.
-#&gt; 3 .Internal(mean(x))     12µs   13.2µs    75085.</code></pre>
+#&gt; 1 mean(x)              16.6µs   17.3µs    55604.
+#&gt; 2 mean.default(x)      14.4µs   14.9µs    64958.
+#&gt; 3 .Internal(mean(x))   13.6µs   13.7µs    70368.</code></pre>
 </div>
 </div>
 </section>
@@ -349,8 +349,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression         min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt;    &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 as.data.frame  538.2µs  686.2µs     1359.
-#&gt; 2 quick_df         3.2µs    4.6µs   199551.</code></pre>
+#&gt; 1 as.data.frame  589.5µs  656.2µs     1447.
+#&gt; 2 quick_df         3.7µs    4.3µs   207929.</code></pre>
 </div>
 </div>
 <p><em>Caveat!</em> This method is fast because it’s dangerous!</p>
@@ -398,10 +398,10 @@
 <pre><code>#&gt; # A tibble: 4 × 4
 #&gt;   expression      min   median `itr/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 loop10       13.3µs   17.9µs    52625.
-#&gt; 2 loop100     376.7µs  470.5µs     2074.
-#&gt; 3 vec10         2.2µs    2.9µs   328368.
-#&gt; 4 vec100       13.5µs   16.4µs    58208.</code></pre>
+#&gt; 1 loop10       17.1µs     18µs    52743.
+#&gt; 2 loop100     460.3µs  491.5µs     1959.
+#&gt; 3 vec10         2.7µs    2.9µs   317912.
+#&gt; 4 vec100       16.3µs   18.5µs    51297.</code></pre>
 </div>
 </div>
 </section>
@@ -422,7 +422,7 @@
 <span id="cb16-6"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.30    0.00    0.33</code></pre>
+#&gt;    0.28    0.00    0.33</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># provide two vectors</span></span>
 <span id="cb18-2"><a></a><span class="fu">system.time</span>(</span>
@@ -432,7 +432,7 @@
 <span id="cb18-6"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.08    0.00    0.10</code></pre>
+#&gt;    0.08    0.00    0.08</code></pre>
 </div>
 </div>
 <p>Add functionality to save values</p>
@@ -443,7 +443,7 @@
 <span id="cb20-4"><a></a><span class="fu">system.time</span>(t1 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, compT))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.09    0.00    0.08</code></pre>
+#&gt;    0.09    0.00    0.09</code></pre>
 </div>
 </div>
 <p>If you look at the source code of <code>stats:::t.test.default()</code>, you’ll see that it does a lot more than just compute the t-statistic.</p>
@@ -464,7 +464,7 @@
 <span id="cb22-14"><a></a><span class="fu">system.time</span>(t2 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, <span class="sc">~</span> <span class="fu">my_t</span>(X[.,], grp)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.03    0.00    0.01</code></pre>
+#&gt;    0.02    0.00    0.01</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -486,7 +486,7 @@
 <span id="cb25-14"><a></a><span class="fu">system.time</span>(t3 <span class="ot">&lt;-</span> <span class="fu">rowtstat</span>(X, grp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.00    0.00    0.02</code></pre>
+#&gt;    0.02    0.00    0.02</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t3))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -502,43 +502,6 @@
 <li><p>Read general books about optimisation like Mature optimisation or the Pragmatic Programmer</p></li>
 <li><p>Read more R code. StackOverflow, R Mailing List, DSLC, GitHub, etc.</p></li>
 </ul>
-</section>
-<section id="meeting-videos" class="slide level2">
-<h2>Meeting Videos</h2>
-<h3 id="cohort-1">Cohort 1</h3>
-<p>(no video)</p>
-<h3 id="cohort-2">Cohort 2</h3>
-<iframe src="https://www.youtube.com/embed/fSdAqlkeq6I" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-3">Cohort 3</h3>
-<iframe src="https://www.youtube.com/embed/yCkvUcT7wW8" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-4">Cohort 4</h3>
-<iframe src="https://www.youtube.com/embed/LCaqvuv3JNg" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-5">Cohort 5</h3>
-<iframe src="https://www.youtube.com/embed/pOaiDK7J7EE" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-6">Cohort 6</h3>
-<iframe src="https://www.youtube.com/embed/UaXimKd3vg8" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:24:42    Arthur Shaw:    I wonder if there's a task view for R Universe: https://r-universe.dev/search/
-01:01:13    Arthur Shaw:    https://www.alexejgossmann.com/benchmarking_r/
-01:04:34    Trevin: I agree that the chapter is a good jumping off point. Gonna have to dig into some of the listed resources 😄</code></pre>
-</details>
-<h3 id="cohort-7">Cohort 7</h3>
-<iframe src="https://www.youtube.com/embed/rOkrHvN8Uqg" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:23:48    Ron Legere: https://www.mathworks.com/help/matlab/matlab_prog/vectorization.html</code></pre>
-</details>
 
 
 </section>

@@ -218,20 +218,20 @@
 <span id="cb2-2"><a></a><span class="fu">names</span>(df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)</span>
 <span id="cb2-3"><a></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;           1          2
-#&gt; 1 0.3404627 0.03332227
-#&gt; 2 0.9892320 0.19464379
-#&gt; 3 0.7218355 0.77230025</code></pre>
+<pre><code>#&gt;           1         2
+#&gt; 1 0.8893205 0.9874973
+#&gt; 2 0.4645398 0.7004741
+#&gt; 3 0.7312149 0.2986040</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>df<span class="sc">$</span><span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">&lt;-</span> df<span class="sc">$</span><span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="sc">+</span> df<span class="sc">$</span><span class="st">`</span><span class="at">2</span><span class="st">`</span></span>
 <span id="cb4-2"><a></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;           1          2        3
-#&gt; 1 0.3404627 0.03332227 0.373785
-#&gt; 2 0.9892320 0.19464379 1.183876
-#&gt; 3 0.7218355 0.77230025 1.494136</code></pre>
+<pre><code>#&gt;           1         2        3
+#&gt; 1 0.8893205 0.9874973 1.876818
+#&gt; 2 0.4645398 0.7004741 1.165014
+#&gt; 3 0.7312149 0.2986040 1.029819</code></pre>
 </div>
 </div>
 <p><strong>What makes these names challenging?</strong></p>
@@ -282,11 +282,11 @@
 <span id="cb12-2"><a></a>y <span class="ot">&lt;-</span> x</span>
 <span id="cb12-3"><a></a><span class="fu">obj_addr</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x188d0060c28"</code></pre>
+<pre><code>#&gt; [1] "0x2a58503acd8"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">obj_addr</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x188d0060c28"</code></pre>
+<pre><code>#&gt; [1] "0x2a58503acd8"</code></pre>
 </div>
 </div>
 <h3 id="exercises">Exercises</h3>
@@ -305,23 +305,23 @@
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">obj_addr</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x188cb8b1738"</code></pre>
+<pre><code>#&gt; [1] "0x2a5828bf738"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">obj_addr</span>(base<span class="sc">::</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x188cb8b1738"</code></pre>
+<pre><code>#&gt; [1] "0x2a5828bf738"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">obj_addr</span>(<span class="fu">get</span>(<span class="st">"mean"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x188cb8b1738"</code></pre>
+<pre><code>#&gt; [1] "0x2a5828bf738"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="fu">obj_addr</span>(<span class="fu">evalq</span>(mean))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x188cb8b1738"</code></pre>
+<pre><code>#&gt; [1] "0x2a5828bf738"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="fu">obj_addr</span>(<span class="fu">match.fun</span>(<span class="st">"mean"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x188cb8b1738"</code></pre>
+<pre><code>#&gt; [1] "0x2a5828bf738"</code></pre>
 </div>
 </div>
 <blockquote>
@@ -339,14 +339,14 @@
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
 <span id="cb27-2"><a></a><span class="fu">cat</span>(<span class="fu">tracemem</span>(x), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;00000188D0CBA058&gt;</code></pre>
+<pre><code>#&gt; &lt;000002A585CC0FF8&gt;</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>y <span class="ot">&lt;-</span> x</span>
 <span id="cb29-2"><a></a>y[[<span class="dv">3</span>]] <span class="ot">&lt;-</span> <span class="dv">4</span>L  <span class="co"># Changes (copy-on-modify)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x00000188d0cba058 -&gt; 0x00000188d0fa2648]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
+<pre><code>#&gt; tracemem[0x000002a585cc0ff8 -&gt; 0x000002a58600d5e8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>y[[<span class="dv">3</span>]] <span class="ot">&lt;-</span> <span class="dv">5</span>L  <span class="co"># Doesn't change (modify-in-place)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -371,11 +371,11 @@
 <span id="cb32-7"><a></a></span>
 <span id="cb32-8"><a></a><span class="fu">ref</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1:0x188d1604d78] &lt;dbl&gt;</code></pre>
+<pre><code>#&gt; [1:0x2a58669dd18] &lt;dbl&gt;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="fu">ref</span>(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1:0x188d1604d78] &lt;dbl&gt;</code></pre>
+<pre><code>#&gt; [1:0x2a58669dd18] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <!-- ![](images/02-trace.png) -->
@@ -406,15 +406,15 @@
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="fu">ref</span>(l1, l2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x188d1f72868] &lt;list&gt; 
-#&gt; ├─[2:0x188d2624388] &lt;dbl&gt; 
-#&gt; ├─[3:0x188d26241c8] &lt;dbl&gt; 
-#&gt; └─[4:0x188d2624008] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x2a586f2e698] &lt;list&gt; 
+#&gt; ├─[2:0x2a5877133b8] &lt;dbl&gt; 
+#&gt; ├─[3:0x2a5877131f8] &lt;dbl&gt; 
+#&gt; └─[4:0x2a587713038] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [5:0x188d1f713c8] &lt;list&gt; 
-#&gt; ├─[2:0x188d2624388] 
-#&gt; ├─[3:0x188d26241c8] 
-#&gt; └─[6:0x188d261ac48] &lt;dbl&gt;</code></pre>
+#&gt; █ [5:0x2a586fc3098] &lt;list&gt; 
+#&gt; ├─[2:0x2a5877133b8] 
+#&gt; ├─[3:0x2a5877131f8] 
+#&gt; └─[6:0x2a58770fc78] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 
@@ -436,13 +436,13 @@
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>d2[, <span class="dv">2</span>] <span class="ot">&lt;-</span> d2[, <span class="dv">2</span>] <span class="sc">*</span> <span class="dv">2</span></span>
 <span id="cb40-2"><a></a><span class="fu">ref</span>(d1, d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x188cd88acc8] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x188cf51e418] &lt;dbl&gt; 
-#&gt; └─y = [3:0x188cf51e3c8] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x2a584931608] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x2a57f3b9cc8] &lt;dbl&gt; 
+#&gt; └─y = [3:0x2a57f3b9c78] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [4:0x188cf309dc8] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x188cf51e418] 
-#&gt; └─y = [5:0x188d0111bd8] &lt;dbl&gt;</code></pre>
+#&gt; █ [4:0x2a5810eb508] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x2a57f3b9cc8] 
+#&gt; └─y = [5:0x2a57feb2058] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>All columns change</p>
@@ -450,13 +450,13 @@
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>d3[<span class="dv">1</span>, ] <span class="ot">&lt;-</span> d3[<span class="dv">1</span>, ] <span class="sc">*</span> <span class="dv">3</span></span>
 <span id="cb42-2"><a></a><span class="fu">ref</span>(d1, d3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x188cd88acc8] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x188cf51e418] &lt;dbl&gt; 
-#&gt; └─y = [3:0x188cf51e3c8] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x2a584931608] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x2a57f3b9cc8] &lt;dbl&gt; 
+#&gt; └─y = [3:0x2a57f3b9c78] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [4:0x188cfbb7048] &lt;df[,2]&gt; 
-#&gt; ├─x = [5:0x188d0b36148] &lt;dbl&gt; 
-#&gt; └─y = [6:0x188d0b360f8] &lt;dbl&gt;</code></pre>
+#&gt; █ [4:0x2a57faa92c8] &lt;df[,2]&gt; 
+#&gt; ├─x = [5:0x2a585a91b38] &lt;dbl&gt; 
+#&gt; └─y = [6:0x2a585a91ae8] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 </section>
@@ -482,12 +482,12 @@
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>L, <span class="dv">2</span>L, <span class="dv">3</span>L)</span>
 <span id="cb45-2"><a></a><span class="fu">tracemem</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "&lt;00000188D06A9888&gt;"</code></pre>
+<pre><code>#&gt; [1] "&lt;000002A5856391C8&gt;"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>x[[<span class="dv">3</span>]] <span class="ot">&lt;-</span> <span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x00000188d06a9888 -&gt; 0x00000188d0711508]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x00000188d0711508 -&gt; 0x00000188d16add18]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
+<pre><code>#&gt; tracemem[0x000002a5856391c8 -&gt; 0x000002a585653f08]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x000002a585653f08 -&gt; 0x000002a58663f8b8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
 </div>
 </div>
 <blockquote>
@@ -505,12 +505,12 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="fu">ref</span>(c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x188d2022558] &lt;list&gt; 
-#&gt; ├─█ [2:0x188d0b05b48] &lt;list&gt; 
-#&gt; │ ├─[3:0x188d0b5b858] &lt;int&gt; 
-#&gt; │ └─[3:0x188d0b5b858] 
-#&gt; ├─[3:0x188d0b5b858] 
-#&gt; └─[4:0x188d0c0e4a0] &lt;int&gt;</code></pre>
+<pre><code>#&gt; █ [1:0x2a586fc3ea8] &lt;list&gt; 
+#&gt; ├─█ [2:0x2a585a1a308] &lt;list&gt; 
+#&gt; │ ├─[3:0x2a585aa1c40] &lt;int&gt; 
+#&gt; │ └─[3:0x2a585aa1c40] 
+#&gt; ├─[3:0x2a585aa1c40] 
+#&gt; └─[4:0x2a585b13d90] &lt;int&gt;</code></pre>
 </div>
 </div>
 <h5 id="what-happens-here">4. What happens here?</h5>
@@ -526,10 +526,10 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a></a><span class="fu">ref</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x188d1229388] &lt;list&gt; 
-#&gt; ├─[2:0x188d150cd98] &lt;int&gt; 
-#&gt; └─█ [3:0x188d1c717e8] &lt;list&gt; 
-#&gt;   └─[2:0x188d150cd98]</code></pre>
+<pre><code>#&gt; █ [1:0x2a586172508] &lt;list&gt; 
+#&gt; ├─[2:0x2a58641c040] &lt;int&gt; 
+#&gt; └─█ [3:0x2a586b06c48] &lt;list&gt; 
+#&gt;   └─[2:0x2a58641c040]</code></pre>
 </div>
 </div>
 
@@ -671,22 +671,22 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a><span class="fu">cat</span>(<span class="fu">tracemem</span>(x), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;00000188D27817A8&gt;</code></pre>
+<pre><code>#&gt; &lt;000002A587857268&gt;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(medians)) {</span>
 <span id="cb81-2"><a></a>  x[[i]] <span class="ot">&lt;-</span> x[[i]] <span class="sc">-</span> medians[[i]]</span>
 <span id="cb81-3"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x00000188d27817a8 -&gt; 0x00000188d283d118]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x00000188d283d118 -&gt; 0x00000188d283c548]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x00000188d283c548 -&gt; 0x00000188d283c4d8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x00000188d283c4d8 -&gt; 0x00000188d283c468]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x00000188d283c468 -&gt; 0x00000188d283c3f8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x00000188d283c3f8 -&gt; 0x00000188d283c388]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x00000188d283c388 -&gt; 0x00000188d283c318]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x00000188d283c318 -&gt; 0x00000188d283c2a8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x00000188d283c2a8 -&gt; 0x00000188d283c238]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x00000188d283c238 -&gt; 0x00000188d283c1c8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
+<pre><code>#&gt; tracemem[0x000002a587857268 -&gt; 0x000002a584b5de78]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x000002a584b5de78 -&gt; 0x000002a584b5d2a8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x000002a584b5d2a8 -&gt; 0x000002a584b5d238]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x000002a584b5d238 -&gt; 0x000002a584b5d1c8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x000002a584b5d1c8 -&gt; 0x000002a584b5d158]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x000002a584b5d158 -&gt; 0x000002a584b5d0e8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x000002a584b5d0e8 -&gt; 0x000002a584b5d078]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x000002a584b5d078 -&gt; 0x000002a584b5d008]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x000002a584b5d008 -&gt; 0x000002a584bbfea8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
+#&gt; tracemem[0x000002a584bbfea8 -&gt; 0x000002a584bbfe38]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a><span class="fu">untracemem</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -696,13 +696,13 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <span id="cb84-2"><a></a></span>
 <span id="cb84-3"><a></a><span class="fu">cat</span>(<span class="fu">tracemem</span>(y), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;00000188CD850188&gt;</code></pre>
+<pre><code>#&gt; &lt;000002A584B16388&gt;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(medians)) {</span>
 <span id="cb86-2"><a></a>  y[[i]] <span class="ot">&lt;-</span> y[[i]] <span class="sc">-</span> medians[[i]]</span>
 <span id="cb86-3"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x00000188cd850188 -&gt; 0x00000188cde947e8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
+<pre><code>#&gt; tracemem[0x000002a584b16388 -&gt; 0x000002a582d8fea8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a></a><span class="fu">untracemem</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -729,8 +729,8 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 data.frame   54.3µs   69.9µs    12785.     410KB     192.
-#&gt; 2 list         21.9µs   32.2µs    29164.     391KB     283.</code></pre>
+#&gt; 1 data.frame   52.3µs   68.2µs    13411.     410KB     201.
+#&gt; 2 list         16.2µs     33µs    28621.     391KB     279.</code></pre>
 </div>
 </div>
 <p><strong>Try with 20 columns</strong></p>
@@ -747,8 +747,8 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 data.frame  135.6µs  174.7µs     5314.     400KB     57.3
-#&gt; 2 list         28.4µs   38.6µs    24248.     392KB    243.</code></pre>
+#&gt; 1 data.frame  143.8µs  189.7µs     4722.     400KB     50.1
+#&gt; 2 list         25.6µs   39.7µs    24419.     392KB    243.</code></pre>
 </div>
 </div>
 <p><strong>WOW!</strong></p>
@@ -806,12 +806,12 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <div class="sourceCode cell-code" id="cb99"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a></a><span class="fu">gc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;           used (Mb) gc trigger (Mb) max used (Mb)
-#&gt; Ncells  806847 43.1    1485610 79.4  1485610 79.4
-#&gt; Vcells 4533816 34.6   10146329 77.5 10146311 77.5</code></pre>
+#&gt; Ncells  805637 43.1    1486050 79.4  1486050 79.4
+#&gt; Vcells 4532584 34.6   10146329 77.5 10146315 77.5</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb101"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a></a><span class="fu">mem_used</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 81.46 MB</code></pre>
+<pre><code>#&gt; 81.38 MB</code></pre>
 </div>
 </div>
 <ul>
@@ -822,59 +822,6 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
 <li>R counts memory from objects, but there are gaps due to those that are deleted -&gt; <em>memory fragmentation</em> [less memory actually available they you might think]</li>
 </ol></li>
 </ul>
-</section>
-<section id="meeting-videos" class="slide level2">
-<h2>Meeting Videos</h2>
-<h3 id="cohort-1">Cohort 1</h3>
-<p>(no video recorded)</p>
-<h3 id="cohort-2">Cohort 2</h3>
-<iframe src="https://www.youtube.com/embed/pCiNj2JRK50" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-3">Cohort 3</h3>
-<iframe src="https://www.youtube.com/embed/-bEXdOoxO_E" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-4">Cohort 4</h3>
-<iframe src="https://www.youtube.com/embed/gcVU_F-L6zY" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-5">Cohort 5</h3>
-<iframe src="https://www.youtube.com/embed/aqcvKox9V0Q" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-6">Cohort 6</h3>
-<iframe src="https://www.youtube.com/embed/O4Oo_qO7SIY" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:16:57    Federica Gazzelloni:    cohort 2 video: https://www.youtube.com/watch?v=pCiNj2JRK50
-00:18:39    Federica Gazzelloni:    cohort 2 presentation: https://r4ds.github.io/bookclub-Advanced_R/Presentations/Week02/Cohort2_America/Chapter2Slides.html#1
-00:40:24    Arthur Shaw:    Just the opposite, Ryan. Very clear presentation!
-00:51:54    Trevin: parquet?
-00:53:00    Arthur Shaw:    We may all be right. {arrow} looks to deal with feather and parquet files: https://arrow.apache.org/docs/r/
-01:00:04    Arthur Shaw:    Some questions for future meetings. (1) I find Ryan's use of slides hugely effective in conveying information. Would it be OK if future sessions (optionally) used slides? If so, should/could we commit slides to some folder on the repo? (2) I think reusing the images from Hadley's books really helps understanding and discussion. Is that OK to do? Here I'm thinking about copyright concerns. (If possible, I would rather not redraw variants of Hadley's images.)
-01:01:35    Federica Gazzelloni:    It's all ok, you can use past presentation, you don't need to push them to the repo, you can use the images from the book
-01:07:19    Federica Gazzelloni:    Can I use: gc(reset = TRUE) safely?</code></pre>
-</details>
-<h3 id="cohort-7">Cohort 7</h3>
-<iframe src="https://www.youtube.com/embed/kpAUoGO6elE" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:09:40    Ryan Honomichl: https://drdoane.com/three-deep-truths-about-r/
-00:12:51    Robert Hilly:   Be right back
-00:36:12    Ryan Honomichl: brb
-00:41:18    Ron:    I tried mapply and also got different answers
-00:41:44    collinberke:    Interesting, would like to know more what is going on.
-00:49:57    Robert Hilly:   simple_map &lt;- function(x, f, ...) {
-  out &lt;- vector("list", length(x))
-  for (i in seq_along(x)) {
-    out[[i]] &lt;- f(x[[i]], ...)
-  }
-  out
-}</code></pre>
-</details>
 
 
 </section>

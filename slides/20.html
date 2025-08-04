@@ -296,7 +296,7 @@
 </div>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>rlang<span class="sc">::</span><span class="fu">get_env</span>(q1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x00000226d60330a8&gt;</code></pre>
+<pre><code>#&gt; &lt;environment: 0x000001f161f6d698&gt;</code></pre>
 </div>
 </div>
 <p>Or set them</p>
@@ -359,7 +359,7 @@
 #&gt; $f
 #&gt; &lt;quosure&gt;
 #&gt; expr: ^x
-#&gt; env:  0x00000226d3a61a88</code></pre>
+#&gt; env:  0x000001f15fc6f2e0</code></pre>
 </div>
 </div>
 </section>
@@ -536,16 +536,16 @@
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a><span class="fu">resample</span>(sample_df, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;     a b c
-#&gt; 2   2 4 3
 #&gt; 4   4 2 4
+#&gt; 3   3 3 2
 #&gt; 1   1 5 5
-#&gt; 4.1 4 2 4
-#&gt; 2.1 2 4 3
-#&gt; 4.2 4 2 4
+#&gt; 1.1 1 5 5
+#&gt; 3.1 3 3 2
 #&gt; 5   5 1 1
 #&gt; 5.1 5 1 1
-#&gt; 4.3 4 2 4
-#&gt; 4.4 4 2 4</code></pre>
+#&gt; 3.2 3 3 2
+#&gt; 5.2 5 1 1
+#&gt; 4.1 4 2 4</code></pre>
 </div>
 </div>
 <p>But we also want to use subset and we want to create a function that allow us to resample and subset (with <code>subset2()</code>) in a single step.</p>
@@ -577,16 +577,16 @@
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a><span class="fu">subsample</span>(sample_df, b <span class="sc">==</span> c, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;     a b c
-#&gt; 1   1 5 5
-#&gt; 1.1 1 5 5
 #&gt; 5   5 1 1
-#&gt; 1.2 1 5 5
 #&gt; 5.1 5 1 1
 #&gt; 5.2 5 1 1
+#&gt; 1   1 5 5
 #&gt; 5.3 5 1 1
-#&gt; 1.3 1 5 5
+#&gt; 1.1 1 5 5
 #&gt; 5.4 5 1 1
-#&gt; 5.5 5 1 1</code></pre>
+#&gt; 5.5 5 1 1
+#&gt; 1.2 1 5 5
+#&gt; 1.3 1 5 5</code></pre>
 </div>
 </div>
 <p><strong>Be careful!</strong>, potential ambiguity:</p>
@@ -610,44 +610,6 @@
 <section id="base-evaluation" class="slide level2">
 <h2>Base evaluation</h2>
 <p>Check 20.6 in the book!</p>
-</section>
-<section id="meeting-videos" class="slide level2">
-<h2>Meeting Videos</h2>
-<h3 id="cohort-1">Cohort 1</h3>
-<iframe src="https://www.youtube.com/embed/4En_Ypvtjqw" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-2">Cohort 2</h3>
-<iframe src="https://www.youtube.com/embed/ewHAlVwCGtY" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-3">Cohort 3</h3>
-<iframe src="https://www.youtube.com/embed/0K1vyiV8_qo" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-4">Cohort 4</h3>
-<iframe src="https://www.youtube.com/embed/kfwjJDuyN8U" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-5">Cohort 5</h3>
-<iframe src="https://www.youtube.com/embed/WzfD9GK6nCI" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-6">Cohort 6</h3>
-<iframe src="https://www.youtube.com/embed/8FT2BA18Ghg" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>01:00:42    Trevin: They just want to help you present that’s all</code></pre>
-</details>
-<h3 id="cohort-7">Cohort 7</h3>
-<iframe src="https://www.youtube.com/embed/g77Jfl_xrXM" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:55:22    collinberke:    https://rlang.r-lib.org/reference/embrace-operator.html?q=enquo#under-the-hood</code></pre>
-</details>
-<iframe src="https://www.youtube.com/embed/wPLrafScijE" width="100%" height="400px" data-external="1">
-</iframe>
 
 
 </section>

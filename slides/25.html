@@ -244,7 +244,7 @@ Like how?
 <span id="cb2-6"><a></a>add</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (x, y, z) 
-#&gt; .Call(&lt;pointer: 0x00007ff9d7b215f0&gt;, x, y, z)</code></pre>
+#&gt; .Call(&lt;pointer: 0x00007ff9d7e315f0&gt;, x, y, z)</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">add</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -317,7 +317,7 @@ Like how?
 <span id="cb9-9"><a></a>x<span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">100</span>)</span>
 <span id="cb9-10"><a></a><span class="fu">sumR</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 48.57133</code></pre>
+<pre><code>#&gt; [1] 51.16287</code></pre>
 </div>
 </div>
 <p>Translation:</p>
@@ -354,9 +354,9 @@ Like how?
 <pre><code>#&gt; # A tibble: 3 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 sum(x)        700ns    800ns  1176844.        0B        0
-#&gt; 2 sumC(x)       800ns    1.1µs   865688.        0B        0
-#&gt; 3 sumR(x)      13.8µs   19.7µs    48653.        0B        0</code></pre>
+#&gt; 1 sum(x)        700ns    1.6µs   611939.        0B        0
+#&gt; 2 sumC(x)       900ns    1.7µs   469982.        0B        0
+#&gt; 3 sumR(x)      14.2µs   27.4µs    33865.        0B        0</code></pre>
 </div>
 </div>
 </section>
@@ -389,8 +389,8 @@ Like how?
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression          min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt;     &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 pdistR(0.5, y)   3.23ms   3.69ms      268.    7.63MB     136.
-#&gt; 2 pdistC(0.5, y)   1.66ms   2.08ms      473.    7.63MB     176.</code></pre>
+#&gt; 1 pdistR(0.5, y)   4.37ms   8.76ms      119.    7.63MB     63.2
+#&gt; 2 pdistC(0.5, y)   2.26ms    5.7ms      182.    7.63MB     87.5</code></pre>
 </div>
 </div>
 </section>
@@ -442,8 +442,8 @@ rcode here
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 mean(x)     122.6µs  136.8µs     6910.        0B        0
-#&gt; 2 meanC(x)     40.5µs   50.8µs    18955.        0B        0</code></pre>
+#&gt; 1 mean(x)     122.8µs    234µs     4084.        0B     2.02
+#&gt; 2 meanC(x)     40.4µs    114µs     9270.        0B     0</code></pre>
 </div>
 </div>
 </section>
@@ -729,8 +729,8 @@ rcode here
 <pre><code>#&gt; # A tibble: 2 × 6
 #&gt;   expression              min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 gibbs_r(100, 10)     1.37ms   1.88ms      517.  103.22KB     28.9
-#&gt; 2 gibbs_cpp(100, 10)  148.5µs  211.3µs     4600.    1.61KB     29.6</code></pre>
+#&gt; 1 gibbs_r(100, 10)     1.31ms   3.83ms      283.  103.22KB     18.0
+#&gt; 2 gibbs_cpp(100, 10)  150.1µs  416.3µs     2456.    1.61KB     16.9</code></pre>
 </div>
 </div>
 </section>
@@ -822,9 +822,9 @@ rcode here
 <pre><code>#&gt; # A tibble: 3 × 6
 #&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 vacc1       779.8µs   1.01ms      929.    7.86KB    45.6 
-#&gt; 2 vacc2        48.1µs   61.7µs    15618.  146.68KB    31.1 
-#&gt; 3 vacc3        30.8µs   38.7µs    25332.   11.98KB     5.07</code></pre>
+#&gt; 1 vacc1       750.5µs   1.88ms      546.    7.86KB    28.8 
+#&gt; 2 vacc2        48.4µs   72.1µs    10005.  146.68KB    16.9 
+#&gt; 3 vacc3        30.8µs   41.5µs    15519.   11.98KB     4.06</code></pre>
 </div>
 </div>
 </section>
@@ -840,62 +840,9 @@ rcode here
 <section id="op-success" class="slide level2">
 <h2>Op Success!</h2>
 
+
+
 <img data-src="images/we-did-it-celebration-meme.jpg" class="r-stretch quarto-figure-center"><p class="caption">Congrats!</p></section>
-<section id="meeting-videos" class="slide level2">
-<h2>Meeting Videos</h2>
-<h3 id="cohort-1">Cohort 1</h3>
-<iframe src="https://www.youtube.com/embed/2JDeacWl1DM" width="100%" height="400px" data-external="1">
-</iframe>
-<iframe src="https://www.youtube.com/embed/sLWCelHpcqc" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-2">Cohort 2</h3>
-<iframe src="https://www.youtube.com/embed/rQwOosOJpaY" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-3">Cohort 3</h3>
-<iframe src="https://www.youtube.com/embed/ZWdIeR1jK9Q" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-4">Cohort 4</h3>
-<iframe src="https://www.youtube.com/embed/_K8DKF3Fzes" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-5">Cohort 5</h3>
-<iframe src="https://www.youtube.com/embed/nske4iqsgh0" width="100%" height="400px" data-external="1">
-</iframe>
-<h3 id="cohort-6">Cohort 6</h3>
-<iframe src="https://www.youtube.com/embed/hyVK08jXiYw" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:10:13    Arthur Shaw:    Did things freeze for anyone else?
-00:55:40    Federica Gazzelloni:    https://en.cppreference.com/w/cpp/container
-00:57:44    Federica Gazzelloni:    https://dirk.eddelbuettel.com/blog/2011/07/14/
-01:07:33    Trevin: I don’t have experience
-01:07:54    Oluwafemi Oyedele:  Same here!!!
-01:11:57    Arthur Shaw:    Does anyone know any packages that use C++? The one that comes to mind for me is haven, which uses a C++ library
-01:12:30    Trevin: When I was looking, one that stood out to me was rstan
-01:13:02    Arthur Shaw:    Reacted to "When I was looking, ..." with 👍</code></pre>
-</details>
-<h3 id="cohort-7">Cohort 7</h3>
-<iframe src="https://www.youtube.com/embed/Luu7JsixQgY" width="100%" height="400px" data-external="1">
-</iframe>
-<details>
-<summary>
-Meeting chat log
-</summary>
-<pre><code>00:43:02    Gus Lipkin: I think I found the definition for `mean`
-
-An R call goes to *a which then calls the C function *b
-
-*a: https://github.com/wch/r-source/blob/trunk/src/library/base/R/mean.R
-*b: https://github.com/wch/r-source/blob/trunk/src/library/stats/src/cov.c#L207
-
-It looks like the second pass only happens if `R_FINITE(mean_from_first_pass)` which tries to call `isfinite` from C++ and if it’s not there, it’ll make sure it is a number and is not positive or negative infinity.
-00:49:55    Gus Lipkin: I feel bad for dropping in on the last chapter and getting Collin’s thanks 😅 I wish I’d joined sooner.</code></pre>
-</details>
-
-
-</section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
