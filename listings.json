@@ -1,5 +1,71 @@
 [
   {
+    "listing": "/24.html",
+    "items": [
+      "/slides/24.html"
+    ]
+  },
+  {
+    "listing": "/22.html",
+    "items": [
+      "/slides/22.html"
+    ]
+  },
+  {
+    "listing": "/20.html",
+    "items": [
+      "/slides/20.html"
+    ]
+  },
+  {
+    "listing": "/18.html",
+    "items": [
+      "/slides/18.html"
+    ]
+  },
+  {
+    "listing": "/16.html",
+    "items": [
+      "/slides/16.html"
+    ]
+  },
+  {
+    "listing": "/14.html",
+    "items": [
+      "/slides/14.html"
+    ]
+  },
+  {
+    "listing": "/12.html",
+    "items": [
+      "/slides/12.html"
+    ]
+  },
+  {
+    "listing": "/10.html",
+    "items": [
+      "/slides/10.html"
+    ]
+  },
+  {
+    "listing": "/08.html",
+    "items": [
+      "/slides/08.html"
+    ]
+  },
+  {
+    "listing": "/06.html",
+    "items": [
+      "/slides/06.html"
+    ]
+  },
+  {
+    "listing": "/04.html",
+    "items": [
+      "/slides/04.html"
+    ]
+  },
+  {
     "listing": "/02.html",
     "items": [
       "/slides/02.html"
@@ -15,6 +81,78 @@
       "/videos/01/04.html",
       "/videos/01/03.html",
       "/videos/01/02.html"
+    ]
+  },
+  {
+    "listing": "/03.html",
+    "items": [
+      "/slides/03.html"
+    ]
+  },
+  {
+    "listing": "/05.html",
+    "items": [
+      "/slides/05.html"
+    ]
+  },
+  {
+    "listing": "/07.html",
+    "items": [
+      "/slides/07.html"
+    ]
+  },
+  {
+    "listing": "/09.html",
+    "items": [
+      "/slides/09.html"
+    ]
+  },
+  {
+    "listing": "/11.html",
+    "items": [
+      "/slides/11.html"
+    ]
+  },
+  {
+    "listing": "/13.html",
+    "items": [
+      "/slides/13.html"
+    ]
+  },
+  {
+    "listing": "/15.html",
+    "items": [
+      "/slides/15.html"
+    ]
+  },
+  {
+    "listing": "/17.html",
+    "items": [
+      "/slides/17.html"
+    ]
+  },
+  {
+    "listing": "/19.html",
+    "items": [
+      "/slides/19.html"
+    ]
+  },
+  {
+    "listing": "/21.html",
+    "items": [
+      "/slides/21.html"
+    ]
+  },
+  {
+    "listing": "/23.html",
+    "items": [
+      "/slides/23.html"
+    ]
+  },
+  {
+    "listing": "/25.html",
+    "items": [
+      "/slides/25.html"
     ]
   }
 ]

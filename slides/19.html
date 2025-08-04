@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Advanced R Book Club – Quasiquotation</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5fa723a4ee799f64e44b6fe0747a0a63.css">
+  <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-dark">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Quasiquotation</h1>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="learning-objectives" class="slide level2">
+<h2>Learning objectives:</h2>
+<ul>
+<li>What quasiquotation means</li>
+<li>Why it’s important</li>
+<li>Learn some practical uses</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(rlang)</span>
+<span id="cb1-2"><a></a><span class="fu">library</span>(purrr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="introduction" class="slide level2">
+<h2>Introduction</h2>
+<p>Three pillars of <em>tidy</em> evaluation</p>
+<ol type="1">
+<li>Quasiquotation</li>
+<li>Quosures (chapter 20)</li>
+<li>Data masks (Chapter 20)</li>
+</ol>
+<p><strong>Quasiquotation = quotation + unquotation</strong></p>
+<ul>
+<li><strong>Quote.</strong> Capture unevaluated expression… (“defuse”)<br>
+</li>
+<li><strong>Unquote.</strong> Evaluate selections of quoted expression! (“inject”)</li>
+<li>Functions that use these features are said to use Non-standard evaluation (NSE)</li>
+<li>Note: related to Lisp macros, and also exists in other languages with Lisp heritage, e.g.&nbsp;Julia</li>
+</ul>
+<blockquote>
+<p>On it’s own, Quasiquotation good for programming, but combined with other tools, important for data analysis.</p>
+</blockquote>
+</section>
+<section id="motivation" class="slide level2">
+<h2>Motivation</h2>
+<p>Simple <em>concrete</em> example:</p>
+<p><code>cement()</code> is a function that works like <code>paste()</code> but doesn’t need need quotes</p>
+<p>(Think of automatically adding ‘quotes’ to the arguments)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>cement <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb2-2"><a></a>  args <span class="ot">&lt;-</span> <span class="fu">ensyms</span>(...)</span>
+<span id="cb2-3"><a></a>  <span class="fu">paste</span>(purrr<span class="sc">::</span><span class="fu">map</span>(args, as_string), <span class="at">collapse =</span> <span class="st">" "</span>)</span>
+<span id="cb2-4"><a></a>}</span>
+<span id="cb2-5"><a></a></span>
+<span id="cb2-6"><a></a><span class="fu">cement</span>(Good, morning, Hadley)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Good morning Hadley"</code></pre>
+</div>
+</div>
+<p>What if we wanted to use variables? What is an object and what should be quoted?</p>
+<p>This is where ‘unquoting’ comes in!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>name <span class="ot">&lt;-</span> <span class="st">"Bob"</span></span>
+<span id="cb4-2"><a></a><span class="fu">cement</span>(Good, afternoon, <span class="sc">!!</span>name) <span class="co"># Bang-bang!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Good afternoon Bob"</code></pre>
+</div>
+</div>
+</section>
+<section id="vocabulary" class="slide level2 unnumbered">
+<h2>Vocabulary</h2>
+<p>Can think of <code>cement()</code> and <code>paste()</code> as being ‘mirror-images’ of each other.</p>
+<ul>
+<li><code>paste()</code> - define what to quote - <strong>Evaluates</strong> arguments</li>
+<li><code>cement()</code> - define what to unquote - <strong>Quotes</strong> arguments</li>
+</ul>
+<p><strong>Quoting function</strong> similar to, but more precise than, <strong>Non-standard evaluation (NSE)</strong></p>
+<ul>
+<li>Tidyverse functions - e.g., <code>dplyr::mutate()</code>, <code>tidyr::pivot_longer()</code></li>
+<li>Base functions - e.g., <code>library()</code>, <code>subset()</code>, <code>with()</code></li>
+</ul>
+<p><strong>Quoting function</strong> arguments cannot be evaluated outside of function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">cement</span>(Good, afternoon, Cohort) <span class="co"># No problem</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Good afternoon Cohort"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>Good      <span class="co"># Error!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error: object 'Good' not found</code></pre>
+</div>
+</div>
+<p><strong>Non-quoting (standard) function</strong> arguments can be evaluated:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">paste</span>(<span class="st">"Good"</span>, <span class="st">"afternoon"</span>, <span class="st">"Cohort"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Good afternoon Cohort"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="st">"Good"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Good"</code></pre>
+</div>
+</div>
+</section>
+<section id="quoting" class="slide level2">
+<h2>Quoting</h2>
+<p><strong>Capture expressions without evaluating them</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; Warning in body[[col]][rows][!is.na(result)] &lt;- omit_na(result): number of
+#&gt; items to replace is not a multiple of replacement length</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="mswiutofea" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#mswiutofea table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#mswiutofea thead, #mswiutofea tbody, #mswiutofea tfoot, #mswiutofea tr, #mswiutofea td, #mswiutofea th {
+  border-style: none;
+}
+
+#mswiutofea p {
+  margin: 0;
+  padding: 0;
+}
+
+#mswiutofea .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#mswiutofea .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#mswiutofea .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#mswiutofea .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#mswiutofea .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mswiutofea .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mswiutofea .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mswiutofea .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#mswiutofea .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#mswiutofea .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#mswiutofea .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#mswiutofea .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#mswiutofea .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#mswiutofea .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#mswiutofea .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: bold;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mswiutofea .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#mswiutofea .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#mswiutofea .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#mswiutofea .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mswiutofea .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#mswiutofea .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#mswiutofea .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#mswiutofea .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mswiutofea .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#mswiutofea .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#mswiutofea .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mswiutofea .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mswiutofea .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#mswiutofea .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mswiutofea .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#mswiutofea .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mswiutofea .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mswiutofea .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mswiutofea .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mswiutofea .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mswiutofea .gt_left {
+  text-align: left;
+}
+
+#mswiutofea .gt_center {
+  text-align: center;
+}
+
+#mswiutofea .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#mswiutofea .gt_font_normal {
+  font-weight: normal;
+}
+
+#mswiutofea .gt_font_bold {
+  font-weight: bold;
+}
+
+#mswiutofea .gt_font_italic {
+  font-style: italic;
+}
+
+#mswiutofea .gt_super {
+  font-size: 65%;
+}
+
+#mswiutofea .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#mswiutofea .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#mswiutofea .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#mswiutofea .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#mswiutofea .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#mswiutofea .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#mswiutofea .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#mswiutofea .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#mswiutofea div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-postprocess="true" style="table-layout:fixed;" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="t" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" style="text-align: center; font-weight: bold;" scope="col"></th>
+<th id="Developer" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="text-align: center; font-weight: bold;" scope="col">Developer</th>
+<th id="User" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="text-align: center; font-weight: bold;" scope="col">User</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="gt_group_heading_row odd">
+<td colspan="3" id="Expression (Quasiquotation)" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">Expression (Quasiquotation)</td>
+</tr>
+<tr class="gt_row_group_first even">
+<td class="gt_row gt_left" headers="Expression (Quasiquotation)  t" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000">One</td>
+<td class="gt_row gt_center" headers="Expression (Quasiquotation)  Developer" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000"><code>expr()</code></td>
+<td class="gt_row gt_center" headers="Expression (Quasiquotation)  User" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000"><code>enexpr()</code></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Expression (Quasiquotation)  t" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000">Many</td>
+<td class="gt_row gt_center" headers="Expression (Quasiquotation)  Developer" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000"><code>exprs()</code></td>
+<td class="gt_row gt_center" headers="Expression (Quasiquotation)  User" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000"><code>enexprs()</code></td>
+</tr>
+<tr class="gt_group_heading_row even">
+<td colspan="3" id="Symbol (Quasiquotation)" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">Symbol (Quasiquotation)</td>
+</tr>
+<tr class="gt_row_group_first odd">
+<td class="gt_row gt_left" headers="Symbol (Quasiquotation)  t" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000">One</td>
+<td class="gt_row gt_center" headers="Symbol (Quasiquotation)  Developer" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000"><code>expr()</code></td>
+<td class="gt_row gt_center" headers="Symbol (Quasiquotation)  User" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000"><code>ensym()</code></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Symbol (Quasiquotation)  t" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000">Many</td>
+<td class="gt_row gt_center" headers="Symbol (Quasiquotation)  Developer" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000"><code>exprs()</code></td>
+<td class="gt_row gt_center" headers="Symbol (Quasiquotation)  User" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000"><code>ensyms()</code></td>
+</tr>
+<tr class="gt_group_heading_row odd">
+<td colspan="3" id="R Base (Quotation)" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">R Base (Quotation)</td>
+</tr>
+<tr class="gt_row_group_first even">
+<td class="gt_row gt_left" headers="R Base (Quotation)  t" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000">One</td>
+<td class="gt_row gt_center" headers="R Base (Quotation)  Developer" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000"><code>quote()</code></td>
+<td class="gt_row gt_center" headers="R Base (Quotation)  User" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: hidden; border-bottom-color: #000000"><code>alist()</code></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="R Base (Quotation)  t" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000">Many</td>
+<td class="gt_row gt_center" headers="R Base (Quotation)  Developer" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000"><code>substitute()</code></td>
+<td class="gt_row gt_center" headers="R Base (Quotation)  User" style="border-left-width: 1px; border-left-style: hidden; border-left-color: #000000; border-right-width: 1px; border-right-style: hidden; border-right-color: #000000; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000"><code>as.list(substitute(...()))</code></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<ul>
+<li>Non-base functions are from <strong>rlang</strong></li>
+<li><strong>Developer</strong> - From you, direct, fixed, interactive</li>
+<li><strong>User</strong> - From the user, indirect, varying, programmatic</li>
+</ul>
+<p>Also:</p>
+<ul>
+<li><code>bquote()</code> provides a limited form of quasiquotation</li>
+<li><code>~</code>, the formula, is a quoting function (see <a href="https://adv-r.hadley.nz/evaluation.html#quosure-impl">Section 20.3.4</a>)</li>
+</ul>
+<h3 class="unnumbered" id="expr-and-exprs"><code>expr()</code> and <code>exprs()</code></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">expr</span>(x <span class="sc">+</span> y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; x + y</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">exprs</span>(<span class="at">exp1 =</span> x <span class="sc">+</span> y, <span class="at">exp2 =</span> x <span class="sc">*</span> y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $exp1
+#&gt; x + y
+#&gt; 
+#&gt; $exp2
+#&gt; x * y</code></pre>
+</div>
+</div>
+<h3 class="unnumbered" id="enexpr-and-enexprs"><code>enexpr()</code><sup>1</sup> and <code>enexprs()</code></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">enexpr</span>(x)</span>
+<span id="cb19-2"><a></a><span class="fu">f</span>(a <span class="sc">+</span> b <span class="sc">+</span> c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; a + b + c</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>f2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) <span class="fu">enexprs</span>(<span class="at">exp1 =</span> x, <span class="at">exp2 =</span> y)</span>
+<span id="cb21-2"><a></a><span class="fu">f2</span>(<span class="at">x =</span> a <span class="sc">+</span> b, <span class="at">y =</span> c <span class="sc">+</span> d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $exp1
+#&gt; a + b
+#&gt; 
+#&gt; $exp2
+#&gt; c + d</code></pre>
+</div>
+</div>
+<h3 class="unnumbered" id="ensym-and-ensyms"><code>ensym()</code> and <code>ensyms()</code></h3>
+<ul>
+<li><strong><a href="https://adv-r.hadley.nz/expressions.html#symbols">Remember</a>:</strong> Symbol represents the name of an object. Can only be length 1.</li>
+<li>These are stricter than <code>enexpr/s()</code></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">ensym</span>(x)</span>
+<span id="cb23-2"><a></a><span class="fu">f</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; a</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>f2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) <span class="fu">ensyms</span>(<span class="at">sym1 =</span> x, <span class="at">sym2 =</span> y)</span>
+<span id="cb25-2"><a></a><span class="fu">f2</span>(<span class="at">x =</span> a, <span class="at">y =</span> <span class="st">"b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $sym1
+#&gt; a
+#&gt; 
+#&gt; $sym2
+#&gt; b</code></pre>
+</div>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p><code>enexpr()</code> = <strong>en</strong>rich <code>expr()</code></p></li></ol></aside></section>
+<section id="unquoting" class="slide level2">
+<h2>Unquoting</h2>
+<p><strong>Selectively evaluate parts of an expression</strong></p>
+<ul>
+<li>Merges ASTs with template</li>
+<li>1 argument <code>!!</code> (<strong>unquote</strong>, <strong>bang-bang</strong>)
+<ul>
+<li>Unquoting a <em>function call</em> evaluates and returns results</li>
+<li>Unquoting a <em>function (name)</em> replaces the function (alternatively use <code>call2()</code>)</li>
+</ul></li>
+<li>&gt;1 arguments <code>!!!</code> (<strong>unquote-splice</strong>, <strong>bang-bang-bang</strong>, <strong>triple bang</strong>)</li>
+<li><code>!!</code> and <code>!!!</code> only work like this inside quoting function using rlang</li>
+</ul>
+<h3 class="unnumbered" id="basic-unquoting">Basic unquoting</h3>
+<p><strong>One argument</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">expr</span>(a <span class="sc">+</span> b)</span>
+<span id="cb27-2"><a></a>y <span class="ot">&lt;-</span> <span class="fu">expr</span>(c <span class="sc">/</span> d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">expr</span>(<span class="fu">f</span>(x, y))      <span class="co"># No unquoting</span></span>
+<span id="cb28-2"><a></a><span class="co">#&gt; f(x, y)</span></span>
+<span id="cb28-3"><a></a><span class="fu">expr</span>(<span class="fu">f</span>(<span class="sc">!!</span>x, <span class="sc">!!</span>y))  <span class="co"># Unquoting</span></span>
+<span id="cb28-4"><a></a><span class="co">#&gt; f(a + b, c/d)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Multiple arguments</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>z <span class="ot">&lt;-</span> <span class="fu">exprs</span>(a <span class="sc">+</span> b, c <span class="sc">+</span> d)</span>
+<span id="cb29-2"><a></a>w <span class="ot">&lt;-</span> <span class="fu">exprs</span>(<span class="at">exp1 =</span> a <span class="sc">+</span> b, <span class="at">exp2 =</span> c <span class="sc">+</span> d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">expr</span>(<span class="fu">f</span>(z))      <span class="co"># No unquoting</span></span>
+<span id="cb30-2"><a></a><span class="co">#&gt; f(z)</span></span>
+<span id="cb30-3"><a></a><span class="fu">expr</span>(<span class="fu">f</span>(<span class="sc">!!!</span>z))   <span class="co"># Unquoting</span></span>
+<span id="cb30-4"><a></a><span class="co">#&gt; f(a + b, c + d)</span></span>
+<span id="cb30-5"><a></a><span class="fu">expr</span>(<span class="fu">f</span>(<span class="sc">!!!</span>w))   <span class="co"># Unquoting when named</span></span>
+<span id="cb30-6"><a></a><span class="co">#&gt; f(exp1 = a + b, exp2 = c + d)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<h3 class="unnumbered" id="special-usages-or-cases">Special usages or cases</h3>
+<p>For example, get the AST of an expression</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(x)</span>
+<span id="cb31-2"><a></a><span class="co">#&gt; x</span></span>
+<span id="cb31-3"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="sc">!!</span>x)</span>
+<span id="cb31-4"><a></a><span class="co">#&gt; █─`+` </span></span>
+<span id="cb31-5"><a></a><span class="co">#&gt; ├─a </span></span>
+<span id="cb31-6"><a></a><span class="co">#&gt; └─b</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Unquote <em>function call</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">expr</span>(<span class="fu">f</span>(<span class="sc">!!</span><span class="fu">mean</span>(<span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">300</span>)), y))</span>
+<span id="cb32-2"><a></a><span class="co">#&gt; f(200, y)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Unquote <em>function</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>f <span class="ot">&lt;-</span> <span class="fu">expr</span>(sd)</span>
+<span id="cb33-2"><a></a><span class="fu">expr</span>((<span class="sc">!!</span>f)(x))</span>
+<span id="cb33-3"><a></a><span class="co">#&gt; sd(x)</span></span>
+<span id="cb33-4"><a></a><span class="fu">expr</span>((<span class="sc">!!</span>f)(<span class="sc">!!</span>x <span class="sc">+</span> <span class="sc">!!</span>y))</span>
+<span id="cb33-5"><a></a><span class="co">#&gt; sd(a + b + c/d)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="non-quoting" class="slide level2">
+<h2>Non-quoting</h2>
+<p>Only <code>bquote()</code> provides a limited form of quasiquotation.</p>
+<p>The rest of base selectively uses or does not use quoting (rather than unquoting).</p>
+<p>Four basic forms of quoting/non-quoting:</p>
+<ol type="1">
+<li><strong>Pair of functions</strong> - Quoting and non-quoting
+<ul>
+<li>e.g., <code>$</code> (quoting) and <code>[[</code> (non-quoting)</li>
+</ul></li>
+<li><strong>Pair of Arguments</strong> - Quoting and non-quoting
+<ul>
+<li>e.g., <code>rm(...)</code> (quoting) and <code>rm(list = c(...))</code> (non-quoting)</li>
+</ul></li>
+<li><strong>Arg to control quoting</strong>
+<ul>
+<li>e.g., <code>library(rlang)</code> (quoting) and <code>library(pkg, character.only = TRUE)</code> (where <code>pkg &lt;- "rlang"</code>)</li>
+</ul></li>
+<li><strong>Quote if evaluation fails</strong>
+<ul>
+<li><code>help(var)</code> - Quote, show help for var</li>
+<li><code>help(var)</code> (where <code>var &lt;- "mean"</code>) - No quote, show help for mean</li>
+<li><code>help(var)</code> (where <code>var &lt;- 10</code>) - Quote fails, show help for var</li>
+</ul></li>
+</ol>
+</section>
+<section id="dot-dot-dot-when-using-with-quoting" class="slide level2">
+<h2>… (dot-dot-dot) [When using … with quoting]</h2>
+<ul>
+<li>Sometimes need to supply an <em>arbitrary</em> list of expressions or arguments in a function (<code>...</code>)</li>
+<li>But need a way to use these when we don’t necessarily have the names</li>
+<li>Remember <code>!!</code> and <code>!!!</code> only work with functions that use rlang</li>
+<li>Can use <code>list2(...)</code> to turn <code>...</code> into “tidy dots” which <em>can</em> be unquoted and spliced</li>
+<li>Require <code>list2()</code> if going to be passing or using <code>!!</code> or <code>!!!</code> in <code>...</code></li>
+<li><code>list2()</code> is a wrapper around <code>dots_list()</code> with the most common defaults</li>
+</ul>
+<p><strong>No need for <code>list2()</code></strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>d <span class="ot">&lt;-</span> <span class="cf">function</span>(...) <span class="fu">data.frame</span>(<span class="fu">list</span>(...))</span>
+<span id="cb34-2"><a></a><span class="fu">d</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>))</span>
+<span id="cb34-3"><a></a><span class="co">#&gt;   x y</span></span>
+<span id="cb34-4"><a></a><span class="co">#&gt; 1 1 2</span></span>
+<span id="cb34-5"><a></a><span class="co">#&gt; 2 2 4</span></span>
+<span id="cb34-6"><a></a><span class="co">#&gt; 3 3 6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Require <code>list2()</code></strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>vars <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>))</span>
+<span id="cb35-2"><a></a><span class="fu">d</span>(<span class="sc">!!!</span>vars)</span>
+<span id="cb35-3"><a></a><span class="co">#&gt; Error in !vars: invalid argument type</span></span>
+<span id="cb35-4"><a></a>d2 <span class="ot">&lt;-</span> <span class="cf">function</span>(...) <span class="fu">data.frame</span>(<span class="fu">list2</span>(...))</span>
+<span id="cb35-5"><a></a><span class="fu">d2</span>(<span class="sc">!!!</span>vars)</span>
+<span id="cb35-6"><a></a><span class="co">#&gt;   x y</span></span>
+<span id="cb35-7"><a></a><span class="co">#&gt; 1 1 2</span></span>
+<span id="cb35-8"><a></a><span class="co">#&gt; 2 2 4</span></span>
+<span id="cb35-9"><a></a><span class="co">#&gt; 3 3 6</span></span>
+<span id="cb35-10"><a></a><span class="co"># Same result but x and y evaluated later</span></span>
+<span id="cb35-11"><a></a>vars_expr <span class="ot">&lt;-</span> <span class="fu">exprs</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>))</span>
+<span id="cb35-12"><a></a><span class="fu">d2</span>(<span class="sc">!!!</span>vars_expr)  </span>
+<span id="cb35-13"><a></a><span class="co">#&gt;   x y</span></span>
+<span id="cb35-14"><a></a><span class="co">#&gt; 1 1 2</span></span>
+<span id="cb35-15"><a></a><span class="co">#&gt; 2 2 4</span></span>
+<span id="cb35-16"><a></a><span class="co">#&gt; 3 3 6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Getting argument names (symbols) from variables</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>nm <span class="ot">&lt;-</span> <span class="st">"z"</span></span>
+<span id="cb36-2"><a></a>val <span class="ot">&lt;-</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span>
+<span id="cb36-3"><a></a><span class="fu">d2</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="sc">!!</span><span class="at">nm :=</span> val)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   x z
+#&gt; 1 1 a
+#&gt; 2 2 b
+#&gt; 3 3 c
+#&gt; 4 4 d</code></pre>
+</div>
+</div>
+</section>
+<section id="exec-making-your-own" class="slide level2 unnumbered">
+<h2><code>exec()</code> [Making your own …]</h2>
+<p>What if your function doesn’t have tidy dots?</p>
+<p>Can’t use <code>!!</code> or <code>:=</code> if doesn’t support rlang or dynamic dots</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>my_mean <span class="ot">&lt;-</span> <span class="cf">function</span>(x, arg_name, arg_val) {</span>
+<span id="cb38-2"><a></a>  <span class="fu">mean</span>(x, <span class="sc">!!</span><span class="at">arg_name :=</span> arg_val)</span>
+<span id="cb38-3"><a></a>}</span>
+<span id="cb38-4"><a></a></span>
+<span id="cb38-5"><a></a><span class="fu">my_mean</span>(<span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>), <span class="at">arg_name =</span> <span class="st">"na.rm"</span>, <span class="at">arg_val =</span> <span class="cn">TRUE</span>)     </span>
+<span id="cb38-6"><a></a><span class="co">#&gt; Error in `my_mean()`:</span></span>
+<span id="cb38-7"><a></a><span class="co">#&gt; ! `:=` can only be used within dynamic dots.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s use the … from <code>exec()</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a><span class="fu">exec</span>(.fn, ..., <span class="at">.env =</span> <span class="fu">caller_env</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>my_mean <span class="ot">&lt;-</span> <span class="cf">function</span>(x, arg_name, arg_val) {</span>
+<span id="cb40-2"><a></a>  <span class="fu">exec</span>(<span class="st">"mean"</span>, x, <span class="sc">!!</span><span class="at">arg_name :=</span> arg_val)</span>
+<span id="cb40-3"><a></a>}</span>
+<span id="cb40-4"><a></a></span>
+<span id="cb40-5"><a></a><span class="fu">my_mean</span>(<span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>), <span class="at">arg_name =</span> <span class="st">"na.rm"</span>, <span class="at">arg_val =</span> <span class="cn">TRUE</span>)     </span>
+<span id="cb40-6"><a></a><span class="co">#&gt; [1] 5.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note that you do not unquote <code>arg_val</code>.</p>
+<p>Also <code>exec</code> is useful for mapping over a list of functions:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">runif</span>(<span class="dv">10</span>), <span class="cn">NA</span>)</span>
+<span id="cb41-2"><a></a>funs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"sd"</span>)</span>
+<span id="cb41-3"><a></a>purrr<span class="sc">::</span><span class="fu">map_dbl</span>(funs, exec, x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 0.3631060 0.2929449 0.3164028</code></pre>
+</div>
+</div>
+</section>
+<section id="base-r-do.call" class="slide level2 unnumbered">
+<h2>Base R <code>do.call</code></h2>
+<p><code>do.call(what, args)</code></p>
+<ul>
+<li><code>what</code> is a function to call</li>
+<li><code>args</code> is a list of arguments to pass to the function.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="fu">nrow</span>(mtcars)</span>
+<span id="cb43-2"><a></a><span class="co">#&gt; [1] 32</span></span>
+<span id="cb43-3"><a></a>mtcars3 <span class="ot">&lt;-</span> <span class="fu">do.call</span>(<span class="st">"rbind"</span>, <span class="fu">list</span>(mtcars, mtcars, mtcars))</span>
+<span id="cb43-4"><a></a><span class="fu">nrow</span>(mtcars3)</span>
+<span id="cb43-5"><a></a><span class="co">#&gt; [1] 96</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<h3 class="unnumbered" id="exercise-19.5.5-1">Exercise 19.5.5 #1</h3>
+<p>One way to implement <code>exec</code> is shown here: Describe how it works. What are the key ideas?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>exec_ <span class="ot">&lt;-</span> <span class="cf">function</span>(f, ..., <span class="at">.env =</span> <span class="fu">caller_env</span>()){</span>
+<span id="cb44-2"><a></a>  args <span class="ot">&lt;-</span> <span class="fu">list2</span>(...)</span>
+<span id="cb44-3"><a></a>  <span class="fu">do.call</span>(f, args, <span class="at">envir  =</span> .env)</span>
+<span id="cb44-4"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="case-studies-side-note" class="slide level2">
+<h2>Case Studies (side note)</h2>
+<p>Sometimes you want to run a bunch of models, without having to copy/paste each one.</p>
+<p>BUT, you also want the summary function to show the appropriate model call, not one with hidden variables (e.g., <code>lm(y ~ x, data = data)</code>).</p>
+<p>We can achieve this by building expressions and unquoting as needed:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a><span class="fu">library</span>(purrr)</span>
+<span id="cb45-2"><a></a></span>
+<span id="cb45-3"><a></a>vars <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="st">"hp"</span>, <span class="st">"hp"</span>),</span>
+<span id="cb45-4"><a></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="st">"mpg"</span>, <span class="st">"cyl"</span>))</span>
+<span id="cb45-5"><a></a></span>
+<span id="cb45-6"><a></a>x_sym <span class="ot">&lt;-</span> <span class="fu">syms</span>(vars<span class="sc">$</span>x)</span>
+<span id="cb45-7"><a></a>y_sym <span class="ot">&lt;-</span> <span class="fu">syms</span>(vars<span class="sc">$</span>y)</span>
+<span id="cb45-8"><a></a></span>
+<span id="cb45-9"><a></a>formulae <span class="ot">&lt;-</span> <span class="fu">map2</span>(x_sym, y_sym, \(x, y) <span class="fu">expr</span>(<span class="sc">!!</span>y <span class="sc">~</span> <span class="sc">!!</span>x))</span>
+<span id="cb45-10"><a></a>formulae</span>
+<span id="cb45-11"><a></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb45-12"><a></a><span class="co">#&gt; mpg ~ hp</span></span>
+<span id="cb45-13"><a></a><span class="co">#&gt; </span></span>
+<span id="cb45-14"><a></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb45-15"><a></a><span class="co">#&gt; cyl ~ hp</span></span>
+<span id="cb45-16"><a></a>models <span class="ot">&lt;-</span> <span class="fu">map</span>(formulae, \(f) <span class="fu">expr</span>(<span class="fu">lm</span>(<span class="sc">!!</span>f, <span class="at">data =</span> mtcars)))</span>
+<span id="cb45-17"><a></a><span class="fu">summary</span>(<span class="fu">eval</span>(models[[<span class="dv">1</span>]]))</span>
+<span id="cb45-18"><a></a><span class="co">#&gt; </span></span>
+<span id="cb45-19"><a></a><span class="co">#&gt; Call:</span></span>
+<span id="cb45-20"><a></a><span class="co">#&gt; lm(formula = mpg ~ hp, data = mtcars)</span></span>
+<span id="cb45-21"><a></a><span class="co">#&gt; </span></span>
+<span id="cb45-22"><a></a><span class="co">#&gt; Residuals:</span></span>
+<span id="cb45-23"><a></a><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span id="cb45-24"><a></a><span class="co">#&gt; -5.7121 -2.1122 -0.8854  1.5819  8.2360 </span></span>
+<span id="cb45-25"><a></a><span class="co">#&gt; </span></span>
+<span id="cb45-26"><a></a><span class="co">#&gt; Coefficients:</span></span>
+<span id="cb45-27"><a></a><span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span id="cb45-28"><a></a><span class="co">#&gt; (Intercept) 30.09886    1.63392  18.421  &lt; 2e-16 ***</span></span>
+<span id="cb45-29"><a></a><span class="co">#&gt; hp          -0.06823    0.01012  -6.742 1.79e-07 ***</span></span>
+<span id="cb45-30"><a></a><span class="co">#&gt; ---</span></span>
+<span id="cb45-31"><a></a><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb45-32"><a></a><span class="co">#&gt; </span></span>
+<span id="cb45-33"><a></a><span class="co">#&gt; Residual standard error: 3.863 on 30 degrees of freedom</span></span>
+<span id="cb45-34"><a></a><span class="co">#&gt; Multiple R-squared:  0.6024, Adjusted R-squared:  0.5892 </span></span>
+<span id="cb45-35"><a></a><span class="co">#&gt; F-statistic: 45.46 on 1 and 30 DF,  p-value: 1.788e-07</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As a function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>lm_df <span class="ot">&lt;-</span> <span class="cf">function</span>(df, data) {</span>
+<span id="cb46-2"><a></a>  x_sym <span class="ot">&lt;-</span> <span class="fu">map</span>(df<span class="sc">$</span>x, as.symbol)</span>
+<span id="cb46-3"><a></a>  y_sym <span class="ot">&lt;-</span> <span class="fu">map</span>(df<span class="sc">$</span>y, as.symbol)</span>
+<span id="cb46-4"><a></a>  data <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(data)</span>
+<span id="cb46-5"><a></a>  </span>
+<span id="cb46-6"><a></a>  formulae <span class="ot">&lt;-</span> <span class="fu">map2</span>(x_sym, y_sym, \(x, y) <span class="fu">expr</span>(<span class="sc">!!</span>y <span class="sc">~</span> <span class="sc">!!</span>x))</span>
+<span id="cb46-7"><a></a>  models <span class="ot">&lt;-</span> <span class="fu">map</span>(formulae, \(f) <span class="fu">expr</span>(<span class="fu">lm</span>(<span class="sc">!!</span>f, <span class="sc">!!</span>data)))</span>
+<span id="cb46-8"><a></a>  </span>
+<span id="cb46-9"><a></a>  <span class="fu">map</span>(models, \(m) <span class="fu">summary</span>(<span class="fu">eval</span>(m)))</span>
+<span id="cb46-10"><a></a>}</span>
+<span id="cb46-11"><a></a></span>
+<span id="cb46-12"><a></a>vars <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="st">"hp"</span>, <span class="st">"hp"</span>),</span>
+<span id="cb46-13"><a></a>                   <span class="at">y =</span> <span class="fu">c</span>(<span class="st">"mpg"</span>, <span class="st">"cyl"</span>))</span>
+<span id="cb46-14"><a></a><span class="fu">lm_df</span>(vars, <span class="at">data =</span> mtcars)</span>
+<span id="cb46-15"><a></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb46-16"><a></a><span class="co">#&gt; </span></span>
+<span id="cb46-17"><a></a><span class="co">#&gt; Call:</span></span>
+<span id="cb46-18"><a></a><span class="co">#&gt; lm(formula = mpg ~ hp, data = mtcars)</span></span>
+<span id="cb46-19"><a></a><span class="co">#&gt; </span></span>
+<span id="cb46-20"><a></a><span class="co">#&gt; Residuals:</span></span>
+<span id="cb46-21"><a></a><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span id="cb46-22"><a></a><span class="co">#&gt; -5.7121 -2.1122 -0.8854  1.5819  8.2360 </span></span>
+<span id="cb46-23"><a></a><span class="co">#&gt; </span></span>
+<span id="cb46-24"><a></a><span class="co">#&gt; Coefficients:</span></span>
+<span id="cb46-25"><a></a><span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span id="cb46-26"><a></a><span class="co">#&gt; (Intercept) 30.09886    1.63392  18.421  &lt; 2e-16 ***</span></span>
+<span id="cb46-27"><a></a><span class="co">#&gt; hp          -0.06823    0.01012  -6.742 1.79e-07 ***</span></span>
+<span id="cb46-28"><a></a><span class="co">#&gt; ---</span></span>
+<span id="cb46-29"><a></a><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb46-30"><a></a><span class="co">#&gt; </span></span>
+<span id="cb46-31"><a></a><span class="co">#&gt; Residual standard error: 3.863 on 30 degrees of freedom</span></span>
+<span id="cb46-32"><a></a><span class="co">#&gt; Multiple R-squared:  0.6024, Adjusted R-squared:  0.5892 </span></span>
+<span id="cb46-33"><a></a><span class="co">#&gt; F-statistic: 45.46 on 1 and 30 DF,  p-value: 1.788e-07</span></span>
+<span id="cb46-34"><a></a><span class="co">#&gt; </span></span>
+<span id="cb46-35"><a></a><span class="co">#&gt; </span></span>
+<span id="cb46-36"><a></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb46-37"><a></a><span class="co">#&gt; </span></span>
+<span id="cb46-38"><a></a><span class="co">#&gt; Call:</span></span>
+<span id="cb46-39"><a></a><span class="co">#&gt; lm(formula = cyl ~ hp, data = mtcars)</span></span>
+<span id="cb46-40"><a></a><span class="co">#&gt; </span></span>
+<span id="cb46-41"><a></a><span class="co">#&gt; Residuals:</span></span>
+<span id="cb46-42"><a></a><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
+<span id="cb46-43"><a></a><span class="co">#&gt; -2.27078 -0.74879 -0.06417  0.63512  1.74067 </span></span>
+<span id="cb46-44"><a></a><span class="co">#&gt; </span></span>
+<span id="cb46-45"><a></a><span class="co">#&gt; Coefficients:</span></span>
+<span id="cb46-46"><a></a><span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span id="cb46-47"><a></a><span class="co">#&gt; (Intercept) 3.006795   0.425485   7.067 7.41e-08 ***</span></span>
+<span id="cb46-48"><a></a><span class="co">#&gt; hp          0.021684   0.002635   8.229 3.48e-09 ***</span></span>
+<span id="cb46-49"><a></a><span class="co">#&gt; ---</span></span>
+<span id="cb46-50"><a></a><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb46-51"><a></a><span class="co">#&gt; </span></span>
+<span id="cb46-52"><a></a><span class="co">#&gt; Residual standard error: 1.006 on 30 degrees of freedom</span></span>
+<span id="cb46-53"><a></a><span class="co">#&gt; Multiple R-squared:  0.693,  Adjusted R-squared:  0.6827 </span></span>
+<span id="cb46-54"><a></a><span class="co">#&gt; F-statistic: 67.71 on 1 and 30 DF,  p-value: 3.478e-09</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="meeting-videos" class="slide level2">
+<h2>Meeting Videos</h2>
+<h3 id="cohort-1">Cohort 1</h3>
+<iframe src="https://www.youtube.com/embed/tbByqsRRvdE" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-2">Cohort 2</h3>
+<iframe src="https://www.youtube.com/embed/IXE21pR8EJ0" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-3">Cohort 3</h3>
+<iframe src="https://www.youtube.com/embed/gxSpz6IePLg" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-4">Cohort 4</h3>
+<iframe src="https://www.youtube.com/embed/aniKrZrr4aU" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-5">Cohort 5</h3>
+<iframe src="https://www.youtube.com/embed/klcpEb5ZBSM" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-6">Cohort 6</h3>
+<iframe src="https://www.youtube.com/embed/OBodjc80y-E" width="100%" height="400px" data-external="1">
+</iframe>
+<details>
+<summary>
+Meeting chat log
+</summary>
+<pre><code>01:02:07    Trevin: Yeah, that was a great workshop
+01:02:18    Trevin: Glad they posted the resources online
+01:06:39    Trevin: Thank you!</code></pre>
+</details>
+<h3 id="cohort-7">Cohort 7</h3>
+<iframe src="https://www.youtube.com/embed/8LPw_VTBsmQ" width="100%" height="400px" data-external="1">
+</iframe>
+<details>
+<summary>
+Meeting chat log
+</summary>
+<pre><code>00:50:48    Stone:  https://www.r-bloggers.com/2018/10/quasiquotation-in-r-via-bquote/
+00:58:26    iPhone: See ya next week!</code></pre>
+</details>
+<iframe src="https://www.youtube.com/embed/g77Jfl_xrXM" width="100%" height="400px" data-external="1">
+</iframe>
+<details>
+<summary>
+Meeting chat log
+</summary>
+<pre><code>00:55:22    collinberke:    https://rlang.r-lib.org/reference/embrace-operator.html?q=enquo#under-the-hood</code></pre>
+</details>
+
+
+</section>
+
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p><a href="../" target="advr_club-index">DSLC.io/advr</a> | <a href="https://DSLC.io" target="_blank">DSLC.io</a></p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/r4ds\.github\.io\/bookclub-advr\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+                // target, if specified
+                link.setAttribute("target", "_blank");
+                if (link.getAttribute("rel") === null) {
+                  link.setAttribute("rel", "noopener");
+                }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

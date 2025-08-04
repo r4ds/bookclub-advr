@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Advanced R Book Club – Expressions</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5fa723a4ee799f64e44b6fe0747a0a63.css">
+  <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-dark">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Expressions</h1>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="learning-objectives" class="slide level2">
+<h2>Learning objectives:</h2>
+<ul>
+<li>Understand the idea of the abstract syntax tree (AST).</li>
+<li>Discuss the data structures that underlie the AST:
+<ul>
+<li>Constants</li>
+<li>Symbols</li>
+<li>Calls</li>
+</ul></li>
+<li>Explore the idea behind parsing.</li>
+<li>Explore some details of R’s grammar.</li>
+<li>Discuss the use or recursive functions to compute on the language.</li>
+<li>Work with three other more specialized data structures:
+<ul>
+<li>Pairlists</li>
+<li>Missing arguments</li>
+<li>Expression vectors</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(rlang)</span>
+<span id="cb1-2"><a></a><span class="fu">library</span>(lobstr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="introduction" class="slide level2">
+<h2>Introduction</h2>
+<blockquote>
+<p>To compute on the language, we first need to understand its structure.</p>
+</blockquote>
+<ul>
+<li>This requires a few things:
+<ul>
+<li>New vocabulary.</li>
+<li>New tools to inspect and modify expressions.</li>
+<li>Approach the use of the language with new ways of thinking.</li>
+</ul></li>
+<li>One of the first new ways of thinking is the distinction between an operation and its result.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>y <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error: object 'x' not found</code></pre>
+</div>
+</div>
+<ul>
+<li>We can capture the intent of the code without executing it using the rlang package.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>z <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">expr</span>(y <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="dv">10</span>)</span>
+<span id="cb4-2"><a></a></span>
+<span id="cb4-3"><a></a>z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; y &lt;- x * 10</code></pre>
+</div>
+</div>
+<ul>
+<li>We can then evaluate the expression using the <strong>base::eval</strong> function.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb6-2"><a></a></span>
+<span id="cb6-3"><a></a>base<span class="sc">::</span><span class="fu">eval</span>(<span class="fu">expr</span>(y <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="dv">10</span>))</span>
+<span id="cb6-4"><a></a></span>
+<span id="cb6-5"><a></a>y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 40</code></pre>
+</div>
+</div>
+<h3 id="evaluating-multiple-expressions">Evaluating multiple expressions</h3>
+<ul>
+<li><p>The function <code>expression()</code> allows for multiple expressions, and in some ways it acts similarly to the way files are <code>source()</code>d in. That is, we <code>eval()</code>uate all of the expressions at once.</p></li>
+<li><p><code>expression()</code> returns a vector and can be passed to <code>eval()</code>.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>z <span class="ot">&lt;-</span> <span class="fu">expression</span>(x <span class="ot">&lt;-</span> <span class="dv">4</span>, x <span class="sc">*</span> <span class="dv">10</span>)</span>
+<span id="cb8-2"><a></a></span>
+<span id="cb8-3"><a></a><span class="fu">eval</span>(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 40</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">is.atomic</span>(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] FALSE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">is.vector</span>(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<ul>
+<li><code>exprs()</code> does not evaluate everything at once. To evaluate each expression, the individual expressions must be evaluated in a loop.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">exprs</span>(x <span class="ot">&lt;-</span> <span class="dv">4</span>, x <span class="sc">*</span> <span class="dv">10</span>)) {</span>
+<span id="cb14-2"><a></a><span class="fu">print</span>(i)</span>
+<span id="cb14-3"><a></a><span class="fu">print</span>(<span class="fu">eval</span>(i))</span>
+<span id="cb14-4"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; x &lt;- 4
+#&gt; [1] 4
+#&gt; x * 10
+#&gt; [1] 40</code></pre>
+</div>
+</div>
+</section>
+<section id="abstract-syntax-tree-ast" class="slide level2">
+<h2>Abstract Syntax Tree (AST)</h2>
+<ul>
+<li>Expressions are objects that capture the structure of code without evaluating it.</li>
+<li>Expressions are also called abstract syntax trees (ASTs) because the structure of code is hierarchical and can be naturally represented as a tree.</li>
+<li>Understanding this tree structure is crucial for inspecting and modifying expressions.
+<ul>
+<li>Branches = Calls</li>
+<li>Leaves = Symbols and constants</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">f</span>(x, <span class="st">"y"</span>, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img data-src="images/simple.png"></p>
+<h3 id="with-lobstrast">With <code>lobstr::ast():</code></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="fu">f</span>(x, <span class="st">"y"</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─f 
+#&gt; ├─x 
+#&gt; ├─"y" 
+#&gt; └─1</code></pre>
+</div>
+</div>
+<ul>
+<li>Some functions might also contain more calls like the example below:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">f</span>(<span class="fu">g</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="fu">h</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="fu">i</span>()))<span class="sc">:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img data-src="images/complicated.png"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="fu">f</span>(<span class="fu">g</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="fu">h</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="fu">i</span>())))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─f 
+#&gt; ├─█─g 
+#&gt; │ ├─1 
+#&gt; │ └─2 
+#&gt; └─█─h 
+#&gt;   ├─3 
+#&gt;   ├─4 
+#&gt;   └─█─i</code></pre>
+</div>
+</div>
+<ul>
+<li>Read the <strong>hand-drawn diagrams</strong> from left-to-right (ignoring vertical position)</li>
+<li>Read the <strong>lobstr-drawn diagrams</strong> from top-to-bottom (ignoring horizontal position).</li>
+<li>The depth within the tree is determined by the nesting of function calls.</li>
+<li>Depth also determines evaluation order, <strong>as evaluation generally proceeds from deepest-to-shallowest, but this is not guaranteed because of lazy evaluation</strong>.</li>
+</ul>
+<h3 id="infix-calls">Infix calls</h3>
+<blockquote>
+<p>Every call in R can be written in tree form because any call can be written in prefix form.</p>
+</blockquote>
+<p>An infix operator is a function where the function name is placed between its arguments. Prefix form is when then function name comes before the arguments, which are enclosed in parentheses. [Note that the name infix comes from the words prefix and suffix.]</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>y <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="dv">10</span></span>
+<span id="cb22-2"><a></a><span class="st">`</span><span class="at">&lt;-</span><span class="st">`</span>(y, <span class="st">`</span><span class="at">*</span><span class="st">`</span>(x, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>A characteristic of the language is that infix functions can always be written as prefix functions; therefore, all function calls can be represented using an AST.</li>
+</ul>
+<p><img data-src="images/prefix.png"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(y <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─`&lt;-` 
+#&gt; ├─y 
+#&gt; └─█─`*` 
+#&gt;   ├─x 
+#&gt;   └─10</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="st">`</span><span class="at">&lt;-</span><span class="st">`</span>(y, <span class="st">`</span><span class="at">*</span><span class="st">`</span>(x, <span class="dv">10</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─`&lt;-` 
+#&gt; ├─y 
+#&gt; └─█─`*` 
+#&gt;   ├─x 
+#&gt;   └─10</code></pre>
+</div>
+</div>
+<ul>
+<li>There is no difference between the ASTs for the infix version vs the prefix version, and if you generate an expression with prefix calls, R will still print it in infix form:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>rlang<span class="sc">::</span><span class="fu">expr</span>(<span class="st">`</span><span class="at">&lt;-</span><span class="st">`</span>(y, <span class="st">`</span><span class="at">*</span><span class="st">`</span>(x, <span class="dv">10</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; y &lt;- x * 10</code></pre>
+</div>
+</div>
+</section>
+<section id="expression" class="slide level2">
+<h2>Expression</h2>
+<ul>
+<li>Collectively, the data structures present in the AST are called expressions.</li>
+<li>These include:
+<ol type="1">
+<li>Constants</li>
+<li>Symbols</li>
+<li>Calls</li>
+<li>Pairlists</li>
+</ol></li>
+</ul>
+<h3 id="constants">Constants</h3>
+<ul>
+<li>Scalar constants are the simplest component of the AST.</li>
+<li>A constant is either <strong>NULL</strong> or a <strong>length-1</strong> atomic vector (or scalar)
+<ul>
+<li>e.g., <code>TRUE</code>, <code>1L</code>, <code>2.5</code>, <code>"x"</code>, or <code>"hello"</code>.</li>
+</ul></li>
+<li>We can test for a constant with <code>rlang::is_syntactic_literal()</code>.</li>
+<li>Constants are self-quoting in the sense that the expression used to represent a constant is the same constant:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="fu">identical</span>(<span class="fu">expr</span>(<span class="cn">TRUE</span>), <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="fu">identical</span>(<span class="fu">expr</span>(<span class="dv">1</span>), <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">identical</span>(<span class="fu">expr</span>(<span class="dv">2</span>L), <span class="dv">2</span>L)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">identical</span>(<span class="fu">expr</span>(<span class="st">"x"</span>), <span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="fu">identical</span>(<span class="fu">expr</span>(<span class="st">"hello"</span>), <span class="st">"hello"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<h3 id="symbols">Symbols</h3>
+<ul>
+<li>A symbol represents the name of an object.
+<ul>
+<li><code>x</code></li>
+<li><code>mtcars</code></li>
+<li><code>mean</code></li>
+</ul></li>
+<li>In base R, the terms symbol and name are used interchangeably (i.e., <code>is.name()</code> is identical to <code>is.symbol()</code>), but this book used symbol consistently because <strong>“name”</strong> has many other meanings.</li>
+<li>You can create a symbol in two ways:
+<ol type="1">
+<li>by capturing code that references an object with <code>expr()</code>.</li>
+<li>turning a string into a symbol with <code>rlang::sym()</code>.</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a><span class="fu">expr</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; x</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a><span class="fu">sym</span>(<span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; x</code></pre>
+</div>
+</div>
+<ul>
+<li>A symbol can be turned back into a string with <code>as.character()</code> or <code>rlang::as_string()</code>.</li>
+<li><code>as_string()</code> has the advantage of clearly signalling that you’ll get a character vector of length 1.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="fu">as_string</span>(<span class="fu">expr</span>(x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "x"</code></pre>
+</div>
+</div>
+<ul>
+<li>We can recognize a symbol because it is printed without quotes</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a><span class="fu">expr</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; x</code></pre>
+</div>
+</div>
+<ul>
+<li><code>str()</code> tells you that it is a symbol, and <code>is.symbol()</code> is TRUE:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a><span class="fu">str</span>(<span class="fu">expr</span>(x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;  symbol x</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a><span class="fu">is.symbol</span>(<span class="fu">expr</span>(x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<ul>
+<li>The symbol type is not vectorised, i.e., a symbol is always length 1.</li>
+<li>If you want multiple symbols, you’ll need to put them in a list, using <code>rlang::syms()</code>.</li>
+</ul>
+<p>Note that <code>as_string()</code> will not work on expressions which are not symbols.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a></a><span class="fu">as_string</span>(<span class="fu">expr</span>(x<span class="sc">+</span>y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in `as_string()`:
+#&gt; ! Can't convert a call to a string.</code></pre>
+</div>
+</div>
+<h3 id="calls">Calls</h3>
+<ul>
+<li>A call object represents a captured function call.</li>
+<li>Call objects are a special type of list.
+<ul>
+<li>The first component specifies the function to call (usually a symbol, i.e., the name fo the function).</li>
+<li>The remaining elements are the arguments for that call.</li>
+</ul></li>
+<li>Call objects create branches in the AST, because calls can be nested inside other calls.</li>
+<li>You can identify a call object when printed because it looks just like a function call.</li>
+<li>Confusingly <code>typeof()</code> and <code>str()</code> print language for call objects (where we might expect it to return that it is a “call” object), but <code>is.call()</code> returns TRUE:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="fu">read.table</span>(<span class="st">"important.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─read.table 
+#&gt; ├─"important.csv" 
+#&gt; └─row.names = FALSE</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="fu">read.table</span>(<span class="st">"important.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a><span class="fu">typeof</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "language"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="fu">is.call</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<h3 id="subsetting">Subsetting</h3>
+<ul>
+<li>Calls generally behave like lists.</li>
+<li>Since they are list-like, you can use standard subsetting tools.</li>
+<li>The first element of the call object is the function to call, which is usually a symbol:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a>x[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; read.table</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a><span class="fu">is.symbol</span>(x[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<ul>
+<li>The remainder of the elements are the arguments:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a></a><span class="fu">is.symbol</span>(x[<span class="sc">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] FALSE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a></a><span class="fu">as.list</span>(x[<span class="sc">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [[1]]
+#&gt; [1] "important.csv"
+#&gt; 
+#&gt; $row.names
+#&gt; [1] FALSE</code></pre>
+</div>
+</div>
+<ul>
+<li>We can extract individual arguments with [[ or, if named, $:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a>x[[<span class="dv">2</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "important.csv"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a></a>x<span class="sc">$</span>row.names</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] FALSE</code></pre>
+</div>
+</div>
+<ul>
+<li>We can determine the number of arguments in a call object by subtracting 1 from its length:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a></a><span class="fu">length</span>(x) <span class="sc">-</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 2</code></pre>
+</div>
+</div>
+<ul>
+<li>Extracting specific arguments from calls is challenging because of R’s flexible rules for argument matching:
+<ul>
+<li>It could potentially be in any location, with the full name, with an abbreviated name, or with no name.</li>
+</ul></li>
+<li>To work around this problem, you can use <code>rlang::call_standardise()</code> which standardizes all arguments to use the full name:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a></a>rlang<span class="sc">::</span><span class="fu">call_standardise</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; Warning: `call_standardise()` is deprecated as of rlang 0.4.11
+#&gt; This warning is displayed once every 8 hours.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; read.table(file = "important.csv", row.names = FALSE)</code></pre>
+</div>
+</div>
+<ul>
+<li>But If the function uses … it’s not possible to standardise all arguments.</li>
+<li>Calls can be modified in the same way as lists:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a>x<span class="sc">$</span>header <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb77-2"><a></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; read.table("important.csv", row.names = FALSE, header = TRUE)</code></pre>
+</div>
+</div>
+<h3 id="function-position">Function position</h3>
+<ul>
+<li>The first element of the call object is the function position. This contains the function that will be called when the object is evaluated, and is usually a symbol.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="fu">foo</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─foo</code></pre>
+</div>
+</div>
+<ul>
+<li>While R allows you to surround the name of the function with quotes, the parser converts it to a symbol:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="st">"foo"</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─foo</code></pre>
+</div>
+</div>
+<ul>
+<li>However, sometimes the function doesn’t exist in the current environment and you need to do some computation to retrieve it:
+<ul>
+<li>For example, if the function is in another package, is a method of an R6 object, or is created by a function factory. In this case, the function position will be occupied by another call:</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(pkg<span class="sc">::</span><span class="fu">foo</span>(<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─█─`::` 
+#&gt; │ ├─pkg 
+#&gt; │ └─foo 
+#&gt; └─1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(obj<span class="sc">$</span><span class="fu">foo</span>(<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─█─`$` 
+#&gt; │ ├─obj 
+#&gt; │ └─foo 
+#&gt; └─1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="fu">foo</span>(<span class="dv">1</span>)(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─█─foo 
+#&gt; │ └─1 
+#&gt; └─2</code></pre>
+</div>
+</div>
+
+<img data-src="images/call-call.png" class="r-stretch"><h3 id="constructing">Constructing</h3>
+<ul>
+<li>You can construct a call object from its components using <code>rlang::call2()</code>.</li>
+<li>The first argument is the name of the function to call (either as a string, a symbol, or another call).</li>
+<li>The remaining arguments will be passed along to the call:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a></a><span class="fu">call2</span>(<span class="st">"mean"</span>, <span class="at">x =</span> <span class="fu">expr</span>(x), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; mean(x = x, na.rm = TRUE)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a></a><span class="fu">call2</span>(<span class="fu">expr</span>(base<span class="sc">::</span>mean), <span class="at">x =</span> <span class="fu">expr</span>(x), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; base::mean(x = x, na.rm = TRUE)</code></pre>
+</div>
+</div>
+<ul>
+<li>Infix calls created in this way still print as usual.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a></a><span class="fu">call2</span>(<span class="st">"&lt;-"</span>, <span class="fu">expr</span>(x), <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; x &lt;- 10</code></pre>
+</div>
+</div>
+</section>
+<section id="parsing-and-grammar" class="slide level2">
+<h2>Parsing and grammar</h2>
+<ul>
+<li><strong>Parsing</strong> - The process by which a computer language takes a string and constructs an expression. Parsing is governed by a set of rules known as a grammar.</li>
+<li>We are going to use <code>lobstr::ast()</code> to explore some of the details of R’s grammar, and then show how you can transform back and forth between expressions and strings.</li>
+<li><strong>Operator precedence</strong> - Conventions used by the programming language to resolve ambiguity.</li>
+<li>Infix functions introduce two sources of ambiguity.</li>
+<li>The first source of ambiguity arises from infix functions: what does 1 + 2 * 3 yield? Do you get 9 (i.e., (1 + 2) * 3), or 7 (i.e., 1 + (2 * 3))? In other words, which of the two possible parse trees below does R use?</li>
+</ul>
+
+<img data-src="images/ambig-order.png" class="r-stretch"><ul>
+<li>Programming languages use conventions called operator precedence to resolve this ambiguity. We can use <code>ast()</code> to see what R does:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─`+` 
+#&gt; ├─1 
+#&gt; └─█─`*` 
+#&gt;   ├─2 
+#&gt;   └─3</code></pre>
+</div>
+</div>
+<ul>
+<li>PEMDAS (or BEDMAS or BODMAS, depending on where in the world you grew up) is pretty clear on what to do. Other operator precedence isn’t as clear.</li>
+<li>There’s one particularly surprising case in R:
+<ul>
+<li>! has a much lower precedence (i.e., it binds less tightly) than you might expect.</li>
+<li>This allows you to write useful operations like:</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="sc">!</span>x <span class="sc">%in%</span> y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─`!` 
+#&gt; └─█─`%in%` 
+#&gt;   ├─x 
+#&gt;   └─y</code></pre>
+</div>
+</div>
+<ul>
+<li><strong>R has over 30 infix operators divided into 18 precedence</strong> groups.</li>
+<li>While the details are described in <code>?Syntax</code>, very few people have memorized the complete ordering.</li>
+<li>If there’s any confusion, use parentheses!</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a></a><span class="co"># override PEMDAS</span></span>
+<span id="cb99-2"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>((<span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span>) <span class="sc">*</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─`*` 
+#&gt; ├─█─`(` 
+#&gt; │ └─█─`+` 
+#&gt; │   ├─1 
+#&gt; │   └─2 
+#&gt; └─3</code></pre>
+</div>
+</div>
+<h3 id="associativity">Associativity</h3>
+<ul>
+<li>The second source of ambiguity is introduced by repeated usage of the same infix function.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">+</span> <span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a></a><span class="co"># What does R do first?</span></span>
+<span id="cb103-2"><a></a>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span>) <span class="sc">+</span> <span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a></a><span class="co"># or</span></span>
+<span id="cb105-2"><a></a><span class="dv">1</span> <span class="sc">+</span> (<span class="dv">2</span> <span class="sc">+</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 6</code></pre>
+</div>
+</div>
+<ul>
+<li><p>In this case it doesn’t matter. Other places it might, like in <code>ggplot2</code>.</p></li>
+<li><p>In R, most operators are left-associative, i.e., the operations on the left are evaluated first:</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">+</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─`+` 
+#&gt; ├─█─`+` 
+#&gt; │ ├─1 
+#&gt; │ └─2 
+#&gt; └─3</code></pre>
+</div>
+</div>
+<ul>
+<li>There are two exceptions to the left-associative rule:
+<ol type="1">
+<li>exponentiation</li>
+<li>assignment</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="dv">2</span> <span class="sc">^</span> <span class="dv">2</span> <span class="sc">^</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─`^` 
+#&gt; ├─2 
+#&gt; └─█─`^` 
+#&gt;   ├─2 
+#&gt;   └─3</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(x <span class="ot">&lt;-</span> y <span class="ot">&lt;-</span> z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─`&lt;-` 
+#&gt; ├─x 
+#&gt; └─█─`&lt;-` 
+#&gt;   ├─y 
+#&gt;   └─z</code></pre>
+</div>
+</div>
+<h3 id="parsing-and-deparsing">Parsing and deparsing</h3>
+<ul>
+<li>Parsing - turning characters you’ve typed into an AST (i.e., from strings to expressions).</li>
+<li>R usually takes care of parsing code for us.</li>
+<li>But occasionally you have code stored as a string, and you want to parse it yourself.</li>
+<li>You can do so using <code>rlang::parse_expr()</code>:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a></a>x1 <span class="ot">&lt;-</span> <span class="st">"y &lt;- x + 10"</span></span>
+<span id="cb113-2"><a></a>x1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "y &lt;- x + 10"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a></a><span class="fu">is.call</span>(x1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] FALSE</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a></a>x2 <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">parse_expr</span>(x1)</span>
+<span id="cb117-2"><a></a>x2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; y &lt;- x + 10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a></a><span class="fu">is.call</span>(x2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<ul>
+<li><code>parse_expr()</code> always returns a single expression.</li>
+<li>If you have multiple expression separated by <code>;</code> or <code>,</code>, you’ll need to use <code>rlang::parse_exprs()</code> which is the plural version of <code>rlang::parse_expr()</code>. It returns a list of expressions:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb121"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb121-1"><a></a>x3 <span class="ot">&lt;-</span> <span class="st">"a &lt;- 1; a + 1"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb122"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a></a>rlang<span class="sc">::</span><span class="fu">parse_exprs</span>(x3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [[1]]
+#&gt; a &lt;- 1
+#&gt; 
+#&gt; [[2]]
+#&gt; a + 1</code></pre>
+</div>
+</div>
+<ul>
+<li>If you find yourself parsing strings into expressions often, <strong>quasiquotation</strong> may be a safer approach.
+<ul>
+<li>More about quasiquaotation in Chapter 19.</li>
+</ul></li>
+<li>The inverse of parsing is deparsing.</li>
+<li><strong>Deparsing</strong> - given an expression, you want the string that would generate it.</li>
+<li>Deparsing happens automatically when you print an expression.</li>
+<li>You can get the string with <code>rlang::expr_text()</code>:</li>
+<li>Parsing and deparsing are not symmetric.
+<ul>
+<li>Parsing creates the AST which means that we lose backticks around ordinary names, comments, and whitespace.</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb124"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a></a><span class="fu">cat</span>(<span class="fu">expr_text</span>(<span class="fu">expr</span>({</span>
+<span id="cb124-2"><a></a>  <span class="co"># This is a comment</span></span>
+<span id="cb124-3"><a></a>  x <span class="ot">&lt;-</span>             <span class="st">`</span><span class="at">x</span><span class="st">`</span> <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb124-4"><a></a>})))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; {
+#&gt;     x &lt;- x + 1
+#&gt; }</code></pre>
+</div>
+</div>
+</section>
+<section id="using-the-ast-to-solve-more-complicated-problems" class="slide level2">
+<h2>Using the AST to solve more complicated problems</h2>
+<ul>
+<li>Here we focus on what we learned to perform recursion on the AST.</li>
+<li>Two parts of a recursive function:
+<ul>
+<li>Recursive case: handles the nodes in the tree. Typically, you’ll do something to each child of a node, usually calling the recursive function again, and then combine the results back together again. For expressions, you’ll need to handle calls and pairlists (function arguments).</li>
+<li>Base case: handles the leaves of the tree. The base cases ensure that the function eventually terminates, by solving the simplest cases directly. For expressions, you need to handle symbols and constants in the base case.</li>
+</ul></li>
+</ul>
+<h3 id="two-helper-functions">Two helper functions</h3>
+<ul>
+<li>First, we need an <code>epxr_type()</code> function to return the type of expression element as a string.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb126"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a></a>expr_type <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb126-2"><a></a>  <span class="cf">if</span> (rlang<span class="sc">::</span><span class="fu">is_syntactic_literal</span>(x)) {</span>
+<span id="cb126-3"><a></a>    <span class="st">"constant"</span></span>
+<span id="cb126-4"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.symbol</span>(x)) {</span>
+<span id="cb126-5"><a></a>    <span class="st">"symbol"</span></span>
+<span id="cb126-6"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.call</span>(x)) {</span>
+<span id="cb126-7"><a></a>    <span class="st">"call"</span></span>
+<span id="cb126-8"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.pairlist</span>(x)) {</span>
+<span id="cb126-9"><a></a>    <span class="st">"pairlist"</span></span>
+<span id="cb126-10"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb126-11"><a></a>    <span class="fu">typeof</span>(x)</span>
+<span id="cb126-12"><a></a>  }</span>
+<span id="cb126-13"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb127"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a></a><span class="fu">expr_type</span>(<span class="fu">expr</span>(<span class="st">"a"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "constant"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb129"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a></a><span class="fu">expr_type</span>(<span class="fu">expr</span>(x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "symbol"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a></a><span class="fu">expr_type</span>(<span class="fu">expr</span>(<span class="fu">f</span>(<span class="dv">1</span>, <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "call"</code></pre>
+</div>
+</div>
+<ul>
+<li>Second, we need a wrapper function to handle exceptions.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a></a>switch_expr <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb133-2"><a></a>  <span class="cf">switch</span>(<span class="fu">expr_type</span>(x),</span>
+<span id="cb133-3"><a></a>    ...,</span>
+<span id="cb133-4"><a></a>    <span class="fu">stop</span>(<span class="st">"Don't know how to handle type "</span>, <span class="fu">typeof</span>(x), <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb133-5"><a></a>  )</span>
+<span id="cb133-6"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Lastly, we can write a basic template that walks the AST using the <code>switch()</code> statement.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb134"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb134-1"><a></a>recurse_call <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb134-2"><a></a>  <span class="fu">switch_expr</span>(x,</span>
+<span id="cb134-3"><a></a>    <span class="co"># Base cases</span></span>
+<span id="cb134-4"><a></a>    <span class="at">symbol =</span> ,</span>
+<span id="cb134-5"><a></a>    <span class="at">constant =</span> ,</span>
+<span id="cb134-6"><a></a></span>
+<span id="cb134-7"><a></a>    <span class="co"># Recursive cases</span></span>
+<span id="cb134-8"><a></a>    <span class="at">call =</span> ,</span>
+<span id="cb134-9"><a></a>    <span class="at">pairlist =</span></span>
+<span id="cb134-10"><a></a>  )</span>
+<span id="cb134-11"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<h3 id="specific-use-cases-for-recurse_call">Specific use cases for <code>recurse_call()</code></h3>
+<h3 id="example-1-finding-f-and-t">Example 1: Finding F and T</h3>
+<ul>
+<li>Using <code>F</code> and <code>T</code> in our code rather than <code>FALSE</code> and <code>TRUE</code> is bad practice.</li>
+<li>Say we want to walk the AST to find times when we use <code>F</code> and <code>T</code>.</li>
+<li>Start off by finding the type of <code>T</code> vs <code>TRUE</code>.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb135"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a></a><span class="fu">expr_type</span>(<span class="fu">expr</span>(<span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "constant"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb137"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a></a><span class="fu">expr_type</span>(<span class="fu">expr</span>(T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "symbol"</code></pre>
+</div>
+</div>
+<ul>
+<li>With this knowledge, we can now write the base cases of our recursive function.</li>
+<li>The logic is as follows:
+<ul>
+<li>A constant is never a logical abbreviation and a symbol is an abbreviation if it is “F” or “T”:</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a></a>logical_abbr_rec <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb139-2"><a></a>  <span class="fu">switch_expr</span>(x,</span>
+<span id="cb139-3"><a></a>    <span class="at">constant =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb139-4"><a></a>    <span class="at">symbol =</span> <span class="fu">as_string</span>(x) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"F"</span>, <span class="st">"T"</span>)</span>
+<span id="cb139-5"><a></a>  )</span>
+<span id="cb139-6"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb140"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb140-1"><a></a><span class="fu">logical_abbr_rec</span>(<span class="fu">expr</span>(<span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] FALSE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb142"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb142-1"><a></a><span class="fu">logical_abbr_rec</span>(<span class="fu">expr</span>(T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<ul>
+<li>It’s best practice to write another wrapper, assuming every input you receive will be an expression.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb144"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb144-1"><a></a>logical_abbr <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb144-2"><a></a>  <span class="fu">logical_abbr_rec</span>(<span class="fu">enexpr</span>(x))</span>
+<span id="cb144-3"><a></a>}</span>
+<span id="cb144-4"><a></a></span>
+<span id="cb144-5"><a></a><span class="fu">logical_abbr</span>(T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb146"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb146-1"><a></a><span class="fu">logical_abbr</span>(<span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] FALSE</code></pre>
+</div>
+</div>
+<h4 id="next-step-code-for-the-recursive-cases">Next step: code for the recursive cases</h4>
+<ul>
+<li>Here we want to do the same thing for calls and for pairlists.</li>
+<li>Here’s the logic: recursively apply the function to each subcomponent, and return <code>TRUE</code> if any subcomponent contains a logical abbreviation.</li>
+<li>This is simplified by using the <code>purrr::some()</code> function, which iterates over a list and returns <code>TRUE</code> if the predicate function is true for any element.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb148"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb148-1"><a></a>logical_abbr_rec <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb148-2"><a></a>  <span class="fu">switch_expr</span>(x,</span>
+<span id="cb148-3"><a></a>  <span class="co"># Base cases</span></span>
+<span id="cb148-4"><a></a>  <span class="at">constant =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb148-5"><a></a>  <span class="at">symbol =</span> <span class="fu">as_string</span>(x) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"F"</span>, <span class="st">"T"</span>),</span>
+<span id="cb148-6"><a></a>  <span class="co"># Recursive cases</span></span>
+<span id="cb148-7"><a></a>  <span class="at">call =</span> ,</span>
+<span id="cb148-8"><a></a>  <span class="co"># Are we sure this is the correct function to use?</span></span>
+<span id="cb148-9"><a></a>  <span class="co"># Why not logical_abbr_rec?</span></span>
+<span id="cb148-10"><a></a>  <span class="at">pairlist =</span> purrr<span class="sc">::</span><span class="fu">some</span>(x, logical_abbr_rec)</span>
+<span id="cb148-11"><a></a>  )</span>
+<span id="cb148-12"><a></a>}</span>
+<span id="cb148-13"><a></a></span>
+<span id="cb148-14"><a></a><span class="fu">logical_abbr</span>(<span class="fu">mean</span>(x, <span class="at">na.rm =</span> T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb150"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb150-1"><a></a><span class="fu">logical_abbr</span>(<span class="cf">function</span>(x, <span class="at">na.rm =</span> T) <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<h3 id="example-2-finding-all-variables-created-by-assignment">Example 2: Finding all variables created by assignment</h3>
+<ul>
+<li>Listing all the variables is a little more complicated.</li>
+<li>Figure out what assignment looks like based on the AST.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb152"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb152-1"><a></a><span class="fu">ast</span>(x <span class="ot">&lt;-</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─`&lt;-` 
+#&gt; ├─x 
+#&gt; └─10</code></pre>
+</div>
+</div>
+<ul>
+<li>Now we need to decide what data structure we’re going to use for the results.
+<ul>
+<li>Easiest thing will be to return a character vector.</li>
+<li>We would need to use a list if we wanted to return symbols.</li>
+</ul></li>
+</ul>
+<h3 id="dealing-with-the-base-cases">Dealing with the base cases</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb154"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb154-1"><a></a>find_assign_rec <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb154-2"><a></a>  <span class="fu">switch_expr</span>(x,</span>
+<span id="cb154-3"><a></a>    <span class="at">constant =</span> ,</span>
+<span id="cb154-4"><a></a>    <span class="at">symbol =</span> <span class="fu">character</span>()</span>
+<span id="cb154-5"><a></a>  )</span>
+<span id="cb154-6"><a></a>}</span>
+<span id="cb154-7"><a></a>find_assign <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">find_assign_rec</span>(<span class="fu">enexpr</span>(x))</span>
+<span id="cb154-8"><a></a></span>
+<span id="cb154-9"><a></a><span class="fu">find_assign</span>(<span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; character(0)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb156"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb156-1"><a></a><span class="fu">find_assign</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; character(0)</code></pre>
+</div>
+</div>
+<h3 id="dealing-with-the-recursive-cases">Dealing with the recursive cases</h3>
+<ul>
+<li>Here is the function to flatten pairlists.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb158"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb158-1"><a></a>flat_map_chr <span class="ot">&lt;-</span> <span class="cf">function</span>(.x, .f, ...) {</span>
+<span id="cb158-2"><a></a>  purrr<span class="sc">::</span><span class="fu">flatten_chr</span>(purrr<span class="sc">::</span><span class="fu">map</span>(.x, .f, ...))</span>
+<span id="cb158-3"><a></a>}</span>
+<span id="cb158-4"><a></a></span>
+<span id="cb158-5"><a></a><span class="fu">flat_map_chr</span>(letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="sc">~</span> <span class="fu">rep</span>(., <span class="fu">sample</span>(<span class="dv">3</span>, <span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "a" "b" "b" "c" "c"</code></pre>
+</div>
+</div>
+<ul>
+<li>Here is the code needed to identify calls.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb160"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb160-1"><a></a>find_assign_rec <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb160-2"><a></a>  <span class="fu">switch_expr</span>(x,</span>
+<span id="cb160-3"><a></a>    <span class="co"># Base cases</span></span>
+<span id="cb160-4"><a></a>    <span class="at">constant =</span> ,</span>
+<span id="cb160-5"><a></a>    <span class="at">symbol =</span> <span class="fu">character</span>(),</span>
+<span id="cb160-6"><a></a></span>
+<span id="cb160-7"><a></a>    <span class="co"># Recursive cases</span></span>
+<span id="cb160-8"><a></a>    <span class="at">pairlist =</span> <span class="fu">flat_map_chr</span>(<span class="fu">as.list</span>(x), find_assign_rec),</span>
+<span id="cb160-9"><a></a>    <span class="at">call =</span> {</span>
+<span id="cb160-10"><a></a>      <span class="cf">if</span> (<span class="fu">is_call</span>(x, <span class="st">"&lt;-"</span>)) {</span>
+<span id="cb160-11"><a></a>        <span class="fu">as_string</span>(x[[<span class="dv">2</span>]])</span>
+<span id="cb160-12"><a></a>      } <span class="cf">else</span> {</span>
+<span id="cb160-13"><a></a>        <span class="fu">flat_map_chr</span>(<span class="fu">as.list</span>(x), find_assign_rec)</span>
+<span id="cb160-14"><a></a>      }</span>
+<span id="cb160-15"><a></a>    }</span>
+<span id="cb160-16"><a></a>  )</span>
+<span id="cb160-17"><a></a>}</span>
+<span id="cb160-18"><a></a></span>
+<span id="cb160-19"><a></a><span class="fu">find_assign</span>(a <span class="ot">&lt;-</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "a"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb162"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb162-1"><a></a><span class="fu">find_assign</span>({</span>
+<span id="cb162-2"><a></a>  a <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb162-3"><a></a>  {</span>
+<span id="cb162-4"><a></a>    b <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb162-5"><a></a>  }</span>
+<span id="cb162-6"><a></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "a" "b"</code></pre>
+</div>
+</div>
+<h3 id="make-the-function-more-robust">Make the function more robust</h3>
+<ul>
+<li>Throw cases at it that we think might break the function.</li>
+<li>Write a function to handle these cases.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb164"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb164-1"><a></a>find_assign_call <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb164-2"><a></a>  <span class="cf">if</span> (<span class="fu">is_call</span>(x, <span class="st">"&lt;-"</span>) <span class="sc">&amp;&amp;</span> <span class="fu">is_symbol</span>(x[[<span class="dv">2</span>]])) {</span>
+<span id="cb164-3"><a></a>    lhs <span class="ot">&lt;-</span> <span class="fu">as_string</span>(x[[<span class="dv">2</span>]])</span>
+<span id="cb164-4"><a></a>    children <span class="ot">&lt;-</span> <span class="fu">as.list</span>(x)[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb164-5"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb164-6"><a></a>    lhs <span class="ot">&lt;-</span> <span class="fu">character</span>()</span>
+<span id="cb164-7"><a></a>    children <span class="ot">&lt;-</span> <span class="fu">as.list</span>(x)</span>
+<span id="cb164-8"><a></a>  }</span>
+<span id="cb164-9"><a></a></span>
+<span id="cb164-10"><a></a>  <span class="fu">c</span>(lhs, <span class="fu">flat_map_chr</span>(children, find_assign_rec))</span>
+<span id="cb164-11"><a></a>}</span>
+<span id="cb164-12"><a></a></span>
+<span id="cb164-13"><a></a>find_assign_rec <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb164-14"><a></a>  <span class="fu">switch_expr</span>(x,</span>
+<span id="cb164-15"><a></a>    <span class="co"># Base cases</span></span>
+<span id="cb164-16"><a></a>    <span class="at">constant =</span> ,</span>
+<span id="cb164-17"><a></a>    <span class="at">symbol =</span> <span class="fu">character</span>(),</span>
+<span id="cb164-18"><a></a></span>
+<span id="cb164-19"><a></a>    <span class="co"># Recursive cases</span></span>
+<span id="cb164-20"><a></a>    <span class="at">pairlist =</span> <span class="fu">flat_map_chr</span>(x, find_assign_rec),</span>
+<span id="cb164-21"><a></a>    <span class="at">call =</span> <span class="fu">find_assign_call</span>(x)</span>
+<span id="cb164-22"><a></a>  )</span>
+<span id="cb164-23"><a></a>}</span>
+<span id="cb164-24"><a></a></span>
+<span id="cb164-25"><a></a><span class="fu">find_assign</span>(a <span class="ot">&lt;-</span> b <span class="ot">&lt;-</span> c <span class="ot">&lt;-</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "a" "b" "c"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb166"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb166-1"><a></a><span class="fu">find_assign</span>(<span class="fu">system.time</span>(x <span class="ot">&lt;-</span> <span class="fu">print</span>(y <span class="ot">&lt;-</span> <span class="dv">5</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "x" "y"</code></pre>
+</div>
+</div>
+<ul>
+<li>This approach certainly is more complicated, but it’s important to start simple and move up.</li>
+</ul>
+</section>
+<section id="specialised-data-structures" class="slide level2">
+<h2>Specialised data structures</h2>
+<ul>
+<li>Pairlists</li>
+<li>Missing arguments</li>
+<li>Expression vectors</li>
+</ul>
+<h3 id="pairlists">Pairlists</h3>
+<ul>
+<li>Pairlists are a remnant of R’s past and have been replaced by lists almost everywhere.</li>
+<li>The only place you are likely to see pairlists in R is when working with calls to the function, as the formal arguments to a function are stored in a pairlist:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb168"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb168-1"><a></a>f <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="cf">function</span>(x, <span class="at">y =</span> <span class="dv">10</span>) x <span class="sc">+</span> y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb169"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb169-1"><a></a>args <span class="ot">&lt;-</span> f[[<span class="dv">2</span>]]</span>
+<span id="cb169-2"><a></a>args</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $x
+#&gt; 
+#&gt; 
+#&gt; $y
+#&gt; [1] 10</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb171"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb171-1"><a></a><span class="fu">typeof</span>(args)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "pairlist"</code></pre>
+</div>
+</div>
+<ul>
+<li>Fortunately, whenever you encounter a pairlist, you can treat it just like a regular list:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb173"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb173-1"><a></a>pl <span class="ot">&lt;-</span> <span class="fu">pairlist</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb174"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb174-1"><a></a><span class="fu">length</span>(pl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 2</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb176"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb176-1"><a></a>pl<span class="sc">$</span>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
+</div>
+</div>
+<h3 id="missing-arguments">Missing arguments</h3>
+<ul>
+<li>Empty symbols</li>
+<li>To create an empty symbol, you need to use <code>missing_arg()</code> or <code>expr()</code>.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb178"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb178-1"><a></a><span class="fu">missing_arg</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb179"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb179-1"><a></a><span class="fu">typeof</span>(<span class="fu">missing_arg</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "symbol"</code></pre>
+</div>
+</div>
+<ul>
+<li>Empty symbols don’t print anything.
+<ul>
+<li>To check, we need to use <code>rlang::is_missing()</code></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb181"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb181-1"><a></a><span class="fu">is_missing</span>(<span class="fu">missing_arg</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<ul>
+<li>These are usually present in function formals:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb183"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb183-1"><a></a>f <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="cf">function</span>(x, <span class="at">y =</span> <span class="dv">10</span>) x <span class="sc">+</span> y)</span>
+<span id="cb183-2"><a></a></span>
+<span id="cb183-3"><a></a>args <span class="ot">&lt;-</span> f[[<span class="dv">2</span>]]</span>
+<span id="cb183-4"><a></a></span>
+<span id="cb183-5"><a></a></span>
+<span id="cb183-6"><a></a><span class="fu">is_missing</span>(args[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<h3 id="expression-vectors">Expression vectors</h3>
+<ul>
+<li>An expression vector is just a list of expressions.
+<ul>
+<li>The only difference is that calling <code>eval()</code> on an expression evaluates each individual expression.</li>
+<li>Instead, it might be more advantageous to use a list of expressions.</li>
+</ul></li>
+<li>Expression vectors are only produced by two base functions: <code>expression()</code> and <code>parse()</code>:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb185"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb185-1"><a></a>exp1 <span class="ot">&lt;-</span> <span class="fu">parse</span>(<span class="at">text =</span> <span class="fu">c</span>(<span class="st">" </span></span>
+<span id="cb185-2"><a></a><span class="st">x &lt;- 4</span></span>
+<span id="cb185-3"><a></a><span class="st">x</span></span>
+<span id="cb185-4"><a></a><span class="st">"</span>))</span>
+<span id="cb185-5"><a></a>exp1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; expression(x &lt;- 4, x)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb187"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb187-1"><a></a>exp2 <span class="ot">&lt;-</span> <span class="fu">expression</span>(x <span class="ot">&lt;-</span> <span class="dv">4</span>, x)</span>
+<span id="cb187-2"><a></a>exp2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; expression(x &lt;- 4, x)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb189"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb189-1"><a></a><span class="fu">typeof</span>(exp1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "expression"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb191"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb191-1"><a></a><span class="fu">typeof</span>(exp2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "expression"</code></pre>
+</div>
+</div>
+<ul>
+<li>Like calls and pairlists, expression vectors behave like lists:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb193"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb193-1"><a></a><span class="fu">length</span>(exp1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb195"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb195-1"><a></a>exp1[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; x &lt;- 4</code></pre>
+</div>
+</div>
+</section>
+<section id="meeting-videos" class="slide level2">
+<h2>Meeting Videos</h2>
+<h3 id="cohort-1">Cohort 1</h3>
+<iframe src="https://www.youtube.com/embed/2NixH3QAerQ" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-2">Cohort 2</h3>
+<iframe src="https://www.youtube.com/embed/mYOUgzoRcjI" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-3">Cohort 3</h3>
+<iframe src="https://www.youtube.com/embed/5RLCRFli6QI" width="100%" height="400px" data-external="1">
+</iframe>
+<iframe src="https://www.youtube.com/embed/F8df5PMNC8Y" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-4">Cohort 4</h3>
+<iframe src="https://www.youtube.com/embed/tSVBlAP5DIY" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-5">Cohort 5</h3>
+<iframe src="https://www.youtube.com/embed/Jc_R4yFsYeE" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-6">Cohort 6</h3>
+<iframe src="https://www.youtube.com/embed/K8w28ee3CR8" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-7">Cohort 7</h3>
+<iframe src="https://www.youtube.com/embed/XPs-TI4BYjk" width="100%" height="400px" data-external="1">
+</iframe>
+<iframe src="https://www.youtube.com/embed/8LPw_VTBsmQ" width="100%" height="400px" data-external="1">
+</iframe>
+<details>
+<summary>
+Meeting chat log
+</summary>
+<pre><code>00:50:48    Stone:  https://www.r-bloggers.com/2018/10/quasiquotation-in-r-via-bquote/
+00:58:26    iPhone: See ya next week!</code></pre>
+</details>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p><a href="../" target="advr_club-index">DSLC.io/advr</a> | <a href="https://DSLC.io" target="_blank">DSLC.io</a></p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/r4ds\.github\.io\/bookclub-advr\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+                // target, if specified
+                link.setAttribute("target", "_blank");
+                if (link.getAttribute("rel") === null) {
+                  link.setAttribute("rel", "noopener");
+                }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

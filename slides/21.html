@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <title>Advanced R Book Club – Translating R code</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5fa723a4ee799f64e44b6fe0747a0a63.css">
+  <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+  <script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+  <script src="../site_libs/d3-3.3.8/d3.min.js"></script>
+  <script src="../site_libs/dagre-0.4.0/dagre-d3.min.js"></script>
+  <link href="../site_libs/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
+  <script src="../site_libs/mermaid-0.3.0/dist/mermaid.slim.min.js"></script>
+  <link href="../site_libs/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+  <script src="../site_libs/chromatography-0.1/chromatography.js"></script>
+  <script src="../site_libs/DiagrammeR-binding-1.0.11/DiagrammeR.js"></script>
+</head>
+<body class="quarto-dark">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Translating R code</h1>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="learning-objectives" class="slide level2">
+<h2>Learning objectives:</h2>
+<ul>
+<li>Build DSL (domain specific languages) to aid interoperability between R, HTML and LaTeX</li>
+<li>Reinforce metaprogramming concepts (expressions, quasiquotation, evaluation)</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ef79d3ab7e051da14c53" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-ef79d3ab7e051da14c53">{"x":{"diagram":"\ngraph LR\n\nexpressions --> R\nquasiquotation --> R\nevaluation --> R\n\nR --> HTML\nR --> LaTeX\n"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<details>
+<summary>
+Mermaid code
+</summary>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>DiagrammeR<span class="sc">::</span><span class="fu">mermaid</span>(<span class="st">"</span></span>
+<span id="cb1-2"><a></a><span class="st">graph LR</span></span>
+<span id="cb1-3"><a></a></span>
+<span id="cb1-4"><a></a><span class="st">expressions --&gt; R</span></span>
+<span id="cb1-5"><a></a><span class="st">quasiquotation --&gt; R</span></span>
+<span id="cb1-6"><a></a><span class="st">evaluation --&gt; R</span></span>
+<span id="cb1-7"><a></a></span>
+<span id="cb1-8"><a></a><span class="st">R --&gt; HTML</span></span>
+<span id="cb1-9"><a></a><span class="st">R --&gt; LaTeX</span></span>
+<span id="cb1-10"><a></a><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</details>
+<details>
+<summary>
+Session Info
+</summary>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">library</span>(DiagrammeR) <span class="co">#for Mermaid flowchart</span></span>
+<span id="cb2-2"><a></a><span class="fu">library</span>(lobstr)     <span class="co">#abstract syntax trees</span></span>
+<span id="cb2-3"><a></a><span class="fu">library</span>(purrr)      <span class="co">#functional programming</span></span>
+<span id="cb2-4"><a></a><span class="fu">library</span>(rlang)      <span class="co">#tidy evaluation</span></span>
+<span id="cb2-5"><a></a></span>
+<span id="cb2-6"><a></a><span class="co"># from section 18.5</span></span>
+<span id="cb2-7"><a></a>expr_type <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb2-8"><a></a>  <span class="cf">if</span> (rlang<span class="sc">::</span><span class="fu">is_syntactic_literal</span>(x)) {</span>
+<span id="cb2-9"><a></a>    <span class="st">"constant"</span></span>
+<span id="cb2-10"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.symbol</span>(x)) {</span>
+<span id="cb2-11"><a></a>    <span class="st">"symbol"</span></span>
+<span id="cb2-12"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.call</span>(x)) {</span>
+<span id="cb2-13"><a></a>    <span class="st">"call"</span></span>
+<span id="cb2-14"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.pairlist</span>(x)) {</span>
+<span id="cb2-15"><a></a>    <span class="st">"pairlist"</span></span>
+<span id="cb2-16"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-17"><a></a>    <span class="fu">typeof</span>(x)</span>
+<span id="cb2-18"><a></a>  }</span>
+<span id="cb2-19"><a></a>}</span>
+<span id="cb2-20"><a></a>flat_map_chr <span class="ot">&lt;-</span> <span class="cf">function</span>(.x, .f, ...) {</span>
+<span id="cb2-21"><a></a>  purrr<span class="sc">::</span><span class="fu">flatten_chr</span>(purrr<span class="sc">::</span><span class="fu">map</span>(.x, .f, ...))</span>
+<span id="cb2-22"><a></a>}</span>
+<span id="cb2-23"><a></a>switch_expr <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb2-24"><a></a>  <span class="cf">switch</span>(<span class="fu">expr_type</span>(x),</span>
+<span id="cb2-25"><a></a>    ...,</span>
+<span id="cb2-26"><a></a>    <span class="fu">stop</span>(<span class="st">"Don't know how to handle type "</span>, <span class="fu">typeof</span>(x), <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-27"><a></a>  )</span>
+<span id="cb2-28"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>utils<span class="sc">::</span><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; R version 4.5.1 (2025-06-13 ucrt)
+#&gt; Platform: x86_64-w64-mingw32/x64
+#&gt; Running under: Windows 11 x64 (build 26100)
+#&gt; 
+#&gt; Matrix products: default
+#&gt;   LAPACK version 3.12.1
+#&gt; 
+#&gt; locale:
+#&gt; [1] LC_COLLATE=English_United States.utf8 
+#&gt; [2] LC_CTYPE=English_United States.utf8   
+#&gt; [3] LC_MONETARY=English_United States.utf8
+#&gt; [4] LC_NUMERIC=C                          
+#&gt; [5] LC_TIME=English_United States.utf8    
+#&gt; 
+#&gt; time zone: America/Chicago
+#&gt; tzcode source: internal
+#&gt; 
+#&gt; attached base packages:
+#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
+#&gt; 
+#&gt; other attached packages:
+#&gt; [1] rlang_1.1.6       purrr_1.1.0       lobstr_1.1.2      DiagrammeR_1.0.11
+#&gt; 
+#&gt; loaded via a namespace (and not attached):
+#&gt;  [1] digest_0.6.37      RColorBrewer_1.1-3 R6_2.6.1           fastmap_1.2.0     
+#&gt;  [5] xfun_0.52          magrittr_2.0.3     glue_1.8.0         knitr_1.50        
+#&gt;  [9] htmltools_0.5.8.1  rmarkdown_2.29     lifecycle_1.0.4    cli_3.6.5         
+#&gt; [13] visNetwork_2.1.2   vctrs_0.6.5        compiler_4.5.1     tools_4.5.1       
+#&gt; [17] evaluate_1.0.4     yaml_2.3.10        jsonlite_2.0.0     htmlwidgets_1.6.4 
+#&gt; [21] keyring_1.4.1</code></pre>
+</div>
+</div>
+</details>
+</section>
+<section id="case-study-mcq" class="slide level2">
+<h2>Case Study: MCQ</h2>
+<p>We are going to use R code to generate HTML or LaTeX to produce multiple-choice questions such as</p>
+<h3 id="pop-quiz">Pop Quiz!</h3>
+<ol type="1">
+<li><p>What is the <strong>derivative</strong> of <span class="math inline">\(f(x) = 1 + 2\cos(3\pi x + 4)\)</span>?</p>
+<ol type="a">
+<li><span class="math inline">\(f'(x) = 6\pi\sin(3\pi x + 4)\)</span></li>
+<li><span class="math inline">\(f'(x) = -6\pi\sin(3\pi x + 4)\)</span></li>
+<li><span class="math inline">\(f'(x) = 24\pi\sin(3\pi x + 4)\)</span></li>
+<li><span class="math inline">\(f'(x) = -24\pi\sin(3\pi x + 4)\)</span></li>
+</ol></li>
+</ol>
+
+<img data-src="images/translating/calculus_cat.png" class="r-stretch quarto-figure-center"><p class="caption">A whisker plot</p></section>
+<section class="slide level2">
+
+<p>As developers, we may be asking ourselves:</p>
+<ul>
+<li>What are the expressions?</li>
+<li>What are the symbols?</li>
+<li>Will we have to quote inputs from the user (math teacher)?</li>
+</ul>
+</section>
+<section id="html" class="slide level2">
+<h2>HTML</h2>
+<p>We are trying to produce</p>
+<pre><code>&lt;body&gt;
+  &lt;h1 id = 'pop_quiz'&gt;Pop Quiz&lt;/h1&gt;
+  &lt;ol&gt;
+    &lt;li&gt;What is the &lt;b&gt;derivative&lt;/b&gt; of $f(x) = 1 + 2\cos(3\pi x + 4)$?&lt;/li&gt;
+    &lt;ol&gt;
+      &lt;li&gt;$f'(x) = 6\pi\sin(3\pi x + 4)$&lt;/li&gt;
+      &lt;li&gt;$f'(x) = -6\pi\sin(3\pi x + 4)$&lt;/li&gt;
+      &lt;li&gt;$f'(x) = 24\pi\sin(3\pi x + 4)$&lt;/li&gt;
+      &lt;li&gt;$f'(x) = -24\pi\sin(3\pi x + 4)$&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/ol&gt;
+  &lt;img src = 'calculus_cat.png' width = '100' height = '100' /&gt;
+&lt;/body&gt;</code></pre>
+<p>using DSL</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">with_html</span>(</span>
+<span id="cb6-2"><a></a>  <span class="fu">body</span>(</span>
+<span id="cb6-3"><a></a>    <span class="fu">h1</span>(<span class="st">"Pop quiz!"</span>, <span class="at">id =</span> <span class="st">"pop_quiz"</span>),</span>
+<span id="cb6-4"><a></a>    <span class="fu">ol</span>(</span>
+<span id="cb6-5"><a></a>      <span class="fu">li</span>(<span class="st">"What is the "</span>, <span class="fu">b</span>(<span class="st">"derivative"</span>),  <span class="st">"of $f(x) = 1 + 2cos(3pi x + 4)$?"</span>),</span>
+<span id="cb6-6"><a></a>      <span class="fu">ol</span>(</span>
+<span id="cb6-7"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = 6pi*sin(3pi x + 4)$"</span>),</span>
+<span id="cb6-8"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = -6pi*sin(3pi x + 4)$"</span>),</span>
+<span id="cb6-9"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = 24pi*sin(3pi x + 4)$"</span>),</span>
+<span id="cb6-10"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = -24pi*sin(3pi x + 4)$"</span>)</span>
+<span id="cb6-11"><a></a>      )</span>
+<span id="cb6-12"><a></a>    ),</span>
+<span id="cb6-13"><a></a>    <span class="fu">img</span>(<span class="at">src =</span> <span class="st">"images/translating/calculus_cat.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span>
+<span id="cb6-14"><a></a>  )</span>
+<span id="cb6-15"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In particular,</p>
+<ul>
+<li><strong>tags</strong> such as <code>&lt;b&gt;&lt;/b&gt;</code> have <em>attributes</em></li>
+<li><strong>void tags</strong> such as <code>&lt;img /&gt;</code></li>
+<li>special characters: <code>&amp;</code>, <code>&lt;</code>, and <code>&gt;</code></li>
+</ul>
+<details>
+<summary>
+HTML verification
+</summary>
+
+  <h1 id="pop_quiz">Pop Quiz</h1>
+  <ol>
+    <li>What is the <b>derivative</b> of $f(x) = 1 + 2\cos(3\pi x + 4)$?</li>
+    <ol>
+      <li>$f'(x) = 6\pi\sin(3\pi x + 4)$</li>
+      <li>$f'(x) = -6\pi\sin(3\pi x + 4)$</li>
+      <li>$f'(x) = 24\pi\sin(3\pi x + 4)$</li>
+      <li>$f'(x) = -24\pi\sin(3\pi x + 4)$</li>
+    </ol>
+  </ol>
+  <img src="images/translating/calculus_cat.png" width="100" height="100">
+
+</details>
+</section>
+<section id="escaping" class="slide level2">
+<h2>Escaping</h2>
+<ul>
+<li>need to escape <code>&amp;</code>, <code>&lt;</code>, and <code>&gt;</code></li>
+<li>don’t “double escape”</li>
+<li>leave HTML alone</li>
+</ul>
+<h3 id="s3-class">S3 Class</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>html <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">structure</span>(x, <span class="at">class =</span> <span class="st">"advr_html"</span>)</span>
+<span id="cb7-2"><a></a></span>
+<span id="cb7-3"><a></a><span class="co">#dispatch</span></span>
+<span id="cb7-4"><a></a>print.advr_html <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb7-5"><a></a>  out <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"&lt;HTML&gt; "</span>, x)</span>
+<span id="cb7-6"><a></a>  <span class="fu">cat</span>(<span class="fu">paste</span>(<span class="fu">strwrap</span>(out), <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb7-7"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<h3 id="generic">Generic</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>escape <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">UseMethod</span>(<span class="st">"escape"</span>)</span>
+<span id="cb8-2"><a></a>escape.character <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb8-3"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&amp;"</span>, <span class="st">"&amp;amp;"</span>, x)</span>
+<span id="cb8-4"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&lt;"</span>, <span class="st">"&amp;lt;"</span>, x)</span>
+<span id="cb8-5"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&gt;"</span>, <span class="st">"&amp;gt;"</span>, x)</span>
+<span id="cb8-6"><a></a>  <span class="fu">html</span>(x)</span>
+<span id="cb8-7"><a></a>}</span>
+<span id="cb8-8"><a></a>escape.advr_html <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<h3 id="checks">Checks</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">escape</span>(<span class="st">"This is some text."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; This is some text.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">escape</span>(<span class="st">"x &gt; 1 &amp; y &lt; 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; x &amp;gt; 1 &amp;amp; y &amp;lt; 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">escape</span>(<span class="fu">escape</span>(<span class="st">"This is some text. 1 &gt; 2"</span>)) <span class="co">#double escape</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; This is some text. 1 &amp;gt; 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">escape</span>(<span class="fu">html</span>(<span class="st">"&lt;hr /&gt;"</span>)) <span class="co">#already html</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; &lt;hr /&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="named-components" class="slide level2">
+<h2>Named Components</h2>
+<pre><code>li("What is the ", b("derivative"),  "of $f(x) = 1 + 2\cos(3\pi x + 4)$?")</code></pre>
+<ul>
+<li>aiming to classify <code>li</code> and <code>b</code> as <strong>named components</strong></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>dots_partition <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb18-2"><a></a>  dots <span class="ot">&lt;-</span> <span class="fu">list2</span>(...)</span>
+<span id="cb18-3"><a></a>  </span>
+<span id="cb18-4"><a></a> <span class="cf">if</span> (<span class="fu">is.null</span>(<span class="fu">names</span>(dots))) {</span>
+<span id="cb18-5"><a></a>  is_named <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="fu">length</span>(dots))</span>
+<span id="cb18-6"><a></a>} <span class="cf">else</span> {</span>
+<span id="cb18-7"><a></a>  is_named <span class="ot">&lt;-</span> <span class="fu">names</span>(dots) <span class="sc">!=</span> <span class="st">""</span></span>
+<span id="cb18-8"><a></a>}</span>
+<span id="cb18-9"><a></a>  </span>
+<span id="cb18-10"><a></a>  <span class="fu">list</span>(</span>
+<span id="cb18-11"><a></a>    <span class="at">named =</span> dots[is_named],</span>
+<span id="cb18-12"><a></a>    <span class="at">unnamed =</span> dots[<span class="sc">!</span>is_named]</span>
+<span id="cb18-13"><a></a>  )</span>
+<span id="cb18-14"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<h3 id="check">Check</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">str</span>(<span class="fu">dots_partition</span>(<span class="at">company =</span> <span class="st">"Posit"</span>,</span>
+<span id="cb19-2"><a></a>                   <span class="at">software =</span> <span class="st">"RStudio"</span>,</span>
+<span id="cb19-3"><a></a>                   <span class="st">"DSLC"</span>,</span>
+<span id="cb19-4"><a></a>                   <span class="st">"Cohort 9"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; List of 2
+#&gt;  $ named  :List of 2
+#&gt;   ..$ company : chr "Posit"
+#&gt;   ..$ software: chr "RStudio"
+#&gt;  $ unnamed:List of 2
+#&gt;   ..$ : chr "DSLC"
+#&gt;   ..$ : chr "Cohort 9"</code></pre>
+</div>
+</div>
+<details>
+<summary>
+HTML Attributes
+</summary>
+<p>Found among the textbook’s <a href="https://github.com/hadley/adv-r/blob/master/dsl-html-attributes.r">source code</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>html_attributes <span class="ot">&lt;-</span> <span class="cf">function</span>(list) {</span>
+<span id="cb21-2"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(list) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="st">""</span>)</span>
+<span id="cb21-3"><a></a></span>
+<span id="cb21-4"><a></a>  attr <span class="ot">&lt;-</span> <span class="fu">map2_chr</span>(<span class="fu">names</span>(list), list, html_attribute)</span>
+<span id="cb21-5"><a></a>  <span class="fu">paste0</span>(<span class="st">" "</span>, <span class="fu">unlist</span>(attr), <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb21-6"><a></a>}</span>
+<span id="cb21-7"><a></a>html_attribute <span class="ot">&lt;-</span> <span class="cf">function</span>(name, <span class="at">value =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb21-8"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(value) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(name) <span class="co"># for attributes with no value</span></span>
+<span id="cb21-9"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(value) <span class="sc">!=</span> <span class="dv">1</span>) <span class="fu">stop</span>(<span class="st">"`value` must be NULL or length 1"</span>)</span>
+<span id="cb21-10"><a></a></span>
+<span id="cb21-11"><a></a>  <span class="cf">if</span> (<span class="fu">is.logical</span>(value)) {</span>
+<span id="cb21-12"><a></a>    <span class="co"># Convert T and F to true and false</span></span>
+<span id="cb21-13"><a></a>    value <span class="ot">&lt;-</span> <span class="fu">tolower</span>(value)</span>
+<span id="cb21-14"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb21-15"><a></a>    value <span class="ot">&lt;-</span> <span class="fu">escape_attr</span>(value)</span>
+<span id="cb21-16"><a></a>  }</span>
+<span id="cb21-17"><a></a>  <span class="fu">paste0</span>(name, <span class="st">"='"</span>, value, <span class="st">"'"</span>)</span>
+<span id="cb21-18"><a></a>}</span>
+<span id="cb21-19"><a></a>escape_attr <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb21-20"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">escape.character</span>(x)</span>
+<span id="cb21-21"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\'</span><span class="st">"</span>, <span class="st">'&amp;#39;'</span>, x)</span>
+<span id="cb21-22"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\"</span><span class="st">"</span>, <span class="st">'&amp;quot;'</span>, x)</span>
+<span id="cb21-23"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\r</span><span class="st">"</span>, <span class="st">'&amp;#13;'</span>, x)</span>
+<span id="cb21-24"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="st">'&amp;#10;'</span>, x)</span>
+<span id="cb21-25"><a></a>  x</span>
+<span id="cb21-26"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</details>
+</section>
+<section id="tags-calls" class="slide level2">
+<h2>Tags (calls)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>tag <span class="ot">&lt;-</span> <span class="cf">function</span>(tag) {</span>
+<span id="cb22-2"><a></a>  <span class="fu">new_function</span>(</span>
+<span id="cb22-3"><a></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ), <span class="co">#arguments of new function</span></span>
+<span id="cb22-4"><a></a>    <span class="fu">expr</span>({         <span class="co">#body of the new function</span></span>
+<span id="cb22-5"><a></a>      </span>
+<span id="cb22-6"><a></a>      <span class="co">#classify tags as named components</span></span>
+<span id="cb22-7"><a></a>      dots <span class="ot">&lt;-</span> <span class="fu">dots_partition</span>(...)</span>
+<span id="cb22-8"><a></a>      </span>
+<span id="cb22-9"><a></a>      <span class="co">#focus on named components as the tags</span></span>
+<span id="cb22-10"><a></a>      attribs <span class="ot">&lt;-</span> <span class="fu">html_attributes</span>(dots<span class="sc">$</span>named)</span>
+<span id="cb22-11"><a></a>      </span>
+<span id="cb22-12"><a></a>      <span class="co"># otherwise, nested code</span></span>
+<span id="cb22-13"><a></a>      children <span class="ot">&lt;-</span> <span class="fu">map_chr</span>(dots<span class="sc">$</span>unnamed, escape)</span>
+<span id="cb22-14"><a></a></span>
+<span id="cb22-15"><a></a>      <span class="co"># paste brackets, tag names, and attributes together</span></span>
+<span id="cb22-16"><a></a>      <span class="co"># then unquote user arguments</span></span>
+<span id="cb22-17"><a></a>      <span class="fu">html</span>(<span class="fu">paste0</span>(</span>
+<span id="cb22-18"><a></a>        <span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag), attribs, <span class="st">"&gt;"</span>,</span>
+<span id="cb22-19"><a></a>        <span class="fu">paste</span>(children, <span class="at">collapse =</span> <span class="st">""</span>),</span>
+<span id="cb22-20"><a></a>        <span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;/"</span>, tag, <span class="st">"&gt;"</span>)</span>
+<span id="cb22-21"><a></a>      ))</span>
+<span id="cb22-22"><a></a>    }),</span>
+<span id="cb22-23"><a></a>    <span class="fu">caller_env</span>() <span class="co">#return the environment</span></span>
+<span id="cb22-24"><a></a>  )</span>
+<span id="cb22-25"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<details>
+<summary>
+Void tags
+</summary>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>void_tag <span class="ot">&lt;-</span> <span class="cf">function</span>(tag) {</span>
+<span id="cb23-2"><a></a>  <span class="fu">new_function</span>(</span>
+<span id="cb23-3"><a></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ), <span class="co">#allows for missing arguments</span></span>
+<span id="cb23-4"><a></a>    <span class="fu">expr</span>({</span>
+<span id="cb23-5"><a></a>      dots <span class="ot">&lt;-</span> <span class="fu">dots_partition</span>(...)</span>
+<span id="cb23-6"><a></a>      </span>
+<span id="cb23-7"><a></a>      <span class="co"># error check</span></span>
+<span id="cb23-8"><a></a>      <span class="cf">if</span> (<span class="fu">length</span>(dots<span class="sc">$</span>unnamed) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb23-9"><a></a>        <span class="fu">abort</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag, <span class="st">"&gt; must not have unnamed arguments"</span>))</span>
+<span id="cb23-10"><a></a>      }</span>
+<span id="cb23-11"><a></a>      attribs <span class="ot">&lt;-</span> <span class="fu">html_attributes</span>(dots<span class="sc">$</span>named)</span>
+<span id="cb23-12"><a></a></span>
+<span id="cb23-13"><a></a>      <span class="fu">html</span>(<span class="fu">paste0</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag), attribs, <span class="st">" /&gt;"</span>))</span>
+<span id="cb23-14"><a></a>    }),</span>
+<span id="cb23-15"><a></a>    <span class="fu">caller_env</span>()</span>
+<span id="cb23-16"><a></a>  )</span>
+<span id="cb23-17"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</details>
+<h3 id="checks-1">Checks</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">tag</span>(<span class="st">"ol"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; function (...) 
+#&gt; {
+#&gt;     dots &lt;- dots_partition(...)
+#&gt;     attribs &lt;- html_attributes(dots$named)
+#&gt;     children &lt;- map_chr(dots$unnamed, escape)
+#&gt;     html(paste0("&lt;ol", attribs, "&gt;", paste(children, collapse = ""), 
+#&gt;         "&lt;/ol&gt;"))
+#&gt; }</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>img <span class="ot">&lt;-</span> <span class="fu">void_tag</span>(<span class="st">"img"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">img</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+
+<img class="r-stretch"><div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">img</span>(<span class="at">src =</span> <span class="st">"images/translating/calculus_cat.png"</span>,</span>
+<span id="cb28-2"><a></a>    <span class="at">width =</span> <span class="dv">100</span>,</span>
+<span id="cb28-3"><a></a>    <span class="at">height =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; &lt;img src='images/translating/calculus_cat.png' width='100'
+#&gt; height='100' /&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="tags-processing" class="slide level2">
+<h2>Tags (processing)</h2>
+<details>
+<summary>
+Venn Diagram
+</summary>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/translating/tags_r_venn.png"></p>
+<figcaption>Venn Diagram of words in R or HTML</figcaption>
+</figure>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>tags <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"abbr"</span>, <span class="st">"address"</span>, <span class="st">"article"</span>, <span class="st">"aside"</span>, <span class="st">"audio"</span>,</span>
+<span id="cb30-2"><a></a>  <span class="st">"b"</span>,<span class="st">"bdi"</span>, <span class="st">"bdo"</span>, <span class="st">"blockquote"</span>, <span class="st">"body"</span>, <span class="st">"button"</span>, <span class="st">"canvas"</span>,</span>
+<span id="cb30-3"><a></a>  <span class="st">"caption"</span>,<span class="st">"cite"</span>, <span class="st">"code"</span>, <span class="st">"colgroup"</span>, <span class="st">"data"</span>, <span class="st">"datalist"</span>,</span>
+<span id="cb30-4"><a></a>  <span class="st">"dd"</span>, <span class="st">"del"</span>,<span class="st">"details"</span>, <span class="st">"dfn"</span>, <span class="st">"div"</span>, <span class="st">"dl"</span>, <span class="st">"dt"</span>, <span class="st">"em"</span>,</span>
+<span id="cb30-5"><a></a>  <span class="st">"eventsource"</span>,<span class="st">"fieldset"</span>, <span class="st">"figcaption"</span>, <span class="st">"figure"</span>, <span class="st">"footer"</span>,</span>
+<span id="cb30-6"><a></a>  <span class="st">"form"</span>, <span class="st">"h1"</span>, <span class="st">"h2"</span>, <span class="st">"h3"</span>, <span class="st">"h4"</span>, <span class="st">"h5"</span>, <span class="st">"h6"</span>, <span class="st">"head"</span>, <span class="st">"header"</span>,</span>
+<span id="cb30-7"><a></a>  <span class="st">"hgroup"</span>, <span class="st">"html"</span>, <span class="st">"i"</span>,<span class="st">"iframe"</span>, <span class="st">"ins"</span>, <span class="st">"kbd"</span>, <span class="st">"label"</span>,</span>
+<span id="cb30-8"><a></a>  <span class="st">"legend"</span>, <span class="st">"li"</span>, <span class="st">"mark"</span>, <span class="st">"map"</span>,<span class="st">"menu"</span>, <span class="st">"meter"</span>, <span class="st">"nav"</span>,</span>
+<span id="cb30-9"><a></a>  <span class="st">"noscript"</span>, <span class="st">"object"</span>, <span class="st">"ol"</span>, <span class="st">"optgroup"</span>, <span class="st">"option"</span>, <span class="st">"output"</span>,</span>
+<span id="cb30-10"><a></a>  <span class="st">"p"</span>, <span class="st">"pre"</span>, <span class="st">"progress"</span>, <span class="st">"q"</span>, <span class="st">"ruby"</span>, <span class="st">"rp"</span>,<span class="st">"rt"</span>, <span class="st">"s"</span>, <span class="st">"samp"</span>,</span>
+<span id="cb30-11"><a></a>  <span class="st">"script"</span>, <span class="st">"section"</span>, <span class="st">"select"</span>, <span class="st">"small"</span>, <span class="st">"span"</span>, <span class="st">"strong"</span>,</span>
+<span id="cb30-12"><a></a>  <span class="st">"style"</span>, <span class="st">"sub"</span>, <span class="st">"summary"</span>, <span class="st">"sup"</span>, <span class="st">"table"</span>, <span class="st">"tbody"</span>, <span class="st">"td"</span>,</span>
+<span id="cb30-13"><a></a>  <span class="st">"textarea"</span>, <span class="st">"tfoot"</span>, <span class="st">"th"</span>, <span class="st">"thead"</span>, <span class="st">"time"</span>, <span class="st">"title"</span>, <span class="st">"tr"</span>,</span>
+<span id="cb30-14"><a></a>  <span class="st">"u"</span>, <span class="st">"ul"</span>, <span class="st">"var"</span>, <span class="st">"video"</span></span>
+<span id="cb30-15"><a></a>)</span>
+<span id="cb30-16"><a></a></span>
+<span id="cb30-17"><a></a>void_tags <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"area"</span>, <span class="st">"base"</span>, <span class="st">"br"</span>, <span class="st">"col"</span>, <span class="st">"command"</span>, <span class="st">"embed"</span>,</span>
+<span id="cb30-18"><a></a>  <span class="st">"hr"</span>, <span class="st">"img"</span>, <span class="st">"input"</span>, <span class="st">"keygen"</span>, <span class="st">"link"</span>, <span class="st">"meta"</span>, <span class="st">"param"</span>,</span>
+<span id="cb30-19"><a></a>  <span class="st">"source"</span>, <span class="st">"track"</span>, <span class="st">"wbr"</span></span>
+<span id="cb30-20"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</details>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>html_tags <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb31-2"><a></a>  tags <span class="sc">|&gt;</span>          <span class="co">#list of tag names from HTML</span></span>
+<span id="cb31-3"><a></a>    <span class="fu">set_names</span>() <span class="sc">|&gt;</span> <span class="co">#named variable to avoid reserved words!</span></span>
+<span id="cb31-4"><a></a>    <span class="fu">map</span>(tag),      <span class="co">#make them function calls</span></span>
+<span id="cb31-5"><a></a>  void_tags <span class="sc">|&gt;</span></span>
+<span id="cb31-6"><a></a>    <span class="fu">set_names</span>() <span class="sc">|&gt;</span></span>
+<span id="cb31-7"><a></a>    <span class="fu">map</span>(void_tag)</span>
+<span id="cb31-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<h3 id="example">Example</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>html_tags<span class="sc">$</span><span class="fu">ol</span>(</span>
+<span id="cb32-2"><a></a>  html_tags<span class="sc">$</span><span class="fu">li</span>(<span class="st">"What is the "</span>, </span>
+<span id="cb32-3"><a></a>               html_tags<span class="sc">$</span><span class="fu">b</span>(<span class="st">"derivative"</span>),</span>
+<span id="cb32-4"><a></a>               <span class="st">"of $f(x) = 1 + 2cos(3pi x + 4)$?"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; &lt;ol&gt;&lt;li&gt;What is the &lt;b&gt;derivative&lt;/b&gt;of $f(x) = 1 + 2cos(3pi x +
+#&gt; 4)$?&lt;/li&gt;&lt;/ol&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="bringing-the-html-together" class="slide level2">
+<h2>Bringing the HTML Together</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>with_html <span class="ot">&lt;-</span> <span class="cf">function</span>(code) {</span>
+<span id="cb34-2"><a></a>  <span class="fu">eval_tidy</span>(<span class="fu">enquo</span>(code), html_tags)</span>
+<span id="cb34-3"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<h3 id="main-example">Main Example</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">with_html</span>(</span>
+<span id="cb35-2"><a></a>  <span class="fu">body</span>(</span>
+<span id="cb35-3"><a></a>    <span class="fu">h1</span>(<span class="st">"Pop quiz!"</span>, <span class="at">id =</span> <span class="st">"pop_quiz"</span>),</span>
+<span id="cb35-4"><a></a>    <span class="fu">ol</span>(</span>
+<span id="cb35-5"><a></a>      <span class="fu">li</span>(<span class="st">"What is the "</span>, <span class="fu">b</span>(<span class="st">"derivative"</span>),  <span class="st">"of $f(x) = 1 + 2cos(3pi x + 4)$?"</span>),</span>
+<span id="cb35-6"><a></a>      <span class="fu">ol</span>(</span>
+<span id="cb35-7"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = 6pi*sin(3pi x + 4)$"</span>),</span>
+<span id="cb35-8"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = -6pi*sin(3pi x + 4)$"</span>),</span>
+<span id="cb35-9"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = 24pi*sin(3pi x + 4)$"</span>),</span>
+<span id="cb35-10"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = -24pi*sin(3pi x + 4)$"</span>)</span>
+<span id="cb35-11"><a></a>      )</span>
+<span id="cb35-12"><a></a>    ),</span>
+<span id="cb35-13"><a></a>    <span class="fu">img</span>(<span class="at">src =</span> <span class="st">"images/translating/calculus_cat.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span>
+<span id="cb35-14"><a></a>  )</span>
+<span id="cb35-15"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; &lt;body&gt;&lt;h1 id='pop_quiz'&gt;Pop quiz!&lt;/h1&gt;&lt;ol&gt;&lt;li&gt;What is the
+#&gt; &lt;b&gt;derivative&lt;/b&gt;of $f(x) = 1 + 2cos(3pi x + 4)$?&lt;/li&gt;&lt;ol&gt;&lt;li&gt;$f'(x) =
+#&gt; 6pi*sin(3pi x + 4)$&lt;/li&gt;&lt;li&gt;$f'(x) = -6pi*sin(3pi x +
+#&gt; 4)$&lt;/li&gt;&lt;li&gt;$f'(x) = 24pi*sin(3pi x + 4)$&lt;/li&gt;&lt;li&gt;$f'(x) =
+#&gt; -24pi*sin(3pi x + 4)$&lt;/li&gt;&lt;/ol&gt;&lt;/ol&gt;&lt;img
+#&gt; src='images/translating/calculus_cat.png' width='100' height='100'
+#&gt; /&gt;&lt;/body&gt;</code></pre>
+</div>
+</div>
+<h3 id="check-1">Check</h3>
+<h1 id="pop_quiz">Pop quiz!</h1><ol><li>What is the <b>derivative</b> of $f(x) = 1 + 2cos(3pi x + 4)$?</li><ol><li>$f'(x) = 6pi*sin(3pi x + 4)$</li><li>$f'(x) = -6pi*sin(3pi x + 4)$</li><li>$f'(x) = 24pi*sin(3pi x + 4)$</li><li>$f'(x) = -24pi*sin(3pi x + 4)$</li></ol></ol><img src="images/translating/calculus_cat.png" width="100" height="100">
+</section>
+<section id="latex" class="slide level2">
+<h2>LaTeX</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>latex <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">structure</span>(x, <span class="at">class =</span> <span class="st">"advr_latex"</span>)</span>
+<span id="cb37-2"><a></a>print.advr_latex <span class="ot">&lt;-</span> <span class="cf">function</span>(x) { <span class="fu">cat</span>(<span class="st">"&lt;LATEX&gt; "</span>, x, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>) }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<h3 id="to_math">to_math</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>to_math <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb38-2"><a></a>  expr <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(x)</span>
+<span id="cb38-3"><a></a>  <span class="fu">latex</span>(              <span class="co">#return LaTeX code</span></span>
+<span id="cb38-4"><a></a>    <span class="fu">eval_bare</span>(        <span class="co">#eval_bare to ensure use of latex environment </span></span>
+<span id="cb38-5"><a></a>      expr,           <span class="co">#expression (not quosure)</span></span>
+<span id="cb38-6"><a></a>      <span class="fu">latex_env</span>(expr) <span class="co">#need to define latex_env</span></span>
+<span id="cb38-7"><a></a>    ))</span>
+<span id="cb38-8"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="known-symbols" class="slide level2">
+<h2>Known Symbols</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a>greek_letters <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb39-2"><a></a>  <span class="st">"alpha"</span>, <span class="st">"beta"</span>, <span class="st">"chi"</span>, <span class="st">"delta"</span>, <span class="st">"Delta"</span>, <span class="st">"epsilon"</span>, <span class="st">"eta"</span>, </span>
+<span id="cb39-3"><a></a><span class="st">"gamma"</span>, <span class="st">"Gamma"</span>, <span class="st">"iota"</span>, <span class="st">"kappa"</span>, <span class="st">"lambda"</span>, <span class="st">"Lambda"</span>, <span class="st">"mu"</span>, </span>
+<span id="cb39-4"><a></a><span class="st">"nu"</span>, <span class="st">"omega"</span>, <span class="st">"Omega"</span>, <span class="st">"phi"</span>, <span class="st">"Phi"</span>, <span class="st">"pi"</span>, <span class="st">"Pi"</span>, <span class="st">"psi"</span>, <span class="st">"Psi"</span>, </span>
+<span id="cb39-5"><a></a><span class="st">"rho"</span>, <span class="st">"sigma"</span>, <span class="st">"Sigma"</span>, <span class="st">"tau"</span>, <span class="st">"theta"</span>, <span class="st">"Theta"</span>, <span class="st">"upsilon"</span>, </span>
+<span id="cb39-6"><a></a><span class="st">"Upsilon"</span>, <span class="st">"varepsilon"</span>, <span class="st">"varphi"</span>, <span class="st">"varrho"</span>, <span class="st">"vartheta"</span>, <span class="st">"xi"</span>, </span>
+<span id="cb39-7"><a></a><span class="st">"Xi"</span>, <span class="st">"zeta"</span></span>
+<span id="cb39-8"><a></a>)</span>
+<span id="cb39-9"><a></a></span>
+<span id="cb39-10"><a></a>greek_env <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">as_environment</span>(</span>
+<span id="cb39-11"><a></a>  rlang<span class="sc">::</span><span class="fu">set_names</span>(</span>
+<span id="cb39-12"><a></a>    <span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">"</span>, greek_letters), <span class="co">#latex values</span></span>
+<span id="cb39-13"><a></a>    greek_letters                <span class="co">#R names</span></span>
+<span id="cb39-14"><a></a>  )</span>
+<span id="cb39-15"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a><span class="fu">str</span>(<span class="fu">as.list</span>(greek_env))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; List of 38
+#&gt;  $ zeta      : chr "\\zeta"
+#&gt;  $ Xi        : chr "\\Xi"
+#&gt;  $ xi        : chr "\\xi"
+#&gt;  $ vartheta  : chr "\\vartheta"
+#&gt;  $ varrho    : chr "\\varrho"
+#&gt;  $ varphi    : chr "\\varphi"
+#&gt;  $ varepsilon: chr "\\varepsilon"
+#&gt;  $ Upsilon   : chr "\\Upsilon"
+#&gt;  $ upsilon   : chr "\\upsilon"
+#&gt;  $ Theta     : chr "\\Theta"
+#&gt;  $ theta     : chr "\\theta"
+#&gt;  $ tau       : chr "\\tau"
+#&gt;  $ Sigma     : chr "\\Sigma"
+#&gt;  $ sigma     : chr "\\sigma"
+#&gt;  $ rho       : chr "\\rho"
+#&gt;  $ Psi       : chr "\\Psi"
+#&gt;  $ psi       : chr "\\psi"
+#&gt;  $ Pi        : chr "\\Pi"
+#&gt;  $ pi        : chr "\\pi"
+#&gt;  $ Phi       : chr "\\Phi"
+#&gt;  $ phi       : chr "\\phi"
+#&gt;  $ Omega     : chr "\\Omega"
+#&gt;  $ omega     : chr "\\omega"
+#&gt;  $ nu        : chr "\\nu"
+#&gt;  $ mu        : chr "\\mu"
+#&gt;  $ Lambda    : chr "\\Lambda"
+#&gt;  $ lambda    : chr "\\lambda"
+#&gt;  $ kappa     : chr "\\kappa"
+#&gt;  $ iota      : chr "\\iota"
+#&gt;  $ Gamma     : chr "\\Gamma"
+#&gt;  $ gamma     : chr "\\gamma"
+#&gt;  $ eta       : chr "\\eta"
+#&gt;  $ epsilon   : chr "\\epsilon"
+#&gt;  $ Delta     : chr "\\Delta"
+#&gt;  $ delta     : chr "\\delta"
+#&gt;  $ chi       : chr "\\chi"
+#&gt;  $ beta      : chr "\\beta"
+#&gt;  $ alpha     : chr "\\alpha"</code></pre>
+</div>
+</div>
+</section>
+<section id="known-functions" class="slide level2">
+<h2>Known Functions</h2>
+<h3 id="unary-operations">Unary Operations</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>unary_op <span class="ot">&lt;-</span> <span class="cf">function</span>(left, right) {</span>
+<span id="cb42-2"><a></a>  <span class="fu">new_function</span>(</span>
+<span id="cb42-3"><a></a>    <span class="fu">exprs</span>(<span class="at">e1 =</span> ),</span>
+<span id="cb42-4"><a></a>    <span class="fu">expr</span>(</span>
+<span id="cb42-5"><a></a>      <span class="fu">paste0</span>(<span class="sc">!!</span>left, e1, <span class="sc">!!</span>right)</span>
+<span id="cb42-6"><a></a>    ),</span>
+<span id="cb42-7"><a></a>    <span class="fu">caller_env</span>()</span>
+<span id="cb42-8"><a></a>  )</span>
+<span id="cb42-9"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="co">#example</span></span>
+<span id="cb43-2"><a></a><span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sqrt{"</span>, <span class="st">"}"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; function (e1) 
+#&gt; paste0("\\sqrt{", e1, "}")</code></pre>
+</div>
+</div>
+<h3 id="binary-operations">Binary Operations</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>binary_op <span class="ot">&lt;-</span> <span class="cf">function</span>(sep) {</span>
+<span id="cb45-2"><a></a>  <span class="fu">new_function</span>(</span>
+<span id="cb45-3"><a></a>    <span class="fu">exprs</span>(<span class="at">e1 =</span> , <span class="at">e2 =</span> ),</span>
+<span id="cb45-4"><a></a>    <span class="fu">expr</span>(</span>
+<span id="cb45-5"><a></a>      <span class="fu">paste0</span>(e1, <span class="sc">!!</span>sep, e2)</span>
+<span id="cb45-6"><a></a>    ),</span>
+<span id="cb45-7"><a></a>    <span class="fu">caller_env</span>()</span>
+<span id="cb45-8"><a></a>  )</span>
+<span id="cb45-9"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="co">#example</span></span>
+<span id="cb46-2"><a></a><span class="fu">binary_op</span>(<span class="st">"+"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; function (e1, e2) 
+#&gt; paste0(e1, "+", e2)</code></pre>
+</div>
+</div>
+<details>
+<summary>
+Even more LaTeX syntax
+</summary>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>known_func_env <span class="ot">&lt;-</span> <span class="fu">child_env</span>(</span>
+<span id="cb48-2"><a></a>  <span class="at">.parent =</span> <span class="fu">empty_env</span>(),</span>
+<span id="cb48-3"><a></a>  </span>
+<span id="cb48-4"><a></a>  <span class="co"># Binary operators</span></span>
+<span id="cb48-5"><a></a>  <span class="st">`</span><span class="at">+</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" + "</span>),</span>
+<span id="cb48-6"><a></a>  <span class="st">`</span><span class="at">-</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" - "</span>),</span>
+<span id="cb48-7"><a></a>  <span class="st">`</span><span class="at">*</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" * "</span>),</span>
+<span id="cb48-8"><a></a>  <span class="st">`</span><span class="at">/</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" / "</span>),</span>
+<span id="cb48-9"><a></a>  <span class="st">`</span><span class="at">^</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">"^"</span>),</span>
+<span id="cb48-10"><a></a>  <span class="st">`</span><span class="at">[</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">"_"</span>),</span>
+<span id="cb48-11"><a></a></span>
+<span id="cb48-12"><a></a>  <span class="co"># Grouping</span></span>
+<span id="cb48-13"><a></a>  <span class="st">`</span><span class="at">{</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left{ "</span>, <span class="st">" </span><span class="sc">\\</span><span class="st">right}"</span>),</span>
+<span id="cb48-14"><a></a>  <span class="st">`</span><span class="at">(</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left( "</span>, <span class="st">" </span><span class="sc">\\</span><span class="st">right)"</span>),</span>
+<span id="cb48-15"><a></a>  <span class="at">paste =</span> paste,</span>
+<span id="cb48-16"><a></a></span>
+<span id="cb48-17"><a></a>  <span class="co"># Other math functions</span></span>
+<span id="cb48-18"><a></a>  <span class="at">sqrt =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sqrt{"</span>, <span class="st">"}"</span>),</span>
+<span id="cb48-19"><a></a>  <span class="at">sin =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sin("</span>, <span class="st">")"</span>),</span>
+<span id="cb48-20"><a></a>  <span class="at">cos =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">cos("</span>, <span class="st">")"</span>),</span>
+<span id="cb48-21"><a></a>  <span class="at">tan =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">tan("</span>, <span class="st">")"</span>),</span>
+<span id="cb48-22"><a></a>  <span class="at">log =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">log("</span>, <span class="st">")"</span>),</span>
+<span id="cb48-23"><a></a>  <span class="at">abs =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left| "</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">right| "</span>),</span>
+<span id="cb48-24"><a></a>  <span class="at">frac =</span> <span class="cf">function</span>(a, b) {</span>
+<span id="cb48-25"><a></a>    <span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">frac{"</span>, a, <span class="st">"}{"</span>, b, <span class="st">"}"</span>)</span>
+<span id="cb48-26"><a></a>  },</span>
+<span id="cb48-27"><a></a></span>
+<span id="cb48-28"><a></a>  <span class="co"># Labelling</span></span>
+<span id="cb48-29"><a></a>  <span class="at">hat =</span>   <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">hat{"</span>, <span class="st">"}"</span>),</span>
+<span id="cb48-30"><a></a>  <span class="at">tilde =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">tilde{"</span>, <span class="st">"}"</span>)</span>
+<span id="cb48-31"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</details>
+</section>
+<section id="unknown-symbols" class="slide level2">
+<h2>Unknown Symbols</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a>names_grabber <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb49-2"><a></a>  <span class="fu">switch_expr</span>(x,</span>
+<span id="cb49-3"><a></a>              <span class="at">constant =</span> <span class="fu">character</span>(),</span>
+<span id="cb49-4"><a></a>              <span class="at">symbol =</span>   <span class="fu">as.character</span>(x),</span>
+<span id="cb49-5"><a></a>              <span class="at">call =</span>     <span class="fu">flat_map_chr</span>(<span class="fu">as.list</span>(x[<span class="sc">-</span><span class="dv">1</span>]), names_grabber)</span>
+<span id="cb49-6"><a></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb49-7"><a></a>    <span class="fu">unique</span>()</span>
+<span id="cb49-8"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[x + y + f(a, b, c, 10)\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="fu">names_grabber</span>(<span class="fu">expr</span>(x <span class="sc">+</span> y <span class="sc">+</span> <span class="fu">f</span>(a, b, c, <span class="dv">10</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "x" "y" "a" "b" "c"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="fu">expr</span>(x <span class="sc">+</span> y <span class="sc">+</span> <span class="fu">f</span>(a, b, c, <span class="dv">10</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─expr 
+#&gt; └─█─`+` 
+#&gt;   ├─█─`+` 
+#&gt;   │ ├─x 
+#&gt;   │ └─y 
+#&gt;   └─█─f 
+#&gt;     ├─a 
+#&gt;     ├─b 
+#&gt;     ├─c 
+#&gt;     └─10</code></pre>
+</div>
+</div>
+</section>
+<section id="unknown-functions" class="slide level2">
+<h2>Unknown Functions</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a>calls_grabber <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb54-2"><a></a>  <span class="fu">switch_expr</span>(x,</span>
+<span id="cb54-3"><a></a>    <span class="at">constant =</span> ,</span>
+<span id="cb54-4"><a></a>    <span class="at">symbol =</span>   <span class="fu">character</span>(),</span>
+<span id="cb54-5"><a></a>    <span class="at">call =</span> {</span>
+<span id="cb54-6"><a></a>      fname <span class="ot">&lt;-</span> <span class="fu">as.character</span>(x[[<span class="dv">1</span>]])</span>
+<span id="cb54-7"><a></a>      children <span class="ot">&lt;-</span> <span class="fu">flat_map_chr</span>(<span class="fu">as.list</span>(x[<span class="sc">-</span><span class="dv">1</span>]), calls_grabber)</span>
+<span id="cb54-8"><a></a>      <span class="fu">c</span>(fname, children)</span>
+<span id="cb54-9"><a></a>    }</span>
+<span id="cb54-10"><a></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb54-11"><a></a>    <span class="fu">unique</span>()</span>
+<span id="cb54-12"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[f(g + b, c, d(a))\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a><span class="fu">names_grabber</span>(<span class="fu">expr</span>(<span class="fu">f</span>(g <span class="sc">+</span> b, c, <span class="fu">d</span>(a))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "g" "b" "c" "a"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a></a><span class="fu">calls_grabber</span>(<span class="fu">expr</span>(<span class="fu">f</span>(g <span class="sc">+</span> b, c, <span class="fu">d</span>(a))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "f" "+" "d"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="fu">expr</span>(<span class="fu">f</span>(g <span class="sc">+</span> b, c, <span class="fu">d</span>(a))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─expr 
+#&gt; └─█─f 
+#&gt;   ├─█─`+` 
+#&gt;   │ ├─g 
+#&gt;   │ └─b 
+#&gt;   ├─c 
+#&gt;   └─█─d 
+#&gt;     └─a</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a>seek_closure <span class="ot">&lt;-</span> <span class="cf">function</span>(op) {</span>
+<span id="cb61-2"><a></a>  <span class="co"># change math font for function names</span></span>
+<span id="cb61-3"><a></a>  <span class="co"># apply ending parenthesis</span></span>
+<span id="cb61-4"><a></a>  <span class="fu">new_function</span>(</span>
+<span id="cb61-5"><a></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ),</span>
+<span id="cb61-6"><a></a>    <span class="fu">expr</span>({</span>
+<span id="cb61-7"><a></a>      contents <span class="ot">&lt;-</span> <span class="fu">paste</span>(..., <span class="at">collapse =</span> <span class="st">", "</span>)</span>
+<span id="cb61-8"><a></a>      <span class="fu">paste0</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">mathrm{"</span>, op, <span class="st">"}("</span>), contents, <span class="st">")"</span>)</span>
+<span id="cb61-9"><a></a>    })</span>
+<span id="cb61-10"><a></a>  )</span>
+<span id="cb61-11"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="bringing-the-latex-together" class="slide level2">
+<h2>Bringing the LaTeX Together</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb62-2"><a></a>  </span>
+<span id="cb62-3"><a></a>  <span class="co"># Unknown Functions</span></span>
+<span id="cb62-4"><a></a>  calls <span class="ot">&lt;-</span> <span class="fu">calls_grabber</span>(expr)</span>
+<span id="cb62-5"><a></a>  call_list <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="fu">set_names</span>(calls), seek_closure)</span>
+<span id="cb62-6"><a></a>  call_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(call_list)</span>
+<span id="cb62-7"><a></a></span>
+<span id="cb62-8"><a></a>  <span class="co"># Known Functions</span></span>
+<span id="cb62-9"><a></a>  known_func_env <span class="ot">&lt;-</span> <span class="fu">env_clone</span>(known_func_env, call_env)</span>
+<span id="cb62-10"><a></a></span>
+<span id="cb62-11"><a></a>  <span class="co"># Unknown Symbols</span></span>
+<span id="cb62-12"><a></a>  names <span class="ot">&lt;-</span> <span class="fu">names_grabber</span>(expr)</span>
+<span id="cb62-13"><a></a>  symbol_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(<span class="fu">set_names</span>(names), <span class="at">parent =</span> known_func_env)</span>
+<span id="cb62-14"><a></a></span>
+<span id="cb62-15"><a></a>  <span class="co"># Known symbols</span></span>
+<span id="cb62-16"><a></a>  greek_env <span class="ot">&lt;-</span> <span class="fu">env_clone</span>(greek_env, <span class="at">parent =</span> symbol_env)</span>
+<span id="cb62-17"><a></a>  greek_env</span>
+<span id="cb62-18"><a></a>}</span>
+<span id="cb62-19"><a></a></span>
+<span id="cb62-20"><a></a>to_math <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb62-21"><a></a>  expr <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(x)</span>
+<span id="cb62-22"><a></a>  <span class="fu">latex</span>(              <span class="co">#return LaTeX code</span></span>
+<span id="cb62-23"><a></a>    <span class="fu">eval_bare</span>(        <span class="co">#eval_bare to ensure use of latex environment </span></span>
+<span id="cb62-24"><a></a>      expr,           <span class="co">#expression (not quosure)</span></span>
+<span id="cb62-25"><a></a>      <span class="fu">latex_env</span>(expr) <span class="co">#need to define latex_env</span></span>
+<span id="cb62-26"><a></a>    ))</span>
+<span id="cb62-27"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<h3 id="check-2">Check</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a><span class="fu">to_math</span>(<span class="fu">sin</span>(pi) <span class="sc">+</span> <span class="fu">f</span>(a))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;LATEX&gt; \sin(\pi) + \mathrm{f}(a)</code></pre>
+</div>
+</div>
+</section>
+<section id="finishing-the-example" class="slide level2">
+<h2>Finishing the Example</h2>
+<p>(TO DO)</p>
+</section>
+<section id="meeting-videos" class="slide level2">
+<h2>Meeting Videos</h2>
+<h3 id="cohort-1">Cohort 1</h3>
+<iframe src="https://www.youtube.com/embed/fixyitpXrwY" width="100%" height="400px" data-external="1">
+</iframe>
+<iframe src="https://www.youtube.com/embed/h3RNPyhIjas" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-2">Cohort 2</h3>
+<iframe src="https://www.youtube.com/embed/pj0hTW1CtbI" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-3">Cohort 3</h3>
+<p>(no video)</p>
+<h3 id="cohort-4">Cohort 4</h3>
+<iframe src="https://www.youtube.com/embed/0TclsXa085Y" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-5">Cohort 5</h3>
+<iframe src="https://www.youtube.com/embed/v_dkrIEdmKE" width="100%" height="400px" data-external="1">
+</iframe>
+<h3 id="cohort-6">Cohort 6</h3>
+<iframe src="https://www.youtube.com/embed/_-uwFjO5CyM" width="100%" height="400px" data-external="1">
+</iframe>
+<details>
+<summary>
+Meeting chat log
+</summary>
+<pre><code>00:30:16    Arthur Shaw:    https://www.w3schools.com/html/html_entities.asp
+00:32:29    Arthur Shaw:    Beta symbol in HTML: &amp;Beta;
+00:56:55    Arthur Shaw:    https://dbplyr.tidyverse.org/articles/translation-function.html
+00:57:48    Arthur Shaw:    https://dtplyr.tidyverse.org/index.html
+00:58:43    Arthur Shaw:    https://dtplyr.tidyverse.org/articles/translation.html</code></pre>
+</details>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p><a href="../" target="advr_club-index">DSLC.io/advr</a> | <a href="https://DSLC.io" target="_blank">DSLC.io</a></p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/r4ds\.github\.io\/bookclub-advr\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+                // target, if specified
+                link.setAttribute("target", "_blank");
+                if (link.getAttribute("rel") === null) {
+                  link.setAttribute("rel", "noopener");
+                }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
