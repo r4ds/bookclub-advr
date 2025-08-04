@@ -1,0 +1,15 @@
+{
+  "hash": "6b4dc131efa5fdc3e6e3b5eeb29cefa8",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\nengine: knitr\ntitle: Club meetings\n---\n\n# Welcome\n\n- Welcome to the Advanced R book club! \n- book: [adv-r.hadley.nz](https://adv-r.hadley.nz/)\n- These slides are available at [dslc.io/advr](https://dslc.io/advr).\n- We follow the [Data Science Learning Community Code of Conduct](https://dslc.io/code_of_conduct.html).\n\n::: notes\n- You can add notes on each slide with blocks like this!\n- Load a deck in the browser and type \"s\" to see these notes.\n:::\n\n## Book club meetings\n\n-   Volunteer leads discussion of a chapter\n    -   **This is the best way to learn the material.**\n-   Presentations: \n    -   Review of material\n    -   Questions you have\n    -   Maybe live demo\n-   More info about editing: [this github repo](https://github.com/r4ds/bookclub-advr)\n-   Ideally convert existing Rmd to qmd as we go\n-   Recorded, available on the [Data Science Learning Community YouTube Channel (DSLC.video)](http://dslc.video)\n\n## Pace\n\n-   **Goal:** 1 chapter/week\n-   Ok to split overwhelming chapters\n-   Ok to combine short chapters\n-   Meet ***every*** week except holidays, etc\n    -   We will meet even if scheduled presenter unavailable\n    -   Push to finish before Daylight Savings Madness March 8\n\n## Learning objectives (LOs)\n\n-   Students who study with LOs in mind ***retain more***\n-   **Tips:**\n    -   Think \"After today's session, you will be able to {LO}\"\n    -   *Very* roughly **1 per heading**\n\n## Group introductions\n\n- If you feel comfortable sharing:\n  - Who are you?\n  - Where you calling in from? (If you're not comfortable sharing, skip)\n  - How long have you been using R?\n  - What was your introduction to R?\n  - What are you most looking forward to during the club?\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

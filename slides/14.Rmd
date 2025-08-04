@@ -1,0 +1,555 @@
+---
+engine: knitr
+title: R6
+---
+
+## Learning objectives:
+
+```{r include=FALSE}
+library(ids)
+```
+
+- Discuss how to construct a R6 class.
+- Overview the different mechanisms of a R6 class (e.g. initialization, print, public, private, and active fields and methods).
+- Observe various examples using R6's mechanisms to create R6 classes, objects, fields, and methods.
+- Observe the consequences of R6's reference semantics.
+- Review the book's arguments on the use of R6 over reference classes.
+
+## A review of OOP
+
+![](images/14-four-pillars.png)
+
+* **A PIE**
+
+## Introducing R6 
+
+![](images/14-r6-logo.png)
+
+* R6 classes are not built into base.
+  * It is a separate [package](https://r6.r-lib.org/).
+  * You have to install and attach to use.
+  * If R6 objects are used in a package, it needs to be specified as a dependency in the `DESCRIPTION` file.
+
+```{r eval=FALSE}
+install.packages("R6")
+```
+
+```{r}
+library(R6)
+```
+
+* R6 classes have two special properties:
+  1. Uses an encapsulated OOP paradigm.
+     * Methods belong to objects, not generics.
+     * They follow the form `object$method()` for calling fields and methods.
+  2. R6 objects are mutable.
+     * Modified in place.
+     * They follow reference semantics.
+* R6 is similar to OOP in other languages.
+* However, its use can lead ton non-idiomatic R code.
+  * Tradeoffs - follows an OOP paradigm but sacrafice what users are use to. 
+  * [Microsoft365R](https://github.com/Azure/Microsoft365R).
+
+## Constructing an R6 class, the basics
+
+* Really simple to do, just use the `R6::R6Class()` function.
+
+```{r}
+Accumulator <- R6Class("Accumulator", list(
+  sum = 0,
+  add = function(x = 1) {
+    self$sum <- self$sum + x
+    invisible(self)
+  }
+))
+```
+
+* Two important arguments:
+  1. `classname` - A string used to name the class (not needed but suggested)
+  2. `public` - A list of methods (functions) and fields (anything else)
+* Suggested style conventions to follow:
+  * Class name should follow `UpperCamelCase`.
+  * Methods and fields should use `snake_case`.
+  * Always assign the result of a `R6Class()` into a variable with the same name as the class.
+* You can use `self$` to access methods and fields of the current object.
+
+## Constructing an R6 object
+
+* Just use `$new()`
+
+```{r}
+x <- Accumulator$new()
+```
+
+```{r}
+x$add(4)
+x$sum
+```
+
+## R6 objects and method chaining
+
+* All side-effect R6 methods should return `self` invisibly.
+* This allows for method chaining.
+
+```{r eval=FALSE}
+x$add(10)$add(10)$sum
+# [1] 24
+```
+
+* To improve readability:
+
+```{r eval=FALSE}
+# Method chaining
+x$
+  add(10)$
+  add(10)$
+  sum
+# [1] 44
+```
+
+## R6 useful methods
+
+* `$print()` - Modifies the default printing method.
+  * `$print()` should always return `invisible(self)`.
+* `$initialize()` - Overides the default behaviour of `$new()`.
+  * Also provides a space to validate inputs.
+
+## Constructing a bank account class
+
+```{r}
+BankAccount <- R6Class("BankAccount", list(
+  owner = NULL,
+  type = NULL,
+  balance = 0,
+  initialize = function(owner, type) {
+    stopifnot(is.character(owner), length(owner) == 1)
+    stopifnot(is.character(type), length(type) == 1)
+  },
+  deposit = function(amount) {
+    self$balance <- self$balance + amount
+    invisible(self)
+  },
+  withdraw = function(amount) {
+    self$balance <- self$balance - amount
+    invisible(self)
+  }
+))
+```
+
+## Simple transactions
+
+```{r}
+collinsavings <- BankAccount$new("Collin", type = "Savings")
+collinsavings$deposit(10)
+collinsavings
+```
+
+```{r}
+collinsavings$withdraw(10)
+collinsavings
+```
+
+## Modifying the `$print()` method 
+
+```{r}
+BankAccount <- R6Class("BankAccount", list(
+  owner = NULL,
+  type = NULL,
+  balance = 0,
+  initialize = function(owner, type) {
+    stopifnot(is.character(owner), length(owner) == 1)
+    stopifnot(is.character(type), length(type) == 1)
+
+    self$owner <- owner
+    self$type <- type
+  },
+  deposit = function(amount) {
+    self$balance <- self$balance + amount
+    invisible(self)
+  },
+  withdraw = function(amount) {
+    self$balance <- self$balance - amount
+    invisible(self)
+  },
+  print = function(...) {
+    cat("Account owner: ", self$owner, "\n", sep = "")
+    cat("Account type: ", self$type, "\n", sep = "")
+    cat("  Balance: ", self$balance, "\n", sep = "")
+    invisible(self)
+  }
+))
+```
+
+* Important point: Methods are bound to individual objects.
+  * Reference semantics vs. copy-on-modify.
+
+```{r eval=FALSE}
+collinsavings
+
+hadleychecking <- BankAccount$new("Hadley", type = "Checking")
+
+hadleychecking
+```
+
+## How does this work? 
+
+* [Winston Chang's 2017 useR talk](https://www.youtube.com/watch?v=3GEFd8rZQgY&list=WL&index=11)
+
+* [R6 objects are just environments with a particular structure.](https://youtu.be/3GEFd8rZQgY?t=759)
+ 
+![](images/14-r6_environment.png)
+
+## Adding methods after class creation
+
+* Use `$set()` to add methods after creation.
+* Keep in mind methods added with `$set()` are only available with new objects.
+
+```{r eval=FALSE}
+Accumulator <- R6Class("Accumulator")
+Accumlator$set("public", "sum", 0)
+Accumulator$set("public", "add", function(x = 1) {
+  self$sum <- self$sum + x
+  invisible(self)
+})
+```
+
+## Inheritance
+
+* To inherit behaviour from an existing class, provide the class object via the `inherit` argument.
+* This example also provides a good example on how to [debug]() an R6 class.
+
+```{r eval=FALSE}
+BankAccountOverDraft <- R6Class("BankAccountOverDraft",
+  inherit = BankAccount,
+  public = list(
+    withdraw = function(amount) {
+      if ((self$balance - amount) < 0) {
+        stop("Overdraft")
+      }
+      # self$balance() <- self$withdraw()
+      self$balance <- self$balance - amount
+      invisible(self)
+    }
+  )
+)
+```
+
+### Future instances debugging
+
+```{r eval=FALSE}
+BankAccountOverDraft$debug("withdraw")
+x <- BankAccountOverDraft$new("x", type = "Savings")
+x$withdraw(20)
+
+# Turn debugging off
+BankAccountOverDraft$undebug("withdraw")
+```
+
+### Individual object debugging
+
+* Use the `debug()` function.
+
+```{r eval=FALSE}
+x <- BankAccountOverDraft$new("x", type = "Savings")
+# Turn on debugging
+debug(x$withdraw)
+x$withdraw(10)
+
+# Turn off debugging
+undebug(x$withdraw)
+x$withdraw(5)
+```
+
+### Test out our debugged class
+
+```{r eval=FALSE}
+collinsavings <- BankAccountOverDraft$new("Collin", type = "Savings")
+collinsavings
+collinsavings$withdraw(10)
+collinsavings
+collinsavings$deposit(5)
+collinsavings
+collinsavings$withdraw(5)
+```
+
+## Introspection
+
+* Every R6 object has an S3 class that reflects its hierarchy of R6 classes.
+* Use the `class()` function to determine class (and all classes it inherits from).
+
+```{r eval=FALSE}
+class(collinsavings)
+```
+
+* You can also list all methods and fields of an R6 object with `names()`.
+
+```{r eval=FALSE}
+names(collinsavings)
+```
+
+## Controlling access
+
+* R6 provides two other arguments:
+  * `private` - create fields and methods only available from within the class.
+  * `active` - allows you to use accessor functions to define dynamic or active fields.
+
+## Privacy
+
+* Private fields and methods - elements that can only be accessed from within the class, not from the outside.
+* We need to know two things to use private elements:
+  1. `private`'s interface is just like `public`'s interface.
+     * List of methods (functions) and fields (everything else).
+  2. You use `private$` instead of `self$`
+     * You cannot access private fields or methods outside of the class.
+* Why might you want to keep your methods and fields private?
+  * You'll want to be clear what is ok for others to access, especially if you have a complex system of classes.
+  * It's easier to refactor private fields and methods, as you know others are not relying on it.
+
+## Active fields
+
+* Active fields allow you to define components that look like fields from the outside, but are defined with functions, like methods.
+* Implemented using active bindings.
+* Each active binding is a function that takes a single argument `value`.
+* Great when used in conjunction with private fields.
+  * This allows for additional checks.
+  * For example, we can use them to make a read-only field and to validate inputs.
+
+## Adding a read-only bank account number
+
+```{r eval=FALSE}
+BankAccount <- R6Class("BankAccount", public = list(
+  owner = NULL,
+  type = NULL,
+  balance = 0,
+  initialize = function(owner, type, acct_num = NULL) {
+    private$acct_num <- acct_num
+    self$owner <- owner
+    self$type <- type
+  },
+  deposit = function(amount) {
+    self$balance <- self$balance + amount
+    invisible(self)
+  },
+  withdraw = function(amount) {
+    self$balance <- self$balance - amount
+    invisible(self)
+  },
+  print = function(...) {
+    cat("Account owner: ", self$owner, "\n", sep = "")
+    cat("Account type: ", self$type, "\n", sep = "")
+    cat("Account #: ", private$acct_num, "\n", sep = "")
+    cat("  Balance: ", self$balance, "\n", sep = "")
+    invisible(self)
+  }
+  ),
+  private = list(
+    acct_num = NULL
+  ),
+  active = list(
+    create_acct_num = function(value) {
+      if (is.null(private$acct_num)) {
+        private$acct_num <- ids::uuid()
+      } else {
+        stop("`$acct_num` already assigned")
+      }
+    }
+  )
+)
+```
+
+```{r eval=FALSE}
+collinsavings <- BankAccount$new("Collin", type = "Savings")
+collinsavings$create_acct_num
+# Stops because account number is assigned
+collinsavings$create_acct_num()
+collinsavings$print()
+```
+
+## How does an active field work?
+
+* Not sold on this, as I don't know if `active` gets its own environment. 
+  * Any ideas?
+
+![](images/14-r6_active_field.png)
+
+## Reference semantics
+
+* Big difference to note about R6 objects in relation to other objects:
+  * R6 objects have reference semantics.
+* The primary consequence of reference semantics is that objects are not copied when modified.
+* If you want to copy an R6 object, you need to use `$clone`.
+* There are some other less obvious consequences:
+  * It's harder to reason about code that uses R6 objects, as you need more context.
+  * Think about when an R6 object is deleted, you can use `$finalize()` to clean up after yourself.
+  * If one of the fields is an R6 object, you must create it inside `$initialize()`, not `R6Class()`
+
+## R6 makes it harder to reason about code
+
+* Reference semantics makes code harder to reason about.
+
+```{r eval=FALSE}
+x <- list(a = 1)
+y <- list(b = 2)
+
+# Here we know the final line only modifies z
+z <- f(x, y)
+
+# vs.
+
+x <- List$new(a = 1)
+y <- List$new(b = 2)
+
+# If x or y is a method, we don't know if it modifies
+# something other than z. Is this a limitation of
+# abstraction?
+z <- f(x, y)
+```
+
+* I understand the basics, but not necessarily the tradeoffs.
+  * Anyone care to fill me in?
+  * Is this a limitation of abstraction?
+
+## Better sense of what's going on by looking at a finalizer
+
+* Since R6 objects are not copied-on-modified, so they are only deleted once.
+* We can use this characteristic to complement our `$initialize()` with a `$finalize()` method.
+  * i.e., to clean up after we delete an R6 object.
+  * This could be a way to close a database connection.
+
+```{r eval=FALSE}
+TemporaryFile <- R6Class("TemporaryFile", list(
+  path = NULL,
+  initialize = function() {
+    self$path <- tempfile()
+  },
+  finalize = function() {
+    message("Cleaning up ", self$path)
+    unlink(self$path)
+  }
+))
+```
+
+```{r eval=FALSE}
+tf <- TemporaryFile$new()
+# The finalizer will clean up, once the R6 object is deleted.
+rm(tf)
+```
+
+## Consequences of R6 fields
+
+* If you use an R6 class as the default value of a field, it will be shared across all instances of the object.
+
+```{r eval=FALSE}
+TemporaryDatabase <- R6Class("TemporaryDatabase", list(
+  con = NULL,
+  file = TemporaryFile$new(),
+  initialize = function() {
+    self$con <- DBI::dbConnect(RSQLite::SQLite(), path = file$path)
+  },
+  finalize = function() {
+    DBI::dbDisconnect(self$con)
+  }
+))
+
+db_a <- TemporaryDatabase$new()
+db_b <- TemporaryDatabase$new()
+
+db_a$file$path == db_b$file$path
+#> [1] TRUE
+```
+
+* To fix this, we need to move the class method call to `$intialize()`
+
+```{r eval=FALSE}
+TemporaryDatabase <- R6Class("TemporaryDatabase", list(
+  con = NULL,
+  file = NULL,
+  initialize = function() {
+    self$file <- TemporaryFile$new()
+    self$con <- DBI::dbConnect(RSQLite::SQLite(), path = file$path)
+  },
+  finalize = function() {
+    DBI::dbDisconnect(self$con)
+  }
+))
+
+db_a <- TemporaryDatabase$new()
+db_b <- TemporaryDatabase$new()
+
+db_a$file$path == db_b$file$path
+#> [1] FALSE
+```
+
+## Why use R6?
+
+* Book mentions R6 is similar to the built-in reference classes.
+* Then why use R6?
+* R6 is simpler. 
+  * RC requires you to understand S4.
+* [Comprehensive documentation](https://r6.r-lib.org/articles/Introduction.html).
+* Simpler mechanisms for cross-package subclassing, which just works.
+* R6 separates public and private fields in separate environments, RC stacks everything in the same environment. 
+* [R6 is faster](https://r6.r-lib.org/articles/Performance.html).
+* RC is tied to R, so any bug fixes need a newer version of R.
+  * This is especially important if you're writing packages that need to work with multiple R versions.
+* R6 and RC are similar, so if you need RC, it will only require a small amount of additional effort to learn RC.
+
+## Meeting Videos
+
+### Cohort 1
+
+`r knitr::include_url("https://www.youtube.com/embed/hPjaOdprgow")`
+
+### Cohort 2
+
+`r knitr::include_url("https://www.youtube.com/embed/LVkDJ28XJUE")`
+
+### Cohort 3
+
+`r knitr::include_url("https://www.youtube.com/embed/rCjQTbQ22qc")`
+
+`r knitr::include_url("https://www.youtube.com/embed/ii6xhOzT_HQ")`
+
+### Cohort 4
+
+`r knitr::include_url("https://www.youtube.com/embed/i_z6pHavhX0")`
+
+### Cohort 5
+
+`r knitr::include_url("https://www.youtube.com/embed/NXmlqK2LxWw")`
+
+### Cohort 6
+
+`r knitr::include_url("https://www.youtube.com/embed/EuTubeJ1VUw")`
+
+<details>
+<summary> Meeting chat log </summary>
+
+```
+00:11:34	Trevin:	https://engineering-shiny.org/common-app-caveats.html?q=R6#using-r6-as-data-storage
+00:39:36	Federica Gazzelloni:	new R7: https://rconsortium.github.io/OOP-WG/
+00:40:04	Federica Gazzelloni:	R7 designed to be a successor to S3 and S4
+00:40:40	Federica Gazzelloni:	R6: https://r6.r-lib.org/articles/Introduction.html
+00:52:44	Trevin:	https://advanced-r-solutions.rbind.io/r6.html#controlling-access
+01:00:34	Federica Gazzelloni:	interesting: https://r-craft.org/r-news/object-oriented-programming-oop-in-r-with-r6-the-complete-guide/
+01:01:58	Trevin:	https://hadley.shinyapps.io/cran-downloads/
+01:02:33	Oluwafemi Oyedele:	Thank you !!!
+```
+</details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/Q4FA0BB_PeY")`
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:06:57	Ron Legere:	https://arxiv.org/abs/2303.12712
+00:07:07	Ron Legere:	^^ shows some of the power and limitations
+00:39:41	collinberke:	https://www.youtube.com/watch?v=3GEFd8rZQgY&list=WL&index=11
+00:49:20	iPhone:	Sorry fellas need to jump early. See you next week!
+01:05:21	collinberke:	https://github.com/r4ds/bookclub-advr
+01:09:30	Ron Legere:	makeActiveBinding
+```
+</details>

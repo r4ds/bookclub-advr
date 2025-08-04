@@ -1,0 +1,420 @@
+---
+engine: knitr
+title: S3
+---
+
+# Introduction
+
+## Basics
+
+- Has class
+- Uses a generic function to decide on method
+  - method = implementation for a specific class
+  - dispatch = process of searching for right method
+
+## Classes
+
+**Theory:**
+
+What is class?
+
+  - No formal definition in S3
+  - Simply set class attribute
+
+How to set class?
+
+  - At time of object creation
+  - After object creation
+  
+```{r}
+# at time of object creation
+x <- structure(list(), class = "my_class")
+
+# after object creation
+x <- list()
+class(x) <- "my_class"
+```
+
+Some advice on style:
+
+  - Rules: Can be any string
+  - Advice: Consider using/including package name to avoid collision with name of another class (e.g., `blob`, which defines a single class; haven has `labelled` and `haven_labelled`)
+  - Convention: letters and `_`; avoid `.` since it might be confused as separator between generic and class name
+
+**Practice:**
+
+How to compose a class in practice?
+
+- **Constructor**, which helps the developer create new object of target class. Provide always.
+- **Validator**, which checks that values in constructor are valid. May not be necessary for simple classes.
+- **Helper**, which helps users create new objects of target class. May be relevant only for user-facing classes.
+
+### Constructors
+
+Help developers construct an object of the target class:
+
+```{r}
+new_difftime <- function(x = double(), units = "secs") {
+  # check inputs
+  # issue generic system error if unexpected type or value
+  stopifnot(is.double(x))
+  units <- match.arg(units, c("secs", "mins", "hours", "days", "weeks"))
+
+  # construct instance of target class
+  structure(x,
+    class = "difftime",
+    units = units
+  )
+}
+```
+
+### Validators
+
+Contrast a constructor, aimed at quickly creating instances of a class, which only checks type of inputs ...
+
+```{r, error = TRUE}
+new_factor <- function(x = integer(), levels = character()) {
+  stopifnot(is.integer(x))
+  stopifnot(is.character(levels))
+
+  structure(
+    x,
+    levels = levels,
+    class = "factor"
+  )
+}
+
+# error messages are for system default and developer-facing
+new_factor(1:5, "a")
+```
+
+
+... with a validator, aimed at emitting errors if inputs pose problems, which makes more expensive checks
+
+```{r, error = TRUE}
+validate_factor <- function(x) {
+  values <- unclass(x)
+  levels <- attr(x, "levels")
+
+  if (!all(!is.na(values) & values > 0)) {
+    stop(
+      "All `x` values must be non-missing and greater than zero",
+      call. = FALSE
+    )
+  }
+
+  if (length(levels) < max(values)) {
+    stop(
+      "There must be at least as many `levels` as possible values in `x`",
+      call. = FALSE
+    )
+  }
+
+  x
+}
+
+# error messages are informative and user-facing
+validate_factor(new_factor(1:5, "a"))
+```
+
+Maybe there is a typo in the `validate_factor()` function? Do the integers need to start at 1 and be consecutive?  
+
+* If not, then `length(levels) < max(values)` should be `length(levels) < length(values)`, right?
+* If so, why do the integers need to start at 1 and be consecutive?  And if they need to be as such, we should tell the user, right?
+
+```{r, error = TRUE}
+validate_factor(new_factor(1:3, levels = c("a", "b", "c")))
+validate_factor(new_factor(10:12, levels = c("a", "b", "c")))
+```
+
+
+### Helpers
+
+Some desired virtues:
+
+- Have the same name as the class
+- Call the constructor and validator, if the latter exists.
+- Issue error informative, user-facing error messages
+- Adopt thoughtful/useful defaults or type conversion
+
+
+Exercise 5 in 13.3.4
+
+Q: Read the documentation for `utils::as.roman()`. How would you write a constructor for this class? Does it need a validator? What might a helper do?
+
+A: This function transforms numeric input into Roman numbers. It is built on the integer type, which results in the following constructor.
+ 
+ 
+```{r}
+new_roman <- function(x = integer()) {
+  stopifnot(is.integer(x))
+  structure(x, class = "roman")
+}
+```
+
+The documentation tells us, that only values between 1 and 3899 are uniquely represented, which we then include in our validation function.
+
+```{r}
+validate_roman <- function(x) {
+  values <- unclass(x)
+  
+  if (any(values < 1 | values > 3899)) {
+    stop(
+      "Roman numbers must fall between 1 and 3899.",
+      call. = FALSE
+    )
+  }
+  x
+}
+```
+
+For convenience, we allow the user to also pass real values to a helper function.
+
+```{r, error = TRUE}
+roman <- function(x = integer()) {
+  x <- as.integer(x)
+  
+  validate_roman(new_roman(x))
+}
+
+# Test
+roman(c(1, 753, 2024))
+
+roman(0)
+```
+
+
+
+## Generics and methods
+
+**Generic functions:**
+
+- Consist of a call to `UseMethod()`
+- Pass arguments from the generic to the dispatched method "auto-magically"
+
+```{r}
+my_new_generic <- function(x) {
+  UseMethod("my_new_generic")
+}
+```
+
+### Method dispatch
+
+- `UseMethod()` creates a vector of method names
+- Dispatch 
+  - Examines all methods in the vector
+  - Selects a method
+
+```{r}
+x <- Sys.Date()
+sloop::s3_dispatch(print(x))
+```
+
+### Finding methods
+
+While `sloop::s3_dispatch()` gives the specific method selected for a specific call, on can see the methods defined:
+
+- For a generic
+```{r}
+sloop::s3_methods_generic("mean")
+```
+- For a class
+```{r}
+sloop::s3_methods_class("ordered")
+```
+
+### Creating methods
+
+Two rules:
+
+- Only write a method if you own the generic. Otherwise, bad manners.
+- Method must have same arguments as its generic--with one important exception: `...`
+
+**Example from text:**
+
+I thought it would be good for us to work through this problem.
+
+> Carefully read the documentation for `UseMethod()` and explain why the following code returns the results that it does. What two usual rules of function evaluation does `UseMethod()` violate?
+
+```{r}
+g <- function(x) {
+  x <- 10
+  y <- 10
+  UseMethod("g")
+}
+g.default <- function(x) c(x = x, y = y)
+
+x <- 1
+y <- 1
+g(x)
+g.default(x)
+```
+
+
+
+**Examples caught in the wild:**
+
+- [`haven::zap_label`](https://github.com/tidyverse/haven/blob/main/R/zap_label.R), which removes column labels
+- [`dplyr::mutate`](https://github.com/tidyverse/dplyr/blob/main/R/mutate.R)
+- [`tidyr::pivot_longer`](https://github.com/tidyverse/tidyr/blob/main/R/pivot-long.R)
+
+## Object styles
+
+## Inheritance
+
+Three ideas:
+
+1. Class is a vector of classes
+```{r}
+class(ordered("x"))
+class(Sys.time())
+```
+2. Dispatch moves through class vector until it finds a defined method
+```{r}
+sloop::s3_dispatch(print(ordered("x")))
+```
+3. Method can delegate to another method via `NextMethod()`, which is indicated by `->` as below:
+```{r}
+sloop::s3_dispatch(ordered("x")[1])
+```
+
+### `NextMethod()`
+
+Consider `secret` class that masks each character of the input with `x` in output
+
+```{r}
+new_secret <- function(x = double()) {
+  stopifnot(is.double(x))
+  structure(x, class = "secret")
+}
+
+print.secret <- function(x, ...) {
+  print(strrep("x", nchar(x)))
+  invisible(x)
+}
+
+y <- new_secret(c(15, 1, 456))
+y
+```
+
+Notice that the `[` method is problematic in that it does not preserve the `secret` class.  Additionally, it returns `15` as the first element instead of `xx`.
+
+```{r}
+sloop::s3_dispatch(y[1])
+y[1]
+```
+
+Fix this with a `[.secret` method:
+
+The first fix (not run) is inefficient because it creates a copy of `y`.
+
+```{r eval = FALSE}
+# not run
+`[.secret` <- function(x, i) {
+  x <- unclass(x)
+  new_secret(x[i])
+}
+```
+
+`NextMethod()` is more efficient.
+
+```{r}
+`[.secret` <- function(x, i) {
+  # first, dispatch to `[`
+  # then, coerce subset value to `secret` class
+  new_secret(NextMethod())
+}
+```
+
+Notice that `[.secret` is selected for dispatch, but that the method delegates to the internal `[`.
+
+```{r}
+sloop::s3_dispatch(y[1])
+y[1]
+```
+
+
+### Allowing subclassing
+
+Continue the example above to have a `supersecret` subclass that hides even the number of characters in the input (e.g., `123` -> `xxxxx`, 12345678 -> `xxxxx`, 1 -> `xxxxx`).
+
+To allow for this subclass, the constructor function needs to include two additional arguments:
+
+- `...` for passing an arbitrary set of arguments to different subclasses
+- `class` for defining the subclass
+
+```{r}
+new_secret <- function(x, ..., class = character()) {
+  stopifnot(is.double(x))
+
+  structure(
+    x,
+    ...,
+    class = c(class, "secret")
+  )
+}
+```
+
+To create the subclass, simply invoke the parent class constructor inside of the subclass constructor:
+
+```{r}
+new_supersecret <- function(x) {
+  new_secret(x, class = "supersecret")
+}
+
+print.supersecret <- function(x, ...) {
+  print(rep("xxxxx", length(x)))
+  invisible(x)
+}
+```
+
+But this means the subclass inherits all parent methods and needs to overwrite all parent methods with subclass methods that return the sublclass rather than the parent class.
+
+There's no easy solution to this problem in base R.
+
+There is a solution in the vectors package: `vctrs::vec_restore()`
+
+<!-- TODO: read docs/vignettes to be able to summarize how this works -->
+
+## Meeting Videos
+
+### Cohort 1
+
+`r knitr::include_url("https://www.youtube.com/embed/Fy3JF5Em6qY")`
+
+### Cohort 2
+
+`r knitr::include_url("https://www.youtube.com/embed/9GkgNC15EAw")`
+
+### Cohort 3
+
+`r knitr::include_url("https://www.youtube.com/embed/q7lFXSLdC1g")`
+
+`r knitr::include_url("https://www.youtube.com/embed/2rHS_urTGFg")`
+
+### Cohort 4
+
+`r knitr::include_url("https://www.youtube.com/embed/4la5adcWwKE")`
+
+`r knitr::include_url("https://www.youtube.com/embed/eTCT2O58GYM")`
+
+### Cohort 5
+
+`r knitr::include_url("https://www.youtube.com/embed/NeHtEGab1Og")`
+
+### Cohort 6
+
+`r knitr::include_url("https://www.youtube.com/embed/vzbl2o-MEeQ")`
+
+<details>
+<summary> Meeting chat log </summary>
+
+```
+00:05:30	Oluwafemi Oyedele:	Hi everyone, Good Evening !!!
+00:09:44	Trevin:	I agree Arthur, need to look at that package some more
+```
+</details>
+
+### Cohort 7
+
+`r knitr::include_url("https://www.youtube.com/embed/zNLx4q8TCKQ")`

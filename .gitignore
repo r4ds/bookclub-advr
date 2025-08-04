@@ -4,10 +4,11 @@
 .httr-oauth
 .DS_Store
 
-# Ignore things during render.
+# Ignore things generated during render.
 *.html
 *.rmarkdown
 /.quarto/
 /_site/
 /site_libs/
 figure-revealjs
+/[0-9][0-9]*.qmd

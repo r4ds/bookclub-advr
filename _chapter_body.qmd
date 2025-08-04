@@ -1,7 +1,0 @@
-:::{#slides}
-:::
-
-## Meeting videos
-
-:::{#videos}
-:::

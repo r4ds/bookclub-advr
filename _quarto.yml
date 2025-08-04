@@ -1,86 +1,10 @@
 project:
   type: website
-
-website:
-  title: "Advanced R Book Club"
-  sidebar:
-    style: "docked"
-    search: true
-    tools:
-      - icon: github
-        href: https://github.com/r4ds/bookclub-advr
-      - icon: youtube
-        href: https://dslc.video/advr
-      - icon: mastodon
-        href: https://fosstodon.org/@DSLC
-      - icon: linkedin
-        href: https://www.linkedin.com/company/dslc-io
-    contents:
-      - index.qmd
-      - file: slides/00-club_intro.qmd
-        target: advr_club-slides
-      - section: "Getting started"
-        contents:
-        - 01.qmd
-      - section: "Foundations"
-        contents:
-          - 02.qmd
-          - file: slides/03_Vectors.Rmd
-            target: advr_club-slides
-          - file: slides/04_Subsetting.Rmd
-            target: advr_club-slides
-          - file: slides/05_Control_flow.Rmd
-            target: advr_club-slides
-          - file: slides/06_Functions.Rmd
-            target: advr_club-slides
-          - file: slides/07_Environments.Rmd
-            target: advr_club-slides
-          - file: slides/08_Conditions.Rmd
-            target: advr_club-slides
-      - section: "Functional programming"
-        contents:
-          - file: slides/09_Functionals.Rmd
-            target: advr_club-slides
-          - file: slides/10_Function_factories.Rmd
-            target: advr_club-slides
-          - file: slides/11_Function_operators.Rmd
-            target: advr_club-slides
-      - section: "Object-oriented programming"
-        contents:
-          - file: slides/12_Base_types.Rmd
-            target: advr_club-slides
-          - file: slides/13_S3.Rmd
-            target: advr_club-slides
-          - file: slides/14_R6.Rmd
-            target: advr_club-slides
-          - file: slides/15_S4.Rmd
-            target: advr_club-slides
-          - file: slides/16_Trade-offs.Rmd
-            target: advr_club-slides
-      - section: "Metaprogramming"
-        contents:
-          - file: slides/17_Big_picture.Rmd
-            target: advr_club-slides
-          - file: slides/18_Expressions.Rmd
-            target: advr_club-slides
-          - file: slides/19_Quasiquotation.Rmd
-            target: advr_club-slides
-          - file: slides/20_Evaluation.Rmd
-            target: advr_club-slides
-          - file: slides/21_Translating_R_code.Rmd
-            target: advr_club-slides
-      - section: "Techniques"
-        contents:
-          - file: slides/22_Debugging.Rmd
-            target: advr_club-slides
-          - file: slides/23_Measuring_performance.Rmd
-            target: advr_club-slides
-          - file: slides/24_Improving_performance.Rmd
-            target: advr_club-slides
-          - file: slides/25_Rewriting_R_code_in_C++.Rmd
-            target: advr_club-slides
-
-
+  pre-render: generate_chapters.R
+  render:
+  - slides/*
+  - videos/*
+  - '*.qmd'
 format:
   html:
     theme:
@@ -89,3 +13,60 @@ format:
     css: styles.css
     toc: false
     link-external-newwindow: true
+execute:
+  freeze: auto
+website:
+  title: Advanced R Book Club
+  sidebar:
+    style: docked
+    search: true
+    tools:
+    - icon: github
+      href: https://github.com/r4ds/bookclub-advr
+    - icon: youtube
+      href: https://dslc.video/advr
+    - icon: mastodon
+      href: https://fosstodon.org/@DSLC
+    - icon: linkedin
+      href: https://www.linkedin.com/company/dslc-io
+    contents:
+    - index.qmd
+    - file: slides/00.qmd
+      target: advr_club-slides
+    - section: Getting Started
+      contents:
+      - 01.qmd
+    - section: Foundations
+      contents:
+      - 02.qmd
+      - 03.qmd
+      - 04.qmd
+      - 05.qmd
+      - 06.qmd
+      - 07.qmd
+      - 08.qmd
+    - section: Functional programming
+      contents:
+      - 09.qmd
+      - 10.qmd
+      - 11.qmd
+    - section: Object-oriented programming
+      contents:
+      - 12.qmd
+      - 13.qmd
+      - 15.qmd
+      - 14.qmd
+      - 16.qmd
+    - section: Metaprogramming
+      contents:
+      - 17.qmd
+      - 18.qmd
+      - 19.qmd
+      - 20.qmd
+      - 21.qmd
+    - section: Techniques
+      contents:
+      - 22.qmd
+      - 23.qmd
+      - 24.qmd
+      - 25.qmd
