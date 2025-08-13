@@ -5,56 +5,61 @@ title: Names and values
 
 ## Learning objectives
 
-- To be able to understand distinction between an *object* and its *name*
-- With this knowledge, to be able write faster code using less memory
+- To distinction between an *object* and its *name*
+- To identify when data _physically_ copied versus modified
 - To better understand R's functional programming tools
 
-Using lobstr package here.
-```{r}
+The lobstr package will help us through the chapter
+
+```{r, echo = TRUE}
 library(lobstr)
 ```
 
 
 ## Quiz
 
-### 1. How do I create a new column called `3` that contains the sum of `1` and `2`?
+**1. How do I create a new column called `3` that contains the sum of `1` and `2`?**
 
-```{r}
+```{r, echo = TRUE}
 df <- data.frame(runif(3), runif(3))
 names(df) <- c(1, 2)
 df
 ```
 
-```{r}
+```{r, echo = TRUE}
 df$`3` <- df$`1` + df$`2`
 df
 ```
 
-**What makes these names challenging?**
+*What makes these names challenging?*
 
-> You need to use backticks (`) when the name of an object doesn't start with a 
-> a character or '.' [or . followed by a number] (non-syntactic names).
+> You need to use backticks (`) when the name of an object doesn't start with a character or '.' [or . followed by a number] (non-syntactic names).
 
-### 2. How much memory does `y` occupy?
+## Quiz
 
-```{r}
+**2. How much memory does `y` occupy?**
+
+```{r, echo = TRUE}
 x <- runif(1e6)
 y <- list(x, x, x)
 ```
 
 Need to use the lobstr package:
-```{r}
+```{r, echo = TRUE}
 lobstr::obj_size(y)
 ```
 
 > Note that if you look in the RStudio Environment or use R base `object.size()`
 > you actually get a value of 24 MB
 
-```{r}
+```{r, echo = TRUE}
 object.size(y)
 ```
 
-### 3. On which line does `a` get copied in the following example?
+## Quiz
+
+**3. On which line does `a` get copied in the following example?**
+
 ```{r}
 a <- c(1, 5, 3, 2)
 b <- a
@@ -73,27 +78,44 @@ b[[1]] <- 10
 ```{r}
 x <- c(1, 2, 3)
 y <- x
+x
 obj_addr(x)
+y
+obj_addr(y)
+
+y[2] <- 3
+
+x
+obj_addr(x)
+y
 obj_addr(y)
 ```
 
 
-### Exercises
+## Exercises
 
-##### 1. Explain the relationships
+**1. Explain the relationships**
+
 ```{r}
 a <- 1:10
 b <- a
 c <- b
 d <- 1:10
+
+obj_addr(a)
+obj_addr(b)
+obj_addr(c)
+obj_addr(d)
 ```
 
 > `a` `b` and `c` are all names that refer to the first value `1:10`
 > 
 > `d` is a name that refers to the *second* value of `1:10`.
 
+## Exercises
 
-##### 2. Do the following all point to the same underlying function object? hint: `lobstr::obj_addr()`
+**2. Do the following all point to the same underlying function object? hint: `lobstr::obj_addr()`**
+
 ```{r}
 obj_addr(mean)
 obj_addr(base::mean)
@@ -106,22 +128,36 @@ obj_addr(match.fun("mean"))
 
 ## Copy-on-modify
 
+```{r}
+x <- c(1, 2, 3)
+y <- x
+obj_addr(x)
+obj_addr(y)
+```
+
 - If you modify a value bound to multiple names, it is 'copy-on-modify'
-- If you modify a value bound to a single name, it is 'modify-in-place'
-- Use `tracemem()` to see when a name's value changes
+
+```{r}
+y[2] <- 3
+obj_addr(x)
+obj_addr(y)
+```
+
+## Modify-in-place
 
 ```{r}
 x <- c(1, 2, 3)
 cat(tracemem(x), "\n")
 ```
 
+- If you modify a value bound to a single name, it is 'modify-in-place'
+
 ```{r}
 y <- x
 y[[3]] <- 4L  # Changes (copy-on-modify)
 y[[3]] <- 5L  # Doesn't change (modify-in-place)
+untracemem(x)
 ```
-
-Turn off `tracemem()` with `untracemem()`
 
 > Can also use `ref(x)` to get the address of the value bound to a given name
 
@@ -143,7 +179,7 @@ ref(x)
 ref(z)
 ```
 
-<!-- ![](images/02-trace.png) -->
+![](images/02-trace.png)
 
 ## Lists
 
@@ -206,11 +242,14 @@ x <- c("a", "a", "abc", "d")
 
 ## Exercises
 
-##### 1. Why is `tracemem(1:10)` not useful?
+**1. Why is `tracemem(1:10)` not useful?**
 
 > Because it tries to trace a value that is not bound to a name
 
-##### 2. Why are there two copies?
+## Exercises
+
+**2. Why are there two copies?**
+
 ```{r}
 x <- c(1L, 2L, 3L)
 tracemem(x)
@@ -219,7 +258,9 @@ x[[3]] <- 4
 
 > Because we convert an *integer* vector (using 1L, etc.) to a *double* vector (using just 4)- 
 
-##### 3. What is the relationships among these objects?
+## Exercises
+
+**3. What is the relationships among these objects?**
 
 ```{r}
 a <- 1:10      
@@ -235,8 +276,10 @@ c <- b(obj 1, obj 1), obj 1, 1:10
 ref(c)
 ```
 
+## Exercises
 
-##### 4. What happens here?
+**4. What happens here?**
+
 ```{r}
 x <- list(1:10)
 x[[2]] <- x
@@ -261,14 +304,14 @@ ref(x)
 - Difficult to predict how big something will be
   - Can only add sizes together if they share no references in common
 
-### Alternative Representation
+## Alternative Representation
 - As of R 3.5.0 - ALTREP
 - Represent some vectors compactly
     - e.g., 1:1000 - not 10,000 values, just 1 and 1,000
 
-### Exercises
+## Exercises
 
-##### 1. Why are the sizes so different?
+**1. Why are the sizes so different?**
 
 ```{r}
 y <- rep(list(runif(1e4)), 100)
@@ -281,7 +324,9 @@ obj_size(y)    # ~80   kB
 > 
 > "This function merely provides a rough indication: it should be reasonably accurate for atomic vectors, but **does not detect if elements of a list are shared**, for example.
 
-##### 2. Why is the size misleading?
+## Exercises
+
+**2. Why is the size misleading?**
 
 ```{r}
 funs <- list(mean, sd, var)
@@ -291,7 +336,9 @@ obj_size(funs)
 > Because they reference functions from base and stats, which are always available.
 > Why bother looking at the size? What use is that?
 
-##### 3. Predict the sizes
+## Exercises
+
+**3. Predict the sizes**
 
 ```{r}
 a <- runif(1e6) # 8 MB
@@ -344,7 +391,7 @@ obj_size(a, b)
     - Objects with a single binding (performance optimization)
     - Environments (special)
 
-### Objects with a single binding
+## Objects with a single binding
 
 - Hard to know if copy will occur
 - If you have 2+ bindings and remove them, R can't follow how many are removed (so will always think there are more than one)
@@ -353,7 +400,7 @@ obj_size(a, b)
 - Best to use `tracemem()` to check rather than guess.
 
 
-#### Example - lists vs. data frames in for loop
+## Example - lists vs. data frames in for loop
 
 **Setup**  
 
@@ -384,7 +431,7 @@ for (i in seq_along(medians)) {
 untracemem(y)
 ```
 
-#### Benchmark this (Exercise #2)
+## Benchmark this (Exercise #2)
 
 **First wrap in a function**
 ```{r}
@@ -422,7 +469,8 @@ bench::mark(
 **WOW!**
 
 
-### Environmments
+## Environmments
+
 - Always modified in place (**reference semantics**)
 - Interesting because if you modify the environment, all existing bindings have the same reference
 - If two names point to the same environment, and you update one, you update both!
@@ -436,9 +484,10 @@ e2$c
 
 - This means that environments can contain themselves (!)
 
-### Exercises
+## Exercises
 
-##### 1. Why isn't this circular?
+**1. Why isn't this circular?**
+
 ```{r}
 x <- list()
 x[[1]] <- x
@@ -446,9 +495,13 @@ x[[1]] <- x
 
 > Because the binding to the list() object moves from `x` in the first line to `x[[1]]` in the second.
 
-##### 2. (see "Objects with a single binding")
+## Exercises
 
-##### 3. What happens if you attempt to use tracemem() on an environment?
+**2. (see "Objects with a single binding")**
+
+## Exercises
+
+**3. What happens if you attempt to use tracemem() on an environment?**
 
 ```{r}
 #| error: true
