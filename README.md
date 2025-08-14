@@ -20,7 +20,7 @@ If you would like to present, please see the schedule sign-up sheet for your coh
 - Cohort 7 (started 2022-10-24, ended 2023-06-13): [meeting videos](https://youtube.com/playlist?list=PL3x6DOfs2NGi4I1DhjPufFNbqCry_xQLq)
 - Cohort 8 (started 2024-02-01, ended 2024-06-13): [meeting videos](https://www.youtube.com/playlist?list=PL3x6DOfs2NGgr9ZNvaqf4Lb6GN9l6g9dK)
 - Cohort 9 (started 2024-05-24, ended 2024-11-22): [meeting videos](https://www.youtube.com/playlist?list=PL3x6DOfs2NGgR7BeG9Jri8wrSgW_X-s4_)
-- Cohort 10 (facilitator: @jonthegeek): meeting time TBD | [schedule](https://docs.google.com/spreadsheets/d/1PgK1ZgOzKqIyxwS6iU_KF5LqBHrb0yx4GN0crVUAaUE/edit?usp=sharing) [meeting videos](https://www.youtube.com/playlist?list=PL3x6DOfs2NGjlV0O0uf685xmUGfBzstHP)
+- Cohort 10 (facilitator: @jonthegeek): [Tuesdays noon central](https://dslcio.slack.com/archives/C010GJ3VAE5/p1754654985535729) | [schedule](https://docs.google.com/spreadsheets/d/1PgK1ZgOzKqIyxwS6iU_KF5LqBHrb0yx4GN0crVUAaUE/edit?usp=sharing) | [meeting videos](https://www.youtube.com/playlist?list=PL3x6DOfs2NGjlV0O0uf685xmUGfBzstHP)
 
 The slides from the old clubs are in a [separate repository](https://github.com/r4ds/bookclub-Advanced_R).
 
