@@ -6,7 +6,7 @@ title: Names and values
 ## Learning objectives
 
 - To distinction between an *object* and its *name*
-- To identify when data _physically_ copied versus modified
+- To identify when data are _physically_ copied versus modified
 - To better understand R's functional programming tools
 
 The lobstr package will help us through the chapter
@@ -18,49 +18,19 @@ library(lobstr)
 
 ## Quiz
 
-**1. How do I create a new column called `3` that contains the sum of `1` and `2`?**
+**1. Syntactic vs Non-syntactic names?**
 
-```{r, echo = TRUE}
-df <- data.frame(runif(3), runif(3))
-names(df) <- c(1, 2)
-df
-```
+Syntactic names: contain alphanumeric digits, `.`, and  `_`
 
-```{r, echo = TRUE}
-df$`3` <- df$`1` + df$`2`
-df
-```
+Non-syntactic names: Start with a `_` or 0-9. Workaround is to surround in ```.
 
-*What makes these names challenging?*
-
-> You need to use backticks (`) when the name of an object doesn't start with a character or '.' [or . followed by a number] (non-syntactic names).
+Also, can't use reserved words found at `?Reserved`. 
 
 ## Quiz
 
-**2. How much memory does `y` occupy?**
+**2. On which line does `a` get copied in the following example?**
 
 ```{r, echo = TRUE}
-x <- runif(1e6)
-y <- list(x, x, x)
-```
-
-Need to use the lobstr package:
-```{r, echo = TRUE}
-lobstr::obj_size(y)
-```
-
-> Note that if you look in the RStudio Environment or use R base `object.size()`
-> you actually get a value of 24 MB
-
-```{r, echo = TRUE}
-object.size(y)
-```
-
-## Quiz
-
-**3. On which line does `a` get copied in the following example?**
-
-```{r}
 a <- c(1, 5, 3, 2)
 b <- a
 b[[1]] <- 10
@@ -70,12 +40,10 @@ b[[1]] <- 10
 
 ## Binding basics
 
-- Create values and *bind* a name to them
-- Names have values (rather than values have names)
-- Multiple names can refer to the same values
+- Create values like `1` and *bind* a name to them like `a`. Cannot bind values to names
 - We can look at an object's address to keep track of the values independent of their names
 
-```{r}
+```{r, echo = TRUE}
 x <- c(1, 2, 3)
 y <- x
 x
@@ -85,18 +53,14 @@ obj_addr(y)
 
 y[2] <- 3
 
-x
 obj_addr(x)
-y
 obj_addr(y)
 ```
 
 
-## Exercises
+## More binding basics
 
-**1. Explain the relationships**
-
-```{r}
+```{r, echo = TRUE}
 a <- 1:10
 b <- a
 c <- b
@@ -112,11 +76,11 @@ obj_addr(d)
 > 
 > `d` is a name that refers to the *second* value of `1:10`.
 
-## Exercises
+## Exercise
 
-**2. Do the following all point to the same underlying function object? hint: `lobstr::obj_addr()`**
+**1. Do the following all point to the same underlying function object? hint: `lobstr::obj_addr()`**
 
-```{r}
+```{r, echo = TRUE}
 obj_addr(mean)
 obj_addr(base::mean)
 obj_addr(get("mean"))
@@ -128,7 +92,7 @@ obj_addr(match.fun("mean"))
 
 ## Copy-on-modify
 
-```{r}
+```{r, echo = TRUE}
 x <- c(1, 2, 3)
 y <- x
 obj_addr(x)
@@ -137,30 +101,73 @@ obj_addr(y)
 
 - If you modify a value bound to multiple names, it is 'copy-on-modify'
 
-```{r}
+```{r, echo = TRUE}
 y[2] <- 3
 obj_addr(x)
 obj_addr(y)
 ```
 
-## Modify-in-place
+## Excessive copying
 
-```{r}
-x <- c(1, 2, 3)
+We can use `tracemem()` to deduce copies empiracally.
+
+```{r, echo = TRUE}
+x <- data.frame(matrix(runif(5 * 1e4), ncol = 5))
+medians <- vapply(x, median, numeric(1))
+
 cat(tracemem(x), "\n")
+for (i in 1:5) {
+  x[[i]] <- x[[i]] - medians[[i]]
+}
+untracemem(x)
 ```
 
-- If you modify a value bound to a single name, it is 'modify-in-place'
+## Minimizing copies with objects using internal C code
 
-```{r}
-y <- x
-y[[3]] <- 4L  # Changes (copy-on-modify)
-y[[3]] <- 5L  # Doesn't change (modify-in-place)
-untracemem(x)
+```{r, echo = TRUE}
+y <- as.list(x)
+cat(tracemem(y), "\n")
+#> <0x7f80c5c3de20>
+  
+for (i in 1:5) {
+  y[[i]] <- y[[i]] - medians[[i]]
+}
 ```
 
 > Can also use `ref(x)` to get the address of the value bound to a given name
 
+## Environments are always modify-in-place
+
+This property is sometimes described as reference semantics because when you modify an environment all existing bindings to that environment continue to have the same reference.
+
+```{r, echo = TRUE}
+e1 <- rlang::env(a = 1, b = 2, c = 3)
+e2 <- e1
+e1$c <- 4
+e2$c
+```
+
+## Pop Quiz!
+
+**What does this do?**
+
+```{r, echo =  TRUE}
+x <- list()
+x[[1]] <- x
+```
+
+## Pop Quiz!
+
+**Answer: Copy-on-modify**
+
+```{r, echo =  TRUE}
+x <- list()
+x
+obj_addr(x)
+x[[1]] <- x
+x
+obj_addr(x)
+```
 
 ## Functions
 
@@ -175,8 +182,8 @@ f <- function(a) {
 x <- c(1, 2, 3)
 z <- f(x) # No change in value
 
-ref(x)
-ref(z)
+obj_addr(x)
+obj_addr(z)
 ```
 
 ![](images/02-trace.png)
@@ -236,6 +243,7 @@ ref(d1, d3)
 
 ```{r}
 x <- c("a", "a", "abc", "d")
+ref(x, character = TRUE)
 ```
 
 ![](images/02-character-2.png)
@@ -248,19 +256,7 @@ x <- c("a", "a", "abc", "d")
 
 ## Exercises
 
-**2. Why are there two copies?**
-
-```{r}
-x <- c(1L, 2L, 3L)
-tracemem(x)
-x[[3]] <- 4
-```
-
-> Because we convert an *integer* vector (using 1L, etc.) to a *double* vector (using just 4)- 
-
-## Exercises
-
-**3. What is the relationships among these objects?**
+**2. What is the relationships among these objects?**
 
 ```{r}
 a <- 1:10      
@@ -276,37 +272,39 @@ c <- b(obj 1, obj 1), obj 1, 1:10
 ref(c)
 ```
 
-## Exercises
+## Quiz
 
-**4. What happens here?**
+**1. How much memory does `y` occupy?**
 
-```{r}
-x <- list(1:10)
-x[[2]] <- x
+```{r, echo = TRUE}
+x <- runif(1e6)
+lobstr::obj_size(x)
+y <- list(x, x, x)
+lobstr::obj_size(y)
 ```
 
-- `x` is a list
-- `x[[2]] <- x` creates a new list, which in turn contains a reference to the 
-  original list
-- `x` is no longer bound to `list(1:10)`
+> `object.size()` does not attribute memory allocation accurately. Here, it over-estimates the shared memory of the list wit its elements:
 
-```{r}
-ref(x)
+```{r, echo = TRUE}
+object.size(y)
 ```
 
-![](images/02-copy_on_modify_fig2.png){width=50%}
 
 ## Object Size
 
 - Use `lobstr::obj_size()` 
 - Lists may be smaller than expected because of referencing the same value
-- Strings may be smaller than expected because using global string pool
-- Difficult to predict how big something will be
-  - Can only add sizes together if they share no references in common
+- Strings may be smaller than expected because of global string pool
+
+```{r, echo = TRUE}
+banana <- "bananas bananas bananas"
+obj_size(banana)
+obj_size(rep(banana, 100))
+```
 
 ## Alternative Representation
-- As of R 3.5.0 - ALTREP
-- Represent some vectors compactly
+
+- As of 3.5.0, the use of ALTREP represents vectors compactly
     - e.g., 1:1000 - not 10,000 values, just 1 and 1,000
 
 ## Exercises
@@ -329,6 +327,7 @@ obj_size(y)    # ~80   kB
 **2. Why is the size misleading?**
 
 ```{r}
+obj_size(mean)
 funs <- list(mean, sd, var)
 obj_size(funs)
 ```
@@ -348,102 +347,34 @@ obj_size(a)
 
 ```{r}
 b <- list(a, a)
+obj_size(b)
 ```
 
 - There is one value ~8MB
 - `a` and `b[[1]]` and `b[[2]]` all point to the same value.
 
 ```{r}
-obj_size(b)
 obj_size(a, b)
 ```
 
 
 ```{r}
 b[[1]][[1]] <- 10
+obj_size(b)     # 16 MB (two values, two element references)
+obj_size(a, b)  # 16 MB (a & b[[2]] point to the same value)
 ```
 - Now there are two values ~8MB each (16MB total)
 - `a` and `b[[2]]` point to the same value (8MB)
 - `b[[1]]` is new (8MB) because the first element (`b[[1]][[1]]`) has been changed
 
-```{r}
-obj_size(b)     # 16 MB (two values, two element references)
-obj_size(a, b)  # 16 MB (a & b[[2]] point to the same value)
-```
-
-
-```{r}
-b[[2]][[1]] <- 10
-```
-- Finally, now there are three values ~8MB each (24MB total)
-- Although `b[[1]]` and `b[[2]]` have the same contents, 
-  they are not references to the same object.
-
-```{r}
-obj_size(b)
-obj_size(a, b)
-```
-
-
-## Modify-in-place
-
-- Modifying usually creates a copy except for
-    - Objects with a single binding (performance optimization)
-    - Environments (special)
-
-## Objects with a single binding
-
-- Hard to know if copy will occur
-- If you have 2+ bindings and remove them, R can't follow how many are removed (so will always think there are more than one)
-- May make a copy even if there's only one binding left
-- Using a function makes a reference to it **unless it's a function based on C**
-- Best to use `tracemem()` to check rather than guess.
-
-
-## Example - lists vs. data frames in for loop
-
-**Setup**  
-
-Create the data to modify
-```{r}
-x <- data.frame(matrix(runif(5 * 1e4), ncol = 5))
-medians <- vapply(x, median, numeric(1))
-```
-
-
-**Data frame - Copied every time!**
-```{r}
-cat(tracemem(x), "\n")
-for (i in seq_along(medians)) {
-  x[[i]] <- x[[i]] - medians[[i]]
-}
-untracemem(x)
-```
-
-**List (uses internal C code) - Copied once!**
-```{r}
-y <- as.list(x)
-
-cat(tracemem(y), "\n")
-for (i in seq_along(medians)) {
-  y[[i]] <- y[[i]] - medians[[i]]
-}
-untracemem(y)
-```
-
 ## Benchmark this (Exercise #2)
 
-**First wrap in a function**
-```{r}
+```{r, echo = TRUE}
 med <- function(d, medians) {
   for (i in seq_along(medians)) {
     d[[i]] <- d[[i]] - medians[[i]]
   }
 }
-```
-
-**Try with 5 columns**
-```{r}
 x <- data.frame(matrix(runif(5 * 1e4), ncol = 5))
 medians <- vapply(x, median, numeric(1))
 y <- as.list(x)
@@ -452,10 +383,7 @@ bench::mark(
   "data.frame" = med(x, medians),
   "list" = med(y, medians)
 )
-```
 
-**Try with 20 columns**
-```{r}
 x <- data.frame(matrix(runif(5 * 1e4), ncol = 20))
 medians <- vapply(x, median, numeric(1))
 y <- as.list(x)
@@ -466,42 +394,9 @@ bench::mark(
 )
 ```
 
-**WOW!**
-
-
-## Environmments
-
-- Always modified in place (**reference semantics**)
-- Interesting because if you modify the environment, all existing bindings have the same reference
-- If two names point to the same environment, and you update one, you update both!
-
-```{r}
-e1 <- rlang::env(a = 1, b = 2, c = 3)
-e2 <- e1
-e1$c <- 4
-e2$c
-```
-
-- This means that environments can contain themselves (!)
-
 ## Exercises
 
-**1. Why isn't this circular?**
-
-```{r}
-x <- list()
-x[[1]] <- x
-```
-
-> Because the binding to the list() object moves from `x` in the first line to `x[[1]]` in the second.
-
-## Exercises
-
-**2. (see "Objects with a single binding")**
-
-## Exercises
-
-**3. What happens if you attempt to use tracemem() on an environment?**
+**1. What happens if you attempt to use tracemem() on an environment?**
 
 ```{r}
 #| error: true
@@ -514,21 +409,22 @@ tracemem(e1)
 
 ## Unbinding and the garbage collector
 
-- If you delete the 'name' bound to an object, the object still exists
-- R runs a "garbage collector" (GC) to remove these objects when it needs more memory
+- If you delete the 'name' bound to an object, the object still exists in memory
+- R runs a "garbage collector" (GC) to remove unused objects when it needs more memory
 - "Looking from the outside, it’s basically impossible to predict when the GC will run. In fact, you shouldn’t even try."
 - If you want to know when it runs, use `gcinfo(TRUE)` to get a message printed
-- You can force GC with `gc()` but you never need to to use more memory *within* R
-- Only reason to do so is to free memory for other system software, or, to get the
-message printed about how much memory is being used
+- You can force GC with `gc()` but you never need to use more memory *within* R
+- Only reason to do so is to free memory for other system software, or to get the message printed about how much memory is being used
 
 ```{r}
 gc()
 mem_used()
 ```
 
-- These numbers will **not** be what you OS tells you because, 
+## GC memory vs. Operating System memory
+
+- These numbers will **not** be what your OS tells you because, 
   1. It includes objects created by R, but not R interpreter
   2. R and OS are lazy and don't reclaim/release memory until it's needed
   3. R counts memory from objects, but there are gaps due to those that are deleted -> 
-  *memory fragmentation* [less memory actually available they you might think]
+  *memory fragmentation* [less memory actually available then you might think]
