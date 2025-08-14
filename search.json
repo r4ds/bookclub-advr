@@ -274,11 +274,11 @@
     ]
   },
   {
-    "objectID": "videos/25/07.html",
-    "href": "videos/25/07.html",
+    "objectID": "videos/24/07.html",
+    "href": "videos/24/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:43:02    Gus Lipkin: I think I found the definition for `mean`\nAn R call goes to *a which then calls the C function *b\n*a: https://github.com/wch/r-source/blob/trunk/src/library/base/R/mean.R\n*b: https://github.com/wch/r-source/blob/trunk/src/library/stats/src/cov.c#L207\nIt looks like the second pass only happens if `R_FINITE(mean_from_first_pass)` which tries to call `isfinite` from C++ and if it’s not there, it’ll make sure it is a number and is not positive or negative infinity.\n00:49:55    Gus Lipkin: I feel bad for dropping in on the last chapter and getting Collin’s thanks 😅 I wish I’d joined sooner."
+    "text": "Meeting chat log\n\n00:23:48    Ron Legere: https://www.mathworks.com/help/matlab/matlab_prog/vectorization.html"
   },
   {
     "objectID": "videos/24/06.html",
@@ -309,11 +309,18 @@
     "text": "(no video)"
   },
   {
-    "objectID": "videos/20/07.html",
-    "href": "videos/20/07.html",
+    "objectID": "videos/21/06.html",
+    "href": "videos/21/06.html",
+    "title": "Cohort 6",
+    "section": "",
+    "text": "Meeting chat log\n\n00:30:16    Arthur Shaw:    https://www.w3schools.com/html/html_entities.asp\n00:32:29    Arthur Shaw:    Beta symbol in HTML: &Beta;\n00:56:55    Arthur Shaw:    https://dbplyr.tidyverse.org/articles/translation-function.html\n00:57:48    Arthur Shaw:    https://dtplyr.tidyverse.org/index.html\n00:58:43    Arthur Shaw:    https://dtplyr.tidyverse.org/articles/translation.html"
+  },
+  {
+    "objectID": "videos/19/07.html",
+    "href": "videos/19/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:55:22    collinberke:    https://rlang.r-lib.org/reference/embrace-operator.html?q=enquo#under-the-hood"
+    "text": "Meeting chat log\n\n00:50:48    Stone:  https://www.r-bloggers.com/2018/10/quasiquotation-in-r-via-bquote/\n00:58:26    iPhone: See ya next week!\n\n\n\nMeeting chat log\n\n00:55:22    collinberke:    https://rlang.r-lib.org/reference/embrace-operator.html?q=enquo#under-the-hood"
   },
   {
     "objectID": "videos/19/06.html",
@@ -323,11 +330,11 @@
     "text": "Meeting chat log\n\n01:02:07    Trevin: Yeah, that was a great workshop\n01:02:18    Trevin: Glad they posted the resources online\n01:06:39    Trevin: Thank you!"
   },
   {
-    "objectID": "videos/18/07.html",
-    "href": "videos/18/07.html",
+    "objectID": "videos/17/07.html",
+    "href": "videos/17/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:50:48    Stone:  https://www.r-bloggers.com/2018/10/quasiquotation-in-r-via-bquote/\n00:58:26    iPhone: See ya next week!"
+    "text": "Meeting chat log\n\n00:11:09    Ryan Honomichl: https://medium.com/analytics-vidhya/become-a-better-r-programmer-with-the-awesome-lobstr-package-af97fcd22602\n00:33:03    Ryan Honomichl: https://rlang.r-lib.org/reference/enquo.html\n00:37:30    Ryan Honomichl: https://rlang.r-lib.org/reference/topic-multiple-columns.html\n00:41:00    Ryan Honomichl: brb\n00:44:37    Ron Legere: https://www.rdocumentation.org/packages/srvyr/versions/1.2.0\n00:44:58    Ron Legere: http://gdfe.co/srvyr/\n00:51:51    Stone:  https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html"
   },
   {
     "objectID": "videos/17/06.html",
@@ -337,11 +344,11 @@
     "text": "Meeting chat log\n\n00:32:31    Oluwafemi Oyedele:  When should eval_tidy() be used instead of eval()?\nbase::eval() is sufficient for simple evaluation. Use eval_tidy() when you'd like to support expressions referring to the .data pronoun, or when you need to support quosures.\n00:37:08    Trevin (he/him):    https://rlang.r-lib.org/reference/topic-defuse.html\n00:38:38    Federica Gazzelloni:    https://rlang.r-lib.org/reference/eval_tidy.html\n00:39:57    Arthur Shaw:    Tidy eval book: https://bookdown.dongzhuoer.com/tidyverse/tidyeval/\n00:40:14    Arthur Shaw:    Also very useful resource: https://dplyr.tidyverse.org/articles/programming.html\n00:40:28    Trevin (he/him):    https://ggplot2.tidyverse.org/reference/aes.html\n00:40:37    Federica Gazzelloni:    https://ggplot2.tidyverse.org/reference/tidyeval.html\n00:41:22    Oluwafemi Oyedele:  It is Tidyverse design\n00:49:13    Federica Gazzelloni:    https://www.youtube.com/watch?v=2NixH3QAerQ&list=PL3x6DOfs2NGi9lH7q-phZlPrl6HKXYDbn&index=15\n00:50:13    Federica Gazzelloni:    Minute: 17:04\n00:54:03    Federica Gazzelloni:    con &lt;- DBI::dbConnect(RSQLite::SQLite(), filename = \":memory:\")\n00:54:18    Federica Gazzelloni:    DBI::dbDisconnect(con)"
   },
   {
-    "objectID": "videos/14/07.html",
-    "href": "videos/14/07.html",
+    "objectID": "videos/15/07.html",
+    "href": "videos/15/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:06:57    Ron Legere: https://arxiv.org/abs/2303.12712\n00:07:07    Ron Legere: ^^ shows some of the power and limitations\n00:39:41    collinberke:    https://www.youtube.com/watch?v=3GEFd8rZQgY&list=WL&index=11\n00:49:20    iPhone: Sorry fellas need to jump early. See you next week!\n01:05:21    collinberke:    https://github.com/r4ds/bookclub-advr\n01:09:30    Ron Legere: makeActiveBinding"
+    "text": "Meeting chat log\n\n01:09:37    Ron Legere: https://en.wikipedia.org/wiki/Composition_over_inheritance"
   },
   {
     "objectID": "videos/13/06.html",
@@ -351,11 +358,11 @@
     "text": "Meeting chat log\n\n00:05:30    Oluwafemi Oyedele:  Hi everyone, Good Evening !!!\n00:09:44    Trevin: I agree Arthur, need to look at that package some more"
   },
   {
-    "objectID": "videos/12/07.html",
-    "href": "videos/12/07.html",
+    "objectID": "videos/11/07.html",
+    "href": "videos/11/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:35:43    Stone: base::InternalMethods\n00:48:04    collinberke: https://cran.r-project.org/doc/manuals/R-exts.html"
+    "text": "Meeting chat log\n\n00:18:21    collinberke: Jenny Bryan debugging: https://www.youtube.com/watch?v=vgYS-F8opgE\n00:31:10    collinberke: https://purrr.tidyverse.org/reference/slowly.html\n00:47:43    Robert Hilly: By guys!"
   },
   {
     "objectID": "videos/11/06.html",
@@ -365,6 +372,13 @@
     "text": "Meeting chat log\n\n00:01:42    Oluwafemi Oyedele:  Hi, Good Evening !!!\n00:05:52    Arthur Shaw:    @federica, love the hex stickers behind you. All from rstudio::conf?\n00:07:12    Arthur Shaw:    I tried doing the same. I had a hard time ordering them. I also thought I'd make the stickers into magnets so that I could rearrange them in future.\n00:48:34    Oluwafemi Oyedele:  Thank you !!!"
   },
   {
+    "objectID": "videos/09/07.html",
+    "href": "videos/09/07.html",
+    "title": "Cohort 7",
+    "section": "",
+    "text": "Meeting chat log\n\n00:34:09    Ron:    Someone did: https://cran.r-project.org/web/packages/comprehenr/vignettes/Introduction.html\n00:47:58    collinberke:    https://purrr.tidyverse.org/reference/safely.html\n00:48:24    Ron:    it's a function operator !\n00:49:37    Ron:    \\(x) length(unique(x) is not too verbose though\n00:49:39    Ron:    ;)\n01:06:50    collinberke:    https://colinfay.me/purrr-mappers/\n01:07:45    collinberke:    https://colinfay.me/purrr-web-mining/"
+  },
+  {
     "objectID": "videos/09/06.html",
     "href": "videos/09/06.html",
     "title": "Cohort 6",
@@ -372,11 +386,11 @@
     "text": "Meeting chat log\n\n00:15:49    Matt Dupree:    did anyone else lose audio?\n00:15:59    Federica Gazzelloni:    not me\n00:16:02    Arthur Shaw:    Not me either\n00:16:04    Trevin: okay for me\n00:16:27    Matt Dupree:    gonna try rejoining\n00:43:14    Matt Dupree:    oh i didn't know they invisibly returned .x! That's useful!\n00:48:29    Arthur Shaw:    Very cool trick !"
   },
   {
-    "objectID": "videos/08/07.html",
-    "href": "videos/08/07.html",
+    "objectID": "videos/07/07.html",
+    "href": "videos/07/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:34:09    Ron:    Someone did: https://cran.r-project.org/web/packages/comprehenr/vignettes/Introduction.html\n00:47:58    collinberke:    https://purrr.tidyverse.org/reference/safely.html\n00:48:24    Ron:    it's a function operator !\n00:49:37    Ron:    \\(x) length(unique(x) is not too verbose though\n00:49:39    Ron:    ;)\n01:06:50    collinberke:    https://colinfay.me/purrr-mappers/\n01:07:45    collinberke:    https://colinfay.me/purrr-web-mining/"
+    "text": "Meeting chat log\n\n00:06:49    Ryan Honomichl: https://r4ds.github.io/bookclub-Advanced_R/QandA/docs/environments.html\n\n\n\nMeeting chat log\n\n00:14:44    collinberke:    https://ivelasq.rbind.io/blog/macos-rig/index.html\n00:21:10    collinberke:    https://github.com/tidyverse/dplyr/blob/main/NAMESPACE\n01:00:21    collinberke:    https://r4ds.hadley.nz/iteration.html"
   },
   {
     "objectID": "videos/07/06.html",
@@ -386,11 +400,11 @@
     "text": "Meeting chat log\n\n00:08:41    Arthur Shaw:    Hello, everyone!\n00:21:31    Federica Gazzelloni:    ?walk: Apply a function to each element of a list or atomic vector\n00:23:15    Federica Gazzelloni:    ?caller_env: Get properties of the current or caller frame\n00:24:56    Trevin: purrr::walk(x, function(x, ce, ace = rlang::caller_env()) {\n  .ce &lt;- rlang::caller_env()\n  message(\"Internal: \")\n  print(.ce)\n  message(\"Argument: \")\n  print(ace)\n  message(\"External: \")\n  print(ce)\n  message(\"Internal: \",paste0(ls(.ce), collapse = \"\\n\"))\n  message(\"Argument: \",paste0(ls(ace), collapse = \"\\n\"))\n  message(\"External: \",paste0(ls(ce), collapse = \"\\n\"))\n}, ce = rlang::caller_env())\n00:29:39    Federica Gazzelloni:    ??iwalk: Apply a function to each element of a vector, and its index\n00:35:30    Arthur Shaw:    https://magrittr.tidyverse.org/reference/tee.html\n00:36:05    Federica Gazzelloni:    ?`%T&gt;%`\n00:46:59    Trevin: ?eval\n01:06:03    Federica Gazzelloni:    https://cran.r-project.org/web/packages/withr/index.html\n01:09:21    Federica Gazzelloni:    https://github.com/r-lib/withr\n01:10:38    Trevin: I'm okay if we meet next week\n01:10:53    Oluwafemi Oyedele:  I am ok with next week"
   },
   {
-    "objectID": "videos/06/07.html",
-    "href": "videos/06/07.html",
+    "objectID": "videos/05/07.html",
+    "href": "videos/05/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:31:54    Ronald Legere:  https://en.wikipedia.org/wiki/First-class_function\n00:42:55    Ronald Legere:  https://en.wikipedia.org/wiki/Immediately_invoked_function_expression\n\n\n\nMeeting chat log\n\n00:54:02    Ron:    Book gives this simple example of when you might want to use prefix form of an infix operator: lapply(list(1:3, 4:5), `+`, 3)\n00:56:49    collinberke:    https://colinfay.me/playing-r-infix-functions/#:~:text=What%20are%20infix%20functions%3F,%2C%20%2B%20%2C%20and%20so%20on.\n01:07:36    Ron:    x[3] &lt;- 33\n01:07:51    Ron:    `[&lt;-`(x,3,value =33)"
+    "text": "Meeting chat log\n\n00:40:18    Ryan Honomichl: What type of vector does each of the following calls to ifelse() return?\n* \"ifelse returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE.\"\n00:42:11    Ryan Honomichl: \"I recommend assigning the results of an if statement only when the entire expression fits on one line; otherwise it tends to be hard to read\"\n00:42:46    Ryan Honomichl: * When you use the single argument form without an `else` statement, `if` invisibly returns NULL if the condition is FALSE. \n-   Since functions like c() and paste() drop NULL inputs, this allows for a compact expression of certain idioms\n00:54:15    collinberke:    https://docs.google.com/spreadsheets/d/1ScrbEw_-vB9DruaJhjtVY8HLQmuNPqyWeOOjmG6OY1M/edit?usp=sharing\n00:58:46    collinberke:    https://www.youtube.com/@safe4democracy/videos"
   },
   {
     "objectID": "videos/05/06.html",
@@ -400,11 +414,11 @@
     "text": "Meeting chat log\n\n00:16:34    Federica Gazzelloni:    https://github.com/r4ds/bookclub-Advanced_R\n00:22:28    Federica Gazzelloni:    https://stackoverflow.com/questions/50646133/dplyr-if-else-vs-base-r-ifelse\n00:26:20    Trevin: case_when() is great, makes it easy to read\n00:54:01    Trevin: out[I, ]\n00:54:14    Trevin: out[i, ]\n00:55:03    Trevin: I think you have to specify number of rows and columns before..\n00:55:30    Trevin: iterations = 10\n variables = 2\n output &lt;- matrix(ncol=variables, nrow=iterations)\n00:55:43    Trevin: https://stackoverflow.com/questions/13442461/populating-a-data-frame-in-r-in-a-loop"
   },
   {
-    "objectID": "videos/04/07.html",
-    "href": "videos/04/07.html",
+    "objectID": "videos/03/07.html",
+    "href": "videos/03/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:40:18    Ryan Honomichl: What type of vector does each of the following calls to ifelse() return?\n* \"ifelse returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE.\"\n00:42:11    Ryan Honomichl: \"I recommend assigning the results of an if statement only when the entire expression fits on one line; otherwise it tends to be hard to read\"\n00:42:46    Ryan Honomichl: * When you use the single argument form without an `else` statement, `if` invisibly returns NULL if the condition is FALSE. \n-   Since functions like c() and paste() drop NULL inputs, this allows for a compact expression of certain idioms\n00:54:15    collinberke:    https://docs.google.com/spreadsheets/d/1ScrbEw_-vB9DruaJhjtVY8HLQmuNPqyWeOOjmG6OY1M/edit?usp=sharing\n00:58:46    collinberke:    https://www.youtube.com/@safe4democracy/videos"
+    "text": "Meeting chat log\n\n00:54:07    Ron:    https://www.tidyverse.org/blog/2021/03/clock-0-1-0/\n01:14:39    Robert Hilly:   https://www.amazon.com/Effective-Pandas-Patterns-Manipulation-Treading/dp/B09MYXXSFM"
   },
   {
     "objectID": "videos/03/06.html",
@@ -414,18 +428,18 @@
     "text": "Meeting chat log\n\n00:10:18    Oluwafemi Oyedele:  Hi, good evening\n00:23:31    Federica Gazzelloni:    Hi Kiante!\n00:24:21    Federica Gazzelloni:    Thanks Arthur\n00:25:46    Trevin: Welcome Matt!\n00:26:02    Matt Dupree:    hello! thank you!\n00:30:34    Federica Gazzelloni:    Hello Matt!\n00:30:46    Matt Dupree:    hello!\n00:38:24    Ryan Metcalf:   `rlang::cpl()` = “complex”. For example `0+1i`\n00:55:37    Trevin: &gt; two &lt;- c(1,2,3)\n&gt; names(two) &lt;- c(\"one\", \"two\")\n&gt; two\n one  two &lt;NA&gt; \n   1    2    3\n00:57:25    Ryan Metcalf:   Excellent Trevin. You beat me to the output! Assuming we didn't supply the string, `NA` is entered instead.\n01:08:50    Ryan Metcalf:   Without further research, this is the \"Unix Epoch”. However, varying operating systems use different Epochs."
   },
   {
-    "objectID": "videos/02/07.html",
-    "href": "videos/02/07.html",
-    "title": "Cohort 7",
+    "objectID": "videos/02/06.html",
+    "href": "videos/02/06.html",
+    "title": "Cohort 6",
     "section": "",
-    "text": "Meeting chat log\n\n00:09:40    Ryan Honomichl: https://drdoane.com/three-deep-truths-about-r/\n00:12:51    Robert Hilly:   Be right back\n00:36:12    Ryan Honomichl: brb\n00:41:18    Ron:    I tried mapply and also got different answers\n00:41:44    collinberke:    Interesting, would like to know more what is going on.\n00:49:57    Robert Hilly:   simple_map &lt;- function(x, f, ...) {\n  out &lt;- vector(\"list\", length(x))\n  for (i in seq_along(x)) {\n    out[[i]] &lt;- f(x[[i]], ...)\n  }\n  out\n}"
+    "text": "Meeting chat log\n\n00:16:57    Federica Gazzelloni:    cohort 2 video: https://www.youtube.com/watch?v=pCiNj2JRK50\n00:18:39    Federica Gazzelloni:    cohort 2 presentation: https://r4ds.github.io/bookclub-Advanced_R/Presentations/Week02/Cohort2_America/Chapter2Slides.html#1\n00:40:24    Arthur Shaw:    Just the opposite, Ryan. Very clear presentation!\n00:51:54    Trevin: parquet?\n00:53:00    Arthur Shaw:    We may all be right. {arrow} looks to deal with feather and parquet files: https://arrow.apache.org/docs/r/\n01:00:04    Arthur Shaw:    Some questions for future meetings. (1) I find Ryan's use of slides hugely effective in conveying information. Would it be OK if future sessions (optionally) used slides? If so, should/could we commit slides to some folder on the repo? (2) I think reusing the images from Hadley's books really helps understanding and discussion. Is that OK to do? Here I'm thinking about copyright concerns. (If possible, I would rather not redraw variants of Hadley's images.)\n01:01:35    Federica Gazzelloni:    It's all ok, you can use past presentation, you don't need to push them to the repo, you can use the images from the book\n01:07:19    Federica Gazzelloni:    Can I use: gc(reset = TRUE) safely?"
   },
   {
-    "objectID": "videos/01/07.html",
-    "href": "videos/01/07.html",
-    "title": "Cohort 7",
+    "objectID": "videos/01/06.html",
+    "href": "videos/01/06.html",
+    "title": "Cohort 6",
     "section": "",
-    "text": "Meeting chat log\n\n00:20:42    collinberke:    https://rich-iannone.github.io/pointblank/\n00:27:36    Ryan Honomichl: brb\n00:37:05    collinberke:    https://rstudio.github.io/renv/articles/renv.html\n00:51:52    Ryan Honomichl: gotta sign off I'll be ready to lead chapter 2 next week!\n00:52:43    collinberke:    https://r4ds.had.co.nz/iteration.html\n00:59:44    collinberke:    https://mastering-shiny.org/action-tidy.html\n01:00:12    collinberke:    https://dplyr.tidyverse.org/articles/programming.html\n01:05:02    collinberke:    https://usethis.r-lib.org/reference/create_from_github.html\n01:05:53    collinberke:    https://github.com/r4ds/bookclub-advr\n01:06:28    Ron:    I gotta run ,  fun conversation, and nice to meet you Matthew !"
+    "text": "Meeting chat log\n\n00:14:40    SriRam: From Toronto, Civil Engineer. I use R for infrastructure planning/ GIS. Here coz of the ping 😄 , was not ready with a good computer with mic/audio !\n00:15:20    SriRam: I was with Ryan, Federica on other courses\n00:23:21    SriRam: I think the only caution is about Copyright issues\n00:31:32    Ryan Metcalf:   Citation, giving credit back to source. Great comment SriRam.\n00:34:33    SriRam: one = one, in my opinion\n00:41:53    Ryan Metcalf:   https://docs.google.com/spreadsheets/d/1_WFY82UxAdvP4GUdZ2luh15quwdO1n0Km3Q0tfYuqvc/edit#gid=0\n00:48:35    Arthur Shaw:    The README has a nice step-by-step process at the bottom: https://github.com/r4ds/bookclub-advr#how-to-present. I've not done this myself yet, but it looks fairly straightforward.\n00:54:13    lucus w:    Thanks Ryan. Probably {usethis} will be easier. It looks straight forward\n01:00:02    Moria W.:   Thank you for sharing that. This has been good!\n01:00:08    Vaibhav Janve:  Thank you\n01:00:44    Federica Gazzelloni:    hi SriRam we are going.."
   },
   {
     "objectID": "slides/25.html#learning-objectives",
@@ -2344,25 +2358,18 @@
     "text": "Other techniques\n\nRead R blogs to see what performance problems other people have struggled with, and how they have made their code faster.\nRead other R programming books, like The Art of R Programming or Patrick Burns’ R Inferno to learn about common traps.\nTake an algorithms and data structure course to learn some well known ways of tackling certain classes of problems. I have heard good things about Princeton’s Algorithms course offered on Coursera.\nLearn how to parallelise your code. Two places to start are Parallel R and Parallel Computing for Data Science\nRead general books about optimisation like Mature optimisation or the Pragmatic Programmer\nRead more R code. StackOverflow, R Mailing List, DSLC, GitHub, etc."
   },
   {
-    "objectID": "videos/01/06.html",
-    "href": "videos/01/06.html",
-    "title": "Cohort 6",
-    "section": "",
-    "text": "Meeting chat log\n\n00:14:40    SriRam: From Toronto, Civil Engineer. I use R for infrastructure planning/ GIS. Here coz of the ping 😄 , was not ready with a good computer with mic/audio !\n00:15:20    SriRam: I was with Ryan, Federica on other courses\n00:23:21    SriRam: I think the only caution is about Copyright issues\n00:31:32    Ryan Metcalf:   Citation, giving credit back to source. Great comment SriRam.\n00:34:33    SriRam: one = one, in my opinion\n00:41:53    Ryan Metcalf:   https://docs.google.com/spreadsheets/d/1_WFY82UxAdvP4GUdZ2luh15quwdO1n0Km3Q0tfYuqvc/edit#gid=0\n00:48:35    Arthur Shaw:    The README has a nice step-by-step process at the bottom: https://github.com/r4ds/bookclub-advr#how-to-present. I've not done this myself yet, but it looks fairly straightforward.\n00:54:13    lucus w:    Thanks Ryan. Probably {usethis} will be easier. It looks straight forward\n01:00:02    Moria W.:   Thank you for sharing that. This has been good!\n01:00:08    Vaibhav Janve:  Thank you\n01:00:44    Federica Gazzelloni:    hi SriRam we are going.."
-  },
-  {
-    "objectID": "videos/02/06.html",
-    "href": "videos/02/06.html",
-    "title": "Cohort 6",
-    "section": "",
-    "text": "Meeting chat log\n\n00:16:57    Federica Gazzelloni:    cohort 2 video: https://www.youtube.com/watch?v=pCiNj2JRK50\n00:18:39    Federica Gazzelloni:    cohort 2 presentation: https://r4ds.github.io/bookclub-Advanced_R/Presentations/Week02/Cohort2_America/Chapter2Slides.html#1\n00:40:24    Arthur Shaw:    Just the opposite, Ryan. Very clear presentation!\n00:51:54    Trevin: parquet?\n00:53:00    Arthur Shaw:    We may all be right. {arrow} looks to deal with feather and parquet files: https://arrow.apache.org/docs/r/\n01:00:04    Arthur Shaw:    Some questions for future meetings. (1) I find Ryan's use of slides hugely effective in conveying information. Would it be OK if future sessions (optionally) used slides? If so, should/could we commit slides to some folder on the repo? (2) I think reusing the images from Hadley's books really helps understanding and discussion. Is that OK to do? Here I'm thinking about copyright concerns. (If possible, I would rather not redraw variants of Hadley's images.)\n01:01:35    Federica Gazzelloni:    It's all ok, you can use past presentation, you don't need to push them to the repo, you can use the images from the book\n01:07:19    Federica Gazzelloni:    Can I use: gc(reset = TRUE) safely?"
-  },
-  {
-    "objectID": "videos/03/07.html",
-    "href": "videos/03/07.html",
+    "objectID": "videos/01/07.html",
+    "href": "videos/01/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:54:07    Ron:    https://www.tidyverse.org/blog/2021/03/clock-0-1-0/\n01:14:39    Robert Hilly:   https://www.amazon.com/Effective-Pandas-Patterns-Manipulation-Treading/dp/B09MYXXSFM"
+    "text": "Meeting chat log\n\n00:20:42    collinberke:    https://rich-iannone.github.io/pointblank/\n00:27:36    Ryan Honomichl: brb\n00:37:05    collinberke:    https://rstudio.github.io/renv/articles/renv.html\n00:51:52    Ryan Honomichl: gotta sign off I'll be ready to lead chapter 2 next week!\n00:52:43    collinberke:    https://r4ds.had.co.nz/iteration.html\n00:59:44    collinberke:    https://mastering-shiny.org/action-tidy.html\n01:00:12    collinberke:    https://dplyr.tidyverse.org/articles/programming.html\n01:05:02    collinberke:    https://usethis.r-lib.org/reference/create_from_github.html\n01:05:53    collinberke:    https://github.com/r4ds/bookclub-advr\n01:06:28    Ron:    I gotta run ,  fun conversation, and nice to meet you Matthew !"
+  },
+  {
+    "objectID": "videos/02/07.html",
+    "href": "videos/02/07.html",
+    "title": "Cohort 7",
+    "section": "",
+    "text": "Meeting chat log\n\n00:09:40    Ryan Honomichl: https://drdoane.com/three-deep-truths-about-r/\n00:12:51    Robert Hilly:   Be right back\n00:36:12    Ryan Honomichl: brb\n00:41:18    Ron:    I tried mapply and also got different answers\n00:41:44    collinberke:    Interesting, would like to know more what is going on.\n00:49:57    Robert Hilly:   simple_map &lt;- function(x, f, ...) {\n  out &lt;- vector(\"list\", length(x))\n  for (i in seq_along(x)) {\n    out[[i]] &lt;- f(x[[i]], ...)\n  }\n  out\n}"
   },
   {
     "objectID": "videos/04/06.html",
@@ -2372,8 +2379,8 @@
     "text": "Meeting chat log\n\n00:36:02    Arthur Shaw:    TIL that the subset operator has parameters. Thanks, Trevin!\n00:38:55    Vaibhav Janve:  its interesting that carriage \"a\" has two set of wheels instread of 4. I wonder that choice is because its atomic.\n00:40:44    Arthur Shaw:    @Vaibhav, because the load is lighter, the carriage needs fewer axles? ;)  I agree: it's a confusing graphical choice.\n00:41:11    Vaibhav Janve:  lol\n01:05:53    Vaibhav Janve:  Thank you Trevin!"
   },
   {
-    "objectID": "videos/05/07.html",
-    "href": "videos/05/07.html",
+    "objectID": "videos/04/07.html",
+    "href": "videos/04/07.html",
     "title": "Cohort 7",
     "section": "",
     "text": "Meeting chat log\n\n00:40:18    Ryan Honomichl: What type of vector does each of the following calls to ifelse() return?\n* \"ifelse returns a value with the same shape as test which is filled with elements selected from either yes or no depending on whether the element of test is TRUE or FALSE.\"\n00:42:11    Ryan Honomichl: \"I recommend assigning the results of an if statement only when the entire expression fits on one line; otherwise it tends to be hard to read\"\n00:42:46    Ryan Honomichl: * When you use the single argument form without an `else` statement, `if` invisibly returns NULL if the condition is FALSE. \n-   Since functions like c() and paste() drop NULL inputs, this allows for a compact expression of certain idioms\n00:54:15    collinberke:    https://docs.google.com/spreadsheets/d/1ScrbEw_-vB9DruaJhjtVY8HLQmuNPqyWeOOjmG6OY1M/edit?usp=sharing\n00:58:46    collinberke:    https://www.youtube.com/@safe4democracy/videos"
@@ -2386,11 +2393,11 @@
     "text": "Meeting chat log\n\n00:01:11    Oluwafemi Oyedele:  Hi, Good evening\n00:01:22    Federica Gazzelloni:    Hello!\n00:43:19    Federica Gazzelloni:    https://r4ds.github.io/bookclub-Advanced_R/QandA/docs/welcome.html\n00:52:48    Priyanka:   sounds good actually\n00:52:59    Federica Gazzelloni:    👍🏻\n\n\n\nMeeting chat log\n\n00:09:30    Oluwafemi Oyedele:  Hi, Good evening\n00:10:41    Federica Gazzelloni:    Hi\n00:14:40    Federica Gazzelloni:    that's great!\n00:54:24    Trevin: Also, sorry if you are repeating 🙂\n00:54:52    Arthur Shaw:    @ryan, thank you so much for the awesome synthesis! Could you share your reference list? I'd love to dive more deeply into the material you presented.\n00:57:02    Ryan Metcalf:   https://cran.r-project.org/doc/manuals/r-release/R-lang.pdf\n00:59:32    Trevin: https://github.com/COHHIO/RmData\n01:01:48    Ryan Metcalf:   https://mastering-shiny.org/\n01:02:02    Ryan Metcalf:   https://engineering-shiny.org/\n01:02:15    Arthur Shaw:    @trevin, if you get bored with beepr, move to BRRR ;)\n01:02:16    Arthur Shaw:    https://github.com/brooke-watson/BRRR\n01:09:27    Ryan Metcalf:   This is amazing Trevin! I'll take a closer look. Is it ok to reach out to you with any questions?\n01:09:43    Trevin: Yeah, feel free to reach out\n\n\n\nMeeting chat log\n\n00:05:34    Trevin: I didn't catch that\n00:06:02    priyanka gagneja:   i won't be presenting I said .. so you two have the stage\n00:08:39    Federica Gazzelloni:    no worries\n00:08:46    Federica Gazzelloni:    next time you do it\n00:08:56    Federica Gazzelloni:    did you sign up?\n00:09:45    Trevin: Discord is free: https://discord.gg/rstudioconf2022\n00:10:04    Trevin: Free stream link: https://www.rstudio.com/conference/stream\n00:24:32    Arthur Shaw:    Maybe silly question: is the magrittr pipe an infix function?\n00:32:15    Trevin: https://colinfay.me/playing-r-infix-functions/\n00:33:23    Arthur Shaw:    Maybe another example of an infix function: lubridate's `%within%`\n00:33:47    Trevin: That's a good one too ^\n00:33:55    priyanka gagneja:   yes within would be good.\n00:40:13    Arthur Shaw:    no\n00:49:50    Arthur Shaw:    Sorry for dropping in and out. My WiFi router is having issues today--maybe is failing.\n01:08:59    Trevin: Looking forward to it 🙂"
   },
   {
-    "objectID": "videos/07/07.html",
-    "href": "videos/07/07.html",
+    "objectID": "videos/06/07.html",
+    "href": "videos/06/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:06:49    Ryan Honomichl: https://r4ds.github.io/bookclub-Advanced_R/QandA/docs/environments.html\n\n\n\nMeeting chat log\n\n00:14:44    collinberke:    https://ivelasq.rbind.io/blog/macos-rig/index.html\n00:21:10    collinberke:    https://github.com/tidyverse/dplyr/blob/main/NAMESPACE\n01:00:21    collinberke:    https://r4ds.hadley.nz/iteration.html"
+    "text": "Meeting chat log\n\n00:31:54    Ronald Legere:  https://en.wikipedia.org/wiki/First-class_function\n00:42:55    Ronald Legere:  https://en.wikipedia.org/wiki/Immediately_invoked_function_expression\n\n\n\nMeeting chat log\n\n00:54:02    Ron:    Book gives this simple example of when you might want to use prefix form of an infix operator: lapply(list(1:3, 4:5), `+`, 3)\n00:56:49    collinberke:    https://colinfay.me/playing-r-infix-functions/#:~:text=What%20are%20infix%20functions%3F,%2C%20%2B%20%2C%20and%20so%20on.\n01:07:36    Ron:    x[3] &lt;- 33\n01:07:51    Ron:    `[&lt;-`(x,3,value =33)"
   },
   {
     "objectID": "videos/08/06.html",
@@ -2400,8 +2407,8 @@
     "text": "Meeting chat log\n\n00:19:16    Trevin: https://style.tidyverse.org/error-messages.html\n00:20:14    Trevin: More on errors in the design guide: https://design.tidyverse.org/\n01:14:27    Federica Gazzelloni:    more info here: https://colinfay.me/learn-shiny-production/"
   },
   {
-    "objectID": "videos/09/07.html",
-    "href": "videos/09/07.html",
+    "objectID": "videos/08/07.html",
+    "href": "videos/08/07.html",
     "title": "Cohort 7",
     "section": "",
     "text": "Meeting chat log\n\n00:34:09    Ron:    Someone did: https://cran.r-project.org/web/packages/comprehenr/vignettes/Introduction.html\n00:47:58    collinberke:    https://purrr.tidyverse.org/reference/safely.html\n00:48:24    Ron:    it's a function operator !\n00:49:37    Ron:    \\(x) length(unique(x) is not too verbose though\n00:49:39    Ron:    ;)\n01:06:50    collinberke:    https://colinfay.me/purrr-mappers/\n01:07:45    collinberke:    https://colinfay.me/purrr-web-mining/"
@@ -2414,18 +2421,18 @@
     "text": "Meeting chat log\n\n01:02:25    Trevin: I'm good with combining 👍\n01:02:57    Oluwafemi Oyedele:  I agree with combining the chapter!!!"
   },
   {
-    "objectID": "videos/11/07.html",
-    "href": "videos/11/07.html",
-    "title": "Cohort 7",
-    "section": "",
-    "text": "Meeting chat log\n\n00:18:21    collinberke: Jenny Bryan debugging: https://www.youtube.com/watch?v=vgYS-F8opgE\n00:31:10    collinberke: https://purrr.tidyverse.org/reference/slowly.html\n00:47:43    Robert Hilly: By guys!"
-  },
-  {
     "objectID": "videos/12/06.html",
     "href": "videos/12/06.html",
     "title": "Cohort 6",
     "section": "",
     "text": "Meeting chat log\n\n00:35:02    Trevin: sloop (“sail the seas of OOP”)\n00:42:40    Ryan Metcalf:   Awesome input Trevin! I jumped to the vignette, but didn't see the reference directly.\n01:00:01    Trevin: If you're interested there may be a new “R Packages\" cohort starting up soon (also a new version of the book coming out soonish as well?)\n01:08:23    Oluwafemi Oyedele:  Thank you !!!"
+  },
+  {
+    "objectID": "videos/12/07.html",
+    "href": "videos/12/07.html",
+    "title": "Cohort 7",
+    "section": "",
+    "text": "Meeting chat log\n\n00:35:43    Stone: base::InternalMethods\n00:48:04    collinberke: https://cran.r-project.org/doc/manuals/R-exts.html"
   },
   {
     "objectID": "videos/14/06.html",
@@ -2435,11 +2442,11 @@
     "text": "Meeting chat log\n\n00:11:34    Trevin: https://engineering-shiny.org/common-app-caveats.html?q=R6#using-r6-as-data-storage\n00:39:36    Federica Gazzelloni:    new R7: https://rconsortium.github.io/OOP-WG/\n00:40:04    Federica Gazzelloni:    R7 designed to be a successor to S3 and S4\n00:40:40    Federica Gazzelloni:    R6: https://r6.r-lib.org/articles/Introduction.html\n00:52:44    Trevin: https://advanced-r-solutions.rbind.io/r6.html#controlling-access\n01:00:34    Federica Gazzelloni:    interesting: https://r-craft.org/r-news/object-oriented-programming-oop-in-r-with-r6-the-complete-guide/\n01:01:58    Trevin: https://hadley.shinyapps.io/cran-downloads/\n01:02:33    Oluwafemi Oyedele:  Thank you !!!"
   },
   {
-    "objectID": "videos/15/07.html",
-    "href": "videos/15/07.html",
+    "objectID": "videos/14/07.html",
+    "href": "videos/14/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n01:09:37    Ron Legere: https://en.wikipedia.org/wiki/Composition_over_inheritance"
+    "text": "Meeting chat log\n\n00:06:57    Ron Legere: https://arxiv.org/abs/2303.12712\n00:07:07    Ron Legere: ^^ shows some of the power and limitations\n00:39:41    collinberke:    https://www.youtube.com/watch?v=3GEFd8rZQgY&list=WL&index=11\n00:49:20    iPhone: Sorry fellas need to jump early. See you next week!\n01:05:21    collinberke:    https://github.com/r4ds/bookclub-advr\n01:09:30    Ron Legere: makeActiveBinding"
   },
   {
     "objectID": "videos/16/06.html",
@@ -2449,18 +2456,11 @@
     "text": "Meeting chat log\n\n00:11:36    Oluwafemi Oyedele:  I have not built anything with them!!!\n00:16:31    Arthur Shaw:    https://cran.r-project.org/web/packages/sp/index.html\n00:19:05    Arthur Shaw:    Apparently Hadley asked the same question we're asking several years ago: https://stackoverflow.com/questions/5437238/which-packages-make-good-use-of-s4-objects\n00:19:16    Trevin: HA\n00:23:54    Trevin: Your audio is breaking up Federica\n01:06:58    Federica Gazzelloni:    https://mastering-shiny.org/reactive-motivation.html?q=R6#event-driven\n01:07:37    Federica Gazzelloni:    https://engineering-shiny.org/common-app-caveats.html?q=R6#using-r6-as-data-storage\n01:10:52    Oluwafemi Oyedele:  Thank you !!!"
   },
   {
-    "objectID": "videos/17/07.html",
-    "href": "videos/17/07.html",
+    "objectID": "videos/18/07.html",
+    "href": "videos/18/07.html",
     "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:11:09    Ryan Honomichl: https://medium.com/analytics-vidhya/become-a-better-r-programmer-with-the-awesome-lobstr-package-af97fcd22602\n00:33:03    Ryan Honomichl: https://rlang.r-lib.org/reference/enquo.html\n00:37:30    Ryan Honomichl: https://rlang.r-lib.org/reference/topic-multiple-columns.html\n00:41:00    Ryan Honomichl: brb\n00:44:37    Ron Legere: https://www.rdocumentation.org/packages/srvyr/versions/1.2.0\n00:44:58    Ron Legere: http://gdfe.co/srvyr/\n00:51:51    Stone:  https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html"
-  },
-  {
-    "objectID": "videos/19/07.html",
-    "href": "videos/19/07.html",
-    "title": "Cohort 7",
-    "section": "",
-    "text": "Meeting chat log\n\n00:50:48    Stone:  https://www.r-bloggers.com/2018/10/quasiquotation-in-r-via-bquote/\n00:58:26    iPhone: See ya next week!\n\n\n\nMeeting chat log\n\n00:55:22    collinberke:    https://rlang.r-lib.org/reference/embrace-operator.html?q=enquo#under-the-hood"
+    "text": "Meeting chat log\n\n00:50:48    Stone:  https://www.r-bloggers.com/2018/10/quasiquotation-in-r-via-bquote/\n00:58:26    iPhone: See ya next week!"
   },
   {
     "objectID": "videos/20/06.html",
@@ -2470,11 +2470,11 @@
     "text": "Meeting chat log\n\n01:00:42    Trevin: They just want to help you present that’s all"
   },
   {
-    "objectID": "videos/21/06.html",
-    "href": "videos/21/06.html",
-    "title": "Cohort 6",
+    "objectID": "videos/20/07.html",
+    "href": "videos/20/07.html",
+    "title": "Cohort 7",
     "section": "",
-    "text": "Meeting chat log\n\n00:30:16    Arthur Shaw:    https://www.w3schools.com/html/html_entities.asp\n00:32:29    Arthur Shaw:    Beta symbol in HTML: &Beta;\n00:56:55    Arthur Shaw:    https://dbplyr.tidyverse.org/articles/translation-function.html\n00:57:48    Arthur Shaw:    https://dtplyr.tidyverse.org/index.html\n00:58:43    Arthur Shaw:    https://dtplyr.tidyverse.org/articles/translation.html"
+    "text": "Meeting chat log\n\n00:55:22    collinberke:    https://rlang.r-lib.org/reference/embrace-operator.html?q=enquo#under-the-hood"
   },
   {
     "objectID": "videos/24/01.html",
@@ -2484,18 +2484,18 @@
     "text": "(no video)"
   },
   {
-    "objectID": "videos/24/07.html",
-    "href": "videos/24/07.html",
-    "title": "Cohort 7",
-    "section": "",
-    "text": "Meeting chat log\n\n00:23:48    Ron Legere: https://www.mathworks.com/help/matlab/matlab_prog/vectorization.html"
-  },
-  {
     "objectID": "videos/25/06.html",
     "href": "videos/25/06.html",
     "title": "Cohort 6",
     "section": "",
     "text": "Meeting chat log\n\n00:10:13    Arthur Shaw:    Did things freeze for anyone else?\n00:55:40    Federica Gazzelloni:    https://en.cppreference.com/w/cpp/container\n00:57:44    Federica Gazzelloni:    https://dirk.eddelbuettel.com/blog/2011/07/14/\n01:07:33    Trevin: I don’t have experience\n01:07:54    Oluwafemi Oyedele:  Same here!!!\n01:11:57    Arthur Shaw:    Does anyone know any packages that use C++? The one that comes to mind for me is haven, which uses a C++ library\n01:12:30    Trevin: When I was looking, one that stood out to me was rstan\n01:13:02    Arthur Shaw:    Reacted to \"When I was looking, ...\" with 👍"
+  },
+  {
+    "objectID": "videos/25/07.html",
+    "href": "videos/25/07.html",
+    "title": "Cohort 7",
+    "section": "",
+    "text": "Meeting chat log\n\n00:43:02    Gus Lipkin: I think I found the definition for `mean`\nAn R call goes to *a which then calls the C function *b\n*a: https://github.com/wch/r-source/blob/trunk/src/library/base/R/mean.R\n*b: https://github.com/wch/r-source/blob/trunk/src/library/stats/src/cov.c#L207\nIt looks like the second pass only happens if `R_FINITE(mean_from_first_pass)` which tries to call `isfinite` from C++ and if it’s not there, it’ll make sure it is a number and is not positive or negative infinity.\n00:49:55    Gus Lipkin: I feel bad for dropping in on the last chapter and getting Collin’s thanks 😅 I wish I’d joined sooner."
   },
   {
     "objectID": "01.html",
