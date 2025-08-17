@@ -27,7 +27,7 @@ library(lobstr)
 
 Also, can't use reserved words found at `?Reserved`. 
 
-## Quiz
+## Quiz 2. On which line does `a` get copied
 
 **2. On which line does `a` get copied in the following example?**
 
