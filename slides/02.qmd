@@ -30,7 +30,7 @@ Also, can't use reserved words found at `?Reserved`.
 ## Quiz 2. On which line does `a` get copied
 
 
-```{r, echo = TRUE}
+```{r}
 a <- c(1, 5, 3, 2)
 b <- a
 b[[1]] <- 10
