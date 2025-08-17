@@ -5,9 +5,9 @@ title: Names and values
 
 ## Learning objectives
 
-- To distinction between an *object* and its *name*
-- To identify when data are _physically_ copied versus modified
-- To better understand R's functional programming tools
+- Distinguish between an *object* and its *name*.
+- Identify when data are *copied* versus *modified*.
+- Trace the memory used by R.
 
 The lobstr package will help us through the chapter
 
