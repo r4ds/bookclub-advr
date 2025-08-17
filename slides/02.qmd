@@ -16,7 +16,7 @@ library(lobstr)
 ```
 
 
-## Quiz
+## Quiz 1: Syntactic vs Non-syntactic names
 
 **1. Syntactic vs Non-syntactic names?**
 
