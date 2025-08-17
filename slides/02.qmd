@@ -19,7 +19,7 @@ library(lobstr)
 ## Quiz 1: Syntactic vs Non-syntactic names
 
 
-Syntactic names: contain alphanumeric digits, `.`, and  `_`
+- **Syntactic names:** contain alphanumeric digits, `.`, and  `_`.
 
 Non-syntactic names: Start with a `_` or 0-9. Workaround is to surround in ```.
 
