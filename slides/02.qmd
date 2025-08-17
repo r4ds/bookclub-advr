@@ -21,7 +21,9 @@ library(lobstr)
 
 - **Syntactic names:** contain alphanumeric digits, `.`, and  `_`.
 
-Non-syntactic names: Start with a `_` or 0-9. Workaround is to surround in ```.
+- **Non-syntactic names:** 
+  - Start with `_` or `0-9`. 
+  - Workaround: surround in \`.
 
 Also, can't use reserved words found at `?Reserved`. 
 
