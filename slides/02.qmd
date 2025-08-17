@@ -18,7 +18,6 @@ library(lobstr)
 
 ## Quiz 1: Syntactic vs Non-syntactic names
 
-**1. Syntactic vs Non-syntactic names?**
 
 Syntactic names: contain alphanumeric digits, `.`, and  `_`
 
