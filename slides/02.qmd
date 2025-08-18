@@ -47,7 +47,7 @@ obj_addr(a)
 obj_addr(b)
 ```
 
-## Though the values for names seem the same, the values in memory are distinct
+## Though the values bound to names seem the same, the values in memory are distinct
 
 ```{r}
 a <- 1:10
@@ -80,7 +80,7 @@ y <- x
 x[[1]] <- 10
 ```
 
-## `tracemem` shows that copies are minimized when using internal C code like lists
+## `tracemem` shows internal C code minimizes copying
 
 ```{r}
 y <- as.list(x)
@@ -93,7 +93,7 @@ for (i in 1:5) {
 as.list.default
 ```
 
-## The environment in functions also copy values
+## The environment within functions also copies values
 
 ```{r}
 f <- function(a) {
@@ -109,7 +109,7 @@ obj_addr(z)
 
 ![](images/02-trace.png)
 
-## Using `ref()` shows the memory address of a list and its *elements* unlike `obj_addr()`
+## `ref()` shows the memory address of a list and its *elements*
 
 ```{r}
 l1 <- list(1, 2, 3)
@@ -130,7 +130,7 @@ d2[, 2] <- d2[, 2] * 2
 ref(d1, d2)
 ```
 
-## Since dataframes are lists of (column) vectors, mutating a row modifies the whole dataframe value
+## Since dataframes are lists of (column) vectors, mutating a row modifies the value
 
 ```{r}
 d1 <- data.frame(x = c(1, 5, 6), y = c(2, 4, 3))
@@ -139,7 +139,7 @@ d2[1, ] <- d2[1, ] * 2
 ref(d1, d2)
 ```
 
-## Characters are unlike vaslues like `1:10` since these objects are "reused" from a global string pool
+## Characters are unique due to the global string pool
 
 ```{r}
 x <- 1:4
@@ -150,7 +150,7 @@ ref(x,character = TRUE)
 
 ![](images/02-character-2.png)
 
-## How much memory can be measured using `lobstr::obj_size` compared with just traced using `lobstr::obj_addr`
+## Memory amount can also be measured, using `lobstr::obj_size`
 
 ```{r}
 banana <- "bananas bananas bananas"
@@ -167,7 +167,7 @@ y <- 1:10000
 obj_size(y)
 ```
 
-## We can measure memory for dynamically created values using `benc::mark()`
+## We can measure memory for dynamically created values using `bench::mark()`
 
 ```{r}
 med <- function(d, medians) {
