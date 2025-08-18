@@ -9,7 +9,7 @@ title: Names and values
 - Identify when data are *copied* versus *modified*.
 - Trace and identify the memory used by R.
 
-The lobstr package will help us through the chapter
+The `{lobstr}` package will help us throughout the chapter
 
 ```{r}
 library(lobstr)
@@ -19,11 +19,12 @@ library(lobstr)
 ## Syntactic names are easier to create and work with than non-syntactic names
 
 
-- Syntactic names: `my_variable`, `x`, `cpp11`, `.by`. Don't use those in `?Reserved`.
+- Syntactic names: `my_variable`, `x`, `cpp11`, `.by`.
+  - Can't use names in `?Reserved`
 
 - Non-syntactic names need to be surrounded in backticks. 
 
-## The name `a` is bound to the values `c(1, 2, 3)`
+## Names are *bound to* values with `<-`
 
 ```{r}
 a <- c(1, 2, 3)
@@ -39,7 +40,7 @@ obj_addr(a)
 obj_addr(b)
 ```
 
-## If shared values are modified, the object is copied automatically
+## If shared values are modified, the object is copied to a new address
 
 ```{r}
 b[[1]] <- 5
@@ -47,7 +48,7 @@ obj_addr(a)
 obj_addr(b)
 ```
 
-## Though the values bound to names seem the same, the values in memory are distinct
+## Memory addresses can differ even if objects seem the same
 
 ```{r}
 a <- 1:10
@@ -59,42 +60,59 @@ obj_addr(b)
 obj_addr(c)
 ```
 
-## Unlike the values `1:10`, functions and environments share the same memory address
+## Functions have a single address regardless of how they're referenced
 
 ```{r}
 obj_addr(mean)
 obj_addr(base::mean)
+obj_addr(get("mean"))
+```
 
-e <- new.env()
-obj_addr(e)
+## Unlike most objects, environments keep the same memory address on modify
+
+```{r}
+d <- new.env()
+obj_addr(d)
+e <- d
 e[['a']] <- 1
 obj_addr(e)
+obj_addr(d)
+d[['a']]
 ```
 
 ## Use `tracemem` to validate if values are copied or modified
 
 ```{r}
+#| eval: false
 x <- runif(10)
 tracemem(x)
+#> [1] "<000001F4185B4B08>"
 y <- x
 x[[1]] <- 10
+#> tracemem[0x000001f4185b4b08 -> 0x000001f4185b4218]:
+untracemem(x)
 ```
 
 ## `tracemem` shows internal C code minimizes copying
 
 ```{r}
+#| eval: false
 y <- as.list(x)
 tracemem(y)
+#> [1] "<000001AD67FDCD38>"
 medians <- vapply(x, median, numeric(1))
 for (i in 1:5) {
   y[[i]] <- y[[i]] - medians[[i]]
 }
-
-as.list.default
+#> tracemem[0x000001ad67fdcd38 -> 0x000001ad61982638]:
+untracemem(y)
 ```
 
-## The environment within functions also copies values
+## A function's environment follows copy-on-modify rules
 
+:::: {.columns}
+
+::: {.column}
 ```{r}
 f <- function(a) {
   a
@@ -104,13 +122,28 @@ x <- c(1, 2, 3)
 z <- f(x) # No change in value
 
 obj_addr(x)
-obj_addr(z)
+obj_addr(z) # No address change 
 ```
+:::
 
+::: {.column}
 ![](images/02-trace.png)
+:::
+
+::::
+
+::: notes
+- Diagrams will be explained more in chapter 7.
+- `a` points to same address as `x`.
+- If `a` modified inside function, `z` would have new address.
+:::
+
 
 ## `ref()` shows the memory address of a list and its *elements*
 
+:::: {.columns}
+
+::: {.column}
 ```{r}
 l1 <- list(1, 2, 3)
 obj_addr(l1)
@@ -118,8 +151,13 @@ l2 <- l1
 l2[[3]] <- 4
 ref(l1, l2)
 ```
+:::
 
+::: {.column}
 ![](images/02-l-modify-2.png){width=50%}
+:::
+
+::::
 
 ## Since dataframes are lists of (column) vectors, mutating a column modifies only that column
 
@@ -139,16 +177,37 @@ d2[1, ] <- d2[1, ] * 2
 ref(d1, d2)
 ```
 
+::: notes
+- Here "mutate" means "change", not `dplyr::mutate()`
+:::
+
 ## Characters are unique due to the global string pool
 
+:::: {.columns}
+
+::: {.column}
 ```{r}
 x <- 1:4
 ref(x)
-x <- c("a", "a", "abc", "d")
-ref(x,character = TRUE)
+y <- 1:4
+ref(y)
+x <- c("a", "a", "b")
+ref(x, character = TRUE)
+y <- c("a")
+ref(y, character = TRUE)
 ```
+:::
 
+::: {.column}
 ![](images/02-character-2.png)
+:::
+
+::::
+
+::: notes
+- "a" is always at the same address.
+- Each member of character vector has its own address (kind of list-like).
+:::
 
 ## Memory amount can also be measured, using `lobstr::obj_size`
 
@@ -167,7 +226,7 @@ y <- 1:10000
 obj_size(y)
 ```
 
-## We can measure memory for dynamically created values using `bench::mark()`
+## We can measure memory & speed using `bench::mark()`
 
 ```{r}
 med <- function(d, medians) {
@@ -182,11 +241,27 @@ y <- as.list(x)
 bench::mark(
   "data.frame" = med(x, medians),
   "list" = med(y, medians)
-)
+)[, c("min", "median", "mem_alloc")]
 ```
 
-## Though not needed to call explicitly, deleted object's can be given to the OS using the garbage collector `gc()`
+::: notes
+- The thing to see: list version uses less RAM and is faster
+:::
+
+## The garbage collector `gc()` explicitly clears out unbound objects
 
 ```{r}
+x <- 1:3
+x <- 2:4 # "1:3" is orphaned
+rm(x) # "2:4" is orphaned
 gc()
+lobstr::mem_used() # Wrapper around gc()
 ```
+
+::: aside
+`gc()` runs automatically, never *need* to call
+:::
+
+::: notes
+- `mem_used()` multiplies Ncells "used" by either 28 (32-bit architecture) or 56 (64-bit architecture)., and Vcells "used" by 8, adds them, and converts to Mb.
+:::

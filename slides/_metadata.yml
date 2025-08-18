@@ -7,10 +7,7 @@ format:
     incremental: false
 execute:
   eval: true
-  r:
-    echo: true
-  mermaid:
-    echo: false
+  echo: true
 knitr:
   opts_chunk:
     comment: "#>"
