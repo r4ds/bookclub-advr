@@ -7,172 +7,93 @@ title: Names and values
 
 - Distinguish between an *object* and its *name*.
 - Identify when data are *copied* versus *modified*.
-- Trace the memory used by R.
+- Trace and identify the memory used by R.
 
 The lobstr package will help us through the chapter
 
-```{r, echo = TRUE}
+```{r}
 library(lobstr)
 ```
 
 
-## Quiz 1: Syntactic vs Non-syntactic names
+## Syntactic names are easier to create and work with than non-syntactic names
 
 
-- **Syntactic names:** contain alphanumeric digits, `.`, and  `_`.
+- Syntactic names: `my_variable`, `x`, `cpp11`, `.by`. Don't use those in `?Reserved`.
 
-- **Non-syntactic names:** 
-  - Start with `_` or `0-9`. 
-  - Workaround: surround in \`.
+- Non-syntactic names need to be surrounded in backticks. 
 
-Also, can't use reserved words found at `?Reserved`. 
-
-## Quiz 2. On which line does `a` get copied
-
+## The name `a` is bound to the values `c(1, 2, 3)`
 
 ```{r}
-a <- c(1, 5, 3, 2)
+a <- c(1, 2, 3)
+a
+obj_addr(a)
+```
+
+## Many names can be bound to the same values
+
+```{r}
 b <- a
-b[[1]] <- 10
+obj_addr(a)
+obj_addr(b)
 ```
 
-> Not until `b` is modified, the third line
+## If shared values are modified, the object is copied automatically
 
-## Binding basics
-
-- Create values like `1` and *bind* a name to them like `a`. Cannot bind values to names
-- We can look at an object's address to keep track of the values independent of their names
-
-```{r, echo = TRUE}
-x <- c(1, 2, 3)
-y <- x
-x
-obj_addr(x)
-y
-obj_addr(y)
-
-y[2] <- 3
-
-obj_addr(x)
-obj_addr(y)
+```{r}
+b[[1]] <- 5
+obj_addr(a)
+obj_addr(b)
 ```
 
+## Though the values for names seem the same, the values in memory are distinct
 
-## More binding basics
-
-```{r, echo = TRUE}
+```{r}
 a <- 1:10
 b <- a
-c <- b
-d <- 1:10
+c <- 1:10
 
 obj_addr(a)
 obj_addr(b)
 obj_addr(c)
-obj_addr(d)
 ```
 
-> `a` `b` and `c` are all names that refer to the first value `1:10`
-> 
-> `d` is a name that refers to the *second* value of `1:10`.
+## Unlike the values `1:10`, functions and environments share the same memory address
 
-## Exercise
-
-**1. Do the following all point to the same underlying function object? hint: `lobstr::obj_addr()`**
-
-```{r, echo = TRUE}
+```{r}
 obj_addr(mean)
 obj_addr(base::mean)
-obj_addr(get("mean"))
-obj_addr(evalq(mean))
-obj_addr(match.fun("mean"))
+
+e <- new.env()
+obj_addr(e)
+e[['a']] <- 1
+obj_addr(e)
 ```
 
-> Yes!
+## Use `tracemem` to validate if values are copied or modified
 
-## Copy-on-modify
-
-```{r, echo = TRUE}
-x <- c(1, 2, 3)
+```{r}
+x <- runif(10)
+tracemem(x)
 y <- x
-obj_addr(x)
-obj_addr(y)
+x[[1]] <- 10
 ```
 
-- If you modify a value bound to multiple names, it is 'copy-on-modify'
+## `tracemem` shows that copies are minimized when using internal C code like lists
 
-```{r, echo = TRUE}
-y[2] <- 3
-obj_addr(x)
-obj_addr(y)
-```
-
-## Excessive copying
-
-We can use `tracemem()` to deduce copies empiracally.
-
-```{r, echo = TRUE}
-x <- data.frame(matrix(runif(5 * 1e4), ncol = 5))
-medians <- vapply(x, median, numeric(1))
-
-cat(tracemem(x), "\n")
-for (i in 1:5) {
-  x[[i]] <- x[[i]] - medians[[i]]
-}
-untracemem(x)
-```
-
-## Minimizing copies with objects using internal C code
-
-```{r, echo = TRUE}
+```{r}
 y <- as.list(x)
-cat(tracemem(y), "\n")
-#> <0x7f80c5c3de20>
-  
+tracemem(y)
+medians <- vapply(x, median, numeric(1))
 for (i in 1:5) {
   y[[i]] <- y[[i]] - medians[[i]]
 }
+
+as.list.default
 ```
 
-> Can also use `ref(x)` to get the address of the value bound to a given name
-
-## Environments are always modify-in-place
-
-This property is sometimes described as reference semantics because when you modify an environment all existing bindings to that environment continue to have the same reference.
-
-```{r, echo = TRUE}
-e1 <- rlang::env(a = 1, b = 2, c = 3)
-e2 <- e1
-e1$c <- 4
-e2$c
-```
-
-## Pop Quiz!
-
-**What does this do?**
-
-```{r, echo =  TRUE}
-x <- list()
-x[[1]] <- x
-```
-
-## Pop Quiz!
-
-**Answer: Copy-on-modify**
-
-```{r, echo =  TRUE}
-x <- list()
-x
-obj_addr(x)
-x[[1]] <- x
-x
-obj_addr(x)
-```
-
-## Functions
-
-- Copying also applies within functions
-- If you copy (but don't modify) `x` within `f()`, no copy is made
+## The environment in functions also copy values
 
 ```{r}
 f <- function(a) {
@@ -188,188 +109,67 @@ obj_addr(z)
 
 ![](images/02-trace.png)
 
-## Lists
-
-- A list overall, has it's own reference (id)
-- List *elements* also each point to other values
-- List doesn't store the value, it *stores a reference to the value*
-- As of R 3.1.0, modifying lists creates a *shallow copy*
-    - References (bindings) are copied, but *values are not*
+## Using `ref()` shows the memory address of a list and its *elements* unlike `obj_addr()`
 
 ```{r}
 l1 <- list(1, 2, 3)
+obj_addr(l1)
 l2 <- l1
 l2[[3]] <- 4
-```
-
-- We can use `ref()` to see how they compare
-  - See how the list reference is different
-  - But first two items in each list are the same
-
-```{r}
 ref(l1, l2)
 ```
 
 ![](images/02-l-modify-2.png){width=50%}
 
-## Data Frames
-
-- Data frames are lists of vectors
-- So copying and modifying a column *only affects that column*
-- **BUT** if you modify a *row*, every column must be copied
+## Since dataframes are lists of (column) vectors, mutating a column modifies only that column
 
 ```{r}
 d1 <- data.frame(x = c(1, 5, 6), y = c(2, 4, 3))
 d2 <- d1
-d3 <- d1
-```
-
-Only the modified column changes
-```{r}
 d2[, 2] <- d2[, 2] * 2
 ref(d1, d2)
 ```
 
-All columns change
+## Since dataframes are lists of (column) vectors, mutating a row modifies the whole dataframe value
+
 ```{r}
-d3[1, ] <- d3[1, ] * 3
-ref(d1, d3)
+d1 <- data.frame(x = c(1, 5, 6), y = c(2, 4, 3))
+d2 <- d1
+d2[1, ] <- d2[1, ] * 2
+ref(d1, d2)
 ```
 
-## Character vectors
-
-- R has a **global string pool**
-- Elements of character vectors point to unique strings in the pool
+## Characters are unlike vaslues like `1:10` since these objects are "reused" from a global string pool
 
 ```{r}
+x <- 1:4
+ref(x)
 x <- c("a", "a", "abc", "d")
-ref(x, character = TRUE)
+ref(x,character = TRUE)
 ```
 
 ![](images/02-character-2.png)
 
-## Exercises
-
-**1. Why is `tracemem(1:10)` not useful?**
-
-> Because it tries to trace a value that is not bound to a name
-
-## Exercises
-
-**2. What is the relationships among these objects?**
+## How much memory can be measured using `lobstr::obj_size` compared with just traced using `lobstr::obj_addr`
 
 ```{r}
-a <- 1:10      
-b <- list(a, a)
-c <- list(b, a, 1:10) # 
-```
-
-a <- obj 1    
-b <- obj 1, obj 1    
-c <- b(obj 1, obj 1), obj 1, 1:10    
-
-```{r}
-ref(c)
-```
-
-## Quiz
-
-**1. How much memory does `y` occupy?**
-
-```{r, echo = TRUE}
-x <- runif(1e6)
-lobstr::obj_size(x)
-y <- list(x, x, x)
-lobstr::obj_size(y)
-```
-
-> `object.size()` does not attribute memory allocation accurately. Here, it over-estimates the shared memory of the list wit its elements:
-
-```{r, echo = TRUE}
-object.size(y)
-```
-
-
-## Object Size
-
-- Use `lobstr::obj_size()` 
-- Lists may be smaller than expected because of referencing the same value
-- Strings may be smaller than expected because of global string pool
-
-```{r, echo = TRUE}
 banana <- "bananas bananas bananas"
+obj_addr(banana)
 obj_size(banana)
-obj_size(rep(banana, 100))
 ```
 
-## Alternative Representation
-
-- As of 3.5.0, the use of ALTREP represents vectors compactly
-    - e.g., 1:1000 - not 10,000 values, just 1 and 1,000
-
-## Exercises
-
-**1. Why are the sizes so different?**
+## Alternative Representation or ALTREPs represent vector values efficiently
 
 ```{r}
-y <- rep(list(runif(1e4)), 100)
-
-object.size(y) # ~8000 kB
-obj_size(y)    # ~80   kB
+x <- 1:10
+obj_size(x)
+y <- 1:10000
+obj_size(y)
 ```
 
-> From `?object.size()`: 
-> 
-> "This function merely provides a rough indication: it should be reasonably accurate for atomic vectors, but **does not detect if elements of a list are shared**, for example.
-
-## Exercises
-
-**2. Why is the size misleading?**
+## We can measure memory for dynamically created values using `benc::mark()`
 
 ```{r}
-obj_size(mean)
-funs <- list(mean, sd, var)
-obj_size(funs)
-```
-
-> Because they reference functions from base and stats, which are always available.
-> Why bother looking at the size? What use is that?
-
-## Exercises
-
-**3. Predict the sizes**
-
-```{r}
-a <- runif(1e6) # 8 MB
-obj_size(a)
-```
-
-
-```{r}
-b <- list(a, a)
-obj_size(b)
-```
-
-- There is one value ~8MB
-- `a` and `b[[1]]` and `b[[2]]` all point to the same value.
-
-```{r}
-obj_size(a, b)
-```
-
-
-```{r}
-b[[1]][[1]] <- 10
-obj_size(b)     # 16 MB (two values, two element references)
-obj_size(a, b)  # 16 MB (a & b[[2]] point to the same value)
-```
-- Now there are two values ~8MB each (16MB total)
-- `a` and `b[[2]]` point to the same value (8MB)
-- `b[[1]]` is new (8MB) because the first element (`b[[1]][[1]]`) has been changed
-
-## Benchmark this (Exercise #2)
-
-```{r, echo = TRUE}
 med <- function(d, medians) {
   for (i in seq_along(medians)) {
     d[[i]] <- d[[i]] - medians[[i]]
@@ -383,48 +183,10 @@ bench::mark(
   "data.frame" = med(x, medians),
   "list" = med(y, medians)
 )
-
-x <- data.frame(matrix(runif(5 * 1e4), ncol = 20))
-medians <- vapply(x, median, numeric(1))
-y <- as.list(x)
-
-bench::mark(
-  "data.frame" = med(x, medians),
-  "list" = med(y, medians)
-)
 ```
 
-## Exercises
-
-**1. What happens if you attempt to use tracemem() on an environment?**
-
-```{r}
-#| error: true
-e1 <- rlang::env(a = 1, b = 2, c = 3)
-tracemem(e1)
-```
-
-> Because environments always modified in place, there's no point in tracing them
-
-
-## Unbinding and the garbage collector
-
-- If you delete the 'name' bound to an object, the object still exists in memory
-- R runs a "garbage collector" (GC) to remove unused objects when it needs more memory
-- "Looking from the outside, it’s basically impossible to predict when the GC will run. In fact, you shouldn’t even try."
-- If you want to know when it runs, use `gcinfo(TRUE)` to get a message printed
-- You can force GC with `gc()` but you never need to use more memory *within* R
-- Only reason to do so is to free memory for other system software, or to get the message printed about how much memory is being used
+## Though not needed to call explicitly, deleted object's can be given to the OS using the garbage collector `gc()`
 
 ```{r}
 gc()
-mem_used()
 ```
-
-## GC memory vs. Operating System memory
-
-- These numbers will **not** be what your OS tells you because, 
-  1. It includes objects created by R, but not R interpreter
-  2. R and OS are lazy and don't reclaim/release memory until it's needed
-  3. R counts memory from objects, but there are gaps due to those that are deleted -> 
-  *memory fragmentation* [less memory actually available then you might think]
