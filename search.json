@@ -1424,84 +1424,133 @@
     "href": "slides/02.html#learning-objectives",
     "title": "Names and values",
     "section": "Learning objectives",
-    "text": "Learning objectives\n\nTo be able to understand distinction between an object and its name\nWith this knowledge, to be able write faster code using less memory\nTo better understand R’s functional programming tools\n\nUsing lobstr package here.\n\nlibrary(lobstr)"
+    "text": "Learning objectives\n\nDistinguish between an object and its name.\nIdentify when data are copied versus modified.\nTrace and identify the memory used by R.\n\nThe {lobstr} package will help us throughout the chapter\n\nlibrary(lobstr)"
   },
   {
-    "objectID": "slides/02.html#quiz",
-    "href": "slides/02.html#quiz",
+    "objectID": "slides/02.html#syntactic-names-are-easier-to-create-and-work-with-than-non-syntactic-names",
+    "href": "slides/02.html#syntactic-names-are-easier-to-create-and-work-with-than-non-syntactic-names",
     "title": "Names and values",
-    "section": "Quiz",
-    "text": "Quiz\n1. How do I create a new column called 3 that contains the sum of 1 and 2?\n\ndf &lt;- data.frame(runif(3), runif(3))\nnames(df) &lt;- c(1, 2)\ndf\n\n#&gt;           1         2\n#&gt; 1 0.8893205 0.9874973\n#&gt; 2 0.4645398 0.7004741\n#&gt; 3 0.7312149 0.2986040\n\n\n\ndf$`3` &lt;- df$`1` + df$`2`\ndf\n\n#&gt;           1         2        3\n#&gt; 1 0.8893205 0.9874973 1.876818\n#&gt; 2 0.4645398 0.7004741 1.165014\n#&gt; 3 0.7312149 0.2986040 1.029819\n\n\nWhat makes these names challenging?\n\nYou need to use backticks (`) when the name of an object doesn’t start with a a character or ‘.’ [or . followed by a number] (non-syntactic names).\n\n2. How much memory does y occupy?\n\nx &lt;- runif(1e6)\ny &lt;- list(x, x, x)\n\nNeed to use the lobstr package:\n\nlobstr::obj_size(y)\n\n#&gt; 8.00 MB\n\n\n\nNote that if you look in the RStudio Environment or use R base object.size() you actually get a value of 24 MB\n\n\nobject.size(y)\n\n#&gt; 24000224 bytes\n\n\n3. On which line does a get copied in the following example?\n\na &lt;- c(1, 5, 3, 2)\nb &lt;- a\nb[[1]] &lt;- 10\n\n\nNot until b is modified, the third line"
+    "section": "Syntactic names are easier to create and work with than non-syntactic names",
+    "text": "Syntactic names are easier to create and work with than non-syntactic names\n\nSyntactic names: my_variable, x, cpp11, .by.\n\nCan’t use names in ?Reserved\n\nNon-syntactic names need to be surrounded in backticks."
   },
   {
-    "objectID": "slides/02.html#binding-basics",
-    "href": "slides/02.html#binding-basics",
+    "objectID": "slides/02.html#names-are-bound-to-values-with--",
+    "href": "slides/02.html#names-are-bound-to-values-with--",
     "title": "Names and values",
-    "section": "Binding basics",
-    "text": "Binding basics\n\nCreate values and bind a name to them\nNames have values (rather than values have names)\nMultiple names can refer to the same values\nWe can look at an object’s address to keep track of the values independent of their names\n\n\nx &lt;- c(1, 2, 3)\ny &lt;- x\nobj_addr(x)\n\n#&gt; [1] \"0x2a58503acd8\"\n\nobj_addr(y)\n\n#&gt; [1] \"0x2a58503acd8\"\n\n\nExercises\n1. Explain the relationships\n\na &lt;- 1:10\nb &lt;- a\nc &lt;- b\nd &lt;- 1:10\n\n\na b and c are all names that refer to the first value 1:10\nd is a name that refers to the second value of 1:10.\n\n2. Do the following all point to the same underlying function object? hint: lobstr::obj_addr()\n\nobj_addr(mean)\n\n#&gt; [1] \"0x2a5828bf738\"\n\nobj_addr(base::mean)\n\n#&gt; [1] \"0x2a5828bf738\"\n\nobj_addr(get(\"mean\"))\n\n#&gt; [1] \"0x2a5828bf738\"\n\nobj_addr(evalq(mean))\n\n#&gt; [1] \"0x2a5828bf738\"\n\nobj_addr(match.fun(\"mean\"))\n\n#&gt; [1] \"0x2a5828bf738\"\n\n\n\nYes!"
+    "section": "Names are bound to values with <-",
+    "text": "Names are bound to values with &lt;-\n\na &lt;- c(1, 2, 3)\na\n\n#&gt; [1] 1 2 3\n\nobj_addr(a)\n\n#&gt; [1] \"0x2226bfbc968\""
   },
   {
-    "objectID": "slides/02.html#copy-on-modify",
-    "href": "slides/02.html#copy-on-modify",
+    "objectID": "slides/02.html#many-names-can-be-bound-to-the-same-values",
+    "href": "slides/02.html#many-names-can-be-bound-to-the-same-values",
     "title": "Names and values",
-    "section": "Copy-on-modify",
-    "text": "Copy-on-modify\n\nIf you modify a value bound to multiple names, it is ‘copy-on-modify’\nIf you modify a value bound to a single name, it is ‘modify-in-place’\nUse tracemem() to see when a name’s value changes\n\n\nx &lt;- c(1, 2, 3)\ncat(tracemem(x), \"\\n\")\n\n#&gt; &lt;000002A585CC0FF8&gt;\n\n\n\ny &lt;- x\ny[[3]] &lt;- 4L  # Changes (copy-on-modify)\n\n#&gt; tracemem[0x000002a585cc0ff8 -&gt; 0x000002a58600d5e8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main\n\ny[[3]] &lt;- 5L  # Doesn't change (modify-in-place)\n\nTurn off tracemem() with untracemem()\n\nCan also use ref(x) to get the address of the value bound to a given name"
+    "section": "Many names can be bound to the same values",
+    "text": "Many names can be bound to the same values\n\nb &lt;- a\nobj_addr(a)\n\n#&gt; [1] \"0x2226bfbc968\"\n\nobj_addr(b)\n\n#&gt; [1] \"0x2226bfbc968\""
   },
   {
-    "objectID": "slides/02.html#functions",
-    "href": "slides/02.html#functions",
+    "objectID": "slides/02.html#if-shared-values-are-modified-the-object-is-copied-to-a-new-address",
+    "href": "slides/02.html#if-shared-values-are-modified-the-object-is-copied-to-a-new-address",
     "title": "Names and values",
-    "section": "Functions",
-    "text": "Functions\n\nCopying also applies within functions\nIf you copy (but don’t modify) x within f(), no copy is made\n\n\nf &lt;- function(a) {\n  a\n}\n\nx &lt;- c(1, 2, 3)\nz &lt;- f(x) # No change in value\n\nref(x)\n\n#&gt; [1:0x2a58669dd18] &lt;dbl&gt;\n\nref(z)\n\n#&gt; [1:0x2a58669dd18] &lt;dbl&gt;"
+    "section": "If shared values are modified, the object is copied to a new address",
+    "text": "If shared values are modified, the object is copied to a new address\n\nb[[1]] &lt;- 5\nobj_addr(a)\n\n#&gt; [1] \"0x2226bfbc968\"\n\nobj_addr(b)\n\n#&gt; [1] \"0x2226fda7278\""
   },
   {
-    "objectID": "slides/02.html#lists",
-    "href": "slides/02.html#lists",
+    "objectID": "slides/02.html#memory-addresses-can-differ-even-if-objects-seem-the-same",
+    "href": "slides/02.html#memory-addresses-can-differ-even-if-objects-seem-the-same",
     "title": "Names and values",
-    "section": "Lists",
-    "text": "Lists\n\nA list overall, has it’s own reference (id)\nList elements also each point to other values\nList doesn’t store the value, it stores a reference to the value\nAs of R 3.1.0, modifying lists creates a shallow copy\n\nReferences (bindings) are copied, but values are not\n\n\n\nl1 &lt;- list(1, 2, 3)\nl2 &lt;- l1\nl2[[3]] &lt;- 4\n\n\nWe can use ref() to see how they compare\n\nSee how the list reference is different\nBut first two items in each list are the same\n\n\n\nref(l1, l2)\n\n#&gt; █ [1:0x2a586f2e698] &lt;list&gt; \n#&gt; ├─[2:0x2a5877133b8] &lt;dbl&gt; \n#&gt; ├─[3:0x2a5877131f8] &lt;dbl&gt; \n#&gt; └─[4:0x2a587713038] &lt;dbl&gt; \n#&gt;  \n#&gt; █ [5:0x2a586fc3098] &lt;list&gt; \n#&gt; ├─[2:0x2a5877133b8] \n#&gt; ├─[3:0x2a5877131f8] \n#&gt; └─[6:0x2a58770fc78] &lt;dbl&gt;"
+    "section": "Memory addresses can differ even if objects seem the same",
+    "text": "Memory addresses can differ even if objects seem the same\n\na &lt;- 1:10\nb &lt;- a\nc &lt;- 1:10\n\nobj_addr(a)\n\n#&gt; [1] \"0x22271c9e7b0\"\n\nobj_addr(b)\n\n#&gt; [1] \"0x22271c9e7b0\"\n\nobj_addr(c)\n\n#&gt; [1] \"0x22271d77708\""
   },
   {
-    "objectID": "slides/02.html#data-frames",
-    "href": "slides/02.html#data-frames",
+    "objectID": "slides/02.html#functions-have-a-single-address-regardless-of-how-theyre-referenced",
+    "href": "slides/02.html#functions-have-a-single-address-regardless-of-how-theyre-referenced",
     "title": "Names and values",
-    "section": "Data Frames",
-    "text": "Data Frames\n\nData frames are lists of vectors\nSo copying and modifying a column only affects that column\nBUT if you modify a row, every column must be copied\n\n\nd1 &lt;- data.frame(x = c(1, 5, 6), y = c(2, 4, 3))\nd2 &lt;- d1\nd3 &lt;- d1\n\nOnly the modified column changes\n\nd2[, 2] &lt;- d2[, 2] * 2\nref(d1, d2)\n\n#&gt; █ [1:0x2a584931608] &lt;df[,2]&gt; \n#&gt; ├─x = [2:0x2a57f3b9cc8] &lt;dbl&gt; \n#&gt; └─y = [3:0x2a57f3b9c78] &lt;dbl&gt; \n#&gt;  \n#&gt; █ [4:0x2a5810eb508] &lt;df[,2]&gt; \n#&gt; ├─x = [2:0x2a57f3b9cc8] \n#&gt; └─y = [5:0x2a57feb2058] &lt;dbl&gt;\n\n\nAll columns change\n\nd3[1, ] &lt;- d3[1, ] * 3\nref(d1, d3)\n\n#&gt; █ [1:0x2a584931608] &lt;df[,2]&gt; \n#&gt; ├─x = [2:0x2a57f3b9cc8] &lt;dbl&gt; \n#&gt; └─y = [3:0x2a57f3b9c78] &lt;dbl&gt; \n#&gt;  \n#&gt; █ [4:0x2a57faa92c8] &lt;df[,2]&gt; \n#&gt; ├─x = [5:0x2a585a91b38] &lt;dbl&gt; \n#&gt; └─y = [6:0x2a585a91ae8] &lt;dbl&gt;"
+    "section": "Functions have a single address regardless of how they’re referenced",
+    "text": "Functions have a single address regardless of how they’re referenced\n\nobj_addr(mean)\n\n#&gt; [1] \"0x2226f891738\"\n\nobj_addr(base::mean)\n\n#&gt; [1] \"0x2226f891738\"\n\nobj_addr(get(\"mean\"))\n\n#&gt; [1] \"0x2226f891738\""
   },
   {
-    "objectID": "slides/02.html#character-vectors",
-    "href": "slides/02.html#character-vectors",
+    "objectID": "slides/02.html#unlike-most-objects-environments-keep-the-same-memory-address-on-modify",
+    "href": "slides/02.html#unlike-most-objects-environments-keep-the-same-memory-address-on-modify",
     "title": "Names and values",
-    "section": "Character vectors",
-    "text": "Character vectors\n\nR has a global string pool\nElements of character vectors point to unique strings in the pool\n\n\nx &lt;- c(\"a\", \"a\", \"abc\", \"d\")"
+    "section": "Unlike most objects, environments keep the same memory address on modify",
+    "text": "Unlike most objects, environments keep the same memory address on modify\n\nd &lt;- new.env()\nobj_addr(d)\n\n#&gt; [1] \"0x2226b7489d8\"\n\ne &lt;- d\ne[['a']] &lt;- 1\nobj_addr(e)\n\n#&gt; [1] \"0x2226b7489d8\"\n\nobj_addr(d)\n\n#&gt; [1] \"0x2226b7489d8\"\n\nd[['a']]\n\n#&gt; [1] 1"
   },
   {
-    "objectID": "slides/02.html#exercises-1",
-    "href": "slides/02.html#exercises-1",
+    "objectID": "slides/02.html#use-tracemem-to-validate-if-values-are-copied-or-modified",
+    "href": "slides/02.html#use-tracemem-to-validate-if-values-are-copied-or-modified",
     "title": "Names and values",
-    "section": "Exercises",
-    "text": "Exercises\n1. Why is tracemem(1:10) not useful?\n\nBecause it tries to trace a value that is not bound to a name\n\n2. Why are there two copies?\n\nx &lt;- c(1L, 2L, 3L)\ntracemem(x)\n\n#&gt; [1] \"&lt;000002A5856391C8&gt;\"\n\nx[[3]] &lt;- 4\n\n#&gt; tracemem[0x000002a5856391c8 -&gt; 0x000002a585653f08]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main \n#&gt; tracemem[0x000002a585653f08 -&gt; 0x000002a58663f8b8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main\n\n\n\nBecause we convert an integer vector (using 1L, etc.) to a double vector (using just 4)-\n\n3. What is the relationships among these objects?\n\na &lt;- 1:10      \nb &lt;- list(a, a)\nc &lt;- list(b, a, 1:10) # \n\na &lt;- obj 1\nb &lt;- obj 1, obj 1\nc &lt;- b(obj 1, obj 1), obj 1, 1:10\n\nref(c)\n\n#&gt; █ [1:0x2a586fc3ea8] &lt;list&gt; \n#&gt; ├─█ [2:0x2a585a1a308] &lt;list&gt; \n#&gt; │ ├─[3:0x2a585aa1c40] &lt;int&gt; \n#&gt; │ └─[3:0x2a585aa1c40] \n#&gt; ├─[3:0x2a585aa1c40] \n#&gt; └─[4:0x2a585b13d90] &lt;int&gt;\n\n\n4. What happens here?\n\nx &lt;- list(1:10)\nx[[2]] &lt;- x\n\n\nx is a list\nx[[2]] &lt;- x creates a new list, which in turn contains a reference to the original list\nx is no longer bound to list(1:10)\n\n\nref(x)\n\n#&gt; █ [1:0x2a586172508] &lt;list&gt; \n#&gt; ├─[2:0x2a58641c040] &lt;int&gt; \n#&gt; └─█ [3:0x2a586b06c48] &lt;list&gt; \n#&gt;   └─[2:0x2a58641c040]"
+    "section": "Use tracemem to validate if values are copied or modified",
+    "text": "Use tracemem to validate if values are copied or modified\n\nx &lt;- runif(10)\ntracemem(x)\n#&gt; [1] \"&lt;000001F4185B4B08&gt;\"\ny &lt;- x\nx[[1]] &lt;- 10\n#&gt; tracemem[0x000001f4185b4b08 -&gt; 0x000001f4185b4218]:\nuntracemem(x)"
   },
   {
-    "objectID": "slides/02.html#object-size",
-    "href": "slides/02.html#object-size",
+    "objectID": "slides/02.html#tracemem-shows-internal-c-code-minimizes-copying",
+    "href": "slides/02.html#tracemem-shows-internal-c-code-minimizes-copying",
     "title": "Names and values",
-    "section": "Object Size",
-    "text": "Object Size\n\nUse lobstr::obj_size()\nLists may be smaller than expected because of referencing the same value\nStrings may be smaller than expected because using global string pool\nDifficult to predict how big something will be\n\nCan only add sizes together if they share no references in common\n\n\nAlternative Representation\n\nAs of R 3.5.0 - ALTREP\nRepresent some vectors compactly\n\ne.g., 1:1000 - not 10,000 values, just 1 and 1,000\n\n\nExercises\n1. Why are the sizes so different?\n\ny &lt;- rep(list(runif(1e4)), 100)\n\nobject.size(y) # ~8000 kB\n\n#&gt; 8005648 bytes\n\nobj_size(y)    # ~80   kB\n\n#&gt; 80.90 kB\n\n\n\nFrom ?object.size():\n“This function merely provides a rough indication: it should be reasonably accurate for atomic vectors, but does not detect if elements of a list are shared, for example.\n\n2. Why is the size misleading?\n\nfuns &lt;- list(mean, sd, var)\nobj_size(funs)\n\n#&gt; 18.76 kB\n\n\n\nBecause they reference functions from base and stats, which are always available. Why bother looking at the size? What use is that?\n\n3. Predict the sizes\n\na &lt;- runif(1e6) # 8 MB\nobj_size(a)\n\n#&gt; 8.00 MB\n\n\n\nb &lt;- list(a, a)\n\n\nThere is one value ~8MB\na and b[[1]] and b[[2]] all point to the same value.\n\n\nobj_size(b)\n\n#&gt; 8.00 MB\n\nobj_size(a, b)\n\n#&gt; 8.00 MB\n\n\n\nb[[1]][[1]] &lt;- 10\n\n\nNow there are two values ~8MB each (16MB total)\na and b[[2]] point to the same value (8MB)\nb[[1]] is new (8MB) because the first element (b[[1]][[1]]) has been changed\n\n\nobj_size(b)     # 16 MB (two values, two element references)\n\n#&gt; 16.00 MB\n\nobj_size(a, b)  # 16 MB (a & b[[2]] point to the same value)\n\n#&gt; 16.00 MB\n\n\n\nb[[2]][[1]] &lt;- 10\n\n\nFinally, now there are three values ~8MB each (24MB total)\nAlthough b[[1]] and b[[2]] have the same contents, they are not references to the same object.\n\n\nobj_size(b)\n\n#&gt; 16.00 MB\n\nobj_size(a, b)\n\n#&gt; 24.00 MB"
+    "section": "tracemem shows internal C code minimizes copying",
+    "text": "tracemem shows internal C code minimizes copying\n\ny &lt;- as.list(x)\ntracemem(y)\n#&gt; [1] \"&lt;000001AD67FDCD38&gt;\"\nmedians &lt;- vapply(x, median, numeric(1))\nfor (i in 1:5) {\n  y[[i]] &lt;- y[[i]] - medians[[i]]\n}\n#&gt; tracemem[0x000001ad67fdcd38 -&gt; 0x000001ad61982638]:\nuntracemem(y)"
   },
   {
-    "objectID": "slides/02.html#modify-in-place",
-    "href": "slides/02.html#modify-in-place",
+    "objectID": "slides/02.html#a-functions-environment-follows-copy-on-modify-rules",
+    "href": "slides/02.html#a-functions-environment-follows-copy-on-modify-rules",
     "title": "Names and values",
-    "section": "Modify-in-place",
-    "text": "Modify-in-place\n\nModifying usually creates a copy except for\n\nObjects with a single binding (performance optimization)\nEnvironments (special)\n\n\nObjects with a single binding\n\nHard to know if copy will occur\nIf you have 2+ bindings and remove them, R can’t follow how many are removed (so will always think there are more than one)\nMay make a copy even if there’s only one binding left\nUsing a function makes a reference to it unless it’s a function based on C\nBest to use tracemem() to check rather than guess.\n\nExample - lists vs. data frames in for loop\nSetup\nCreate the data to modify\n\nx &lt;- data.frame(matrix(runif(5 * 1e4), ncol = 5))\nmedians &lt;- vapply(x, median, numeric(1))\n\nData frame - Copied every time!\n\ncat(tracemem(x), \"\\n\")\n\n#&gt; &lt;000002A587857268&gt;\n\nfor (i in seq_along(medians)) {\n  x[[i]] &lt;- x[[i]] - medians[[i]]\n}\n\n#&gt; tracemem[0x000002a587857268 -&gt; 0x000002a584b5de78]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main \n#&gt; tracemem[0x000002a584b5de78 -&gt; 0x000002a584b5d2a8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main \n#&gt; tracemem[0x000002a584b5d2a8 -&gt; 0x000002a584b5d238]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main \n#&gt; tracemem[0x000002a584b5d238 -&gt; 0x000002a584b5d1c8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main \n#&gt; tracemem[0x000002a584b5d1c8 -&gt; 0x000002a584b5d158]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main \n#&gt; tracemem[0x000002a584b5d158 -&gt; 0x000002a584b5d0e8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main \n#&gt; tracemem[0x000002a584b5d0e8 -&gt; 0x000002a584b5d078]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main \n#&gt; tracemem[0x000002a584b5d078 -&gt; 0x000002a584b5d008]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main \n#&gt; tracemem[0x000002a584b5d008 -&gt; 0x000002a584bbfea8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main \n#&gt; tracemem[0x000002a584bbfea8 -&gt; 0x000002a584bbfe38]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main\n\nuntracemem(x)\n\nList (uses internal C code) - Copied once!\n\ny &lt;- as.list(x)\n\ncat(tracemem(y), \"\\n\")\n\n#&gt; &lt;000002A584B16388&gt;\n\nfor (i in seq_along(medians)) {\n  y[[i]] &lt;- y[[i]] - medians[[i]]\n}\n\n#&gt; tracemem[0x000002a584b16388 -&gt; 0x000002a582d8fea8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main\n\nuntracemem(y)\n\nBenchmark this (Exercise #2)\nFirst wrap in a function\n\nmed &lt;- function(d, medians) {\n  for (i in seq_along(medians)) {\n    d[[i]] &lt;- d[[i]] - medians[[i]]\n  }\n}\n\nTry with 5 columns\n\nx &lt;- data.frame(matrix(runif(5 * 1e4), ncol = 5))\nmedians &lt;- vapply(x, median, numeric(1))\ny &lt;- as.list(x)\n\nbench::mark(\n  \"data.frame\" = med(x, medians),\n  \"list\" = med(y, medians)\n)\n\n#&gt; # A tibble: 2 × 6\n#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`\n#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;\n#&gt; 1 data.frame   52.3µs   68.2µs    13411.     410KB     201.\n#&gt; 2 list         16.2µs     33µs    28621.     391KB     279.\n\n\nTry with 20 columns\n\nx &lt;- data.frame(matrix(runif(5 * 1e4), ncol = 20))\nmedians &lt;- vapply(x, median, numeric(1))\ny &lt;- as.list(x)\n\nbench::mark(\n  \"data.frame\" = med(x, medians),\n  \"list\" = med(y, medians)\n)\n\n#&gt; # A tibble: 2 × 6\n#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`\n#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;\n#&gt; 1 data.frame  143.8µs  189.7µs     4722.     400KB     50.1\n#&gt; 2 list         25.6µs   39.7µs    24419.     392KB    243.\n\n\nWOW!\nEnvironmments\n\nAlways modified in place (reference semantics)\nInteresting because if you modify the environment, all existing bindings have the same reference\nIf two names point to the same environment, and you update one, you update both!\n\n\ne1 &lt;- rlang::env(a = 1, b = 2, c = 3)\ne2 &lt;- e1\ne1$c &lt;- 4\ne2$c\n\n#&gt; [1] 4\n\n\n\nThis means that environments can contain themselves (!)\n\nExercises\n1. Why isn’t this circular?\n\nx &lt;- list()\nx[[1]] &lt;- x\n\n\nBecause the binding to the list() object moves from x in the first line to x[[1]] in the second.\n\n2. (see “Objects with a single binding”)\n3. What happens if you attempt to use tracemem() on an environment?\n\ne1 &lt;- rlang::env(a = 1, b = 2, c = 3)\ntracemem(e1)\n\n#&gt; Error in tracemem(e1): 'tracemem' is not useful for promise and environment objects\n\n\n\nBecause environments always modified in place, there’s no point in tracing them"
+    "section": "A function’s environment follows copy-on-modify rules",
+    "text": "A function’s environment follows copy-on-modify rules\n\n\n\nf &lt;- function(a) {\n  a\n}\n\nx &lt;- c(1, 2, 3)\nz &lt;- f(x) # No change in value\n\nobj_addr(x)\n\n#&gt; [1] \"0x2226bdb8738\"\n\nobj_addr(z) # No address change \n\n#&gt; [1] \"0x2226bdb8738\"\n\n\n\n\n\n\n\nDiagrams will be explained more in chapter 7.\na points to same address as x.\nIf a modified inside function, z would have new address."
   },
   {
-    "objectID": "slides/02.html#unbinding-and-the-garbage-collector",
-    "href": "slides/02.html#unbinding-and-the-garbage-collector",
+    "objectID": "slides/02.html#ref-shows-the-memory-address-of-a-list-and-its-elements",
+    "href": "slides/02.html#ref-shows-the-memory-address-of-a-list-and-its-elements",
     "title": "Names and values",
-    "section": "Unbinding and the garbage collector",
-    "text": "Unbinding and the garbage collector\n\nIf you delete the ‘name’ bound to an object, the object still exists\nR runs a “garbage collector” (GC) to remove these objects when it needs more memory\n“Looking from the outside, it’s basically impossible to predict when the GC will run. In fact, you shouldn’t even try.”\nIf you want to know when it runs, use gcinfo(TRUE) to get a message printed\nYou can force GC with gc() but you never need to to use more memory within R\nOnly reason to do so is to free memory for other system software, or, to get the message printed about how much memory is being used\n\n\ngc()\n\n#&gt;           used (Mb) gc trigger (Mb) max used (Mb)\n#&gt; Ncells  805637 43.1    1486050 79.4  1486050 79.4\n#&gt; Vcells 4532584 34.6   10146329 77.5 10146315 77.5\n\nmem_used()\n\n#&gt; 81.38 MB\n\n\n\nThese numbers will not be what you OS tells you because,\n\nIt includes objects created by R, but not R interpreter\nR and OS are lazy and don’t reclaim/release memory until it’s needed\nR counts memory from objects, but there are gaps due to those that are deleted -&gt; memory fragmentation [less memory actually available they you might think]"
+    "section": "ref() shows the memory address of a list and its elements",
+    "text": "ref() shows the memory address of a list and its elements\n\n\n\nl1 &lt;- list(1, 2, 3)\nobj_addr(l1)\n\n#&gt; [1] \"0x2226c315db8\"\n\nl2 &lt;- l1\nl2[[3]] &lt;- 4\nref(l1, l2)\n\n#&gt; █ [1:0x2226c315db8] &lt;list&gt; \n#&gt; ├─[2:0x2226c730078] &lt;dbl&gt; \n#&gt; ├─[3:0x2226c75cdc8] &lt;dbl&gt; \n#&gt; └─[4:0x2226c75cc08] &lt;dbl&gt; \n#&gt;  \n#&gt; █ [5:0x2226c36cd68] &lt;list&gt; \n#&gt; ├─[2:0x2226c730078] \n#&gt; ├─[3:0x2226c75cdc8] \n#&gt; └─[6:0x2226c75b318] &lt;dbl&gt;"
+  },
+  {
+    "objectID": "slides/02.html#since-dataframes-are-lists-of-column-vectors-mutating-a-column-modifies-only-that-column",
+    "href": "slides/02.html#since-dataframes-are-lists-of-column-vectors-mutating-a-column-modifies-only-that-column",
+    "title": "Names and values",
+    "section": "Since dataframes are lists of (column) vectors, mutating a column modifies only that column",
+    "text": "Since dataframes are lists of (column) vectors, mutating a column modifies only that column\n\nd1 &lt;- data.frame(x = c(1, 5, 6), y = c(2, 4, 3))\nd2 &lt;- d1\nd2[, 2] &lt;- d2[, 2] * 2\nref(d1, d2)\n\n#&gt; █ [1:0x2226cca93c8] &lt;df[,2]&gt; \n#&gt; ├─x = [2:0x22272216148] &lt;dbl&gt; \n#&gt; └─y = [3:0x222722160f8] &lt;dbl&gt; \n#&gt;  \n#&gt; █ [4:0x2226ce0cf48] &lt;df[,2]&gt; \n#&gt; ├─x = [2:0x22272216148] \n#&gt; └─y = [5:0x222727b0c38] &lt;dbl&gt;"
+  },
+  {
+    "objectID": "slides/02.html#since-dataframes-are-lists-of-column-vectors-mutating-a-row-modifies-the-value",
+    "href": "slides/02.html#since-dataframes-are-lists-of-column-vectors-mutating-a-row-modifies-the-value",
+    "title": "Names and values",
+    "section": "Since dataframes are lists of (column) vectors, mutating a row modifies the value",
+    "text": "Since dataframes are lists of (column) vectors, mutating a row modifies the value\n\nd1 &lt;- data.frame(x = c(1, 5, 6), y = c(2, 4, 3))\nd2 &lt;- d1\nd2[1, ] &lt;- d2[1, ] * 2\nref(d1, d2)\n\n#&gt; █ [1:0x22272912588] &lt;df[,2]&gt; \n#&gt; ├─x = [2:0x222730bd408] &lt;dbl&gt; \n#&gt; └─y = [3:0x222730bd3b8] &lt;dbl&gt; \n#&gt;  \n#&gt; █ [4:0x22272b0e548] &lt;df[,2]&gt; \n#&gt; ├─x = [5:0x222731501d8] &lt;dbl&gt; \n#&gt; └─y = [6:0x22273150188] &lt;dbl&gt;\n\n\n\n\nHere “mutate” means “change”, not dplyr::mutate()"
+  },
+  {
+    "objectID": "slides/02.html#characters-are-unique-due-to-the-global-string-pool",
+    "href": "slides/02.html#characters-are-unique-due-to-the-global-string-pool",
+    "title": "Names and values",
+    "section": "Characters are unique due to the global string pool",
+    "text": "Characters are unique due to the global string pool\n\n\n\nx &lt;- 1:4\nref(x)\n\n#&gt; [1:0x22272f78460] &lt;int&gt;\n\ny &lt;- 1:4\nref(y)\n\n#&gt; [1:0x222730899d8] &lt;int&gt;\n\nx &lt;- c(\"a\", \"a\", \"b\")\nref(x, character = TRUE)\n\n#&gt; █ [1:0x2227394f1d8] &lt;chr&gt; \n#&gt; ├─[2:0x22267d9b118] &lt;string: \"a\"&gt; \n#&gt; ├─[2:0x22267d9b118] \n#&gt; └─[3:0x2226e17f3b8] &lt;string: \"b\"&gt;\n\ny &lt;- c(\"a\")\nref(y, character = TRUE)\n\n#&gt; █ [1:0x2227397fce8] &lt;chr&gt; \n#&gt; └─[2:0x22267d9b118] &lt;string: \"a\"&gt;\n\n\n\n\n\n\n\n“a” is always at the same address.\nEach member of character vector has its own address (kind of list-like)."
+  },
+  {
+    "objectID": "slides/02.html#memory-amount-can-also-be-measured-using-lobstrobj_size",
+    "href": "slides/02.html#memory-amount-can-also-be-measured-using-lobstrobj_size",
+    "title": "Names and values",
+    "section": "Memory amount can also be measured, using lobstr::obj_size",
+    "text": "Memory amount can also be measured, using lobstr::obj_size\n\nbanana &lt;- \"bananas bananas bananas\"\nobj_addr(banana)\n\n#&gt; [1] \"0x22271bc25b8\"\n\nobj_size(banana)\n\n#&gt; 136 B"
+  },
+  {
+    "objectID": "slides/02.html#alternative-representation-or-altreps-represent-vector-values-efficiently",
+    "href": "slides/02.html#alternative-representation-or-altreps-represent-vector-values-efficiently",
+    "title": "Names and values",
+    "section": "Alternative Representation or ALTREPs represent vector values efficiently",
+    "text": "Alternative Representation or ALTREPs represent vector values efficiently\n\nx &lt;- 1:10\nobj_size(x)\n\n#&gt; 680 B\n\ny &lt;- 1:10000\nobj_size(y)\n\n#&gt; 680 B"
+  },
+  {
+    "objectID": "slides/02.html#we-can-measure-memory-speed-using-benchmark",
+    "href": "slides/02.html#we-can-measure-memory-speed-using-benchmark",
+    "title": "Names and values",
+    "section": "We can measure memory & speed using bench::mark()",
+    "text": "We can measure memory & speed using bench::mark()\n\nmed &lt;- function(d, medians) {\n  for (i in seq_along(medians)) {\n    d[[i]] &lt;- d[[i]] - medians[[i]]\n  }\n}\nx &lt;- data.frame(matrix(runif(5 * 1e4), ncol = 5))\nmedians &lt;- vapply(x, median, numeric(1))\ny &lt;- as.list(x)\n\nbench::mark(\n  \"data.frame\" = med(x, medians),\n  \"list\" = med(y, medians)\n)[, c(\"min\", \"median\", \"mem_alloc\")]\n\n#&gt; # A tibble: 2 × 3\n#&gt;        min   median mem_alloc\n#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;\n#&gt; 1   52.7µs   66.6µs     491KB\n#&gt; 2   22.8µs   33.7µs     391KB\n\n\n\n\nThe thing to see: list version uses less RAM and is faster"
+  },
+  {
+    "objectID": "slides/02.html#the-garbage-collector-gc-explicitly-clears-out-unbound-objects",
+    "href": "slides/02.html#the-garbage-collector-gc-explicitly-clears-out-unbound-objects",
+    "title": "Names and values",
+    "section": "The garbage collector gc() explicitly clears out unbound objects",
+    "text": "The garbage collector gc() explicitly clears out unbound objects\n\nx &lt;- 1:3\nx &lt;- 2:4 # \"1:3\" is orphaned\nrm(x) # \"2:4\" is orphaned\ngc()\n\n#&gt;           used (Mb) gc trigger (Mb) max used (Mb)\n#&gt; Ncells  791104 42.3    1505464 80.5  1505464 80.5\n#&gt; Vcells 1497631 11.5    8388608 64.0  8388482 64.0\n\nlobstr::mem_used() # Wrapper around gc()\n\n#&gt; 56.29 MB\n\n\n\n\n\nmem_used() multiplies Ncells “used” by either 28 (32-bit architecture) or 56 (64-bit architecture)., and Vcells “used” by 8, adds them, and converts to Mb.\n\n\n\n\n\ngc() runs automatically, never need to call"
   },
   {
     "objectID": "slides/04.html#learning-objectives",

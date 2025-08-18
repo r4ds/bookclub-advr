@@ -201,630 +201,434 @@
 <section id="learning-objectives" class="slide level2">
 <h2>Learning objectives</h2>
 <ul>
-<li>To be able to understand distinction between an <em>object</em> and its <em>name</em></li>
-<li>With this knowledge, to be able write faster code using less memory</li>
-<li>To better understand R’s functional programming tools</li>
+<li>Distinguish between an <em>object</em> and its <em>name</em>.</li>
+<li>Identify when data are <em>copied</em> versus <em>modified</em>.</li>
+<li>Trace and identify the memory used by R.</li>
 </ul>
-<p>Using lobstr package here.</p>
+<p>The <code>{lobstr}</code> package will help us throughout the chapter</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(lobstr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="quiz" class="slide level2">
-<h2>Quiz</h2>
-<h3 id="how-do-i-create-a-new-column-called-3-that-contains-the-sum-of-1-and-2">1. How do I create a new column called <code>3</code> that contains the sum of <code>1</code> and <code>2</code>?</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">runif</span>(<span class="dv">3</span>), <span class="fu">runif</span>(<span class="dv">3</span>))</span>
-<span id="cb2-2"><a></a><span class="fu">names</span>(df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb2-3"><a></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;           1         2
-#&gt; 1 0.8893205 0.9874973
-#&gt; 2 0.4645398 0.7004741
-#&gt; 3 0.7312149 0.2986040</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>df<span class="sc">$</span><span class="st">`</span><span class="at">3</span><span class="st">`</span> <span class="ot">&lt;-</span> df<span class="sc">$</span><span class="st">`</span><span class="at">1</span><span class="st">`</span> <span class="sc">+</span> df<span class="sc">$</span><span class="st">`</span><span class="at">2</span><span class="st">`</span></span>
-<span id="cb4-2"><a></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;           1         2        3
-#&gt; 1 0.8893205 0.9874973 1.876818
-#&gt; 2 0.4645398 0.7004741 1.165014
-#&gt; 3 0.7312149 0.2986040 1.029819</code></pre>
-</div>
-</div>
-<p><strong>What makes these names challenging?</strong></p>
-<blockquote>
-<p>You need to use backticks (`) when the name of an object doesn’t start with a a character or ‘.’ [or . followed by a number] (non-syntactic names).</p>
-</blockquote>
-<h3 id="how-much-memory-does-y-occupy">2. How much memory does <code>y</code> occupy?</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e6</span>)</span>
-<span id="cb6-2"><a></a>y <span class="ot">&lt;-</span> <span class="fu">list</span>(x, x, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Need to use the lobstr package:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>lobstr<span class="sc">::</span><span class="fu">obj_size</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 8.00 MB</code></pre>
-</div>
-</div>
-<blockquote>
-<p>Note that if you look in the RStudio Environment or use R base <code>object.size()</code> you actually get a value of 24 MB</p>
-</blockquote>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">object.size</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 24000224 bytes</code></pre>
-</div>
-</div>
-<h3 id="on-which-line-does-a-get-copied-in-the-following-example">3. On which line does <code>a</code> get copied in the following example?</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>a <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">2</span>)</span>
-<span id="cb11-2"><a></a>b <span class="ot">&lt;-</span> a</span>
-<span id="cb11-3"><a></a>b[[<span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<blockquote>
-<p>Not until <code>b</code> is modified, the third line</p>
-</blockquote>
-</section>
-<section id="binding-basics" class="slide level2">
-<h2>Binding basics</h2>
+<section id="syntactic-names-are-easier-to-create-and-work-with-than-non-syntactic-names" class="slide level2">
+<h2>Syntactic names are easier to create and work with than non-syntactic names</h2>
 <ul>
-<li>Create values and <em>bind</em> a name to them</li>
-<li>Names have values (rather than values have names)</li>
-<li>Multiple names can refer to the same values</li>
-<li>We can look at an object’s address to keep track of the values independent of their names</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
-<span id="cb12-2"><a></a>y <span class="ot">&lt;-</span> x</span>
-<span id="cb12-3"><a></a><span class="fu">obj_addr</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2a58503acd8"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">obj_addr</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2a58503acd8"</code></pre>
-</div>
-</div>
-<h3 id="exercises">Exercises</h3>
-<h5 id="explain-the-relationships">1. Explain the relationships</h5>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>a <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
-<span id="cb16-2"><a></a>b <span class="ot">&lt;-</span> a</span>
-<span id="cb16-3"><a></a>c <span class="ot">&lt;-</span> b</span>
-<span id="cb16-4"><a></a>d <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<blockquote>
-<p><code>a</code> <code>b</code> and <code>c</code> are all names that refer to the first value <code>1:10</code></p>
-<p><code>d</code> is a name that refers to the <em>second</em> value of <code>1:10</code>.</p>
-</blockquote>
-<h5 id="do-the-following-all-point-to-the-same-underlying-function-object-hint-lobstrobj_addr">2. Do the following all point to the same underlying function object? hint: <code>lobstr::obj_addr()</code></h5>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">obj_addr</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2a5828bf738"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">obj_addr</span>(base<span class="sc">::</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2a5828bf738"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">obj_addr</span>(<span class="fu">get</span>(<span class="st">"mean"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2a5828bf738"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="fu">obj_addr</span>(<span class="fu">evalq</span>(mean))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2a5828bf738"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="fu">obj_addr</span>(<span class="fu">match.fun</span>(<span class="st">"mean"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2a5828bf738"</code></pre>
-</div>
-</div>
-<blockquote>
-<p>Yes!</p>
-</blockquote>
-</section>
-<section id="copy-on-modify" class="slide level2">
-<h2>Copy-on-modify</h2>
+<li>Syntactic names: <code>my_variable</code>, <code>x</code>, <code>cpp11</code>, <code>.by</code>.
 <ul>
-<li>If you modify a value bound to multiple names, it is ‘copy-on-modify’</li>
-<li>If you modify a value bound to a single name, it is ‘modify-in-place’</li>
-<li>Use <code>tracemem()</code> to see when a name’s value changes</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
-<span id="cb27-2"><a></a><span class="fu">cat</span>(<span class="fu">tracemem</span>(x), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;000002A585CC0FF8&gt;</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>y <span class="ot">&lt;-</span> x</span>
-<span id="cb29-2"><a></a>y[[<span class="dv">3</span>]] <span class="ot">&lt;-</span> <span class="dv">4</span>L  <span class="co"># Changes (copy-on-modify)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x000002a585cc0ff8 -&gt; 0x000002a58600d5e8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>y[[<span class="dv">3</span>]] <span class="ot">&lt;-</span> <span class="dv">5</span>L  <span class="co"># Doesn't change (modify-in-place)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Turn off <code>tracemem()</code> with <code>untracemem()</code></p>
-<blockquote>
-<p>Can also use <code>ref(x)</code> to get the address of the value bound to a given name</p>
-</blockquote>
-</section>
-<section id="functions" class="slide level2">
-<h2>Functions</h2>
-<ul>
-<li>Copying also applies within functions</li>
-<li>If you copy (but don’t modify) <code>x</code> within <code>f()</code>, no copy is made</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(a) {</span>
-<span id="cb32-2"><a></a>  a</span>
-<span id="cb32-3"><a></a>}</span>
-<span id="cb32-4"><a></a></span>
-<span id="cb32-5"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
-<span id="cb32-6"><a></a>z <span class="ot">&lt;-</span> <span class="fu">f</span>(x) <span class="co"># No change in value</span></span>
-<span id="cb32-7"><a></a></span>
-<span id="cb32-8"><a></a><span class="fu">ref</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1:0x2a58669dd18] &lt;dbl&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="fu">ref</span>(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1:0x2a58669dd18] &lt;dbl&gt;</code></pre>
-</div>
-</div>
-<!-- ![](images/02-trace.png) -->
-</section>
-<section id="lists" class="slide level2">
-<h2>Lists</h2>
-<ul>
-<li>A list overall, has it’s own reference (id)</li>
-<li>List <em>elements</em> also each point to other values</li>
-<li>List doesn’t store the value, it <em>stores a reference to the value</em></li>
-<li>As of R 3.1.0, modifying lists creates a <em>shallow copy</em>
-<ul>
-<li>References (bindings) are copied, but <em>values are not</em></li>
+<li>Can’t use names in <code>?Reserved</code></li>
 </ul></li>
+<li>Non-syntactic names need to be surrounded in backticks.</li>
 </ul>
+</section>
+<section id="names-are-bound-to-values-with--" class="slide level2">
+<h2>Names are <em>bound to</em> values with <code>&lt;-</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>l1 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
-<span id="cb36-2"><a></a>l2 <span class="ot">&lt;-</span> l1</span>
-<span id="cb36-3"><a></a>l2[[<span class="dv">3</span>]] <span class="ot">&lt;-</span> <span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li>We can use <code>ref()</code> to see how they compare
-<ul>
-<li>See how the list reference is different</li>
-<li>But first two items in each list are the same</li>
-</ul></li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="fu">ref</span>(l1, l2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>a <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb2-2"><a></a>a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x2a586f2e698] &lt;list&gt; 
-#&gt; ├─[2:0x2a5877133b8] &lt;dbl&gt; 
-#&gt; ├─[3:0x2a5877131f8] &lt;dbl&gt; 
-#&gt; └─[4:0x2a587713038] &lt;dbl&gt; 
+<pre><code>#&gt; [1] 1 2 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">obj_addr</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226bfbc968"</code></pre>
+</div>
+</div>
+</section>
+<section id="many-names-can-be-bound-to-the-same-values" class="slide level2">
+<h2>Many names can be bound to the same values</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>b <span class="ot">&lt;-</span> a</span>
+<span id="cb6-2"><a></a><span class="fu">obj_addr</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226bfbc968"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">obj_addr</span>(b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226bfbc968"</code></pre>
+</div>
+</div>
+</section>
+<section id="if-shared-values-are-modified-the-object-is-copied-to-a-new-address" class="slide level2">
+<h2>If shared values are modified, the object is copied to a new address</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>b[[<span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb10-2"><a></a><span class="fu">obj_addr</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226bfbc968"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">obj_addr</span>(b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226fda7278"</code></pre>
+</div>
+</div>
+</section>
+<section id="memory-addresses-can-differ-even-if-objects-seem-the-same" class="slide level2">
+<h2>Memory addresses can differ even if objects seem the same</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>a <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
+<span id="cb14-2"><a></a>b <span class="ot">&lt;-</span> a</span>
+<span id="cb14-3"><a></a>c <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
+<span id="cb14-4"><a></a></span>
+<span id="cb14-5"><a></a><span class="fu">obj_addr</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x22271c9e7b0"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">obj_addr</span>(b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x22271c9e7b0"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">obj_addr</span>(c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x22271d77708"</code></pre>
+</div>
+</div>
+</section>
+<section id="functions-have-a-single-address-regardless-of-how-theyre-referenced" class="slide level2">
+<h2>Functions have a single address regardless of how they’re referenced</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">obj_addr</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226f891738"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">obj_addr</span>(base<span class="sc">::</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226f891738"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">obj_addr</span>(<span class="fu">get</span>(<span class="st">"mean"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226f891738"</code></pre>
+</div>
+</div>
+</section>
+<section id="unlike-most-objects-environments-keep-the-same-memory-address-on-modify" class="slide level2">
+<h2>Unlike most objects, environments keep the same memory address on modify</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>d <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
+<span id="cb26-2"><a></a><span class="fu">obj_addr</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226b7489d8"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>e <span class="ot">&lt;-</span> d</span>
+<span id="cb28-2"><a></a>e[[<span class="st">'a'</span>]] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb28-3"><a></a><span class="fu">obj_addr</span>(e)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226b7489d8"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">obj_addr</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226b7489d8"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>d[[<span class="st">'a'</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
+</div>
+</div>
+</section>
+<section id="use-tracemem-to-validate-if-values-are-copied-or-modified" class="slide level2">
+<h2>Use <code>tracemem</code> to validate if values are copied or modified</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">10</span>)</span>
+<span id="cb34-2"><a></a><span class="fu">tracemem</span>(x)</span>
+<span id="cb34-3"><a></a><span class="co">#&gt; [1] "&lt;000001F4185B4B08&gt;"</span></span>
+<span id="cb34-4"><a></a>y <span class="ot">&lt;-</span> x</span>
+<span id="cb34-5"><a></a>x[[<span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb34-6"><a></a><span class="co">#&gt; tracemem[0x000001f4185b4b08 -&gt; 0x000001f4185b4218]:</span></span>
+<span id="cb34-7"><a></a><span class="fu">untracemem</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="tracemem-shows-internal-c-code-minimizes-copying" class="slide level2">
+<h2><code>tracemem</code> shows internal C code minimizes copying</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>y <span class="ot">&lt;-</span> <span class="fu">as.list</span>(x)</span>
+<span id="cb35-2"><a></a><span class="fu">tracemem</span>(y)</span>
+<span id="cb35-3"><a></a><span class="co">#&gt; [1] "&lt;000001AD67FDCD38&gt;"</span></span>
+<span id="cb35-4"><a></a>medians <span class="ot">&lt;-</span> <span class="fu">vapply</span>(x, median, <span class="fu">numeric</span>(<span class="dv">1</span>))</span>
+<span id="cb35-5"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb35-6"><a></a>  y[[i]] <span class="ot">&lt;-</span> y[[i]] <span class="sc">-</span> medians[[i]]</span>
+<span id="cb35-7"><a></a>}</span>
+<span id="cb35-8"><a></a><span class="co">#&gt; tracemem[0x000001ad67fdcd38 -&gt; 0x000001ad61982638]:</span></span>
+<span id="cb35-9"><a></a><span class="fu">untracemem</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="a-functions-environment-follows-copy-on-modify-rules" class="slide level2">
+<h2>A function’s environment follows copy-on-modify rules</h2>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(a) {</span>
+<span id="cb36-2"><a></a>  a</span>
+<span id="cb36-3"><a></a>}</span>
+<span id="cb36-4"><a></a></span>
+<span id="cb36-5"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb36-6"><a></a>z <span class="ot">&lt;-</span> <span class="fu">f</span>(x) <span class="co"># No change in value</span></span>
+<span id="cb36-7"><a></a></span>
+<span id="cb36-8"><a></a><span class="fu">obj_addr</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226bdb8738"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="fu">obj_addr</span>(z) <span class="co"># No address change </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226bdb8738"</code></pre>
+</div>
+</div>
+</div><div class="column">
+<p><img data-src="images/02-trace.png"></p>
+</div></div>
+<aside class="notes">
+<ul>
+<li>Diagrams will be explained more in chapter 7.</li>
+<li><code>a</code> points to same address as <code>x</code>.</li>
+<li>If <code>a</code> modified inside function, <code>z</code> would have new address.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="ref-shows-the-memory-address-of-a-list-and-its-elements" class="slide level2">
+<h2><code>ref()</code> shows the memory address of a list and its <em>elements</em></h2>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>l1 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb40-2"><a></a><span class="fu">obj_addr</span>(l1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x2226c315db8"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>l2 <span class="ot">&lt;-</span> l1</span>
+<span id="cb42-2"><a></a>l2[[<span class="dv">3</span>]] <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb42-3"><a></a><span class="fu">ref</span>(l1, l2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █ [1:0x2226c315db8] &lt;list&gt; 
+#&gt; ├─[2:0x2226c730078] &lt;dbl&gt; 
+#&gt; ├─[3:0x2226c75cdc8] &lt;dbl&gt; 
+#&gt; └─[4:0x2226c75cc08] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [5:0x2a586fc3098] &lt;list&gt; 
-#&gt; ├─[2:0x2a5877133b8] 
-#&gt; ├─[3:0x2a5877131f8] 
-#&gt; └─[6:0x2a58770fc78] &lt;dbl&gt;</code></pre>
+#&gt; █ [5:0x2226c36cd68] &lt;list&gt; 
+#&gt; ├─[2:0x2226c730078] 
+#&gt; ├─[3:0x2226c75cdc8] 
+#&gt; └─[6:0x2226c75b318] &lt;dbl&gt;</code></pre>
 </div>
 </div>
-
-<img data-src="images/02-l-modify-2.png" style="width:50.0%" class="r-stretch"></section>
-<section id="data-frames" class="slide level2">
-<h2>Data Frames</h2>
-<ul>
-<li>Data frames are lists of vectors</li>
-<li>So copying and modifying a column <em>only affects that column</em></li>
-<li><strong>BUT</strong> if you modify a <em>row</em>, every column must be copied</li>
-</ul>
+</div><div class="column">
+<p><img data-src="images/02-l-modify-2.png" style="width:50.0%"></p>
+</div></div>
+</section>
+<section id="since-dataframes-are-lists-of-column-vectors-mutating-a-column-modifies-only-that-column" class="slide level2">
+<h2>Since dataframes are lists of (column) vectors, mutating a column modifies only that column</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a>d1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">6</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">3</span>))</span>
-<span id="cb39-2"><a></a>d2 <span class="ot">&lt;-</span> d1</span>
-<span id="cb39-3"><a></a>d3 <span class="ot">&lt;-</span> d1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Only the modified column changes</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>d2[, <span class="dv">2</span>] <span class="ot">&lt;-</span> d2[, <span class="dv">2</span>] <span class="sc">*</span> <span class="dv">2</span></span>
-<span id="cb40-2"><a></a><span class="fu">ref</span>(d1, d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>d1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">6</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">3</span>))</span>
+<span id="cb44-2"><a></a>d2 <span class="ot">&lt;-</span> d1</span>
+<span id="cb44-3"><a></a>d2[, <span class="dv">2</span>] <span class="ot">&lt;-</span> d2[, <span class="dv">2</span>] <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb44-4"><a></a><span class="fu">ref</span>(d1, d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x2a584931608] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x2a57f3b9cc8] &lt;dbl&gt; 
-#&gt; └─y = [3:0x2a57f3b9c78] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x2226cca93c8] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x22272216148] &lt;dbl&gt; 
+#&gt; └─y = [3:0x222722160f8] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [4:0x2a5810eb508] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x2a57f3b9cc8] 
-#&gt; └─y = [5:0x2a57feb2058] &lt;dbl&gt;</code></pre>
+#&gt; █ [4:0x2226ce0cf48] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x22272216148] 
+#&gt; └─y = [5:0x222727b0c38] &lt;dbl&gt;</code></pre>
 </div>
 </div>
-<p>All columns change</p>
+</section>
+<section id="since-dataframes-are-lists-of-column-vectors-mutating-a-row-modifies-the-value" class="slide level2">
+<h2>Since dataframes are lists of (column) vectors, mutating a row modifies the value</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>d3[<span class="dv">1</span>, ] <span class="ot">&lt;-</span> d3[<span class="dv">1</span>, ] <span class="sc">*</span> <span class="dv">3</span></span>
-<span id="cb42-2"><a></a><span class="fu">ref</span>(d1, d3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>d1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">6</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">3</span>))</span>
+<span id="cb46-2"><a></a>d2 <span class="ot">&lt;-</span> d1</span>
+<span id="cb46-3"><a></a>d2[<span class="dv">1</span>, ] <span class="ot">&lt;-</span> d2[<span class="dv">1</span>, ] <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb46-4"><a></a><span class="fu">ref</span>(d1, d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x2a584931608] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x2a57f3b9cc8] &lt;dbl&gt; 
-#&gt; └─y = [3:0x2a57f3b9c78] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x22272912588] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x222730bd408] &lt;dbl&gt; 
+#&gt; └─y = [3:0x222730bd3b8] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [4:0x2a57faa92c8] &lt;df[,2]&gt; 
-#&gt; ├─x = [5:0x2a585a91b38] &lt;dbl&gt; 
-#&gt; └─y = [6:0x2a585a91ae8] &lt;dbl&gt;</code></pre>
+#&gt; █ [4:0x22272b0e548] &lt;df[,2]&gt; 
+#&gt; ├─x = [5:0x222731501d8] &lt;dbl&gt; 
+#&gt; └─y = [6:0x22273150188] &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<aside class="notes">
+<ul>
+<li>Here “mutate” means “change”, not <code>dplyr::mutate()</code></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="characters-are-unique-due-to-the-global-string-pool" class="slide level2">
+<h2>Characters are unique due to the global string pool</h2>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span></span>
+<span id="cb48-2"><a></a><span class="fu">ref</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1:0x22272f78460] &lt;int&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a>y <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span></span>
+<span id="cb50-2"><a></a><span class="fu">ref</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1:0x222730899d8] &lt;int&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"b"</span>)</span>
+<span id="cb52-2"><a></a><span class="fu">ref</span>(x, <span class="at">character =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █ [1:0x2227394f1d8] &lt;chr&gt; 
+#&gt; ├─[2:0x22267d9b118] &lt;string: "a"&gt; 
+#&gt; ├─[2:0x22267d9b118] 
+#&gt; └─[3:0x2226e17f3b8] &lt;string: "b"&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>)</span>
+<span id="cb54-2"><a></a><span class="fu">ref</span>(y, <span class="at">character =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █ [1:0x2227397fce8] &lt;chr&gt; 
+#&gt; └─[2:0x22267d9b118] &lt;string: "a"&gt;</code></pre>
+</div>
+</div>
+</div><div class="column">
+<p><img data-src="images/02-character-2.png"></p>
+</div></div>
+<aside class="notes">
+<ul>
+<li>“a” is always at the same address.</li>
+<li>Each member of character vector has its own address (kind of list-like).</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="memory-amount-can-also-be-measured-using-lobstrobj_size" class="slide level2">
+<h2>Memory amount can also be measured, using <code>lobstr::obj_size</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a>banana <span class="ot">&lt;-</span> <span class="st">"bananas bananas bananas"</span></span>
+<span id="cb56-2"><a></a><span class="fu">obj_addr</span>(banana)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "0x22271bc25b8"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="fu">obj_size</span>(banana)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 136 B</code></pre>
 </div>
 </div>
 </section>
-<section id="character-vectors" class="slide level2">
-<h2>Character vectors</h2>
-<ul>
-<li>R has a <strong>global string pool</strong></li>
-<li>Elements of character vectors point to unique strings in the pool</li>
-</ul>
+<section id="alternative-representation-or-altreps-represent-vector-values-efficiently" class="slide level2">
+<h2>Alternative Representation or ALTREPs represent vector values efficiently</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"abc"</span>, <span class="st">"d"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-
-<img data-src="images/02-character-2.png" class="r-stretch"></section>
-<section id="exercises-1" class="slide level2">
-<h2>Exercises</h2>
-<h5 id="why-is-tracemem110-not-useful">1. Why is <code>tracemem(1:10)</code> not useful?</h5>
-<blockquote>
-<p>Because it tries to trace a value that is not bound to a name</p>
-</blockquote>
-<h5 id="why-are-there-two-copies">2. Why are there two copies?</h5>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>L, <span class="dv">2</span>L, <span class="dv">3</span>L)</span>
-<span id="cb45-2"><a></a><span class="fu">tracemem</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
+<span id="cb60-2"><a></a><span class="fu">obj_size</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "&lt;000002A5856391C8&gt;"</code></pre>
+<pre><code>#&gt; 680 B</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>x[[<span class="dv">3</span>]] <span class="ot">&lt;-</span> <span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a>y <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span></span>
+<span id="cb62-2"><a></a><span class="fu">obj_size</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x000002a5856391c8 -&gt; 0x000002a585653f08]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x000002a585653f08 -&gt; 0x000002a58663f8b8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
-</div>
-</div>
-<blockquote>
-<p>Because we convert an <em>integer</em> vector (using 1L, etc.) to a <em>double</em> vector (using just 4)-</p>
-</blockquote>
-<h5 id="what-is-the-relationships-among-these-objects">3. What is the relationships among these objects?</h5>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a>a <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>      </span>
-<span id="cb49-2"><a></a>b <span class="ot">&lt;-</span> <span class="fu">list</span>(a, a)</span>
-<span id="cb49-3"><a></a>c <span class="ot">&lt;-</span> <span class="fu">list</span>(b, a, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) <span class="co"># </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>a &lt;- obj 1<br>
-b &lt;- obj 1, obj 1<br>
-c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="fu">ref</span>(c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x2a586fc3ea8] &lt;list&gt; 
-#&gt; ├─█ [2:0x2a585a1a308] &lt;list&gt; 
-#&gt; │ ├─[3:0x2a585aa1c40] &lt;int&gt; 
-#&gt; │ └─[3:0x2a585aa1c40] 
-#&gt; ├─[3:0x2a585aa1c40] 
-#&gt; └─[4:0x2a585b13d90] &lt;int&gt;</code></pre>
-</div>
-</div>
-<h5 id="what-happens-here">4. What happens here?</h5>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
-<span id="cb52-2"><a></a>x[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li><code>x</code> is a list</li>
-<li><code>x[[2]] &lt;- x</code> creates a new list, which in turn contains a reference to the original list</li>
-<li><code>x</code> is no longer bound to <code>list(1:10)</code></li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a></a><span class="fu">ref</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x2a586172508] &lt;list&gt; 
-#&gt; ├─[2:0x2a58641c040] &lt;int&gt; 
-#&gt; └─█ [3:0x2a586b06c48] &lt;list&gt; 
-#&gt;   └─[2:0x2a58641c040]</code></pre>
-</div>
-</div>
-
-<img data-src="images/02-copy_on_modify_fig2.png" style="width:50.0%" class="r-stretch"></section>
-<section id="object-size" class="slide level2">
-<h2>Object Size</h2>
-<ul>
-<li>Use <code>lobstr::obj_size()</code></li>
-<li>Lists may be smaller than expected because of referencing the same value</li>
-<li>Strings may be smaller than expected because using global string pool</li>
-<li>Difficult to predict how big something will be
-<ul>
-<li>Can only add sizes together if they share no references in common</li>
-</ul></li>
-</ul>
-<h3 id="alternative-representation">Alternative Representation</h3>
-<ul>
-<li>As of R 3.5.0 - ALTREP</li>
-<li>Represent some vectors compactly
-<ul>
-<li>e.g., 1:1000 - not 10,000 values, just 1 and 1,000</li>
-</ul></li>
-</ul>
-<h3 id="exercises-2">Exercises</h3>
-<h5 id="why-are-the-sizes-so-different">1. Why are the sizes so different?</h5>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a>y <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">list</span>(<span class="fu">runif</span>(<span class="fl">1e4</span>)), <span class="dv">100</span>)</span>
-<span id="cb55-2"><a></a></span>
-<span id="cb55-3"><a></a><span class="fu">object.size</span>(y) <span class="co"># ~8000 kB</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 8005648 bytes</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a></a><span class="fu">obj_size</span>(y)    <span class="co"># ~80   kB</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 80.90 kB</code></pre>
-</div>
-</div>
-<blockquote>
-<p>From <code>?object.size()</code>:</p>
-<p>“This function merely provides a rough indication: it should be reasonably accurate for atomic vectors, but <strong>does not detect if elements of a list are shared</strong>, for example.</p>
-</blockquote>
-<h5 id="why-is-the-size-misleading">2. Why is the size misleading?</h5>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a></a>funs <span class="ot">&lt;-</span> <span class="fu">list</span>(mean, sd, var)</span>
-<span id="cb59-2"><a></a><span class="fu">obj_size</span>(funs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 18.76 kB</code></pre>
-</div>
-</div>
-<blockquote>
-<p>Because they reference functions from base and stats, which are always available. Why bother looking at the size? What use is that?</p>
-</blockquote>
-<h5 id="predict-the-sizes">3. Predict the sizes</h5>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a>a <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e6</span>) <span class="co"># 8 MB</span></span>
-<span id="cb61-2"><a></a><span class="fu">obj_size</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 8.00 MB</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a>b <span class="ot">&lt;-</span> <span class="fu">list</span>(a, a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li>There is one value ~8MB</li>
-<li><code>a</code> and <code>b[[1]]</code> and <code>b[[2]]</code> all point to the same value.</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a></a><span class="fu">obj_size</span>(b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 8.00 MB</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a></a><span class="fu">obj_size</span>(a, b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 8.00 MB</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a>b[[<span class="dv">1</span>]][[<span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li>Now there are two values ~8MB each (16MB total)</li>
-<li><code>a</code> and <code>b[[2]]</code> point to the same value (8MB)</li>
-<li><code>b[[1]]</code> is new (8MB) because the first element (<code>b[[1]][[1]]</code>) has been changed</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a></a><span class="fu">obj_size</span>(b)     <span class="co"># 16 MB (two values, two element references)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 16.00 MB</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a><span class="fu">obj_size</span>(a, b)  <span class="co"># 16 MB (a &amp; b[[2]] point to the same value)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 16.00 MB</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a>b[[<span class="dv">2</span>]][[<span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li>Finally, now there are three values ~8MB each (24MB total)</li>
-<li>Although <code>b[[1]]</code> and <code>b[[2]]</code> have the same contents, they are not references to the same object.</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a></a><span class="fu">obj_size</span>(b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 16.00 MB</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a></a><span class="fu">obj_size</span>(a, b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 24.00 MB</code></pre>
+<pre><code>#&gt; 680 B</code></pre>
 </div>
 </div>
 </section>
-<section id="modify-in-place" class="slide level2">
-<h2>Modify-in-place</h2>
+<section id="we-can-measure-memory-speed-using-benchmark" class="slide level2">
+<h2>We can measure memory &amp; speed using <code>bench::mark()</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a></a>med <span class="ot">&lt;-</span> <span class="cf">function</span>(d, medians) {</span>
+<span id="cb64-2"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(medians)) {</span>
+<span id="cb64-3"><a></a>    d[[i]] <span class="ot">&lt;-</span> d[[i]] <span class="sc">-</span> medians[[i]]</span>
+<span id="cb64-4"><a></a>  }</span>
+<span id="cb64-5"><a></a>}</span>
+<span id="cb64-6"><a></a>x <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fu">runif</span>(<span class="dv">5</span> <span class="sc">*</span> <span class="fl">1e4</span>), <span class="at">ncol =</span> <span class="dv">5</span>))</span>
+<span id="cb64-7"><a></a>medians <span class="ot">&lt;-</span> <span class="fu">vapply</span>(x, median, <span class="fu">numeric</span>(<span class="dv">1</span>))</span>
+<span id="cb64-8"><a></a>y <span class="ot">&lt;-</span> <span class="fu">as.list</span>(x)</span>
+<span id="cb64-9"><a></a></span>
+<span id="cb64-10"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb64-11"><a></a>  <span class="st">"data.frame"</span> <span class="ot">=</span> <span class="fu">med</span>(x, medians),</span>
+<span id="cb64-12"><a></a>  <span class="st">"list"</span> <span class="ot">=</span> <span class="fu">med</span>(y, medians)</span>
+<span id="cb64-13"><a></a>)[, <span class="fu">c</span>(<span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"mem_alloc"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 2 × 3
+#&gt;        min   median mem_alloc
+#&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
+#&gt; 1   52.7µs   66.6µs     491KB
+#&gt; 2   22.8µs   33.7µs     391KB</code></pre>
+</div>
+</div>
+<aside class="notes">
 <ul>
-<li>Modifying usually creates a copy except for
-<ul>
-<li>Objects with a single binding (performance optimization)</li>
-<li>Environments (special)</li>
-</ul></li>
+<li>The thing to see: list version uses less RAM and is faster</li>
 </ul>
-<h3 id="objects-with-a-single-binding">Objects with a single binding</h3>
-<ul>
-<li>Hard to know if copy will occur</li>
-<li>If you have 2+ bindings and remove them, R can’t follow how many are removed (so will always think there are more than one)</li>
-<li>May make a copy even if there’s only one binding left</li>
-<li>Using a function makes a reference to it <strong>unless it’s a function based on C</strong></li>
-<li>Best to use <code>tracemem()</code> to check rather than guess.</li>
-</ul>
-<h4 id="example---lists-vs.-data-frames-in-for-loop">Example - lists vs.&nbsp;data frames in for loop</h4>
-<p><strong>Setup</strong></p>
-<p>Create the data to modify</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fu">runif</span>(<span class="dv">5</span> <span class="sc">*</span> <span class="fl">1e4</span>), <span class="at">ncol =</span> <span class="dv">5</span>))</span>
-<span id="cb78-2"><a></a>medians <span class="ot">&lt;-</span> <span class="fu">vapply</span>(x, median, <span class="fu">numeric</span>(<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p><strong>Data frame - Copied every time!</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a><span class="fu">cat</span>(<span class="fu">tracemem</span>(x), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;000002A587857268&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(medians)) {</span>
-<span id="cb81-2"><a></a>  x[[i]] <span class="ot">&lt;-</span> x[[i]] <span class="sc">-</span> medians[[i]]</span>
-<span id="cb81-3"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x000002a587857268 -&gt; 0x000002a584b5de78]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x000002a584b5de78 -&gt; 0x000002a584b5d2a8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x000002a584b5d2a8 -&gt; 0x000002a584b5d238]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x000002a584b5d238 -&gt; 0x000002a584b5d1c8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x000002a584b5d1c8 -&gt; 0x000002a584b5d158]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x000002a584b5d158 -&gt; 0x000002a584b5d0e8]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x000002a584b5d0e8 -&gt; 0x000002a584b5d078]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x000002a584b5d078 -&gt; 0x000002a584b5d008]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x000002a584b5d008 -&gt; 0x000002a584bbfea8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main 
-#&gt; tracemem[0x000002a584bbfea8 -&gt; 0x000002a584bbfe38]: [[&lt;-.data.frame [[&lt;- eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a><span class="fu">untracemem</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p><strong>List (uses internal C code) - Copied once!</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a></a>y <span class="ot">&lt;-</span> <span class="fu">as.list</span>(x)</span>
-<span id="cb84-2"><a></a></span>
-<span id="cb84-3"><a></a><span class="fu">cat</span>(<span class="fu">tracemem</span>(y), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;000002A584B16388&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(medians)) {</span>
-<span id="cb86-2"><a></a>  y[[i]] <span class="ot">&lt;-</span> y[[i]] <span class="sc">-</span> medians[[i]]</span>
-<span id="cb86-3"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tracemem[0x000002a584b16388 -&gt; 0x000002a582d8fea8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a></a><span class="fu">untracemem</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<h4 id="benchmark-this-exercise-2">Benchmark this (Exercise #2)</h4>
-<p><strong>First wrap in a function</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a></a>med <span class="ot">&lt;-</span> <span class="cf">function</span>(d, medians) {</span>
-<span id="cb89-2"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(medians)) {</span>
-<span id="cb89-3"><a></a>    d[[i]] <span class="ot">&lt;-</span> d[[i]] <span class="sc">-</span> medians[[i]]</span>
-<span id="cb89-4"><a></a>  }</span>
-<span id="cb89-5"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p><strong>Try with 5 columns</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fu">runif</span>(<span class="dv">5</span> <span class="sc">*</span> <span class="fl">1e4</span>), <span class="at">ncol =</span> <span class="dv">5</span>))</span>
-<span id="cb90-2"><a></a>medians <span class="ot">&lt;-</span> <span class="fu">vapply</span>(x, median, <span class="fu">numeric</span>(<span class="dv">1</span>))</span>
-<span id="cb90-3"><a></a>y <span class="ot">&lt;-</span> <span class="fu">as.list</span>(x)</span>
-<span id="cb90-4"><a></a></span>
-<span id="cb90-5"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb90-6"><a></a>  <span class="st">"data.frame"</span> <span class="ot">=</span> <span class="fu">med</span>(x, medians),</span>
-<span id="cb90-7"><a></a>  <span class="st">"list"</span> <span class="ot">=</span> <span class="fu">med</span>(y, medians)</span>
-<span id="cb90-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 2 × 6
-#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
-#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 data.frame   52.3µs   68.2µs    13411.     410KB     201.
-#&gt; 2 list         16.2µs     33µs    28621.     391KB     279.</code></pre>
-</div>
-</div>
-<p><strong>Try with 20 columns</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fu">runif</span>(<span class="dv">5</span> <span class="sc">*</span> <span class="fl">1e4</span>), <span class="at">ncol =</span> <span class="dv">20</span>))</span>
-<span id="cb92-2"><a></a>medians <span class="ot">&lt;-</span> <span class="fu">vapply</span>(x, median, <span class="fu">numeric</span>(<span class="dv">1</span>))</span>
-<span id="cb92-3"><a></a>y <span class="ot">&lt;-</span> <span class="fu">as.list</span>(x)</span>
-<span id="cb92-4"><a></a></span>
-<span id="cb92-5"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb92-6"><a></a>  <span class="st">"data.frame"</span> <span class="ot">=</span> <span class="fu">med</span>(x, medians),</span>
-<span id="cb92-7"><a></a>  <span class="st">"list"</span> <span class="ot">=</span> <span class="fu">med</span>(y, medians)</span>
-<span id="cb92-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 2 × 6
-#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`
-#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-#&gt; 1 data.frame  143.8µs  189.7µs     4722.     400KB     50.1
-#&gt; 2 list         25.6µs   39.7µs    24419.     392KB    243.</code></pre>
-</div>
-</div>
-<p><strong>WOW!</strong></p>
-<h3 id="environmments">Environmments</h3>
-<ul>
-<li>Always modified in place (<strong>reference semantics</strong>)</li>
-<li>Interesting because if you modify the environment, all existing bindings have the same reference</li>
-<li>If two names point to the same environment, and you update one, you update both!</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a></a>e1 <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">env</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">3</span>)</span>
-<span id="cb94-2"><a></a>e2 <span class="ot">&lt;-</span> e1</span>
-<span id="cb94-3"><a></a>e1<span class="sc">$</span>c <span class="ot">&lt;-</span> <span class="dv">4</span></span>
-<span id="cb94-4"><a></a>e2<span class="sc">$</span>c</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 4</code></pre>
-</div>
-</div>
-<ul>
-<li>This means that environments can contain themselves (!)</li>
-</ul>
-<h3 id="exercises-3">Exercises</h3>
-<h5 id="why-isnt-this-circular">1. Why isn’t this circular?</h5>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb96-2"><a></a>x[[<span class="dv">1</span>]] <span class="ot">&lt;-</span> x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<blockquote>
-<p>Because the binding to the list() object moves from <code>x</code> in the first line to <code>x[[1]]</code> in the second.</p>
-</blockquote>
-<h5 id="see-objects-with-a-single-binding">2. (see “Objects with a single binding”)</h5>
-<h5 id="what-happens-if-you-attempt-to-use-tracemem-on-an-environment">3. What happens if you attempt to use tracemem() on an environment?</h5>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a></a>e1 <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">env</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">3</span>)</span>
-<span id="cb97-2"><a></a><span class="fu">tracemem</span>(e1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in tracemem(e1): 'tracemem' is not useful for promise and environment objects</code></pre>
-</div>
-</div>
-<blockquote>
-<p>Because environments always modified in place, there’s no point in tracing them</p>
-</blockquote>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
-<section id="unbinding-and-the-garbage-collector" class="slide level2">
-<h2>Unbinding and the garbage collector</h2>
-<ul>
-<li>If you delete the ‘name’ bound to an object, the object still exists</li>
-<li>R runs a “garbage collector” (GC) to remove these objects when it needs more memory</li>
-<li>“Looking from the outside, it’s basically impossible to predict when the GC will run. In fact, you shouldn’t even try.”</li>
-<li>If you want to know when it runs, use <code>gcinfo(TRUE)</code> to get a message printed</li>
-<li>You can force GC with <code>gc()</code> but you never need to to use more memory <em>within</em> R</li>
-<li>Only reason to do so is to free memory for other system software, or, to get the message printed about how much memory is being used</li>
-</ul>
+<section id="the-garbage-collector-gc-explicitly-clears-out-unbound-objects" class="slide level2">
+<h2>The garbage collector <code>gc()</code> explicitly clears out unbound objects</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a></a><span class="fu">gc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span></span>
+<span id="cb66-2"><a></a>x <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span> <span class="co"># "1:3" is orphaned</span></span>
+<span id="cb66-3"><a></a><span class="fu">rm</span>(x) <span class="co"># "2:4" is orphaned</span></span>
+<span id="cb66-4"><a></a><span class="fu">gc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;           used (Mb) gc trigger (Mb) max used (Mb)
-#&gt; Ncells  805637 43.1    1486050 79.4  1486050 79.4
-#&gt; Vcells 4532584 34.6   10146329 77.5 10146315 77.5</code></pre>
+#&gt; Ncells  791104 42.3    1505464 80.5  1505464 80.5
+#&gt; Vcells 1497631 11.5    8388608 64.0  8388482 64.0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a></a><span class="fu">mem_used</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a>lobstr<span class="sc">::</span><span class="fu">mem_used</span>() <span class="co"># Wrapper around gc()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 81.38 MB</code></pre>
+<pre><code>#&gt; 56.29 MB</code></pre>
 </div>
 </div>
+
+<aside class="notes">
 <ul>
-<li>These numbers will <strong>not</strong> be what you OS tells you because,
-<ol type="1">
-<li>It includes objects created by R, but not R interpreter</li>
-<li>R and OS are lazy and don’t reclaim/release memory until it’s needed</li>
-<li>R counts memory from objects, but there are gaps due to those that are deleted -&gt; <em>memory fragmentation</em> [less memory actually available they you might think]</li>
-</ol></li>
+<li><code>mem_used()</code> multiplies Ncells “used” by either 28 (32-bit architecture) or 56 (64-bit architecture)., and Vcells “used” by 8, adds them, and converts to Mb.</li>
 </ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 
 
-</section>
+<aside><div>
+<p><code>gc()</code> runs automatically, never <em>need</em> to call</p>
+</div></aside></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -1040,6 +844,44 @@ c &lt;- b(obj 1, obj 1), obj 1, 1:10</p>
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
