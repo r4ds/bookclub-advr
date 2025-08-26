@@ -103,7 +103,7 @@ Closely related but not technically a vector:
 
 ## Types of Atomic Vectors (1/2)
 
-![Image Credit: Advanced R](images/vectors/summary-tree-atomic.png){{height=70%}} 
+![Image Credit: Advanced R](images/vectors/summary-tree-atomic.png){height=70%} 
 
 ## Types of Atomic Vectors (2/2)
 
@@ -479,7 +479,7 @@ But note that coercion may fail in one of two ways, or both:
 as.integer(c(1, 2, "three"))
 ```
 
-### Exercises
+## Exercises 1/5
 
 1. How do you create raw and complex scalars?
 
@@ -493,6 +493,8 @@ complex(length.out = 1, real = 1, imaginary = 1)
 #> [1] 1+1i
 ```
 </details>
+
+## Exercises 2/5
 
 2. Test your knowledge of the vector coercion rules by predicting the output of the following uses of c():
 
@@ -510,6 +512,8 @@ c(TRUE, 1L)      # will be coerced to integer   -> 1 1
 ```
 </details>
 
+## Exercises 3/5
+
 3. Why is `1 == "1"` true? Why is `-1 < FALSE` true? Why is `"one" < 2` false?
 
 <details><summary>Answer(s)</summary>
@@ -517,11 +521,15 @@ These comparisons are carried out by operator-functions (==, <), which coerce th
 
 </details>
 
+## Exercises 4/5
+
 4. Why is the default missing value, NA, a logical vector? What’s special about logical vectors?
 
 <details><summary>Answer(s)</summary>
 The presence of missing values shouldn’t affect the type of an object. Recall that there is a type-hierarchy for coercion from character → double → integer → logical. When combining `NA`s with other atomic types, the `NA`s will be coerced to integer (`NA_integer_`), double (`NA_real_`) or character (`NA_character_`) and not the other way round. If `NA` were a character and added to a set of other values all of these would be coerced to character as well.
 </details>
+
+## Exercises 5/5
 
 5. Precisely what do `is.atomic()`, `is.numeric()`, and `is.vector()` test for?
 
@@ -534,7 +542,6 @@ The documentation states that:
 
 Atomic vectors are defined in *Advanced R* as objects of type logical, integer, double, complex, character or raw. Vectors are defined as atomic vectors or lists.
 </details>
-
 
 
 ## Attributes
@@ -552,7 +559,7 @@ Three functions:
 2. retrieve en masse with `attributes()`
 3. set en masse with `structure()`
 
-**Single attribute**
+## Single attribute
 
 Use `attr()`
 
@@ -567,7 +574,7 @@ attr(x = a, which = "attribute_name") <- "some attribute"
 attr(a, "attribute_name")
 ```
 
-**Multiple attributes**
+## Multiple attributes
 
 To set multiple attributes, use `structure()` To get multiple attributes, use `attributes()`
 
@@ -613,7 +620,7 @@ str(attributes(a))
 
 ![Image Credit: Advanced R](images/vectors/attr.png) 
 
-### Why
+## Why
 
 Three particularly important attributes: 
 
@@ -623,10 +630,13 @@ Three particularly important attributes:
 
 Most attributes are lost by most operations.  Only two attributes are routinely preserved: names and dimension.
 
-#### Names
+## Names
 
 ~~Three~~ Four ways to name:
 
+:::: {.columns}
+
+::: {.column width="50%"}
 ```{r names}
 # (1) When creating it: 
 x <- c(A = 1, B = 2, C = 3)
@@ -642,8 +652,19 @@ z <- setNames(1:3, c("a", "b", "c"))
 z
 
 ```
+:::
 
+::: {.column width="50%"}
 ![proper diagram](images/vectors/attr-names-1.png) 
+:::
+
+::::
+
+## rlang Names
+
+:::: {.columns}
+
+::: {.column width="50%"}
 
 ```{r names_via_rlang}
 # (4) By setting names--with {rlang}
@@ -655,13 +676,23 @@ rlang::set_names(
 
 ```
 
+:::
+
+::: {.column width="50%"}
 ![simplified diagram](images/vectors/attr-names-2.png) 
+:::
+
+::::
+
+
+## Removing names
+
 
 * You can remove names from a vector by using `x <- unname(x)` or `names(x) <- NULL`.
 * Thematically but not directly related: labelled class vectors with `haven::labelled()`
 
 
-#### Dimensions
+## Dimensions
 
 Create matrices and arrays with `matrix()` and `array()`, or by using the assignment form of `dim()`:
 
@@ -669,22 +700,19 @@ Create matrices and arrays with `matrix()` and `array()`, or by using the assign
 # Two scalar arguments specify row and column sizes
 x <- matrix(1:6, nrow = 2, ncol = 3)
 x
-
 # One vector argument to describe all dimensions
 y <- array(1:24, c(2, 3, 4)) # rows, columns, no of arrays
 y
-
 # You can also modify an object in place by setting dim()
 z <- 1:6
 dim(z) <- c(2, 3) # rows, columns
 z
-
 a <- 1:24
 dim(a) <- c(2, 3, 4) # rows, columns, no of arrays
 a
 ```
 
-##### Functions for working with vectors, matrices and arrays:
+## Functions for working with vectors, matrices and arrays (1/2):
 
 Vector | Matrix	| Array
 :----- | :---------- | :-----
@@ -696,6 +724,8 @@ Vector | Matrix	| Array
 
 * **Caution**: A vector without a `dim` attribute set is often thought of as 1-dimensional, but actually has `NULL` dimensions.
 * One dimension?
+
+## Functions for working with vectors, matrices and arrays (2/2):
 
 ```{r examples_of_1D, eval = FALSE}
 str(1:3)                   # 1d vector
@@ -709,7 +739,7 @@ str(array(1:3, 3))         # "array" vector
 ```
 
 
-### Exercises
+## Exercises 1/4
 
 1. How is `setNames()` implemented? How is `unname()` implemented? Read the source code.
 
@@ -746,6 +776,8 @@ unname <- function(obj, force = FALSE) {
 `unname()` removes existing names (or dimnames) by setting them to `NULL`.
 </details>
 
+## Exercises 2/4
+
 2. What does `dim()` return when applied to a 1-dimensional vector? When might you use `NROW()` or `NCOL()`?
 
 <details><summary>Answer(s)</summary>
@@ -772,6 +804,8 @@ NCOL(x)
 
 </details>
 
+## Exercises 3/4
+
 3. How would you describe the following three objects? What makes them different from `1:5`?
 
 ```{r}
@@ -788,6 +822,7 @@ x3 <- array(1:5, c(5, 1, 1))  # 5 rows, 1 column,  1 in third dim.
 ```
 </details>
 
+## Exercises 4/4
 
 4. An early draft used this code to illustrate `structure()`:
 
@@ -836,14 +871,15 @@ What makes S3 atomic vectors different?
 1. behave differently from a regular vector when passed to a generic function 
 2. often store additional information in other attributes
 
-Four important S3 vectors used in base R:
+
+## Four important S3 vectors used in base R:
 
 1. **Factors** (categorical data)
 2. **Dates**
 3. **Date-times** (POSIXct)
 4. **Durations** (difftime)
 
-### Factors
+## Factors
 
 A factor is a vector used to store categorical data that can contain only predefined values.
 
@@ -851,6 +887,8 @@ Factors are integer vectors with:
 
 -   Class: "factor"
 -   Attributes: "levels", or the set of allowed values
+
+## Factors examples
 
 ```{r factor}
 colors = c('red', 'blue', 'green','red','red', 'green')
@@ -876,7 +914,7 @@ class(a_factor)
 attributes(a_factor)
 ```
 
-#### Custom Order
+## Custom Order
 
 Factors can be ordered. This can be useful for models or visualizations where order matters.
 
@@ -898,7 +936,7 @@ table(values)
 table(ordered_factor)
 ```
 
-### Dates
+## Dates
 
 Dates are:
 
@@ -916,6 +954,8 @@ typeof(notes_date)
 attributes(notes_date)
 ```
 
+## Dates Unix epoch
+
 The double component represents the number of days since since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time) `1970-01-01`
 
 ```{r days_since_1970}
@@ -923,7 +963,7 @@ date <- as.Date("1970-02-01")
 unclass(date)
 ```
 
-### Date-times
+## Date-times
 
 There are 2 Date-time representations in base R:
 
@@ -937,6 +977,8 @@ Just for fun:
 https://www.howtopronounce.com/posixct
 
 -->
+
+## Dates-times: POSIXct
 
 We'll focus on POSIXct because:
 
@@ -971,7 +1013,7 @@ unclass(date_time)
 ```
 
 
-### Durations
+## Durations
 
 Durations represent the amount of time between pairs of dates or date-times.
 
@@ -1004,7 +1046,7 @@ See also:
 -   [`clock::date_time_build()`](https://clock.r-lib.org/reference/date_time_build.html)
 
 
-### Exercises
+## Exercises 1/3
 
 1. What sort of object does `table()` return? What is its type? What attributes does it have? How does the dimensionality change as you tabulate more variables?
 
@@ -1037,6 +1079,8 @@ attributes(x)
 ```
 </details>
 
+## Exercises 2/3
+
 2. What happens to a factor when you modify its levels?
 
 ```{r, eval = FALSE}
@@ -1065,6 +1109,8 @@ as.integer(f1)
 #> [26] 26
 ```
 </details>
+
+## Exercises 3/3
 
 3. What does this code do? How do `f2` and `f3` differ from `f1`?
 
@@ -1098,15 +1144,13 @@ as.integer(f3)
 
 
 
-
-
 ## Lists
 
 * sometimes called a generic vector or recursive vector
 * Recall ([section 2.3.3](https://adv-r.hadley.nz/names-values.html#list-references)): each element is really a *reference* to another object
 * an be composed of elements of different types (as opposed to atomic vectors which must be of only one type)
 
-### Constructing
+## Constructing
 
 Simple lists:
 
@@ -1139,7 +1183,7 @@ simple_list[[3]][2]
 simple_list[[4]][3]
 ```
 
-Even Simpler List
+## Even Simpler List
 
 ```{r list_simpler}
 # Construct
@@ -1155,7 +1199,7 @@ simpler_list[9]
 simpler_list[11]
 ```
 
-Nested lists:
+## Nested lists:
 
 ```{r list_nested}
 nested_list <- list(
@@ -1174,13 +1218,11 @@ str(nested_list)
 
 Like JSON.
 
-Combined lists
+## Combined lists
 
 ```{r list_combined}
-# with list()
-list_comb1 <- list(list(1, 2), list(3, 4))
-# with c()
-list_comb2 <- c(list(1, 2), list(3, 4))
+list_comb1 <- list(list(1, 2), list(3, 4)) # with list()
+list_comb2 <- c(list(1, 2), list(3, 4)) # with c()
 
 # compare structure
 str(list_comb1)
@@ -1191,7 +1233,7 @@ list_comb3 <- c(list(1, 2), list(TRUE, FALSE))
 str(list_comb3)
 ```
 
-### Testing
+## Testing
 
 Check that is a list:
 
@@ -1213,7 +1255,7 @@ rlang::is_list(x = list_comb2, n = 4)
 rlang::is_vector(list_comb2)
 ```
 
-### Coercion
+## Coercion
 
 Use `as.list()`
 
@@ -1222,20 +1264,19 @@ list(1:3)
 as.list(1:3)
 ```
 
-### Matrices and arrays
+## Matrices and arrays
 
 Although not often used, the dimension attribute can be added to create **list-matrices** or **list-arrays**.
 
 ```{r list_matrices_arrays}
 l <- list(1:3, "a", TRUE, 1.0)
-dim(l) <- c(2, 2)
-l
+dim(l) <- c(2, 2); l
 
 l[[1, 1]]
 ```
 
 
-### Exercises
+## Exercises 1/3
 
 1. List all the ways that a list differs from an atomic vector.
 
@@ -1278,6 +1319,8 @@ as.list(1:2)[NA]
 
 </details>
 
+## Exercises 2/3
+
 2. Why do you need to use `unlist()` to convert a list to an atomic vector? Why doesn’t `as.vector()` work?
 
 <details><summary>Answer(s)</summary>
@@ -1289,6 +1332,8 @@ is.vector(as.vector(mtcars))
 ```
 
 </details>
+
+## Exercises 3/3
 
 3. Compare and contrast `c()` and `unlist()` when combining a date and date-time into a single vector.
 
@@ -1370,14 +1415,13 @@ To summarise: c() coerces types and strips time zones. Errors may have occurred 
 </details>
 
 
-
 ## Data frames and tibbles
 
 ![](images/vectors/summary-tree-s3-2.png) 
 
 Credit: [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
 
-### Data frame
+## Data frame
 
 A data frame is a:
 
@@ -1387,6 +1431,8 @@ A data frame is a:
     -   `row.names`
     -   Class: "data frame"
 
+## Data frame, examples 1/2:
+
 ```{r data_frame}
 # Construct
 df <- data.frame(
@@ -1394,7 +1440,6 @@ df <- data.frame(
   col2 = c("un", "deux", "trois") # another named atomic vector
   # ,stringsAsFactors = FALSE # default for versions after R 4.1
 )
-
 # Inspect
 df
 
@@ -1404,6 +1449,9 @@ typeof(df)
 # - attributes
 attributes(df)
 ```
+
+
+## Data frame, examples 2/2:
 
 ```{r df_functions}
 rownames(df)
@@ -1417,14 +1465,14 @@ length(df) # Same as ncol(df)
 
 Unlike other lists, the length of each vector must be the same (i.e. as many vector elements as rows in the data frame).
 
-### Tibble
+## Tibble
 
 Created to relieve some of the frustrations and pain points created by data frames, tibbles are data frames that are:
 
 -   Lazy (do less)
 -   Surly (complain more)
 
-#### Lazy
+## Lazy
 
 Tibbles do not:
 
@@ -1432,7 +1480,7 @@ Tibbles do not:
 -   Transform non-syntactic names
 -   Recycle vectors of length greater than 1
 
-**Coerce strings**
+## ! Coerce strings
 
 ```{r tbl_no_coerce}
 chr_col <- c("don't", "factor", "me", "bro")
@@ -1455,7 +1503,7 @@ str(tbl$a)
 
 ```
 
-**Transform non-syntactic names**
+## ! Transform non-syntactic names
 
 ```{r tbl_col_name}
 # data frame
@@ -1473,7 +1521,7 @@ names(df)
 names(tbl)
 ```
 
-**Recycle vectors of length greater than 1**
+## ! Recycle vectors of length greater than 1
 
 ```{r tbl_recycle, error=TRUE}
 # data frame
@@ -1489,14 +1537,14 @@ tbl <- tibble::tibble(
 )
 ```
 
-#### Surly
+## Surly
 
 Tibbles do only what they're asked and complain if what they're asked doesn't make sense:
 
 -   Subsetting always yields a tibble
 -   Complains if cannot find column
 
-**Subsetting always yields a tibble**
+## Subsetting always yields a tibble**
 
 ```{r tbl_subset}
 # data frame
@@ -1522,7 +1570,7 @@ tbl_col_2 <- dplyr::pull(tbl, col1)
 str(tbl_col_2)
 ```
 
-**Complains if cannot find column**
+## Complains if cannot find column
 
 ```{r tbl_col_match, warning=TRUE}
 names(df)
@@ -1532,7 +1580,7 @@ names(tbl)
 tbl$col
 ```
 
-#### One more difference
+## One more difference
 
 **`tibble()` allows you to refer to variables created during construction**
 
@@ -1575,7 +1623,7 @@ There are three reasons why row names are undesirable:
 </details>
 
 
-### Printing
+## Tibles: Printing
 
 Data frames and tibbles print differently
 
@@ -1585,7 +1633,7 @@ tibble::as_tibble(df3)
 ```
 
 
-### Subsetting
+## Tibles: Subsetting
 
 Two undesirable subsetting behaviours:
 
@@ -1594,18 +1642,18 @@ Two undesirable subsetting behaviours:
 
 Tibbles tweak these behaviours so that a [ always returns a tibble, and a $ doesn’t do partial matching and warns if it can’t find a variable (*this is what makes tibbles surly*).
 
-### Testing
+## Tibles: Testing
 
 Whether data frame: `is.data.frame()`. Note: both data frame and tibble are data frames.
 
 Whether tibble: `tibble::is_tibble`. Note: only tibbles are tibbles. Vanilla data frames are not.
 
-### Coercion
+## Tibles: Coercion
 
 -   To data frame: `as.data.frame()`
 -   To tibble: `tibble::as_tibble()`
 
-### List Columns
+## Tibles: List Columns
 
 List-columns are allowed in data frames but you have to do a little extra work by either adding the list-column after creation or wrapping the list in `I()`
 
@@ -1621,7 +1669,7 @@ df5 <- data.frame(
 df5
 ```
 
-### Matrix and data frame columns
+## Tibles: Matrix and data frame columns
 
 - As long as the number of rows matches the data frame, it’s also possible to have a matrix or data frame as a column of a data frame.
 - same as list-columns, must either addi the list-column after creation or wrapping the list in `I()`
@@ -1640,7 +1688,7 @@ dfm$z
 ```
 
 
-### Exercises
+## Exercises 1/4
 
 1. Can you have a data frame with zero rows? What about zero columns?
 
@@ -1676,6 +1724,8 @@ mtcars[0, 0]
 
 </details>
 
+## Exercises 2/4
+
 2. What happens if you attempt to set rownames that are not unique?
 
 <details><summary>Answer(s)</summary>
@@ -1705,6 +1755,8 @@ df[c(1, 1, 1), , drop = FALSE]
 ```
 
 </details>
+
+## Exercises 3/4
 
 3. If `df` is a data frame, what can you say about `t(df)`, and `t(t(df))`? Perform some experiments, making sure to try different column types.
 
@@ -1748,6 +1800,8 @@ t(df)
 
 </details>
 
+## Exercises 4/4
+
 4. What does `as.matrix()` do when applied to a data frame with columns of different types? How does it differ from `data.matrix()`?
 
 <details><summary>Answer(s)</summary>
@@ -1783,11 +1837,6 @@ data.matrix(df_coltypes)
 </details>
 
 
-
-
-
-
-
 ## `NULL`
 
 Special type of object that:
@@ -1817,7 +1866,7 @@ is.null(NULL)
 
 Let is use some of this chapter's skills on the `penguins` data.
 
-### Attributes
+## Attributes
 
 ```{r}
 str(penguins_raw)
@@ -1827,14 +1876,14 @@ str(penguins_raw)
 str(penguins_raw, give.attr = FALSE)
 ```
 
-### Data Frames vs Tibbles
+## Data Frames vs Tibbles
 
 ```{r}
 penguins_df <- data.frame(penguins)
 penguins_tb <- penguins #i.e. penguins was already a tibble
 ```
 
-#### Printing
+## Printing
 
 * Tip: print out these results in RStudio under different editor themes
 
@@ -1850,7 +1899,7 @@ head(penguins_df)
 penguins_tb
 ```
 
-### Atomic Vectors
+## Atomic Vectors
 
 ```{r}
 species_vector_df <- penguins_df |> select(species)
@@ -1883,9 +1932,10 @@ class(species_unlist_tb)
 typeof(species_pull_tb)
 class(species_pull_tb)
 ```
+
 </details>
 
-### Column Names
+## Column Names
 
 ```{r}
 colnames(penguins_tb)
@@ -1899,7 +1949,7 @@ names(penguins_tb) == colnames(penguins_tb)
 names(penguins_df) == names(penguins_tb)
 ```
 
-* What if we only invoke a partial name of a column of a tibble?
+## What if we only invoke a partial name of a column of a tibble?
 
 ```{r, error = TRUE}
 penguins_tb$y 
@@ -1929,7 +1979,7 @@ head(penguins_df_sp_se$s)
 ```
 
 
-## Chapter Quiz
+## Chapter Quiz 1/5
 
 1. What are the four common types of atomic vectors? What are the two rare types?
 
@@ -1937,11 +1987,15 @@ head(penguins_df_sp_se$s)
 The four common types of atomic vector are logical, integer, double and character. The two rarer types are complex and raw.
 </details>
 
+## Exercises 2/5
+
 2. What are attributes? How do you get them and set them?
 
 <details><summary>Answer(s)</summary>
 Attributes allow you to associate arbitrary additional metadata to any object. You can get and set individual attributes with `attr(x, "y")` and `attr(x, "y") <- value`; or you can get and set all attributes at once with `attributes()`.
 </details>
+
+## Exercises 3/5
 
 3. How is a list different from an atomic vector? How is a matrix different from a data frame?
 
@@ -1949,11 +2003,15 @@ Attributes allow you to associate arbitrary additional metadata to any object. Y
 The elements of a list can be any type (even a list); the elements of an atomic vector are all of the same type. Similarly, every element of a matrix must be the same type; in a data frame, different columns can have different types.
 </details>
 
+## Exercises 4/5
+
 4. Can you have a list that is a matrix? Can a data frame have a column that is a matrix?
 
 <details><summary>Answer(s)</summary>
 You can make a list-array by assigning dimensions to a list. You can make a matrix a column of a data frame with `df$x <- matrix()`, or by using `I()` when creating a new data frame `data.frame(x = I(matrix()))`.
 </details>
+
+## Exercises 5/5
 
 5. How do tibbles behave differently from data frames?
 
