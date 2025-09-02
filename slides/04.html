@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-bc185b5c5bdbcb35c2eb49d8a876ef70.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.33">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.34">
 
   <title>Advanced R Book Club – Subsetting</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -201,146 +201,204 @@
 <section id="learning-objectives" class="slide level2">
 <h2>Learning objectives:</h2>
 <ul>
-<li>Learn about the 6 ways to subset atomic vectors</li>
+<li>Select multiple elements from a vector with <code>[</code></li>
 <li>Learn about the 3 subsetting operators: <code>[[</code>, <code>[</code>, and <code>$</code></li>
 <li>Learn how subsetting works with different vector types</li>
 <li>Learn how subsetting can be combined with assignment</li>
 </ul>
 </section>
-<section id="selecting-multiple-elements" class="slide level2">
-<h2>Selecting multiple elements</h2>
-<h3 id="atomic-vectors">Atomic Vectors</h3>
-<ul>
-<li>6 ways to subset atomic vectors</li>
-</ul>
-<p>Let’s take a look with an example vector.</p>
+<section>
+<section id="selecting-multiple-elements" class="title-slide slide level1 center">
+<h1>Selecting multiple elements</h1>
+
+</section>
+<section id="positive-integers-return-elements-at-specified-positions" class="slide level2">
+<h2>1. Positive integers return elements at specified positions</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.1</span>, <span class="fl">2.2</span>, <span class="fl">3.3</span>, <span class="fl">4.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.1</span>, <span class="fl">2.2</span>, <span class="fl">3.3</span>, <span class="fl">4.4</span>) <span class="co"># decimal = original position</span></span>
+<span id="cb1-2"><a></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1.1 2.2 3.3 4.4</code></pre>
 </div>
-<p><strong>Positive integer indices</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="co"># return elements at specified positions which can be out of order</span></span>
-<span id="cb2-2"><a></a>x[<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>x[<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 4.4 1.1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="co"># duplicate indices return duplicate values</span></span>
-<span id="cb4-2"><a></a>x[<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>x[<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 2.2 2.2</code></pre>
+<pre><code>#&gt; [1] 1.1 1.1 1.1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="co"># real numbers truncate to integers</span></span>
-<span id="cb6-2"><a></a><span class="co"># so this behaves as if it is x[c(3, 3)]</span></span>
-<span id="cb6-3"><a></a>x[<span class="fu">c</span>(<span class="fl">3.2</span>, <span class="fl">3.8</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>x[<span class="fu">c</span>(<span class="fl">1.9999</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 3.3 3.3</code></pre>
+<pre><code>#&gt; [1] 1.1</code></pre>
 </div>
 </div>
-<p><strong>Negative integer indices</strong></p>
+<p>Reals <em>truncate</em> to integers.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="do">### excludes elements at specified positions</span></span>
-<span id="cb8-2"><a></a>x[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>)] <span class="co"># same as x[c(-1, -3)] or x[c(2, 4)]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>x[<span class="fu">c</span>(<span class="fl">1.0001</span>, <span class="fl">1.9999</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1.1 1.1</code></pre>
+</div>
+</div>
+</section>
+<section id="negative-integers-remove-specified-elements" class="slide level2">
+<h2>2. Negative integers remove specified elements</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>x[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>)] <span class="co"># same as x[c(-1, -3)] or x[c(2, 4)]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 2.2 4.4</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="do">### mixing positive and negative is a no-no</span></span>
-<span id="cb10-2"><a></a>x[<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">3</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="b.-mixing-negative-and-positive-integers-throws-an-error" class="slide level2">
+<h2>2b. Mixing negative and positive integers throws an error</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>x[<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">3</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in x[c(-1, 3)]: only 0's may be mixed with negative subscripts</code></pre>
 </div>
 </div>
-<p><strong>Logical Vectors</strong></p>
+</section>
+<section id="c.-zeros-ignored-with-other-ints" class="slide level2">
+<h2>2c. Zeros ignored with other ints</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>x[<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>x[<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 2.2 3.3 4.4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>x[<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span> ,<span class="dv">0</span> ,<span class="dv">0</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 2.2 3.3 4.4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>x[<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">0</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1.1 2.2 3.3</code></pre>
+</div>
+</div>
+</section>
+<section id="logical-vectors-select-specified-elements" class="slide level2">
+<h2>3. Logical vectors select specified elements</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>x[<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 1.1 2.2 4.4</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>x[x <span class="sc">&lt;</span> <span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>x[x <span class="sc">&lt;</span> <span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 1.1 2.2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>cond <span class="ot">&lt;-</span> x <span class="sc">&gt;</span> <span class="fl">2.5</span></span>
-<span id="cb16-2"><a></a>x[cond]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>cond <span class="ot">&lt;-</span> x <span class="sc">&gt;</span> <span class="fl">2.5</span></span>
+<span id="cb25-2"><a></a>x[cond]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 3.3 4.4</code></pre>
 </div>
 </div>
-<ul>
-<li><strong>Recyling rules</strong> applies when the two vectors are of different lengths</li>
-<li>the shorter of the two is recycled to the length of the longer</li>
-<li>Easy to understand if x or y is 1, best to avoid other lengths</li>
-</ul>
+</section>
+<section id="b.-shorter-element-are-recycled-to-higher-length" class="slide level2">
+<h2>3b. Shorter element are recycled to higher length</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>x[<span class="fu">c</span>(F, T)] <span class="co"># equivalent to: x[c(FALSE, TRUE, FALSE, TRUE)]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>x[<span class="cn">FALSE</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; numeric(0)</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>x[<span class="cn">TRUE</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1.1 2.2 3.3 4.4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>x[<span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>)] <span class="co"># equivalent to: x[c(FALSE, TRUE, FALSE, TRUE)]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 2.2 4.4</code></pre>
 </div>
 </div>
-<p><strong>Missing values (NA)</strong></p>
+<ul>
+<li>Easy to understand if x or y is 1, best to avoid other lengths</li>
+</ul>
+</section>
+<section id="c.-na-index-returns-na" class="slide level2">
+<h2>3c. NA index returns NA</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># Missing values in index will also return NA in output</span></span>
-<span id="cb20-2"><a></a>x[<span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">TRUE</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>x[<span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">TRUE</span>, <span class="cn">NA</span>, <span class="cn">TRUE</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1]  NA 2.2  NA 4.4</code></pre>
 </div>
 </div>
-<p><strong>Nothing</strong></p>
+</section>
+<section id="d.-extra-true-index-returns-na" class="slide level2">
+<h2>3d. Extra TRUE index returns NA</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="co"># returns the original vector</span></span>
-<span id="cb22-2"><a></a>x[]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>x[<span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 2.2 3.3 4.4  NA  NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>x[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1.1 2.2 3.3 4.4  NA</code></pre>
+</div>
+</div>
+</section>
+<section id="indexing-with-nothing-returns-original-vector" class="slide level2">
+<h2>4. Indexing with nothing returns original vector</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a>x[]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 1.1 2.2 3.3 4.4</code></pre>
 </div>
 </div>
-<p><strong>Zero</strong></p>
+</section>
+<section id="indexing-with-just-0-returns-0-length-vector-with-class" class="slide level2">
+<h2>5. Indexing with just 0 returns 0-length vector (with class)</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="co"># returns a zero-length vector</span></span>
-<span id="cb24-2"><a></a>x[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>x[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; numeric(0)</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a>letters[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; character(0)</code></pre>
 </div>
-<p><strong>Character vectors</strong></p>
+</div>
+</section>
+<section id="indexing-with-character-vector-returns-element-of-named-vector" class="slide level2">
+<h2>6. Indexing with character vector returns element of named vector</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="co"># if name, you can use to return matched elements</span></span>
-<span id="cb26-2"><a></a>(y <span class="ot">&lt;-</span> <span class="fu">setNames</span>(x, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>(y <span class="ot">&lt;-</span> <span class="fu">setNames</span>(x, letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;   a   b   c   d 
 #&gt; 1.1 2.2 3.3 4.4</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>y[<span class="fu">c</span>(<span class="st">"d"</span>, <span class="st">"b"</span>, <span class="st">"a"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>y[<span class="fu">c</span>(<span class="st">"d"</span>, <span class="st">"b"</span>, <span class="st">"a"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;   d   b   a 
 #&gt; 4.4 2.2 1.1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="co"># Like integer indices, you can repeat indices</span></span>
-<span id="cb30-2"><a></a>y[<span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a>y[<span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"a"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;   a   a   a 
 #&gt; 1.1 1.1 1.1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="co"># When subsetting with [, names are always matched exactly</span></span>
-<span id="cb32-2"><a></a>z <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">abc =</span> <span class="dv">1</span>, <span class="at">def =</span> <span class="dv">2</span>)</span>
-<span id="cb32-3"><a></a>z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="b.-names-must-be-exact-for" class="slide level2">
+<h2>6b. Names must be exact for <code>[</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a></a>z <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">abc =</span> <span class="dv">1</span>, <span class="at">def =</span> <span class="dv">2</span>)</span>
+<span id="cb51-2"><a></a>z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; abc def 
 #&gt;   1   2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>z[<span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"d"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a></a>z[<span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"d"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;NA&gt; &lt;NA&gt; 
 #&gt;   NA   NA</code></pre>
 </div>
 </div>
-<h3 id="lists">Lists</h3>
-<ul>
-<li>Subsetting works the same way</li>
-<li><code>[</code> always returns a list</li>
-<li><code>[[</code> and <code>$</code> let you pull elements out of a list</li>
-</ul>
+</section>
+<section id="subsetting-a-list-with-returns-a-list" class="slide level2">
+<h2>Subsetting a list with <code>[</code> returns a list</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>my_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="fu">c</span>(T, F), <span class="at">b =</span> letters[<span class="dv">5</span><span class="sc">:</span><span class="dv">15</span>], <span class="at">c =</span> <span class="dv">100</span><span class="sc">:</span><span class="dv">108</span>)</span>
-<span id="cb36-2"><a></a>my_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a>my_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="fu">c</span>(T, F), <span class="at">b =</span> letters[<span class="dv">5</span><span class="sc">:</span><span class="dv">15</span>], <span class="at">c =</span> <span class="dv">100</span><span class="sc">:</span><span class="dv">108</span>)</span>
+<span id="cb55-2"><a></a>my_list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; $a
 #&gt; [1]  TRUE FALSE
@@ -351,114 +409,73 @@
 #&gt; $c
 #&gt; [1] 100 101 102 103 104 105 106 107 108</code></pre>
 </div>
-</div>
-<p><strong>Return a (named) list</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>l1 <span class="ot">&lt;-</span> my_list[<span class="dv">2</span>]</span>
-<span id="cb38-2"><a></a>l1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a></a>my_list[<span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; $b
+<pre><code>#&gt; $a
+#&gt; [1]  TRUE FALSE
+#&gt; 
+#&gt; $b
 #&gt;  [1] "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o"</code></pre>
 </div>
 </div>
-<p><strong>Return a vector</strong></p>
+</section>
+<section id="lists-use-same-rules-for" class="slide level2">
+<h2>Lists use same rules for <code>[</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>l2 <span class="ot">&lt;-</span> my_list[[<span class="dv">2</span>]]</span>
-<span id="cb40-2"><a></a>l2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a></a>my_list[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  [1] "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o"</code></pre>
+<pre><code>#&gt; $b
+#&gt;  [1] "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o"
+#&gt; 
+#&gt; $c
+#&gt; [1] 100 101 102 103 104 105 106 107 108</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>l2b <span class="ot">&lt;-</span> my_list<span class="sc">$</span>b</span>
-<span id="cb42-2"><a></a>l2b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a>my_list[<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  [1] "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o"</code></pre>
+<pre><code>#&gt; $a
+#&gt; [1]  TRUE FALSE
+#&gt; 
+#&gt; $c
+#&gt; [1] 100 101 102 103 104 105 106 107 108</code></pre>
 </div>
 </div>
-<p><strong>Return a specific element</strong></p>
+</section>
+<section id="matrices-arrays-take-multidimensional-indices" class="slide level2">
+<h2>Matrices &amp; arrays take multidimensional indices</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>l3 <span class="ot">&lt;-</span> my_list[[<span class="dv">2</span>]][<span class="dv">3</span>]</span>
-<span id="cb44-2"><a></a>l3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a>a <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, <span class="at">nrow =</span> <span class="dv">3</span>)</span>
+<span id="cb63-2"><a></a>a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "g"</code></pre>
+<pre><code>#&gt;      [,1] [,2] [,3]
+#&gt; [1,]    1    4    7
+#&gt; [2,]    2    5    8
+#&gt; [3,]    3    6    9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>l4 <span class="ot">&lt;-</span> my_list[[<span class="st">'b'</span>]][<span class="dv">3</span>]</span>
-<span id="cb46-2"><a></a>l4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a></a>a[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>] <span class="co"># rows, columns</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "g"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>l4b <span class="ot">&lt;-</span> my_list<span class="sc">$</span>b[<span class="dv">3</span>]</span>
-<span id="cb48-2"><a></a>l4b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "g"</code></pre>
+<pre><code>#&gt;      [,1] [,2]
+#&gt; [1,]    4    7
+#&gt; [2,]    5    8</code></pre>
 </div>
 </div>
-<p><strong>Visual Representation</strong></p>
-
-<img data-src="images/subsetting/hadley-tweet.png" class="r-stretch"><p>See this stackoverflow article for more detailed information about the differences: https://stackoverflow.com/questions/1169456/the-difference-between-bracket-and-double-bracket-for-accessing-the-el</p>
-<h3 id="matrices-and-arrays">Matrices and arrays</h3>
-<p>You can subset higher dimensional structures in three ways:</p>
-<ul>
-<li>with multiple vectors</li>
-<li>with a single vector</li>
-<li>with a matrix</li>
-</ul>
+</section>
+<section id="matrices-arrays-can-accept-character-logical-etc" class="slide level2">
+<h2>Matrices &amp; arrays can accept character, logical, etc</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a>a <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">nrow =</span> <span class="dv">3</span>)</span>
-<span id="cb50-2"><a></a><span class="fu">colnames</span>(a) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>)</span>
-<span id="cb50-3"><a></a></span>
-<span id="cb50-4"><a></a><span class="co"># single row</span></span>
-<span id="cb50-5"><a></a>a[<span class="dv">1</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  A  B  C  D 
-#&gt;  1  4  7 10</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a><span class="co"># single column</span></span>
-<span id="cb52-2"><a></a>a[, <span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 1 2 3</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a><span class="co"># single element</span></span>
-<span id="cb54-2"><a></a>a[<span class="dv">1</span>, <span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; A 
-#&gt; 1</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a><span class="co"># two rows from two columns</span></span>
-<span id="cb56-2"><a></a>a[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;      C  D
-#&gt; [1,] 7 10
-#&gt; [2,] 8 11</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a>a[<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>), <span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"A"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a></a><span class="fu">colnames</span>(a) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)</span>
+<span id="cb67-2"><a></a>a[<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>), <span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"A"</span>)] <span class="co"># a[1:2, 2:1]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;      B A
 #&gt; [1,] 4 1
-#&gt; [2,] 6 3</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a><span class="co"># zero index and negative index</span></span>
-<span id="cb60-2"><a></a>a[<span class="dv">0</span>, <span class="sc">-</span><span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;      A C D</code></pre>
+#&gt; [2,] 5 2</code></pre>
 </div>
 </div>
-<p><strong>Subset a matrix with a matrix</strong></p>
+</section>
+<section id="matrices-arrays-are-also-vectors" class="slide level2">
+<h2>Matrices &amp; arrays are also vectors</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a>b <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb62-2"><a></a>b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;      [,1] [,2]
-#&gt; [1,]    1    3
-#&gt; [2,]    2    4</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a></a>a[b]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1]  7 11</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a></a>vals <span class="ot">&lt;-</span> <span class="fu">outer</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">FUN =</span> <span class="st">"paste"</span>, <span class="at">sep =</span> <span class="st">","</span>)</span>
-<span id="cb66-2"><a></a>vals</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a></a>vals <span class="ot">&lt;-</span> <span class="fu">outer</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">FUN =</span> <span class="st">"paste"</span>, <span class="at">sep =</span> <span class="st">","</span>) <span class="co"># All chr combos of 1:5</span></span>
+<span id="cb69-2"><a></a>vals</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;      [,1]  [,2]  [,3]  [,4]  [,5] 
 #&gt; [1,] "1,1" "1,2" "1,3" "1,4" "1,5"
@@ -467,218 +484,144 @@
 #&gt; [4,] "4,1" "4,2" "4,3" "4,4" "4,5"
 #&gt; [5,] "5,1" "5,2" "5,3" "5,4" "5,5"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a>select <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">ncol =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb68-2"><a></a>                 <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>,</span>
-<span id="cb68-3"><a></a>                   <span class="dv">3</span>, <span class="dv">1</span>,</span>
-<span id="cb68-4"><a></a>                   <span class="dv">2</span>, <span class="dv">4</span>))</span>
-<span id="cb68-5"><a></a>select</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a>vals[<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">15</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;      [,1] [,2]
-#&gt; [1,]    1    1
-#&gt; [2,]    3    1
-#&gt; [3,]    2    4</code></pre>
+<pre><code>#&gt; [1] "4,1" "5,3"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a></a>vals[select]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a>a[a <span class="sc">&gt;</span> <span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "1,1" "3,1" "2,4"</code></pre>
-</div>
-</div>
-<p>Matrices and arrays are just special vectors; can subset with a single vector (arrays in R stored column wise)</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a></a>vals[<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">15</span>, <span class="dv">16</span>, <span class="dv">17</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "3,1" "5,3" "1,4" "2,4"</code></pre>
-</div>
-</div>
-<h3 id="data-frames-and-tibbles">Data frames and tibbles</h3>
-<p>Data frames act like both lists and matrices</p>
-<ul>
-<li>When subsetting with a single index, they behave like lists and index the columns, so <code>df[1:2]</code> selects the first two columns.</li>
-<li>When subsetting with two indices, they behave like matrices, so <code>df[1:3, ]</code> selects the first three rows (and all the columns).</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a></a><span class="fu">library</span>(palmerpenguins)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; 
-#&gt; Attaching package: 'palmerpenguins'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; The following objects are masked from 'package:datasets':
-#&gt; 
-#&gt;     penguins, penguins_raw</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a>penguins <span class="ot">&lt;-</span> penguins</span>
-<span id="cb77-2"><a></a></span>
-<span id="cb77-3"><a></a><span class="co"># single index selects first two columns</span></span>
-<span id="cb77-4"><a></a>two_cols <span class="ot">&lt;-</span> penguins[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>] <span class="co"># or penguins[c(2,3)]</span></span>
-<span id="cb77-5"><a></a><span class="fu">head</span>(two_cols)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 6 × 2
-#&gt;   island    bill_length_mm
-#&gt;   &lt;fct&gt;              &lt;dbl&gt;
-#&gt; 1 Torgersen           39.1
-#&gt; 2 Torgersen           39.5
-#&gt; 3 Torgersen           40.3
-#&gt; 4 Torgersen           NA  
-#&gt; 5 Torgersen           36.7
-#&gt; 6 Torgersen           39.3</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a><span class="co"># equivalent to the above code</span></span>
-<span id="cb79-2"><a></a>same_two_cols <span class="ot">&lt;-</span> penguins[<span class="fu">c</span>(<span class="st">"island"</span>, <span class="st">"bill_length_mm"</span>)]</span>
-<span id="cb79-3"><a></a><span class="fu">head</span>(same_two_cols)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 6 × 2
-#&gt;   island    bill_length_mm
-#&gt;   &lt;fct&gt;              &lt;dbl&gt;
-#&gt; 1 Torgersen           39.1
-#&gt; 2 Torgersen           39.5
-#&gt; 3 Torgersen           40.3
-#&gt; 4 Torgersen           NA  
-#&gt; 5 Torgersen           36.7
-#&gt; 6 Torgersen           39.3</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a><span class="co"># two indices separated by comma (first two rows of 3rd and 4th columns)</span></span>
-<span id="cb81-2"><a></a>penguins[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 2 × 2
-#&gt;   bill_length_mm bill_depth_mm
-#&gt;            &lt;dbl&gt;         &lt;dbl&gt;
-#&gt; 1           39.1          18.7
-#&gt; 2           39.5          17.4</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a><span class="co"># Can't do this...</span></span>
-<span id="cb83-2"><a></a>penguins[[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>]][<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error:
-#&gt; ! The `j` argument of `[[.tbl_df()` can't be a vector of length 2 as of
-#&gt;   tibble 3.0.0.
-#&gt; ℹ Recursive subsetting is deprecated for tibbles.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a><span class="co"># ...but this works...</span></span>
-<span id="cb85-2"><a></a>penguins[[<span class="dv">3</span>]][<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 39.1 39.5 40.3   NA</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a></a><span class="co"># ...or this equivalent...</span></span>
-<span id="cb87-2"><a></a>penguins<span class="sc">$</span>bill_length_mm[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 39.1 39.5 40.3   NA</code></pre>
-</div>
-</div>
-<p>Subsetting a tibble with <code>[</code> always returns a tibble</p>
-<h3 id="preserving-dimensionality">Preserving dimensionality</h3>
-<ul>
-<li>Data frames and tibbles behave differently</li>
-<li>tibble will default to preserve dimensionality, data frames do not</li>
-<li>this can lead to unexpected behavior and code breaking in the future</li>
-<li>Use <code>drop = FALSE</code> to preserve dimensionality when subsetting a data frame or use tibbles</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a></a>tb <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">b =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
-<span id="cb89-2"><a></a></span>
-<span id="cb89-3"><a></a><span class="co"># returns tibble</span></span>
-<span id="cb89-4"><a></a><span class="fu">str</span>(tb[, <span class="st">"a"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; tibble [2 × 1] (S3: tbl_df/tbl/data.frame)
-#&gt;  $ a: int [1:2] 1 2</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a></a>tb[, <span class="st">"a"</span>] <span class="co"># equivalent to tb[, "a", drop = FALSE]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 2 × 1
-#&gt;       a
-#&gt;   &lt;int&gt;
-#&gt; 1     1
-#&gt; 2     2</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a></a><span class="co"># returns integer vector</span></span>
-<span id="cb93-2"><a></a><span class="co"># str(tb[, "a", drop = TRUE])</span></span>
-<span id="cb93-3"><a></a>tb[, <span class="st">"a"</span>, drop <span class="ot">=</span> <span class="cn">TRUE</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 1 2</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">b =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
-<span id="cb95-2"><a></a></span>
-<span id="cb95-3"><a></a><span class="co"># returns integer vector</span></span>
-<span id="cb95-4"><a></a><span class="co"># str(df[, "a"])</span></span>
-<span id="cb95-5"><a></a>df[, <span class="st">"a"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 1 2</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a></a><span class="co"># returns data frame with one column</span></span>
-<span id="cb97-2"><a></a><span class="co"># str(df[, "a", drop = FALSE])</span></span>
-<span id="cb97-3"><a></a>df[, <span class="st">"a"</span>, drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;   a
-#&gt; 1 1
-#&gt; 2 2</code></pre>
-</div>
-</div>
-<p><strong>Factors</strong></p>
-<p>Factor subsetting drop argument controls whether or not levels (rather than dimensions) are preserved.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a></a>z <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>))</span>
-<span id="cb99-2"><a></a>z[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] a
-#&gt; Levels: a b c</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a></a>z[<span class="dv">1</span>, drop <span class="ot">=</span> <span class="cn">TRUE</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] a
-#&gt; Levels: a</code></pre>
+<pre><code>#&gt; [1] 6 7 8 9</code></pre>
 </div>
 </div>
 </section>
-<section id="selecting-a-single-element" class="slide level2">
-<h2>Selecting a single element</h2>
-<p><code>[[</code> and <code>$</code> are used to extract single elements (note: a vector can be a single element)</p>
-<h3 id="section"><code>[[]]</code></h3>
-<p>Because <code>[[]]</code> can return only a single item, you must use it with either a single positive integer or a single string.</p>
+<section id="data-frames-subset-list-like-with-single-index" class="slide level2">
+<h2>Data frames subset list-like with single index</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="st">"a"</span>, <span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>)</span>
-<span id="cb103-2"><a></a>x[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">z =</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span>
+<span id="cb75-2"><a></a>df[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   x y
+#&gt; 1 1 3
+#&gt; 2 2 2
+#&gt; 3 3 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a>df[<span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"z"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   x z
+#&gt; 1 1 a
+#&gt; 2 2 b
+#&gt; 3 3 c</code></pre>
+</div>
+</div>
+</section>
+<section id="data-frames-subset-matrix-like-with-multiple-indices" class="slide level2">
+<h2>Data frames subset matrix-like with multiple indices</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a>df[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"z"</span>)] <span class="co"># rows, columns</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   x z
+#&gt; 1 1 a
+#&gt; 2 2 b</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a>df[df<span class="sc">$</span>x <span class="sc">==</span> <span class="dv">2</span>, ] <span class="co"># matching rows, all columns</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   x y z
+#&gt; 2 2 2 b</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a>df[, <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"z"</span>)] <span class="co"># equivalent to no ,</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   x z
+#&gt; 1 1 a
+#&gt; 2 2 b
+#&gt; 3 3 c</code></pre>
+</div>
+</div>
+</section>
+<section id="subsetting-a-tibble-with-returns-a-tibble" class="slide level2">
+<h2>Subsetting a tibble with <code>[</code> returns a tibble</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a>tbl <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(df)</span>
+<span id="cb85-2"><a></a>df[, <span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 1 2 3</code></pre>
 </div>
-</div>
-<p>Hadley Wickham recommends using <code>[[]]</code> with atomic vectors whenever you want to extract a single value to reinforce the expectation that you are getting and setting individual values.</p>
-<h3 id="section-1"><code>$</code></h3>
-<ul>
-<li><code>x$y</code> is equivalent to <code>x[["y"]]</code></li>
-</ul>
-<p>the <code>$</code> operator doesn’t work with stored vals</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a></a>var <span class="ot">&lt;-</span> <span class="st">"cyl"</span></span>
-<span id="cb105-2"><a></a></span>
-<span id="cb105-3"><a></a><span class="co"># Doesn't work - mtcars$var translated to mtcars[["var"]]</span></span>
-<span id="cb105-4"><a></a>mtcars<span class="sc">$</span>var</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a></a>df[, <span class="dv">1</span>, drop <span class="ot">=</span> <span class="cn">FALSE</span>] <span class="co"># Prevent errors</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; NULL</code></pre>
+<pre><code>#&gt;   x
+#&gt; 1 1
+#&gt; 2 2
+#&gt; 3 3</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a></a><span class="co"># Instead use [[</span></span>
-<span id="cb107-2"><a></a>mtcars[[var]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a></a>tbl[, <span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  [1] 6 6 4 6 8 6 8 4 4 6 6 8 8 8 8 8 8 4 4 4 4 8 8 8 8 4 4 4 8 6 8 4</code></pre>
+<pre><code>#&gt; # A tibble: 3 × 1
+#&gt;       x
+#&gt;   &lt;int&gt;
+#&gt; 1     1
+#&gt; 2     2
+#&gt; 3     3</code></pre>
 </div>
 </div>
-<p><code>$</code> allows partial matching, <code>[[]]</code> does not</p>
+</section></section>
+<section>
+<section id="selecting-a-single-element" class="title-slide slide level1 center">
+<h1>Selecting a single element</h1>
+
+</section>
+<section id="selects-a-single-element" class="slide level2">
+<h2><code>[[</code> selects a single element</h2>
+<div class="columns">
+<div class="column">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">abc =</span> <span class="dv">1</span>)</span>
-<span id="cb109-2"><a></a>x<span class="sc">$</span>a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="st">"a"</span>, <span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>)</span>
+<span id="cb91-2"><a></a>x[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [[1]]
+#&gt; [1] 1 2 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a></a><span class="fu">class</span>(x[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "list"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a></a>x[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1 2 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a></a><span class="fu">class</span>(x[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "integer"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a></a>x[[<span class="dv">1</span>]][[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a></a>x[[<span class="st">"a"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div><div class="column">
+<p><img data-src="images/subsetting/hadley-tweet.png"></p>
+</div></div>
+</section>
+<section id="is-shorthand-for-...-exact-false" class="slide level2">
+<h2><code>$</code> is shorthand for <code>[[..., exact = FALSE]]</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">abc =</span> <span class="dv">1</span>)</span>
+<span id="cb101-2"><a></a>x<span class="sc">$</span>abc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a></a>x<span class="sc">$</span>a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a></a>x[[<span class="st">"a"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; NULL</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a></a>x[[<span class="st">"a"</span>, exact <span class="ot">=</span> <span class="cn">FALSE</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
 </div>
-<p>Hadley advises to change Global settings:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a></a><span class="fu">options</span>(<span class="at">warnPartialMatchDollar =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb113-2"><a></a>x<span class="sc">$</span>a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a></a><span class="fu">options</span>(<span class="at">warnPartialMatchDollar =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb109-2"><a></a>x<span class="sc">$</span>a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; Warning in x$a: partial match of 'a' to 'abc'</code></pre>
 </div>
@@ -686,201 +629,258 @@
 <pre><code>#&gt; [1] 1</code></pre>
 </div>
 </div>
-<p>tibbles don’t have this behavior</p>
+</section>
+<section id="behavior-for-missing-ish-indices-is-inconsistent" class="slide level2">
+<h2>Behavior for missing-ish indices is inconsistent</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a></a>penguins<span class="sc">$</span>s</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Warning: Unknown or uninitialised column: `s`.</code></pre>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a></a>a <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">a =</span> <span class="dv">1</span>L, <span class="at">b =</span> <span class="dv">2</span>L)</span>
+<span id="cb112-2"><a></a>lst <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb112-3"><a></a></span>
+<span id="cb112-4"><a></a><span class="co"># Errors:</span></span>
+<span id="cb112-5"><a></a><span class="co"># a[[NULL]]</span></span>
+<span id="cb112-6"><a></a><span class="co"># lst[[NULL]]</span></span>
+<span id="cb112-7"><a></a><span class="co"># a[[5]]</span></span>
+<span id="cb112-8"><a></a><span class="co"># lst[[5]]</span></span>
+<span id="cb112-9"><a></a><span class="co"># a[["c"]]</span></span>
+<span id="cb112-10"><a></a><span class="co"># a[[NA]]</span></span>
+<span id="cb112-11"><a></a></span>
+<span id="cb112-12"><a></a>lst[[<span class="st">"c"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; NULL</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a></a>lst[[<span class="cn">NA</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; NULL</code></pre>
 </div>
 </div>
-<h3 id="missing-and-out-of-bound-indices">missing and out of bound indices</h3>
-<ul>
-<li>Due to the inconsistency of how R handles such indices, <code>purrr::pluck()</code> and <code>purrr::chuck()</code> are recommended</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb119-2"><a></a>  <span class="at">a =</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
-<span id="cb119-3"><a></a>  <span class="at">b =</span> <span class="fu">list</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)</span>
-<span id="cb119-4"><a></a>)</span>
-<span id="cb119-5"><a></a>purrr<span class="sc">::</span><span class="fu">pluck</span>(x, <span class="st">"a"</span>, <span class="dv">1</span>)</span>
-<span id="cb119-6"><a></a><span class="co"># [1] 1</span></span>
-<span id="cb119-7"><a></a>purrr<span class="sc">::</span><span class="fu">pluck</span>(x, <span class="st">"c"</span>, <span class="dv">1</span>)</span>
-<span id="cb119-8"><a></a><span class="co"># NULL</span></span>
-<span id="cb119-9"><a></a>purrr<span class="sc">::</span><span class="fu">pluck</span>(x, <span class="st">"c"</span>, <span class="dv">1</span>, <span class="at">.default =</span> <span class="cn">NA</span>)</span>
-<span id="cb119-10"><a></a><span class="co"># [1] NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<h3 id="and-slot"><code>@</code> and <code>slot()</code></h3>
-<ul>
-<li><p><code>@</code> is <code>$</code> for S4 objects (to be revisited in Chapter 15)</p></li>
-<li><p><code>slot()</code> is <code>[[ ]]</code> for S4 objects</p></li>
-</ul>
 </section>
-<section id="subsetting-and-assignment" class="slide level2">
-<h2>Subsetting and Assignment</h2>
+<section id="purrrpluck-and-purrrchuck-provide-consistent-wrappers" class="slide level2">
+<h2><code>purrr::pluck()</code> and <code>purrr::chuck()</code> provide consistent wrappers</h2>
 <ul>
-<li>Subsetting can be combined with assignment to edit values</li>
+<li><code>purrr::pluck()</code> always returns <code>NULL</code> or <code>.default</code> for (non-<code>NULL</code>) missing</li>
+<li><code>purrr::chuck()</code> always throws error</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb120"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Tigers"</span>, <span class="st">"Royals"</span>, <span class="st">"White Sox"</span>, <span class="st">"Twins"</span>, <span class="st">"Indians"</span>)</span>
-<span id="cb120-2"><a></a></span>
-<span id="cb120-3"><a></a>x[<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="st">"Guardians"</span></span>
-<span id="cb120-4"><a></a></span>
-<span id="cb120-5"><a></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a></a>purrr<span class="sc">::</span><span class="fu">pluck</span>(a, <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "Tigers"    "Royals"    "White Sox" "Twins"     "Guardians"</code></pre>
+<pre><code>#&gt; NULL</code></pre>
 </div>
-</div>
-<ul>
-<li>length of the subset and assignment vector should be the same to avoid recycling</li>
-</ul>
-<p>You can use NULL to remove a component</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb122"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>)</span>
-<span id="cb122-2"><a></a>x[[<span class="st">"b"</span>]] <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb122-3"><a></a><span class="fu">str</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb118"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a></a>purrr<span class="sc">::</span><span class="fu">pluck</span>(a, <span class="st">"c"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; List of 1
-#&gt;  $ a: num 1</code></pre>
+<pre><code>#&gt; NULL</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb120"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a></a>purrr<span class="sc">::</span><span class="fu">pluck</span>(lst, <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; NULL</code></pre>
 </div>
-<p>Subsetting with nothing can preserve structure of original object</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb124"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a></a><span class="co"># mtcars[] &lt;- lapply(mtcars, as.integer)</span></span>
-<span id="cb124-2"><a></a><span class="co"># is.data.frame(mtcars)</span></span>
-<span id="cb124-3"><a></a><span class="co"># [1] TRUE</span></span>
-<span id="cb124-4"><a></a><span class="co"># mtcars &lt;- lapply(mtcars, as.integer)</span></span>
-<span id="cb124-5"><a></a><span class="co">#&gt; is.data.frame(mtcars)</span></span>
-<span id="cb124-6"><a></a><span class="co"># [1] FALSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb122"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a></a>purrr<span class="sc">::</span><span class="fu">pluck</span>(lst, <span class="st">"c"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; NULL</code></pre>
+</div>
 </div>
 </section>
-<section id="applications" class="slide level2">
-<h2>Applications</h2>
-<p>Applications copied from cohort 2 slide</p>
-<h3 id="lookup-tables-character-subsetting">Lookup tables (character subsetting)</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb125"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"m"</span>, <span class="st">"f"</span>, <span class="st">"u"</span>, <span class="st">"f"</span>, <span class="st">"f"</span>, <span class="st">"m"</span>, <span class="st">"m"</span>)</span>
-<span id="cb125-2"><a></a>lookup <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">m =</span> <span class="st">"Male"</span>, <span class="at">f =</span> <span class="st">"Female"</span>, <span class="at">u =</span> <span class="cn">NA</span>)</span>
-<span id="cb125-3"><a></a>lookup[x]</span>
-<span id="cb125-4"><a></a><span class="co">#        m        f        u        f        f        m        m </span></span>
-<span id="cb125-5"><a></a><span class="co">#   "Male" "Female"       NA "Female" "Female"   "Male"   "Male"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<h3 id="matching-and-merging-by-hand-integer-subsetting">Matching and merging by hand (integer subsetting)</h3>
+<section id="s4-has-two-additional-subsetting-operators" class="slide level2">
+<h2>S4 has two additional subsetting operators</h2>
 <ul>
-<li>The <code>match()</code> function allows merging a vector with a table</li>
+<li><code>@</code> equivalent to <code>$</code> (but error if bad)</li>
+<li><code>slot()</code> equivalent to <code>[[</code></li>
 </ul>
+<p>More in Chapter 15</p>
+</section></section>
+<section>
+<section id="subsetting-and-assignment" class="title-slide slide level1 center">
+<h1>Subsetting and assignment</h1>
+
+</section>
+<section id="can-assign-to-position-with" class="slide level2">
+<h2>Can assign to position with <code>[</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb126"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a></a>grades <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"D"</span>, <span class="st">"A"</span>, <span class="st">"C"</span>, <span class="st">"B"</span>, <span class="st">"F"</span>)</span>
-<span id="cb126-2"><a></a>info <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb126-3"><a></a>  <span class="at">grade =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>, <span class="st">"F"</span>),</span>
-<span id="cb126-4"><a></a>  <span class="at">desc =</span> <span class="fu">c</span>(<span class="st">"Excellent"</span>, <span class="st">"Very Good"</span>, <span class="st">"Average"</span>, <span class="st">"Fair"</span>, <span class="st">"Poor"</span>),</span>
-<span id="cb126-5"><a></a>  <span class="at">fail =</span> <span class="fu">c</span>(F, F, F, F, T)</span>
-<span id="cb126-6"><a></a>)</span>
-<span id="cb126-7"><a></a>id <span class="ot">&lt;-</span> <span class="fu">match</span>(grades, info<span class="sc">$</span>grade)</span>
-<span id="cb126-8"><a></a>id</span>
-<span id="cb126-9"><a></a><span class="co"># [1] 3 2 2 1 3</span></span>
-<span id="cb126-10"><a></a>info[id, ]</span>
-<span id="cb126-11"><a></a><span class="co">#   grade      desc  fail</span></span>
-<span id="cb126-12"><a></a><span class="co"># 4     D      Fair FALSE</span></span>
-<span id="cb126-13"><a></a><span class="co"># 1     A Excellent FALSE</span></span>
-<span id="cb126-14"><a></a><span class="co"># 3     C   Average FALSE</span></span>
-<span id="cb126-15"><a></a><span class="co"># 2     B Very Good FALSE</span></span>
-<span id="cb126-16"><a></a><span class="co"># 5     F      Poor  TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb124"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span></span>
+<span id="cb124-2"><a></a>x[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">101</span>, <span class="dv">102</span>)</span>
+<span id="cb124-3"><a></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 101 102   3   4   5</code></pre>
 </div>
-<h3 id="random-samples-and-bootstrapping-integer-subsetting">Random samples and bootstrapping (integer subsetting)</h3>
+<div class="sourceCode cell-code" id="cb126"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a></a>x[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span></span>
+<span id="cb126-2"><a></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1 2 1 4 5</code></pre>
+</div>
+</div>
+</section>
+<section id="remove-list-component-with-null" class="slide level2">
+<h2>Remove list component with <code>NULL</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb127"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a></a><span class="co"># mtcars[sample(nrow(mtcars), 3), ] # use replace = TRUE to replace</span></span>
-<span id="cb127-2"><a></a><span class="co">#                     mpg cyl  disp  hp drat    wt  qsec vs am gear carb</span></span>
-<span id="cb127-3"><a></a><span class="co"># Lotus Europa       30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2</span></span>
-<span id="cb127-4"><a></a><span class="co"># Mazda RX4          21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4</span></span>
-<span id="cb127-5"><a></a><span class="co"># Cadillac Fleetwood 10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb128"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>)</span>
+<span id="cb128-2"><a></a>x[[<span class="st">"b"</span>]] <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb128-3"><a></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $a
+#&gt; [1] 1</code></pre>
 </div>
-<h3 id="ordering-integer-subsetting">Ordering (integer subsetting)</h3>
+</div>
+</section>
+<section id="use-listnull-to-add-null" class="slide level2">
+<h2>Use <code>list(NULL)</code> to add <code>NULL</code></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb128"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a></a><span class="co"># mtcars[order(mtcars$mpg), ]</span></span>
-<span id="cb128-2"><a></a><span class="co">#                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb</span></span>
-<span id="cb128-3"><a></a><span class="co"># Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4</span></span>
-<span id="cb128-4"><a></a><span class="co"># Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4</span></span>
-<span id="cb128-5"><a></a><span class="co"># Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4</span></span>
-<span id="cb128-6"><a></a><span class="co"># Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4</span></span>
-<span id="cb128-7"><a></a><span class="co"># Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4</span></span>
-<span id="cb128-8"><a></a><span class="co"># Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8</span></span>
-<span id="cb128-9"><a></a><span class="co"># ...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb130"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>)</span>
+<span id="cb130-2"><a></a>x[[<span class="st">"b"</span>]] <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>)</span>
+<span id="cb130-3"><a></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $a
+#&gt; [1] 1
+#&gt; 
+#&gt; $b
+#&gt; $b[[1]]
+#&gt; NULL</code></pre>
 </div>
-<h3 id="expanding-aggregated-counts-integer-subsetting">Expanding aggregated counts (integer subsetting)</h3>
+</div>
+</section>
+<section id="subset-with-nothing-to-retain-shape" class="slide level2">
+<h2>Subset with nothing to retain shape</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb132"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb132-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">b =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb132-2"><a></a>df[] <span class="ot">&lt;-</span> <span class="st">"a"</span></span>
+<span id="cb132-3"><a></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   a b
+#&gt; 1 a a
+#&gt; 2 a a
+#&gt; 3 a a</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb134"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb134-1"><a></a>df <span class="ot">&lt;-</span> <span class="st">"a"</span></span>
+<span id="cb134-2"><a></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "a"</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="applications" class="title-slide slide level1 center">
+<h1>Applications</h1>
+
+</section>
+<section id="use-a-lookup-vector-and-recycling-rules-to-translate-values" class="slide level2">
+<h2>Use a lookup vector and recycling rules to translate values</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb136"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb136-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"b"</span>, <span class="st">"g"</span>, <span class="st">"x"</span>, <span class="st">"g"</span>, <span class="st">"g"</span>, <span class="st">"b"</span>)</span>
+<span id="cb136-2"><a></a>lookup <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">b =</span> <span class="st">"blue"</span>, <span class="at">g =</span> <span class="st">"green"</span>, <span class="at">x =</span> <span class="cn">NA</span>)</span>
+<span id="cb136-3"><a></a>lookup[x]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;       b       g       x       g       g       b 
+#&gt;  "blue" "green"      NA "green" "green"  "blue"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb138"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb138-1"><a></a><span class="fu">unname</span>(lookup[x])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "blue"  "green" NA      "green" "green" "blue"</code></pre>
+</div>
+</div>
+</section>
+<section id="use-a-lookup-table-to-generate-rows-of-data" class="slide level2">
+<h2>Use a lookup table to generate rows of data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb140"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb140-1"><a></a>info <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb140-2"><a></a>  <span class="at">code =</span> <span class="fu">c</span>(<span class="st">"b"</span>, <span class="st">"g"</span>, <span class="st">"x"</span>),</span>
+<span id="cb140-3"><a></a>  <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"green"</span>, <span class="cn">NA</span>),</span>
+<span id="cb140-4"><a></a>  <span class="at">other_thing =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">1</span></span>
+<span id="cb140-5"><a></a>)</span>
+<span id="cb140-6"><a></a><span class="fu">match</span>(x, info<span class="sc">$</span>code) <span class="co"># Indices of info$code in x</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1 2 3 2 2 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb142"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb142-1"><a></a>info[<span class="fu">match</span>(x, info<span class="sc">$</span>code), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;     code color other_thing
+#&gt; 1      b  blue           3
+#&gt; 2      g green           2
+#&gt; 3      x  &lt;NA&gt;           1
+#&gt; 2.1    g green           2
+#&gt; 2.2    g green           2
+#&gt; 1.1    b  blue           3</code></pre>
+</div>
+</div>
+</section>
+<section id="sort-with-order" class="slide level2">
+<h2>Sort with <code>order()</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb144"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb144-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"a"</span>)</span>
+<span id="cb144-2"><a></a><span class="fu">order</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 3 1 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb146"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb146-1"><a></a>x[<span class="fu">order</span>(x)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "a" "b" "c"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb148"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb148-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">b =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb148-2"><a></a>df[<span class="fu">order</span>(df<span class="sc">$</span>b), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   b a
+#&gt; 3 1 3
+#&gt; 2 2 2
+#&gt; 1 3 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb150"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb150-1"><a></a>df[, <span class="fu">order</span>(<span class="fu">names</span>(df))]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   a b
+#&gt; 1 1 3
+#&gt; 2 2 2
+#&gt; 3 3 1</code></pre>
+</div>
+</div>
+</section>
+<section id="expand-counts" class="slide level2">
+<h2>Expand counts</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb152"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb152-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">1</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">9</span>, <span class="dv">11</span>, <span class="dv">6</span>), <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">1</span>))</span>
+<span id="cb152-2"><a></a><span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df), df<span class="sc">$</span>n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1 1 1 2 2 2 2 2 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb154"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb154-1"><a></a>df[<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df), df<span class="sc">$</span>n), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;     x  y n
+#&gt; 1   2  9 3
+#&gt; 1.1 2  9 3
+#&gt; 1.2 2  9 3
+#&gt; 2   4 11 5
+#&gt; 2.1 4 11 5
+#&gt; 2.2 4 11 5
+#&gt; 2.3 4 11 5
+#&gt; 2.4 4 11 5
+#&gt; 3   1  6 1</code></pre>
+</div>
+</div>
+</section>
+<section id="ran-out-of-time-to-make-slides-for" class="slide level2">
+<h2>Ran out of time to make slides for</h2>
+<p>Ideally a future cohort should expand these:</p>
 <ul>
-<li>We can expand a count column by using <code>rep()</code></li>
+<li>Remove df columns with <code>setdiff()</code></li>
+<li>Logically subset rows <code>df[df$col &gt; 5, ]</code></li>
+<li>The next slide about <code>which()</code></li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb129"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a></a>df <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="st">"Amy"</span>, <span class="st">"Julie"</span>, <span class="st">"Brian"</span>), <span class="at">n =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span>))</span>
-<span id="cb129-2"><a></a>df[<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df), df<span class="sc">$</span>n), ]</span>
-<span id="cb129-3"><a></a><span class="co"># A tibble: 6 x 2</span></span>
-<span id="cb129-4"><a></a><span class="co">#   x         n</span></span>
-<span id="cb129-5"><a></a><span class="co">#   &lt;chr&gt; &lt;dbl&gt;</span></span>
-<span id="cb129-6"><a></a><span class="co"># 1 Amy       2</span></span>
-<span id="cb129-7"><a></a><span class="co"># 2 Amy       2</span></span>
-<span id="cb129-8"><a></a><span class="co"># 3 Julie     1</span></span>
-<span id="cb129-9"><a></a><span class="co"># 4 Brian     3</span></span>
-<span id="cb129-10"><a></a><span class="co"># 5 Brian     3</span></span>
-<span id="cb129-11"><a></a><span class="co"># 6 Brian     3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<h3 id="removing-columns-from-data-frames-character">Removing columns from data frames (character)</h3>
-<ul>
-<li>We can remove a column by subsetting, which does not change the object</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb130"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a></a>df[, <span class="dv">1</span>]</span>
-<span id="cb130-2"><a></a><span class="co"># A tibble: 3 x 1</span></span>
-<span id="cb130-3"><a></a><span class="co">#   x    </span></span>
-<span id="cb130-4"><a></a><span class="co">#   &lt;chr&gt;</span></span>
-<span id="cb130-5"><a></a><span class="co"># 1 Amy  </span></span>
-<span id="cb130-6"><a></a><span class="co"># 2 Julie</span></span>
-<span id="cb130-7"><a></a><span class="co"># 3 Brian</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ul>
-<li>We can also delete the column using <code>NULL</code></li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a></a>df<span class="sc">$</span>n <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb131-2"><a></a>df</span>
-<span id="cb131-3"><a></a><span class="co"># A tibble: 3 x 1</span></span>
-<span id="cb131-4"><a></a><span class="co">#   x    </span></span>
-<span id="cb131-5"><a></a><span class="co">#   &lt;chr&gt;</span></span>
-<span id="cb131-6"><a></a><span class="co"># 1 Amy  </span></span>
-<span id="cb131-7"><a></a><span class="co"># 2 Julie</span></span>
-<span id="cb131-8"><a></a><span class="co"># 3 Brian</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<h3 id="selecting-rows-based-on-a-condition-logical-subsetting">Selecting rows based on a condition (logical subsetting)</h3>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb132"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb132-1"><a></a><span class="co"># mtcars[mtcars$gear == 5, ]</span></span>
-<span id="cb132-2"><a></a><span class="co">#                 mpg cyl  disp  hp drat    wt qsec vs am gear carb</span></span>
-<span id="cb132-3"><a></a><span class="co"># Porsche 914-2  26.0   4 120.3  91 4.43 2.140 16.7  0  1    5    2</span></span>
-<span id="cb132-4"><a></a><span class="co"># Lotus Europa   30.4   4  95.1 113 3.77 1.513 16.9  1  1    5    2</span></span>
-<span id="cb132-5"><a></a><span class="co"># Ford Pantera L 15.8   8 351.0 264 4.22 3.170 14.5  0  1    5    4</span></span>
-<span id="cb132-6"><a></a><span class="co"># Ferrari Dino   19.7   6 145.0 175 3.62 2.770 15.5  0  1    5    6</span></span>
-<span id="cb132-7"><a></a><span class="co"># Maserati Bora  15.0   8 301.0 335 3.54 3.570 14.6  0  1    5    8</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<h3 id="boolean-algebra-versus-sets-logical-and-integer">Boolean algebra versus sets (logical and integer)</h3>
+</section>
+<section id="boolean-algebra-versus-sets-logical-and-integer" class="slide level2">
+<h2>Boolean algebra versus sets (logical and integer)</h2>
 <ul>
 <li><code>which()</code> gives the indices of a Boolean vector</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a></a>(x1 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span> <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="co"># 1-10 divisible by 2</span></span>
-<span id="cb133-2"><a></a><span class="co">#  [1] FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE  TRUE</span></span>
-<span id="cb133-3"><a></a>(x2 <span class="ot">&lt;-</span> <span class="fu">which</span>(x1))</span>
-<span id="cb133-4"><a></a><span class="co"># [1]  2  4  6  8 10</span></span>
-<span id="cb133-5"><a></a>(y1 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span> <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="co"># 1-10 divisible by 5</span></span>
-<span id="cb133-6"><a></a><span class="co">#  [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE</span></span>
-<span id="cb133-7"><a></a>(y2 <span class="ot">&lt;-</span> <span class="fu">which</span>(y1))</span>
-<span id="cb133-8"><a></a><span class="co"># [1]  5 10</span></span>
-<span id="cb133-9"><a></a>x1 <span class="sc">&amp;</span> y1</span>
-<span id="cb133-10"><a></a><span class="co"># [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb156"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb156-1"><a></a>(x1 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span> <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="co"># 1-10 divisible by 2</span></span>
+<span id="cb156-2"><a></a><span class="co">#  [1] FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE  TRUE</span></span>
+<span id="cb156-3"><a></a>(x2 <span class="ot">&lt;-</span> <span class="fu">which</span>(x1))</span>
+<span id="cb156-4"><a></a><span class="co"># [1]  2  4  6  8 10</span></span>
+<span id="cb156-5"><a></a>(y1 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span> <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="co"># 1-10 divisible by 5</span></span>
+<span id="cb156-6"><a></a><span class="co">#  [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE</span></span>
+<span id="cb156-7"><a></a>(y2 <span class="ot">&lt;-</span> <span class="fu">which</span>(y1))</span>
+<span id="cb156-8"><a></a><span class="co"># [1]  5 10</span></span>
+<span id="cb156-9"><a></a>x1 <span class="sc">&amp;</span> y1</span>
+<span id="cb156-10"><a></a><span class="co"># [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -1096,6 +1096,44 @@
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
