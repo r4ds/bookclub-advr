@@ -1543,7 +1543,7 @@
     "href": "slides/04.html#learning-objectives",
     "title": "Subsetting",
     "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nSelect multiple elements from a vector with [\nLearn about the 3 subsetting operators: [[, [, and $\nLearn how subsetting works with different vector types\nLearn how subsetting can be combined with assignment"
+    "text": "Learning objectives:\n\nSelect multiple elements from a vector with [\nSelect single elements from a vector with [[ and $\nAssign to subsets of vectors\nUse subsetting to expand data"
   },
   {
     "objectID": "slides/04.html#positive-integers-return-elements-at-specified-positions",
