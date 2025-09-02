@@ -1,0 +1,376 @@
+---
+engine: knitr
+title: Subsetting
+---
+
+## Learning objectives:
+
+- Select multiple elements from a vector with `[`
+- Learn about the 3 subsetting operators: `[[`, `[`, and `$`
+- Learn how subsetting works with different vector types
+- Learn how subsetting can be combined with assignment
+
+# Selecting multiple elements
+
+## 1. Positive integers return elements at specified positions
+
+```{r}
+#| label: positive_int
+x <- c(1.1, 2.2, 3.3, 4.4) # decimal = original position
+x
+x[c(4, 1)]
+x[c(1, 1, 1)]
+x[c(1.9999)]
+```
+
+Reals *truncate* to integers.
+
+```{r}
+#| label: positive_real
+x[c(1.0001, 1.9999)]
+```
+
+## 2. Negative integers remove specified elements
+
+```{r}
+#| label: negative_int
+x[-c(1, 3)] # same as x[c(-1, -3)] or x[c(2, 4)]
+```
+
+## 2b. Mixing negative and positive integers throws an error
+
+```{r}
+#| label: mixed_int
+#| error: true
+x[c(-1, 3)]
+```
+
+## 2c. Zeros ignored with other ints 
+
+```{r}
+#| label: negative_int_zero
+x[c(-1, 0)]
+x[c(-1, 0, 0, 0, 0, 0 ,0 ,0)]
+x[c(1, 0, 2, 0, 3, 0)]
+```
+
+
+## 3. Logical vectors select specified elements
+
+```{r}
+#| label: logical_vec
+x[c(TRUE, TRUE, FALSE, TRUE)]
+x[x < 3]
+
+cond <- x > 2.5
+x[cond]
+```
+
+## 3b. Shorter element are recycled to higher length
+
+```{r}
+#| label: recycling
+x[FALSE]
+x[TRUE]
+x[c(FALSE, TRUE)] # equivalent to: x[c(FALSE, TRUE, FALSE, TRUE)]
+```
+
+- Easy to understand if x or y is 1, best to avoid other lengths
+
+## 3c. NA index returns NA
+
+```{r}
+#| label: missing_index
+x[c(NA, TRUE, NA, TRUE)]
+```
+## 3d. Extra TRUE index returns NA
+
+```{r}
+#| label: extra_index
+x[c(FALSE, TRUE, TRUE, TRUE, TRUE, TRUE)]
+x[1:5]
+```
+
+## 4. Indexing with nothing returns original vector
+
+```{r nothing}
+x[]
+```
+
+## 5. Indexing with just 0 returns 0-length vector (with class)
+
+```{r zero}
+x[0]
+letters[0]
+```
+
+## 6. Indexing with character vector returns element of named vector
+
+```{r character}
+(y <- setNames(x, letters[1:4]))
+y[c("d", "b", "a")]
+y[c("a", "a", "a")]
+```
+
+## 6b. Names must be exact for `[`
+
+```{r}
+#| label: exact_names
+z <- c(abc = 1, def = 2)
+z
+z[c("a", "d")]
+```
+
+## Subsetting a list with `[` returns a list
+
+```{r}
+#| label: list_subset_basics
+my_list <- list(a = c(T, F), b = letters[5:15], c = 100:108)
+my_list
+my_list[c("a", "b")]
+```
+
+## Lists use same rules for `[`
+
+```{r} 
+#| label: list_subset_multiple
+my_list[2:3]
+my_list[c(TRUE, FALSE, TRUE)]
+```
+
+## Matrices & arrays take multidimensional indices
+
+```{r}
+#| label: array_subset
+a <- matrix(1:9, nrow = 3)
+a
+a[1:2, 2:3] # rows, columns
+```
+
+## Matrices & arrays can accept character, logical, etc
+
+```{r}
+#| label: array_named
+colnames(a) <- c("A", "B", "C")
+a[c(TRUE, TRUE, FALSE), c("B", "A")] # a[1:2, 2:1]
+```
+
+## Matrices & arrays are also vectors
+
+```{r}
+#| label: array_vector
+vals <- outer(1:5, 1:5, FUN = "paste", sep = ",") # All chr combos of 1:5
+vals
+vals[c(4, 15)]
+a[a > 5]
+```
+
+## Data frames subset list-like with single index
+
+```{r}
+#| label: df_subset1
+df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
+df[1:2]
+df[c("x", "z")]
+```
+
+## Data frames subset matrix-like with multiple indices
+
+```{r}
+df[1:2, c("x", "z")] # rows, columns
+df[df$x == 2, ] # matching rows, all columns
+df[, c("x", "z")] # equivalent to no ,
+```
+
+## Subsetting a tibble with `[` returns a tibble
+
+```{r}
+tbl <- tibble::as_tibble(df)
+df[, 1]
+df[, 1, drop = FALSE] # Prevent errors
+tbl[, 1]
+```
+
+# Selecting a single element
+
+## `[[` selects a single element
+
+:::: {.columns}
+
+::: {.column}
+```{r}
+x <- list(1:3, "a", 4:6)
+x[1]
+class(x[1])
+x[[1]]
+class(x[[1]])
+x[[1]][[1]]
+```
+:::
+
+::: {.column}
+
+![](images/subsetting/hadley-tweet.png)
+:::
+
+::::
+
+## `$` is shorthand for `[[..., exact = FALSE]]`
+
+```{r}
+#| label: dollar_subset
+#| warning: true
+x <- list(abc = 1)
+x$abc
+x$a
+x[["a"]]
+x[["a", exact = FALSE]]
+
+options(warnPartialMatchDollar = TRUE)
+x$a
+```
+
+## Behavior for missing-ish indices is inconsistent
+
+```{r}
+#| label: missingish_indices
+#| error: true
+a <- c(a = 1L, b = 2L)
+lst <- list(a = 1:2)
+
+# Errors:
+# a[[NULL]]
+# lst[[NULL]]
+# a[[5]]
+# lst[[5]]
+# a[["c"]]
+# a[[NA]]
+
+lst[["c"]]
+lst[[NA]]
+```
+
+## `purrr::pluck()` and `purrr::chuck()` provide consistent wrappers
+
+- `purrr::pluck()` always returns `NULL` or `.default` for (non-`NULL`) missing
+- `purrr::chuck()` always throws error
+
+```{r}
+purrr::pluck(a, 5)
+purrr::pluck(a, "c")
+purrr::pluck(lst, 5)
+purrr::pluck(lst, "c")
+```
+
+## S4 has two additional subsetting operators
+
+- `@` equivalent to `$` (but error if bad)
+- `slot()` equivalent to `[[`
+
+More in Chapter 15
+
+# Subsetting and assignment
+
+## Can assign to position with `[`
+
+```{r}
+x <- 1:5
+x[1:2] <- c(101, 102)
+x
+x[1:3] <- 1:2
+x
+```
+
+## Remove list component with `NULL`
+
+```{r}
+x <- list(a = 1, b = 2)
+x[["b"]] <- NULL
+x
+```
+
+## Use `list(NULL)` to add `NULL`
+
+```{r}
+x <- list(a = 1, b = 2)
+x[["b"]] <- list(NULL)
+x
+```
+
+## Subset with nothing to retain shape
+
+```{r}
+df <- data.frame(a = 1:3, b = 1:3)
+df[] <- "a"
+df
+df <- "a"
+df
+```
+
+# Applications
+
+## Use a lookup vector and recycling rules to translate values
+
+```{r}
+x <- c("b", "g", "x", "g", "g", "b")
+lookup <- c(b = "blue", g = "green", x = NA)
+lookup[x]
+unname(lookup[x])
+```
+
+## Use a lookup table to generate rows of data
+
+```{r}
+info <- data.frame(
+  code = c("b", "g", "x"),
+  color = c("blue", "green", NA),
+  other_thing = 3:1
+)
+match(x, info$code) # Indices of info$code in x
+info[match(x, info$code), ]
+```
+
+## Sort with `order()`
+
+```{r}
+x <- c("b", "c", "a")
+order(x)
+x[order(x)]
+
+df <- data.frame(b = 3:1, a = 1:3)
+df[order(df$b), ]
+df[, order(names(df))]
+```
+
+## Expand counts
+
+```{r}
+df <- data.frame(x = c(2, 4, 1), y = c(9, 11, 6), n = c(3, 5, 1))
+rep(1:nrow(df), df$n)
+df[rep(1:nrow(df), df$n), ]
+```
+
+## Ran out of time to make slides for
+
+Ideally a future cohort should expand these:
+
+- Remove df columns with `setdiff()`
+- Logically subset rows `df[df$col > 5, ]`
+- The next slide about `which()`
+
+## Boolean algebra versus sets (logical and integer)
+
+- `which()` gives the indices of a Boolean vector
+
+```{r, eval=FALSE}
+(x1 <- 1:10 %% 2 == 0) # 1-10 divisible by 2
+#  [1] FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE  TRUE FALSE  TRUE
+(x2 <- which(x1))
+# [1]  2  4  6  8 10
+(y1 <- 1:10 %% 5 == 0) # 1-10 divisible by 5
+#  [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE
+(y2 <- which(y1))
+# [1]  5 10
+x1 & y1
+# [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+```
