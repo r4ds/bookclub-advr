@@ -1,0 +1,21 @@
+---
+title: Cohort 8
+---
+
+{{< video https://www.youtube.com/embed/bvo_6s9F5pw >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:10:29	Federica Gazzelloni (she/her):	start
+00:15:26	Silvana Acosta:	emoji
+00:45:52	Rebecca Butler:	Well, the documentation for is.integer clarifies 🙂
+is.integer returns TRUE or FALSE depending on whether its argument is of integer type or not, unless it is a factor when it returns FALSE.
+00:46:12	Silvana Acosta:	Reacted to "Well, the documentat..." with 💜
+00:57:08	Silvana Acosta:	Sorry, need to drop. Almost 10 PM here 😅 Thank you everyone! Specially Betsy for the great presentation! 💜
+00:57:25	Federica Gazzelloni (she/her):	Reacted to "Sorry, need to drop...." with 👋🏻
+00:57:41	Rebecca Butler:	Reacted to "Sorry, need to drop...." with 👋🏻
+01:05:53	Federica Gazzelloni (she/her):	stop
+```
+</details>

@@ -1,0 +1,59 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/OmBum_1jDjE >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:10:07	Gabby Palomo Munoz:	I got my PhD at UNL!!! Go Huskers!!!
+00:15:48	Jo Hardin:	@Tataphani, how do *you* say your name?
+00:18:37	tataphani:	we can be good team me too SAS+ r
+00:19:28	Olufemi Ajumobi:	Reacted to "we can be good team ..." with 👍
+00:23:24	Gabby Palomo Munoz:	This workflow work really well, I always use it when working on slides
+00:23:53	Derek Sollberger:	Aside: to these DSLC book clubs work with Quarto files?
+00:24:29	Gabby Palomo Munoz:	SLides are different than the book
+00:24:34	Gabby Palomo Munoz:	BUT they are both in bookddown
+00:24:52	Gabby Palomo Munoz:	SLIDES are the summarized version that each one of us create for each chapter
+00:26:18	Gabby Palomo Munoz:	The idea is that we don't put everything there is in the chapter in the "slides". Just important relevant things. Snipets. Jon calls them slides because ideally you should put what you are presenting on what can be shown on the screen (like a slide) and avoid scrolling
+00:26:30	Derek Sollberger:	Reacted to "The idea is that we ..." with 👍
+00:26:37	Gabby Palomo Munoz:	BUT it's fine if your 'slide' has more info that you have to scroll through
+00:27:00	Gabby Palomo Munoz:	My grammar there is awful. Sorry!!
+00:28:14	Gabby Palomo Munoz:	I use Windows and have never had any issues with the github
+00:28:18	Gabby Palomo Munoz:	instructions
+00:29:25	tataphani:	Reacted to "I use Windows and ha..." with 👍
+00:31:57	Derek Sollberger:	It feels odd being part of a book club where the slides are already there, haha
+00:35:18	John Ellis:	Any tips for searching for ‘R’ … ‘R Programming’?
+00:35:41	Steffi LaZerte (she/her):	I often include the package name or "stats" if it's related to statistics
+00:35:47	John Ellis:	Reacted to "I often include the ..." with 👍
+00:36:02	Jo Hardin:	i usually include the word tidy
+00:36:07	Derek Sollberger:	Replying to "Any tips for searchi..."
+
+At least it is easier than searching for "pandas"
+00:36:09	Diana Garcia Cortes:	Reacted to "i usually include th..." with 👍
+00:36:26	Derek Sollberger:	Reacted to "I often include the ..." with 👍
+00:36:27	Derek Sollberger:	Reacted to "i usually include th..." with 👍
+00:36:41	Steffi LaZerte (she/her):	Replying to "i usually include th..."
+
+Or base :D depending
+00:39:21	Jo Hardin:	Reacted to "Or base :D depending" with 🙂
+00:39:56	John Ellis:	Reacted to "Or base :D depending" with 👍
+00:40:13	James Capobianco:	First link doesn’t work for me - 404d
+00:40:54	Olivier Leroy:	https://mitp-content-server.mit.edu/books/content/sectbyfn/books_pres_0/6515/sicp.zip/index.html
+00:42:00	James Capobianco:	Reacted to "https://mitp-content..." with 👍
+00:42:27	James Capobianco:	Like a lot of other people said, I’m really interested in practicing functional programming.
+00:42:59	Gabby Palomo Munoz:	Reacted to "Like a lot of other ..." with 💯
+00:43:17	Derek Sollberger:	Reacted to "Like a lot of other ..." with 💯
+00:45:23	Gabby Palomo Munoz:	It's just to highlight that we need to find someone urgently for next week
+00:45:35	James Capobianco:	Yes, I figured it had to do with how soon that week is
+00:45:47	Jo Hardin:	Reacted to "It's just to highlig..." with 👍
+00:45:48	Gabby Palomo Munoz:	I think Jon designed it like that to help whoever is leading the book
+00:47:31	Gabby Palomo Munoz:	One more thing, you don't have to know the content of the chapter and be an expert on that topic to present.
+00:47:40	Derek Sollberger:	Reacted to "One more thing, you ..." with 👍
+00:47:46	Gabby Palomo Munoz:	Jon recommends sometimes to choose a chapter if you want to learn more about a certain topic
+00:47:48	James Capobianco:	Reacted to "One more thing, you ..." with 👍
+00:48:10	Gabby Palomo Munoz:	And we are all here to either answer questions or redirect
+```
+</details>

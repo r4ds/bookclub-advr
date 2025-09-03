@@ -1,0 +1,73 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/3nhMBcL9WNw >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:04:26	Howard Baek:	Good to see you again, Olivier
+00:11:01	Derek Sollberger (he/him):	start
+00:18:16	Olivier Leroy:	T is not a restricted name unlike TRUE:
+00:18:17	Olivier Leroy:	> TRUE <-"bob"
+Error in TRUE <- "bob" : invalid (do_set) left-hand side to assignment
+> T <- "bob"
+>
+00:22:03	Steffi LaZerte (she/her):	nchar()
+00:25:34	Olivier Leroy:	A reference from War ? :p
+00:25:39	Olivier Leroy:	Wat
+00:26:50	Olivier Leroy:	(https://www.destroyallsoftware.com/talks/wat)
+00:32:26	Howard Baek:	I found a blog post discussing different flavors of NA: https://www.njtierney.com/post/2020/09/17/missing-flavour/
+00:32:47	Olivier Leroy:	Brb just checking in an other book
+00:36:12	Olivier Leroy:	> x <- 1L
+> is.numeric(x)
+[1] TRUE
+> y <- 1.4
+> is.numeric(y)
+[1] TRUE
+00:37:20	Olivier Leroy:	> x <- 1
+> is.double(x)
+[1] TRUE
+00:39:51	Derek Sollberger (he/him):	aside: banker's rounding
+00:39:56	Olivier Leroy:	> x <- 2.8
+> as.integer(x)
+[1] 2
+00:40:04	Olivier Leroy:	(truncated)
+00:40:11	Howard Baek:	Non-integral numeric values are truncated towards zero (i.e., as.integer(x) equals trunc(x) there)
+00:40:29	Howard Baek:	I found the above in the help page
+00:40:34	Olivier Leroy:	Reacted to "I found the above in..." with 👍
+00:40:38	tataphani:	Reacted to "I found the above in..." with 👍
+00:40:39	Steffi LaZerte (she/her):	Reacted to "Non-integral numeric..." with 👍🏻
+00:44:36	Jo Hardin:	also, the integer class is complicated because factor variables are integers… sort of
+00:44:48	Olivier Leroy:	Reacted to "also, the integer cl..." with 👍
+00:44:52	Diana Garcia Cortes:	Reacted to "also, the integer cl..." with 👍
+00:45:38	Howard Baek:	Reacted to "also, the integer cl..." with 👍
+00:45:47	Howard Baek:	Reacted to "Screenshot2024_06_07_094000.jpg" with 👍
+00:46:57	Vania:	Reacted to "Screenshot2024_06_07_094000.jpg" with 👍
+00:47:45	Vania:	Replying to "Screenshot2024_06_07_094000.jpg"
+
+I actually didn’t know this. Really interesting!
+00:48:59	Steffi LaZerte (she/her):	Reacted to "Jo Hardin has sent y..." with 😵‍💫
+00:49:08	Jo Hardin:	Replying to "Screenshot2024_06_07_094000.jpg"
+
+i just learned said fact when reading the chapter for today’s meeting.  🙂
+00:50:53	Diana Garcia Cortes:	Reacted to "Screenshot2024_06_07_094000.jpg" with 😵‍💫
+00:52:18	Howard Baek:	From the help page:
+
+An array in R can have one, two or more dimensions. It is simply a vector which is stored with additional attributes giving the dimensions (attribute "dim") and optionally names for those dimensions (attribute "dimnames").
+A two-dimensional array is the same thing as a matrix.
+00:53:02	Howard Baek:	methods("print")
+00:58:05	Derek Sollberger (he/him):	(just for fun) "How to pronounce 'POSIXct'"
+https://www.howtopronounce.com/pos(just for fun) "How to pronounce 'POSIXct'"
+https://www.howtopronounce.com/posixct
+00:58:15	Steffi LaZerte (she/her):	Reacted to "(just for fun) "How ..." with 😂
+00:58:58	Olivier Leroy:	Reacted to "(just for fun) "How ..." with 😂
+00:59:42	Jo Hardin:	gotta run off to a different 10am meeting.  thanks, Derek!
+01:00:07	Steffi LaZerte (she/her):	Reacted to "gotta run off to a d..." with 👋🏻
+01:01:22	Howard Baek:	Reacted to "gotta run off to a d..." with 👋🏻
+01:01:57	Olivier Leroy:	Reacted to "gotta run off to a d..." with 👋🏻
+01:03:14	Derek Sollberger (he/him):	end
+```
+</details>

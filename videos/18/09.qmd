@@ -1,0 +1,42 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/HdCl_znaQLs >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:10:06	Steffi LaZerte (she/her):	https://steffilazerte.ca/posts/ggplot-symbols/
+00:10:53	Olivier Leroy:	start
+00:26:46	Derek Sollberger:	In math, this would be "function composition"
+00:26:55	Steffi LaZerte (she/her):	Reacted to "In math, this would ..." with 👍🏻
+00:28:18	Derek Sollberger:	Aside: this "infix" style dates back to some Polish(?) mathematicians, and may have a resurgence for some artificial intelligence algorithms
+00:31:27	Olivier Leroy:	(+ 1 2 3)
+00:31:38	Olivier Leroy:	()
+00:36:13	Derek Sollberger:	sym("x") is useful if you want R to do your Calculus homework for you, haha
+00:36:21	Steffi LaZerte (she/her):	Reacted to "sym("x") is useful i..." with 😂
+00:36:49	Olivier Leroy:	“Bob” is contant bob <- 1 is a symbol no ?
+00:37:06	Steffi LaZerte (she/her):	Reacted to "“Bob” is contant bob..." with 👍🏻
+00:38:38	Steffi LaZerte (she/her):	Actually possibly not?
+x <- 1
+is.symbol(x) # FALSE
+is.symbol(expr(x)) # TRUE
+00:39:59	Olivier Leroy:	square( 2 + 3)
+00:40:35	Derek Sollberger:	Reacted to "Actually possibly no..." with 👍
+00:46:19	Steffi LaZerte (she/her):	Ah! Because it's just the x part that is the symbol, not the whole expression 😁 
+00:57:34	Olivier Leroy:	`(`
+01:02:40	Jeffrey Stevens:	Got to go. See everyone next week. Thanks, Jo!
+01:02:43	Steffi LaZerte (she/her):	PEMDAS! For me it was BEDMAS! :D
+01:03:11	Derek Sollberger:	Reacted to "PEMDAS! For me it wa..." with 👍
+01:03:29	Nagarjun:	Replying to "PEMDAS! For me it ..."
+
+BODMAS for us in Asia
+01:03:39	Steffi LaZerte (she/her):	Reacted to "BODMAS for us in Asi..." with ❤️
+01:03:50	Steffi LaZerte (she/her):	Replying to "PEMDAS! For me it wa..."
+
+ (probably why I use "brackets" rather than "parentheses")
+01:03:55	Olivier Leroy:	end
+```
+</details>

@@ -1,0 +1,63 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/4_hYWHOMM3k >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:06:56	Jeffrey Stevens:	Which book?
+00:07:03	Olivier Leroy:	SICP
+00:07:21	Olivier Leroy:	https://en.wikipedia.org/wiki/Structure_and_Interpretation_of_Computer_Programs
+00:10:27	Olivier Leroy:	Start
+00:14:35	Olivier Leroy:	More if you came from python
+00:24:13	Derek Sollberger:	possible example: US high school is grades 9:12, but a factor variable wants to also define grades 1:8 as well
+00:26:21	Diana Garcia Cortes:	x <- factor(10:20)
+> unclass(x)
+ [1]  1  2  3  4  5  6  7  8  9 10 11
+attr(,"levels")
+ [1] "10" "11" "12" "13" "14" "15" "16" "17" "18" "19" "20"
+00:26:52	Jo Hardin:	what do you get with max(unclass(x))
+00:27:25	Olivier Leroy:	r$> max(unclass(x))
+[1] 11
+00:28:49	Olivier Leroy:	r$> unclass(10:12)
+[1] 10 11 12
+00:31:00	Jeffrey Stevens:	"The constructor is a developer function: it will be called in many places, by an experienced user. That means it’s OK to trade a little safety in return for performance, and you should avoid potentially time-consuming checks in the constructor."
+00:33:53	Derek Sollberger:	# Simpsons reference
+> as.roman(5) + as.roman(2)
+[1] VII
+00:48:27	Olivier Leroy:	r$> g <- function(x) {x <- 10; y<- 10 ;UseMethod("g")}
+
+r$> g()
+Error in UseMethod("g") :
+  no applicable method for 'g' applied to an object of class "NULL"
+00:48:50	Derek Sollberger:	Replying to "# Simpsons reference..."
+
+> # group generics example
+> 5 + as.roman(2)
+[1] VII
+00:51:34	Derek Sollberger:	Replying to "r$> g <- function(x)..."
+
+> g <- function(x) {
++     x <- 10
++     y <- 10
++     UseMethod("g")
++ }
+> sloop::s3_methods_generic("g")
+# A tibble: 0 × 4
+# ℹ️ 4 variables: generic <chr>, class <chr>,
+#   visible <lgl>, source <chr>
+> g.default <- function(x) c(x = x, y = y)
+> sloop::s3_methods_generic("g")
+# A tibble: 1 × 4
+  generic class   visible source    
+  <chr>   <chr>   <lgl>   <chr>     
+1 g       default TRUE    .GlobalEnv
+00:51:53	Olivier Leroy:	Reacted to "> g <- function(x) {..." with 👍
+00:52:05	Diana Garcia Cortes:	Reacted to "> g <- function(x) {..." with 👍
+01:06:12	Diana Garcia Cortes:	I guess we can say that polymorphism is implemented in R relying on methods correctly named and an mistery UseMethod() function
+01:06:45	Olivier Leroy:	end
+```
+</details>

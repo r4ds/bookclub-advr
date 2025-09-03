@@ -1,0 +1,32 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/fEmj1YI3A9M >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:06:42	Olivier Leroy:	https://github.com/ropensci/quadkeyr
+00:07:53	Olivier Leroy:	https://github.com/teamookla
+00:12:58	Olivier Leroy:	start
+00:14:09	Olivier Leroy:	https://github.com/edzer/sp
+00:15:16	Derek Sollberger:	I just used `lubridate` to compute the ages of Olympian athletes :-)
+00:15:27	Steffi LaZerte (she/her):	Reacted to "I just used `lubrida..." with 🎉
+00:20:09	Jo Hardin:	Reacted to "I just used `lubrida..." with 🎉
+00:22:18	Steffi LaZerte (she/her):	Or -Age :D
+00:23:04	Derek Sollberger:	> class(Inf)
+[1] "numeric"
+> typeof(Inf)
+[1] "double"
+> sloop::otype(Inf)
+[1] "base"
+00:32:11	Derek Sollberger:	That's an incredibly useful search tool!
+00:34:57	Derek Sollberger:	Replying to "That's an incredibly..."
+
+(example for chat) search "memes language:R" in GitHub
+00:38:34	Steffi LaZerte (she/her):	Reacted to "(example for chat) s..." with 😂
+01:01:46	Olivier Leroy:	End
+```
+</details>

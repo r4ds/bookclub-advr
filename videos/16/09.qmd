@@ -1,0 +1,42 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/QMnk6ianL10 >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:09:36	Olivier Leroy:	Start
+00:17:56	Steffi LaZerte (she/her):	I always appreciate these discussions!
+00:18:05	Diana Garcia Cortes:	Reacted to "I always appreciate ..." with ❤️
+00:18:31	Steffi LaZerte (she/her):	Invariably I always think I know the answer and find out that it's not quite as simple as I originally thought, so super valuable.
+00:18:38	Jo Hardin:	Reacted to "I always appreciate ..." with ❤️
+00:19:51	Olivier Leroy:	Closure has plenty polymorphism https://clojure-doc.org/articles/language/polymorphism/
+00:22:57	Olivier Leroy:	Let’s bring back R retro computing
+00:23:03	Steffi LaZerte (she/her):	Reacted to "Let’s bring back R r..." with 😂
+00:29:56	Olivier Leroy:	https://linuxize.com/post/popd-and-pushd-commands-in-linux/
+00:32:22	Diana Garcia Cortes:	I like the wiki stack illustration: https://en.wikipedia.org/wiki/Stack_(abstract_data_type)
+00:33:33	Derek Sollberger (he/him):	Reacted to "I like the wiki stac..." with 🥞
+00:33:51	Steffi LaZerte (she/her):	I cheated: I skimmed and decided that I didn't need to really understand the nuances at this point. I'll come back when I do 😅
+00:34:02	Olivier Leroy:	Reacted to "I like the wiki stac..." with 🥞
+00:34:11	Olivier Leroy:	Reacted to "I cheated: I skimmed..." with 👍
+00:36:58	Olivier Leroy:	Great point
+00:38:22	Steffi LaZerte (she/her):	I love that analogy 😁
+00:39:28	Derek Sollberger (he/him):	Replying to "I love that analogy ..."
+
+(for our records)
+S3 --> S7 … RMD --> QMD
+00:40:44	Steffi LaZerte (she/her):	Reacted to "(for our records)
+S3..." with 🙏🏻
+00:41:48	Olivier Leroy:	The @ sign is for print?
+00:47:01	Olivier Leroy:	Can u use str(cat)
+00:51:18	Olivier Leroy:	Reacted to "(As if we were in a ..." with 😄
+00:59:34	Jo Hardin:	the summary is super helpful!
+00:59:48	Olivier Leroy:	Reacted to "the summary is super..." with 👍
+00:59:50	Diana Garcia Cortes:	Reacted to "the summary is super..." with 👍
+01:00:08	Derek Sollberger (he/him):	Reacted to "the summary is super..." with 👍
+01:00:57	Olivier Leroy:	end
+```
+</details>

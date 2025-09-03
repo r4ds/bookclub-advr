@@ -1,0 +1,40 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/p23VJfhi8OQ >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:06:42	Olivier Leroy:	start
+00:07:15	Olivier Leroy:	I already appreciate it!
+00:13:14	Olivier Leroy:	I just noticed the joke ….
+00:16:59	Olivier Leroy:	Good example!
+00:17:23	Olivier Leroy:	Very fancy !
+00:19:42	Olivier Leroy:	deparse(substitute()) is a classic
+00:19:49	Steffi LaZerte (she/her):	Reacted to "deparse(substitute()..." with ❤️
+00:22:18	Jeffrey Stevens:	Don't forget !!, !!!, parse(), deparse(), eval()
+😜
+00:22:29	Steffi LaZerte (she/her):	Reacted to "Don't forget !!, !!!..." with 😂
+00:23:51	Olivier Leroy:	Reacted to "Don't forget !!, !!!..." with 😂
+00:26:07	Jeffrey Stevens:	Thanks for the cheatsheet, Steffi. Here's the link for the chat: https://raw.githubusercontent.com/rstudio/cheatsheets/master/tidyeval.pdf
+00:26:12	Olivier Leroy:	Reacted to "Thanks for the cheat..." with 👍
+00:27:10	Olivier Leroy:	And function are good example here
+00:27:29	Olivier Leroy:	Function in “math" sense
+00:40:14	Olivier Leroy:	Repetition help build mental model 🙂
+00:41:59	Olivier Leroy:	`$`(mtcars, mpg)
+00:42:34	Olivier Leroy:	`[[`(mtcars, "mpg")
+00:43:51	Olivier Leroy:	Too smart for us
+00:53:44	Olivier Leroy:	{{ vars }}
+00:55:19	Olivier Leroy:	Python community called := walrus operator, I think it is older (also unsure if it is the same idea)
+00:55:30	Derek Sollberger:	Reacted to "Python community cal..." with 👍
+00:55:40	Arjun:	Reacted to "Python community c..." with 👍
+00:59:45	Derek Sollberger:	Thanks for this example!  One can then create a function for 'variable inflation factor' quickly :-)
+01:00:32	Jo Hardin:	thanks Steffi!!  gotta run.  this was awesome.
+01:00:38	Jeffrey Stevens:	GTG hope to see you all next week, but I'll be traveling, so not sure
+01:00:45	Olivier Leroy:	Reacted to "GTG hope to see you ..." with 👍
+01:02:24	Olivier Leroy:	End
+```
+</details>

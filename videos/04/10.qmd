@@ -1,0 +1,35 @@
+---
+title: Cohort 10
+---
+
+{{< video https://www.youtube.com/embed/0Gov9xKVf1E >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:05:24	Olivier Leroy:	my windows manager handle the zoom chat terribly!
+00:06:14	Jon Harmon (jonthegeek):	start
+00:06:24	Olivier Leroy:	the same, I still not have added a volume button and neither a battery status ..
+00:09:11	Olivier Leroy:	I do not want to play with that for indexing
+00:11:42	Olivier Leroy:	if you are using a counter to index stuff maybe
+00:11:56	Derek Sollberger:	truncate to zero + R doesn't start at zero: ignore
+00:16:00	Olivier Leroy:	will it loose attributes?
+00:16:04	Olivier Leroy:	(testing)
+00:16:12	Olivier Leroy:	x[]
+00:17:00	Olivier Leroy:	keeping it
+00:23:15	Olivier Leroy:	brb fast
+00:26:02	Olivier Leroy:	better than using as.data.frame after droping ....
+00:28:20	Ella Kaye:	Wouldn’t x[[1]][[1]] be a single speck of pepper?
+00:28:39	Ella Kaye:	Ahh!
+00:28:49	Olivier Leroy:	we can test
+00:30:33	Olivier Leroy:	x <- list(list(1:2), list(3:4)); x[[1]][[1]]
+00:31:19	Olivier Leroy:	yup return: [1] 1 2
+00:37:35	Olivier Leroy:	create a fake table fast?
+00:41:44	Olivier Leroy:	it is good if you want to join a data frame that was a summary and want to join it back to the "original" data frame
+00:45:39	Olivier Leroy:	is it how start_with_() is implemented? (unsure of the function name)
+00:55:31	Ella Kaye:	I won’t be here next week, I’m afraid, but looking forward to catching up on the recording, and should be back the following week.
+00:55:40	Jon Harmon (jonthegeek):	stop
+00:55:43	Stephan Koenig:	Thanks!
+```
+</details>

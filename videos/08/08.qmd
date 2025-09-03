@@ -1,0 +1,19 @@
+---
+title: Cohort 8
+---
+
+{{< video https://www.youtube.com/embed/i3Uw6nJT-Hk >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:11:57	Federica (she/her):	start
+00:23:34	Federica (she/her):	http://adv-r.had.co.nz/beyond-exception-handling.html
+00:23:47	Federica (she/her):	https://style.tidyverse.org/error-messages.html
+00:26:33	Betsy:	no, can't hear the rain at all!
+01:07:31	Rebecca Butler:	record_log(log("Hello"), path = here::here("mylog.txt"))
+01:11:11	Federica (she/her):	stop
+01:12:38	Rebecca Butler:	I have a meeting now and need to run. Thanks for the presentation today!
+```
+</details>

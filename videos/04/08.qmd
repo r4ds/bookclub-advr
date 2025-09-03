@@ -1,0 +1,36 @@
+---
+title: Cohort 8
+---
+
+{{< video https://www.youtube.com/embed/gQxiPquyfww >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:08:19	Federica Gazzelloni:	Start
+00:14:19	Rebecca Butler:	It’ll (df) recycle as long as one length is a multiple of the other
+00:23:29	Rebecca Butler:	Has anyone ever run into that in the wild?
+00:23:36	Rebecca Butler:	Replying to "Has anyone ever run ..."
+
+Matrix or df columns, that is
+00:25:07	Laura Biggins:	Replying to "Has anyone ever run ..."
+
+Yes, but haven't enjoyed them...
+00:25:58	Rebecca Butler:	Replying to "Has anyone ever run ..."
+
+Do you remember where that came up? Did it feel somewhat appropriate (like it served some purpose, but was unenjoyable)?
+00:27:17	Laura Biggins:	Replying to "Has anyone ever run ..."
+
+I don't really remember, come up when working with other people's code. Not sure I've purposely created them myself.
+00:27:23	Rebecca Butler:	Reacted to "I don't really remem..." with 👍
+00:27:25	Rebecca Butler:	Replying to "Has anyone ever run ..."
+
+thanks!
+00:42:48	Rebecca Butler:	(For the pic, the rightmost bracket was just cut off - The original pepper tweet actually has x[[1]][[1]] for the pile of pepper - https://pbs.twimg.com/media/CO2_qPVWsAAErbv?format=png&name=large)
+00:46:13	Silvana Acosta:	When reading I got a bit lost with the example: a[c(TRUE, FALSE, TRUE), c("B", “A”)]
+00:47:05	Silvana Acosta:	The first example here: https://adv-r.hadley.nz/subsetting.html#matrix-subsetting
+00:47:39	Silvana Acosta:	I don’t think I fully see the 2nd row it produces
+01:03:05	Betsy:	end
+```
+</details>

@@ -1,0 +1,120 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/9LO7hZVB6qY >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:03:07	Olivier Leroy:	Vintage dessert recipe
+00:04:46	Olivier Leroy:	https://tenmorebites.com/2015/09/26/skunk/
+00:07:34	Olivier Leroy:	https://en.wikipedia.org/wiki/Ambrosia_(fruit_salad)
+00:10:37	Olivier Leroy:	start
+00:12:27	Olivier Leroy:	In my mind a list is a recursive vector
+00:13:41	Steffi LaZerte (she/her):	"Vectors come in two flavours: atomic vectors and lists" Chp 3 Introduction
+00:13:49	Olivier Leroy:	Reacted to ""Vectors come in two..." with 👍
+00:13:55	Gabby Palomo Munoz:	Reacted to ""Vectors come in two..." with 💯
+00:14:32	Gabby Palomo Munoz:	There's also map_dfr or something? I think it's deprecated but it's still there... right?
+00:14:58	Jeffrey Stevens:	Replying to "There's also map_dfr..."
+
+I think it is superceded rather than deprecated.
+00:15:19	Gabby Palomo Munoz:	Replying to "There's also map_dfr..."
+
+@Jeffrey Stevens what's the difference?
+00:15:44	Jeffrey Stevens:	Replying to "There's also map_dfr..."
+
+Deprecated will eventually go away. Superceded is maintained but there is a betterr way to do it.
+00:15:46	Steffi LaZerte (she/her):	Replying to "There's also map_dfr..."
+
+Yes, but as you said, not recommended because it is confusing as it implies it acts like map_lgl etc., but it doesn't. I've never really understood it 😅
+00:15:59	Gabby Palomo Munoz:	Reacted to "Deprecated will even..." with 😍
+00:16:18	Derek Sollberger (he/him):	Reacted to "Deprecated will even..." with 😍
+00:16:58	Gabby Palomo Munoz:	Reacted to "Yes, but as you said..." with 👍🏻
+00:17:55	Steffi LaZerte (she/her):	I was so happy to learn that ~ is pronounced "twiddle" that I ran into my spouses office to share 😂
+00:18:06	Olivier Leroy:	Tilda also
+00:18:24	Jeffrey Stevens:	Reacted to "I was so happy to le..." with ➕
+00:18:34	Derek Sollberger (he/him):	Reacted to "I was so happy to le..." with ➕
+00:19:56	Steffi LaZerte (she/her):	However, using the ... is now not encouraged (map gives you a message/warning if you do, I think)
+00:20:00	Olivier Leroy:	I am not an huge fan of the formula syntax, it use a lot of metaprogramming to works and I am always afraid I misunderstood it
+00:20:43	Olivier Leroy:	I used that anonymous function a lot” (length(unique(x)))
+00:22:02	Steffi LaZerte (she/her):	I really like the new R anonymous syntax: \(x) length(unique(x)) Still compact, but allows you to set your own argument names
+00:22:38	Olivier Leroy:	Reacted to "I really like the ne..." with 👍
+00:22:47	Gabby Palomo Munoz:	Replying to "I really like the ne..."
+
+All of this is so confusing to me because is it function(x), ~, or \(x)
+00:22:55	Gabby Palomo Munoz:	Replying to "I really like the ne..."
+
+Too many ways to say the same thing. I get confused.
+00:23:04	Derek Sollberger (he/him):	Reacted to "All of this is so co..." with 👍
+00:23:34	Steffi LaZerte (she/her):	Replying to "I really like the ne..."
+
+They are all equivalent, with the exception of in ~ you have to use the built-in argument names, in function(x) or \(x) you choose the argument name. I.e. you can say function(my_arg) or \(my_arg) for example.
+00:25:06	Jeffrey Stevens:	I was very happy to see the explanation of . vs .x vs ..1
+00:25:25	Gabby Palomo Munoz:	Replying to "I was very happy to ..."
+
+They just lost me with ..1
+00:25:30	Olivier Leroy:	Reacted to "I was very happy to ..." with 👍
+00:25:59	Olivier Leroy:	Here is “.” Is the place holder ?
+00:26:02	Jeffrey Stevens:	Replying to "I was very happy to ..."
+
+. is for one argument
+.x and .y are for two arguments
+..1, ..2, ..3 etc are for more arguments
+00:26:03	Olivier Leroy:	unsure
+00:26:09	Steffi LaZerte (she/her):	Replying to "I was very happy to ..."
+
+It's a way of referring to the arguments by position, when you might have up to n arguments. It's much more relevant with the pmap family.
+00:26:25	Steffi LaZerte (she/her):	Replying to "I was very happy to ..."
+
+..1, ..2, ..., ..n
+00:27:09	Steffi LaZerte (she/her):	Replying to "Here is “.” Is the p..."
+
+. is the argument 😅
+00:27:51	Olivier Leroy:	Replying to "Here is “.” Is the p..."
+
+Ouch
+00:28:48	Olivier Leroy:	Good trial/error!
+00:28:52	Steffi LaZerte (she/her):	Replying to "Here is “.” Is the p..."
+
+Which is why we shouldn't use it... So confusing!
+00:28:58	Jeffrey Stevens:	Reacted to "Good trial/error!" with ➕
+00:29:02	Steffi LaZerte (she/her):	Reacted to "Good trial/error!" with ➕
+00:33:14	Steffi LaZerte (she/her):	I use map() all the time, but had never heard of modify(), I'm so happy! I think I can use that a lot in future.
+00:33:27	Olivier Leroy:	One quick point purrr::map is diff than base::Map
+00:33:45	Steffi LaZerte (she/her):	Reacted to "One quick point purr..." with 👍🏻
+00:36:14	Olivier Leroy:	powering
+00:37:25	Olivier Leroy:	I did not about this one and will prob use it
+00:38:43	Steffi LaZerte (she/her):	There is the furrr package which impliments parallized purrr functions
+00:41:33	Steffi LaZerte (she/her):	Messages prove that it worked 😉
+00:43:36	Olivier Leroy:	Useful in simulation (sadly I am not doing much of that now ..)
+00:44:10	Steffi LaZerte (she/her):	I saw this usage of pmap in a conference presentation last year and it totally blew my mind 🤯
+00:44:20	Olivier Leroy:	Reacted to "I saw this usage of ..." with 👍
+00:44:26	Olivier Leroy:	Replying to "I saw this usage of ..."
+
+Still blew mine
+00:44:32	Steffi LaZerte (she/her):	Reacted to "Still blew mine" with 😂
+00:48:22	Steffi LaZerte (she/her):	Another function that I can totally see me using that I had no idea about!!! So exciting 😁
+00:52:44	Olivier Leroy:	I will be so lost between decimal . and .. (zoom is also lost and want to capitalize after .)
+00:53:03	Steffi LaZerte (she/her):	ggplot(mtcars, aes(hp, mpg)) + 
+  reduce2(c(8,4,2), ...)
+00:53:41	Derek Sollberger (he/him):	aside: Maelle Salmon blog post with an example of `reduce`
+https://masalmon.eu/2023/07/26/reduce/
+00:53:48	Olivier Leroy:	Reacted to "aside: Maelle Salmon..." with 👍
+00:56:24	Olivier Leroy:	Go back in time Hadley!
+00:56:25	Steffi LaZerte (she/her):	Reacted to "aside: Maelle Salmon..." with 👍🏻
+00:56:30	Jeffrey Stevens:	Reacted to "Go back in time Hadl..." with ➕
+00:58:59	Steffi LaZerte (she/her):	Reacted to "Go back in time Hadl..." with 😂
+01:00:20	Olivier Leroy:	This will look better as prettify json
+01:01:03	Derek Sollberger (he/him):	(about `pluck`) Other programming languages, such as LISP, 'pop' elements out of an array instead of viewing elements
+01:03:24	Steffi LaZerte (she/her):	Reacted to "(about `pluck`) Othe..." with 👍🏻
+01:03:37	Olivier Leroy:	Reacted to "(about `pluck`) Othe..." with 👍
+01:05:47	Derek Sollberger (he/him):	Thank you!  I am still new to functional programming in R, and this was very helpful :-)
+01:05:52	Jeffrey Stevens:	Great job, Jo! This was very informative!
+01:06:01	Steffi LaZerte (she/her):	Super great thanks
+01:06:02	Steffi LaZerte (she/her):	!
+01:06:10	Steffi LaZerte (she/her):	wonderful discussions!
+01:06:12	Olivier Leroy:	End
+```
+</details>

@@ -1,0 +1,37 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/IUPx9q4vJrY >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:12:52	Olivier Leroy:	Start
+00:17:30	Olivier Leroy:	my_table$my_field
+00:29:14	Olivier Leroy:	(Save in project! Or I will callJenny!)
+00:30:42	Derek Sollberger:	If I run "collinsavings$balance <- 1234", I don't get an error??
+00:32:03	Derek Sollberger:	Reacted to "(Save in project! Or..." with 🔥
+00:33:12	Steffi LaZerte (she/her):	I don't think you should?
+00:36:27	Derek Sollberger:	Replying to "I don't think you sh..."
+
+Right.  I thought that the overall question was whether or not we could use the assignment operator
+00:38:53	Olivier Leroy:	My understanding is that myniceprint and mybankaccount has two different enclosing
+00:40:21	Olivier Leroy:	Yup states are so hard to manage!
+00:40:37	Olivier Leroy:	Environment > states 😛
+00:47:41	Jeffrey Stevens:	F10
+00:50:22	Olivier Leroy:	I would like copilot to use billionaire name instead of John
+00:51:25	Olivier Leroy:	I am already bad at copy pasting, I would be really bad with co pilot
+00:54:36	Olivier Leroy:	Using just names to get the list of method is really nice versus S3
+00:57:38	Derek Sollberger:	aside: this `ids` package looks to ben convenient for creating fake practice data
+
+https://cran.r-project.org/web/packages/ids/vignettes/ids.html
+00:57:39	Olivier Leroy:	It is just increasing an an ids
+01:00:49	Jo Hardin:	I need to take off for another meeting.  Great job @Diana Garcia Cortes !!!  Nice shirt @Jeffrey Stevens .  🙂  See you all next week.
+01:01:29	Olivier Leroy:	Reacted to "I need to take off f..." with 😄
+01:01:57	Olivier Leroy:	Good example
+01:03:23	Olivier Leroy:	Yup tricky on tempfile() / tempdir()
+01:06:32	Olivier Leroy:	End
+```
+</details>

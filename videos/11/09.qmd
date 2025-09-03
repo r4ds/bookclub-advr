@@ -1,0 +1,19 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/JL95tLWS0XI >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:11:21	Derek Sollberger:	The webR extension for Quarto is neat!
+00:12:53	Derek Sollberger:	Make "Base Types" mandatory reading on our own?
+00:17:28	Derek Sollberger:	start
+00:35:23	Steffi LaZerte (she/her):	auto_browser looks pretty cool!
+00:44:13	Steffi LaZerte (she/her):	Wow that Vectorize looks pretty useful
+01:11:08	Olivier Leroy:	stop
+01:11:10	Olivier Leroy:	end
+```
+</details>

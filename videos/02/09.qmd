@@ -1,0 +1,46 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/SAKLWLy6Egw >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:05:29	Olivier Leroy:	start
+00:06:30	Gabby Palomo Munoz:	You are in good company, we are all learning.
+00:08:40	Olivier Leroy:	You can also use [] full syntax
+00:08:47	Olivier Leroy:	Or [[]]
+00:09:42	Jo Hardin:	sometimes i want the variable to have a specific format.  for example, in linear model output i want the variable to have a space in it (instead of an underscore).  then i’ll leave the space in the variable and use it throughout my code as `explan variable` or whatever.
+00:09:56	Olivier Leroy:	Reacted to "sometimes i want the..." with 👍
+00:10:00	Derek Sollberger (he/him):	Reacted to "sometimes i want the..." with 👍
+00:16:53	Olivier Leroy:	That surprised me a lot
+00:18:21	Derek Sollberger (he/him):	Replying to "That surprised me a ..."
+
+Yes, in comp sci, we jump straight to the environment-eval global/local stuff
+00:20:59	Olivier Leroy:	Replying to "That surprised me a ..."
+
+I was  assuming it changed it because of the function “local”
+00:21:42	Derek Sollberger (he/him):	Does this column vs row copy-in-place consideration play a role in how "tidy" includes "row: observation, column: variable"?
+00:24:42	Joel Liebert:	I just looked it up and yes the global string pool is limited to the current R session!
+00:24:50	Isabel Fernandez Escapa:	Reacted to "I just looked it up ..." with 👍
+00:24:51	Olivier Leroy:	Reacted to "I just looked it up ..." with 👍
+00:24:51	Jo Hardin:	Reacted to "I just looked it up ..." with 👍
+00:26:14	Olivier Leroy:	Replying to "Does this column vs ..."
+
+No idea
+00:26:29	Gabby Palomo Munoz:	Reacted to "I just looked it up ..." with 👍
+00:27:00	Diana Garcia Cortes:	Reacted to "I just looked it up ..." with 👍
+00:30:03	Derek Sollberger (he/him):	Replying to "Screenshot2024_05_31_092416.jpg"
+
+"triple-double", says the Californians
+00:42:49	Olivier Leroy:	Namespace if that help
+00:53:56	Olivier Leroy:	Great question!
+00:58:58	Jo Hardin:	gotta run off to a different meeting.  thanks for the great presentation today!
+00:59:49	Olivier Leroy:	Reacted to "gotta run off to a d..." with 👍
+01:00:15	Diana Garcia Cortes:	I gotta run too. Thank you so much! See you next week
+01:00:39	Olivier Leroy:	Reacted to "I gotta run too. Tha..." with 👋
+01:02:20	Olivier Leroy:	end
+```
+</details>

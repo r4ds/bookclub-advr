@@ -1,0 +1,76 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/Kxjw_nXmDVY >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:12:04	Olivier Leroy:	Start
+00:12:36	Olivier Leroy:	Great!
+00:16:21	Olivier Leroy:	I also searched other examples I find some here: https://raps-with-r.dev/fprog.html#writing-good-functions (still unclear where/when for me)
+00:17:24	Derek Sollberger (he/him):	Reacted to "I also searched othe..." with 👍
+00:17:57	Jo Hardin:	is “binding” like “names"
+00:20:03	Olivier Leroy:	(Did not about it also)
+00:20:07	Olivier Leroy:	know
+00:21:15	Olivier Leroy:	Good point
+00:22:53	Jeff Stevens:	Mind blown! So glad you mentioned that.
+00:23:19	Olivier Leroy:	Replying to "is “binding” like “n..."
+
+About binding and name I like https://mitp-content-server.mit.edu/books/content/sectbyfn/books_pres_0/6515/sicp.zip/full-text/book/book-Z-H-10.html#%_sec_1.1.2 (disclaimer I never only read 2 chapter of it)
+00:23:28	Olivier Leroy:	Reacted to "Mind blown! So glad ..." with 👍
+00:26:33	Olivier Leroy:	I think I understood the super assignment as “write in global” for a long time
+00:26:47	Jeff Stevens:	Replying to "I think I understood..."
+
+Me too
+00:26:53	Derek Sollberger (he/him):	Reacted to "I think I understood..." with 👍
+00:26:58	Howard Baek:	Reacted to "I think I understood..." with 👍
+00:27:12	Jeff Stevens:	Reacted to "I think I understood..." with 👍
+00:30:25	Tinashe Tapera:	So does R have a global assignment at all?
+00:31:02	Tinashe Tapera:	I’m sure it should out of software architecture mecessity
+00:31:22	Olivier Leroy:	Replying to "So does R have a glo..."
+
+No idea, if I want to force it I will assign to .globalenv
+00:32:17	Tinashe Tapera:	Reacted to "No idea, if I want t…" with 👌
+00:32:21	Olivier Leroy:	assign(x, env = .gloabenv)
+00:32:22	Derek Sollberger (he/him):	Replying to "So does R have a glo..."
+
+Yes, it looks like `assign()` has an `envir` parameter
+
+https://stackoverflow.com/questions/9726705/assign-multiple-objects-to-globalenv-from-within-a-function
+00:32:52	Olivier Leroy:	Wrong spelling in .globalenv
+00:33:52	Derek Sollberger (he/him):	sounds like a Data Mishaps Night story :-)
+00:34:11	Olivier Leroy:	Reacted to "sounds like a Data M..." with 👻
+00:34:27	Jeff Stevens:	Should we be doing garbage collection on all functions (not just function factories) to save memory?
+00:34:36	Olivier Leroy:	I did not know that!
+00:35:47	Jeff Stevens:	Awesome explanation--thanks!
+00:35:52	Olivier Leroy:	Reacted to "Awesome explanation-..." with 👍
+00:36:24	Olivier Leroy:	Or you cache outside and kill R
+00:36:37	Tinashe Tapera:	Use targets
+00:36:46	Tinashe Tapera:	That’s exactly what targets is for
+00:36:55	Olivier Leroy:	Reacted to "That’s exactly what ..." with 👍
+00:36:57	Derek Sollberger (he/him):	Reacted to "That’s exactly what ..." with 😻
+00:38:36	Olivier Leroy:	-> https://wlandau.github.io/targetopia/contributing.html#target-factories
+
+(Good example)
+00:43:10	Jo Hardin:	i’m excited about the `switch()` function you just showed!
+00:43:23	Olivier Leroy:	Declarative is always nice on readability!
+00:51:26	Olivier Leroy:	Yes very elegant to store stuff
+00:51:55	Derek Sollberger (he/him):	all 5 functions in `funs` start with the same environment?
+00:52:15	Olivier Leroy:	Replying to "all 5 functions in `..."
+
+Good question
+00:53:30	Olivier Leroy:	It seems attach can attach any kind of object that can be tricky
+00:54:04	Derek Sollberger (he/him):	Replying to "all 5 functions in `..."
+
+ah (I read too fast)
+00:56:02	Olivier Leroy:	I use the ecdf one, not that frequently
+00:59:35	Tinashe Tapera:	You’re justified in hating setwd() though
+00:59:47	Steffi LaZerte (she/her):	Reacted to "You’re justified in ..." with 😂
+01:00:23	Derek Sollberger (he/him):	I doubt that I have seen any other book cover functional programming before OOP (and thank you for the walkthrough)
+01:03:50	Diana Garcia Cortes:	Thank you Steffi!
+01:03:56	Olivier Leroy:	end
+```
+</details>

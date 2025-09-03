@@ -1,0 +1,109 @@
+---
+title: Cohort 10
+---
+
+{{< video https://www.youtube.com/embed/Of5Uz1psDRU >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:05:19	Olivier:	Hey! (grabbing some water)
+00:09:39	Jon Harmon (jonthegeek):	https://DSLC.io/advr 
+https://docs.google.com/spreadsheets/d/1PgK1ZgOzKqIyxwS6iU_KF5LqBHrb0yx4GN0crVUAaUE/edit?usp=sharing
+00:09:52	Jon Harmon (jonthegeek):	start
+00:11:29	Jon Harmon (jonthegeek):	https://DSCL.video/advr
+00:13:30	Jon Harmon (jonthegeek):	https://DSLC.io/advr
+https://docs.google.com/spreadsheets/d/1PgK1ZgOzKqIyxwS6iU_KF5LqBHrb0yx4GN0crVUAaUE/edit?usp=sharing
+https://DSCL.video/advr
+00:16:59	Olivier:	chat team!
+00:17:13	Eamon Caddigan:	Reacted to "chat team!" with 🔥
+00:17:14	Gabby Palomo:	Reacted to "chat team!" with 😂
+00:17:50	Nicholas Giangreco:	What’s the GitHub link to the qmds?
+00:17:56	Gabby Palomo:	Replying to "chat team!"
+
+I just wished the emoji reactions wouldn’t translate to words when the chat is posted on Slack
+00:18:35	Olivier:	Reacted to "I just wished the em..." with 👾
+00:19:33	Eamon Caddigan:	Replying to "What’s the GitHub li..."
+
+https://github.com/r4ds/bookclub-advr
+00:20:22	Derek Sollberger:	Reacted to "I just wished the em..." with 🌭
+00:24:52	Jon Harmon (jonthegeek):	Not a recommendation: https://www.amazon.com/New-Language-Programming-Environment-Wadsworth/dp/053409192X
+00:25:06	Nicholas Giangreco:	Reacted to "https://github.com/r..." with 👍
+00:30:00	Ella Kaye (she/her):	This is starting to sound like the 10-year R book club!
+00:30:18	Gabby Palomo:	Reacted to "This is starting to ..." with 😂
+00:30:24	Sally Chang:	Reacted to "This is starting to ..." with 😂
+00:30:25	Derek Sollberger:	Reacted to "This is starting to ..." with 1️⃣
+00:30:28	Sally Chang:	Reacted to "This is starting to ..." with 1️⃣
+00:30:33	Olivier:	Reacted to "This is starting to ..." with 😂
+00:30:38	Derek Sollberger:	Reacted to "This is starting to ..." with 0️⃣
+00:30:41	Olivier:	Reacted to "This is starting to ..." with 0️⃣
+00:30:42	Olivier:	Reacted to "This is starting to ..." with 1️⃣
+00:30:45	Jon Harmon (jonthegeek):	But don't feel like you have to have 10 years experience! 😄
+00:31:21	Jon Harmon (jonthegeek):	Reacted to "This is starting to ..." with 🔟
+00:31:25	Derek Sollberger:	Reacted to "This is starting to ..." with 🔟
+00:33:37	Sally Chang:	Oh! Forgot to mention as someone in education I am also super excited to see how this club is organized and hopefully someday facilitate a book club myself :)
+00:33:39	Olivier:	() are the best
+00:34:13	Olivier:	Reacted to "Oh! Forgot to mentio..." with 👍
+00:35:43	Jon Harmon (jonthegeek):	Reacted to "Oh! Forgot to mentio..." with 👍
+00:38:02	Gabby Palomo:	Reacted to "Oh! Forgot to mentio..." with 👍
+00:41:33	BYRON DANIEL ODERA:	My name is Byron. I'm calling in from Nairobi,Kenya ( past 8 pm here) Have been using R for 1 year plus now. I'm in behavioral-clinical research. My branching out is after trials with Python which i still find hard😅. I'm looking forward to this class and more R training to help with honing skills in computational genomics and learning from everyone. (Sorry cant be on mic having family dinner but I'm following)
+00:41:40	Sally Chang:	Reacted to "My name is Byron. I'..." with ❤️
+00:41:47	Sally Chang:	Reacted to "My name is Byron. I'..." with 👋
+00:41:55	Gabby Palomo:	Reacted to "My name is Byron. I'..." with ❤️
+00:42:11	Jon Harmon (jonthegeek):	Reacted to "My name is Byron. I'..." with 👋
+00:42:14	Nicholas Giangreco:	Reacted to "My name is Byron. I'..." with 👋
+00:42:56	Olivier:	my cohort was so good that people are coming again!
+00:43:01	Gabby Palomo:	Reacted to "my cohort was so goo..." with 🤩
+00:43:02	Sally Chang:	Reacted to "my cohort was so goo..." with 🎉
+00:43:04	Gabby Palomo:	Reacted to "my cohort was so goo..." with 🎉
+00:43:08	Nicholas Giangreco:	Reacted to "my cohort was so goo..." with 🤩
+00:44:56	Jon Harmon (jonthegeek):	usethis::use_package("x")
+00:45:47	Derek Sollberger:	Yeah, that guy (Derek) didn't really make slides
+00:45:53	Sally Chang:	Reacted to "Yeah, that guy (Dere..." with 😂
+00:45:55	Olivier:	Reacted to "Yeah, that guy (Dere..." with 😄
+00:45:57	Nicholas Giangreco:	Reacted to "Yeah, that guy (Dere..." with 😂
+00:46:01	Retselisitsoe Monyake:	Reacted to "Yeah, that guy (Dere..." with 😅
+00:49:23	Ella Kaye (she/her):	But we’re bringing back C for R users!
+00:49:41	Olivier:	Reacted to "But we’re bringing b..." with 😄
+00:51:18	Gabby Palomo:	Reacted to "Yeah, that guy (Dere..." with 😂
+00:51:46	Olivier:	can we say Hi to the kiddo?
+00:52:24	Eamon Caddigan:	(My youngest is the same age!)
+00:52:29	Gabby Palomo:	We also sometime would like to see your dogs Jon. They are adorable!!!
+00:52:29	Ella Kaye (she/her):	Reacted to "(My youngest is the ..." with ❤️
+00:52:43	Sally Chang:	Reacted to "We also sometime wou..." with ➕
+00:55:12	Olivier:	that is optimist about replacing s3 and s4 :)
+00:56:19	Olivier:	having multiple systems also help you understand the one you are using
+00:56:31	Retselisitsoe Monyake:	Reacted to "having multiple syst..." with 👍
+00:57:15	Olivier:	masstodon!
+00:57:24	Eamon Caddigan:	Reacted to "masstodon!" with 💯
+00:57:26	Nicholas Giangreco:	Reacted to "masstodon!" with 💯
+00:57:56	Gabby Palomo:	Replying to "masstodon!"
+
+I need to go back, I’ve been soaring the blue skies LOL
+00:58:31	Olivier:	Replying to "masstodon!"
+
+ahah that is fine, we still love all the blue sky users
+00:58:38	Eamon Caddigan:	Reacted to "ahah that is fine, w..." with ➕
+00:58:39	Gabby Palomo:	Reacted to "ahah that is fine, w..." with ❤️
+00:58:48	Sally Chang:	At this point in my job search, anything but linkedIn please 😫
+00:58:55	Gabby Palomo:	Reacted to "At this point in my ..." with 😂
+00:58:57	Olivier:	Reacted to "At this point in my ..." with 😂
+00:59:07	Josh Persi:	Reacted to "At this point in my ..." with 😂
+00:59:10	Retselisitsoe Monyake:	Reacted to "At this point in my ..." with 😂
+00:59:11	Derek Sollberger:	Reacted to "At this point in my ..." with 😂
+00:59:58	Olivier:	I just discovered that you need to use a third app to preview your post in LinkedIn ...
+01:00:01	Gabby Palomo:	My take on LinkedIn is that is really cool BUT you have to curate the people you follow very carefully to avoid the weirdos posting about how they finding success before breakfast and inspiration in their cereal.
+01:00:08	Sally Chang:	Reacted to "My take on LinkedIn ..." with ❤️
+01:00:12	Olivier:	Reacted to "My take on LinkedIn ..." with ❤️
+01:00:16	Sally Chang:	Reacted to "I just discovered th..." with 😫
+01:00:43	Nicholas Giangreco:	Reacted to "My take on LinkedIn ..." with 😂
+01:02:40	Olivier:	ones pro of being wrote by scientists is that it tends to be stable (always relative)
+01:06:58	Olivier:	I think it is a good advice, specialy to understand why it can fails
+01:07:22	Eamon Caddigan:	HUGE fan of SICP (aka “the Wizard Book”)
+01:07:40	Olivier:	I still never managed to finish it :P
+01:07:47	Sally Chang:	Reacted to "HUGE fan of SICP (ak..." with 🪄
+01:07:59	Nicholas Giangreco:	Sorry I got to go to my next work meeting! I think I signed up to do the next chapter. Discussion so I will contribute to that on GitHub and be ready to facilitate next week 🙂
+01:08:14	Ella Kaye (she/her):	Sorry I won’t be here next week, but looking forward to seeing you all again the week after.
+```
+</details>

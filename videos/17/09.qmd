@@ -1,0 +1,32 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/Nah3PeBzFnw >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:09:33	Steffi LaZerte (she/her):	start
+00:12:36	Olivier Leroy:	I have a very bad connection sorry for being late
+00:15:06	Olivier Leroy:	Here get(“means”) return a function that got passed c()
+00:19:45	Olivier Leroy:	No worries 😛
+00:21:48	Olivier Leroy:	They are not evaluated
+00:25:25	Olivier Leroy:	Maybe data mask example would help here and !! Is used when you want to interact with tidyverse
+00:26:55	Olivier Leroy:	And this is an example of metaprogramming
+00:27:15	Olivier Leroy:	(Very good job Steffi)
+00:28:00	Jeffrey Stevens:	@Jo: "One of the most intriguing things about R is its ability to do metaprogramming. This is the idea that code is data that can be inspected and modified programmatically."
+00:28:42	Jo Hardin:	Reacted to "@Jo: "One of the mos..." with 👍
+00:29:05	Olivier Leroy:	(Also we are going to spend 4 more chapters on those concepts so it is fine if they do not get understand right away)
+00:31:33	Olivier Leroy:	The SQL example was very good
+00:49:05	Olivier Leroy:	No it is created in the call of the function?
+00:53:55	Olivier Leroy:	Thanks you Steffi!
+00:57:54	Olivier Leroy:	I was mostly disconnected, but we will do more of it latter
+00:59:34	Derek Sollberger (he/him):	Steffi: these additional `with2` examples would be great on the slides (for future cohorts)   :-)
+01:00:52	Olivier Leroy:	Reacted to "Steffi: these additi..." with 👍
+01:02:35	Steffi LaZerte (she/her):	end
+01:02:36	Olivier Leroy:	Yes please
+01:02:49	Olivier Leroy:	Yes Jo is next
+```
+</details>

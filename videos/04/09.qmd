@@ -1,0 +1,105 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/PqKQP6hS1z4 >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:05:22	Olivier Leroy:	Sorry for being late
+00:06:00	Diana Garcia Cortes:	Hi everyone!
+00:06:35	Olivier Leroy:	Start
+00:06:39	Derek Sollberger (he/him):	The data frame and tibble info will come up again here in chapter 4 anyway
+00:06:45	Olivier Leroy:	Reacted to "The data frame and t..." with 👍
+00:10:03	Olivier Leroy:	(The use of number on x was so smart 😛)
+00:11:31	Olivier Leroy:	People who index with float are evil!
+00:12:48	Derek Sollberger (he/him):	Replying to "People who index wit..."
+
+might be useful in some sort of median index calculation
+00:13:19	Olivier Leroy:	Reacted to "might be useful in s..." with 👍
+00:13:31	Olivier Leroy:	Replying to "People who index wit..."
+
+Yup but probably to smart for me
+00:18:17	Olivier Leroy:	Double quote
+00:18:39	Olivier Leroy:	Unless I am dealing with quote in the string
+00:19:02	Diana Garcia Cortes:	Reacted to "Double quote" with ➕
+00:20:50	Olivier Leroy:	I like the eggs and box of eggs example
+00:23:17	tataphani:	{ names of all the students in the class and {{ Just one name
+00:24:47	tataphani:	so {{ would work on both Lists and Vectors ? and same is true for $
+00:25:34	Jo Hardin:	{{  isn’t used for subsetting, as far as I know.
+00:25:41	Olivier Leroy:	r$> x <- letters
+
+r$> x[[1]]
+[1] "a"
+00:25:52	Jeffrey Stevens:	$ doesn't work on vectors
+00:27:10	Jeffrey Stevens:	Unless the vector is named?
+00:27:23	Olivier Leroy:	If the vector is named I think it will works
+00:27:30	Olivier Leroy:	Need to try 😛
+00:28:12	Jeffrey Stevens:	Nope, doesn't seem to work with named vectors
+00:28:32	Jo Hardin:	my_list[[c(1,2)]] is the same as my_list[[1]][[2]]
+00:28:57	Jeffrey Stevens:	"Error in x$c : $ operator is invalid for atomic vectors"
+00:29:12	Jo Hardin:	Can’t unmute today!
+00:29:16	Jo Hardin:	Sorry
+00:29:16	Jeffrey Stevens:	So $ can't be used for atomic vectors
+00:29:22	Jo Hardin:	Thanks ❤️
+00:30:33	Olivier Leroy:	From ?`$` 
+
+> ‘$’ is only valid for recursive objects (and ‘NULL’),
+     and is only discussed in the section below on recursive objects.
+00:30:37	Jo Hardin:	Maybe easier to demo w my_list[[2]][[4]]
+00:30:51	Jeffrey Stevens:	Reacted to "From ?`$` 
+
+> ‘$’ is..." with 👍
+00:31:41	Olivier Leroy:	`$`
+00:33:09	Olivier Leroy:	Return: 
+
+r$> `$`
+.Primitive("$")
+00:35:56	Olivier Leroy:	Reacted to "Nope, doesn't seem t..." with 👍
+00:39:21	Jo Hardin:	Just realized from your example that by using 0 for the row index, you can get the column names.  That’s useful!
+00:39:31	Olivier Leroy:	Reacted to "Just realized from y..." with 👍
+00:39:43	Derek Sollberger (he/him):	Reacted to "Just realized from y..." with 🧐
+00:40:22	Olivier Leroy:	Replying to "Just realized from y..."
+
+I will need to try, but maybe it is just print and you can’t assign ?
+00:40:49	Jo Hardin:	Replying to "Just realized from y…"
+Ahhh, right, that makes sense.
+00:41:20	tataphani:	can we also check if matrix empty or not ?
+00:43:15	Jeffrey Stevens:	names()
+00:45:04	Olivier Leroy:	Subsetting seems simple but it is so tricky
+00:45:18	Jeffrey Stevens:	What's the difference between names() and colnames()?
+00:45:44	Jeffrey Stevens:	Ah, so names() doesn't work on matrices?
+00:49:09	Derek Sollberger (he/him):	NROW() and NCOL() [with capital letters] was in exercise 2 of section 3.3.4
+00:49:39	Olivier Leroy:	Reacted to "NROW() and NCOL() [w..." with 👍
+00:49:52	Howard Baek:	Reacted to "NROW() and NCOL() [w..." with 👍
+00:50:18	Derek Sollberger (he/him):	Replying to "NROW() and NCOL() [w..."
+
+"dim() will return NULL when applied to a 1d vector.
+One may want to use NROW() or NCOL() to handle atomic vectors, lists and NULL values in the same way as one column matrices or data frames. For these objects nrow() and ncol() return NULL"
+00:51:08	Howard Baek:	Replying to "NROW() and NCOL() [w..."
+
+Sounds like a C function used in R
+00:52:06	Howard Baek:	Replying to "NROW() and NCOL() [w..."
+
+Nvm, NCOL is base
+00:53:01	Olivier Leroy:	[ always simplify
+00:53:06	Olivier Leroy:	Except on tibble
+01:04:08	Olivier Leroy:	We are out of time I can continue if needed
+01:04:22	tataphani:	please
+01:04:33	Howard Baek:	Me too, I can stay longer
+01:04:37	Olivier Leroy:	Reacted to "please" with 👍
+01:04:39	Olivier Leroy:	Reacted to "Me too, I can stay l..." with 👍
+01:04:57	Tinashe Tapera:	I have to go but reminder I am presenting next week! Wish my luck 👌
+01:05:12	Olivier Leroy:	Replying to "I have to go but rem..."
+
+Good luck 😛
+01:05:25	Howard Baek:	Reacted to "I have to go but rem..." with 👍
+01:12:50	Olivier Leroy:	Btw they will have a base R function for that soon (the subset with order())
+01:14:45	Olivier Leroy:	I like that trick
+01:15:33	Olivier Leroy:	Kids crashed here sorry 🙂
+01:16:27	Aaron Grzasko:	I need to drop. Great conversation today! Good job, Gabby!.
+01:17:58	Olivier Leroy:	End
+```
+</details>

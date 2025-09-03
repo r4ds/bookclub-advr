@@ -1,0 +1,62 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/70Ep06M3NUk >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:12:20	Olivier Leroy:	Start
+00:16:18	Olivier Leroy:	I have a love/hate relation with sort
+00:16:23	Olivier Leroy:	source
+00:17:36	Steffi LaZerte (she/her):	docs for rlang::parse_expr: 
+These functions parse and transform text into R expressions. This is the first step to interpret or evaluate a piece of R code written by a programmer.
+00:17:59	Olivier Leroy:	‘parse()’ returns the parsed but unevaluated expressions in an
+     ‘expression’, a “list” of ‘call’s.
+00:19:40	Olivier Leroy:	I have a “daily_year” project for this kind of stuff
+00:20:42	Olivier Leroy:	You are doing great!
+00:32:30	Steffi LaZerte (she/her):	eval(rlang::get_expr(q), rlang::get_env(q)) same as 
+rlang::eval_tidy(q)
+00:33:41	Olivier Leroy:	Reacted to "eval(rlang::get_expr..." with 👍
+00:34:00	Derek Sollberger:	Reacted to "eval(rlang::get_expr..." with 👍
+00:34:30	Olivier Leroy:	That was intersting, learning the “mistakes” on the road
+00:35:24	Steffi LaZerte (she/her):	Definitely! Things like this always help me better understand
+00:35:31	Olivier Leroy:	Reacted to "Definitely! Things l..." with 👍
+00:42:33	Olivier Leroy:	Very clear explanation
+00:43:11	Steffi LaZerte (she/her):	Sometimes I use .env$x in workflows too, for maximum readibility and clarity :D
+00:43:19	Olivier Leroy:	Reacted to "Sometimes I use .env..." with 👍
+00:47:42	Olivier Leroy:	Just noticed you are using relative row number
+00:48:16	Jo Hardin:	i noticed the row numbering, too, but i don’t understand it!  what is relative row numbering?
+00:50:52	Olivier Leroy:	Reacted to "i noticed the row nu..." with 👍
+00:59:14	Jo Hardin:	{{ variable }}
+00:59:42	Derek Sollberger:	Replying to "{{ variable }}"
+
+great for data masks?
+00:59:53	Olivier Leroy:	Replying to "{{ variable }}"
+
+{{variable}}
+01:00:11	Derek Sollberger:	Replying to "{{ variable }}"
+
+https://dsollbergerquarto.netlify.app/posts/curly_operator/curly_operator
+01:00:36	Steffi LaZerte (she/her):	https://dplyr.tidyverse.org/articles/programming.html
+01:03:27	Steffi LaZerte (she/her):	var_summary <- function(data, var) {
+data %>%
+summarise(n = n(), min = min({{ var }}), max = max({{ var }}))
+}
+mtcars %>% 
+group_by(cyl) %>% 
+var_summary(mpg)
+01:04:16	Jo Hardin:	library(tidyverse)
+my_func <- function(x){
+  mtcars |> 
+    select({{x}})
+}
+
+my_func(wt)
+01:05:53	Steffi LaZerte (she/her):	Reacted to "library(tidyverse)
+m..." with 👍🏻
+01:09:46	Olivier Leroy:	end
+```
+</details>
