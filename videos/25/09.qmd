@@ -1,0 +1,40 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/v3hnYvUuyyk >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:07:59	Derek Sollberger:	When the scale changes, consider using a C++ array :-p
+00:08:14	Olivier Leroy:	Reacted to "When the scale chang..." with 😄
+00:08:19	Diana Garcia:	Reacted to "When the scale chang..." with 😄
+00:11:51	Steffi LaZerte (she/her):	Reacted to "When the scale chang..." with 😅
+00:15:36	Olivier Leroy:	start
+00:19:35	Olivier Leroy:	statement
+00:25:29	Derek Sollberger:	Does any IDE do code highlighting where different chunks might be in different languages?
+00:25:33	Steffi LaZerte (she/her):	So does that mean there are no vectors in C++?
+00:25:43	Olivier Leroy:	Array
+00:25:54	Steffi LaZerte (she/her):	Ah!
+00:38:15	Olivier Leroy:	Casting is the operation to change/specify data types
+00:38:39	Derek Sollberger:	Reacted to "Casting is the opera..." with 👍
+00:39:36	Jeffrey Stevens:	Reacted to "Casting is the opera..." with 👍
+00:43:39	Olivier Leroy:	More like Python
+00:45:21	Diana Garcia:	https://stackoverflow.com/questions/4955198/what-does-dereferencing-a-pointer-mean-in-c-c
+00:45:26	Olivier Leroy:	Reacted to "https://stackoverflo..." with 👍
+00:45:40	Derek Sollberger:	Reacted to "https://stackoverflo..." with 👆
+00:49:50	Olivier Leroy:	Similar that R function at first
+00:49:57	Olivier Leroy:	Documentation
+00:50:00	Steffi LaZerte (she/her):	Reacted to "Similar that R funct..." with 😅
+00:53:53	Olivier Leroy:	It is classical interview question ...
+00:54:01	Diana Garcia:	https://en.wikipedia.org/wiki/Gibbs_sampling
+00:54:05	Olivier Leroy:	I had it once …
+00:55:19	Derek Sollberger:	Replying to "https://en.wikipedia..."
+
+These advances in MCMC computation speed (about 10 years ago) made it possible to study Bayesian Analysis at the undergraduate level.
+00:55:33	Diana Garcia:	https://gweissman.github.io/post/rcpp-is-smoking-fast-for-agent-based-models-in-data-frames/
+01:04:43	Steffi LaZerte (she/her):	end
+```
+</details>

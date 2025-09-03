@@ -1,0 +1,60 @@
+---
+title: Cohort 8
+---
+
+{{< video https://www.youtube.com/embed/HBkRO13QlIM >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:13:07	Federica Gazzelloni (she/her):	http://r4ds.io/advr
+00:15:46	Federica Gazzelloni (she/her):	start
+00:52:35W	Rebecca Butler:	Does anyone know how to print out much more precision for obj_size?
+00:53:02	Laura Biggins:	No, I was going to ask the same question.
+00:53:48	Federica Gazzelloni (she/her):	https://advanced-r-solutions.rbind.io/names-and-values
+00:56:51	Rebecca Butler:	This is fun:
+a <- runif(1e6)
+a_size <- obj_size(a)
+
+b <- list(a, a)
+b_size <- obj_size(b)
+
+b_size - a_size
+# 64 B
+
+x <- 1
+y <- list(x, x)
+obj_size(y) - obj_size(x)
+# 64 B
+00:58:40	Rebecca Butler:	Replying to "This is fun:
+a <- ru..."
+
+Kind of clarifies that it takes 64 B to make an empty list of length 2
+00:58:58	Laura Biggins:	Replying to "This is fun:
+a <- ru..."
+
+> obj_size(list(NULL))
+56 B
+> obj_size(list(NULL, NULL))
+64 B
+> obj_size(list(NULL, NULL, NULL))
+80 B
+00:59:05	Rebecca Butler:	Replying to "This is fun:
+a <- ru..."
+
+empty_list2 <- vector("list", 2)
+obj_size(empty_list2)
+# 64 B
+
+empty_list3 <- vector("list", 3)
+obj_size(empty_list3)
+# 80 B
+00:59:32	Rebecca Butler:	Replying to "This is fun:
+a <- ru..."
+
+Haha we were going the exact same place, Laura. yep!
+00:59:44	Laura Biggins:	Reacted to "Haha we were going t..." with 👍
+01:04:22	Federica Gazzelloni (she/her):	stop
+```
+</details>

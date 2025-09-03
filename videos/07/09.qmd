@@ -1,0 +1,125 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/WaGydI-0eDk >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:09:26	Jo Hardin:	sorry, didn’t mean to have my mic on!  i’m driving in the car, so won’t be able to say much.
+00:09:34	Olivier Leroy:	Reacted to "sorry, didn’t mean t..." with 👍
+00:09:38	Jo Hardin:	*i’m not actually *driving*.
+00:10:45	Tinashe Tapera:	American holidays are so rare I was so surprised when I moved here
+00:13:10	Derek Sollberger (he/him):	Yes, kudos for making the slides!
+00:13:27	Steffi LaZerte (she/her):	Reacted to "Yes, kudos for makin..." with 💯
+00:14:01	Olivier Leroy:	Reacted to "Yes, kudos for makin..." with 💯
+00:18:21	Olivier Leroy:	I have done a quick check on internet and did not find good ressource on dynamic / lexical scoping (except an SO post)
+00:18:33	Jo Hardin:	Reacted to "I have done a quick ..." with 👍
+00:22:12	Steffi LaZerte (she/her):	I think env_parents() stops if you use a created environment
+00:24:08	Derek Sollberger (he/him):	Replying to "I think env_parents(..."
+
+It seems like every week we learning something new that was brought by rlang or the tidyverse :-)
+00:24:29	Olivier Leroy:	ecur <- globalenv()  # starting point
+repeat {
+    cat(paste0(format(ecur), " (", attr(ecur, "name"), ")"))  # pretty-print
+
+    if (exists("<", envir=ecur, inherits=FALSE))  # look for `<`
+        cat(strrep(" ", 25), "`<` found here!")
+    cat("\n")
+
+    ecur <- parent.env(ecur)  # advance to its enclosure
+}
+00:24:48	Olivier Leroy:	https://deepr.gagolewski.com/chapter/330-environment.html
+00:29:43	Olivier Leroy:	Btw I do not understand what using random order speed up the search (I will learn it someday)
+00:29:49	Olivier Leroy:	why*
+00:32:31	Olivier Leroy:	This also help understanding some “name conflicts” order
+00:32:42	Derek Sollberger (he/him):	Reacted to "This also help under..." with 👍
+00:33:16	Steffi LaZerte (she/her):	Reacted to "This also help under..." with 👍
+00:35:20	Jo Hardin:	but what you are showing is where the function *lives* right?  doesn’t the function still have its own environment?
+00:35:45	Steffi LaZerte (she/her):	Replying to "but what you are sho..."
+
+I think only when it's run...
+00:36:09	Olivier Leroy:	Replying to "but what you are sho..."
+
+Yes where it lives
+00:36:10	Steffi LaZerte (she/her):	Replying to "but what you are sho..."
+
+I think there are three things:
+00:36:11	Tinashe Tapera:	Just want to include a comment: the knowledge of path searching is very useful for when you’re debugging things on your computer in general. If ever something goes wrong, look at your path in the terminal 
+
+echo $PATH
+00:36:21	Olivier Leroy:	Reacted to "Just want to include..." with 👍
+00:36:27	Derek Sollberger (he/him):	Reacted to "Just want to include..." with 👍
+00:36:28	Steffi LaZerte (she/her):	Replying to "but what you are sho..."
+
+Where it lives, where it looks for variables, and it's environment when it runs
+00:36:46	Jo Hardin:	Reacted to "Where it lives, wher..." with 👍
+00:37:10	Olivier Leroy:	Reacted to "Where it lives, wher..." with 👍
+00:37:57	Steffi LaZerte (she/her):	Replying to "but what you are sho..."
+
+"The distinction between binding and being bound by is subtle but important; the difference is how we find g versus how g finds its variables."
+00:38:03	Jo Hardin:	Replying to "but what you are sho..."
+
+doesn’t it look for variables in “its environment” ?  i don’t understand the different between Steffi’s last two.
+00:39:01	Jo Hardin:	Replying to "but what you are sho..."
+
+but it always looks inside the function first because that is “the function’s environment”… and then it just keeps going up the parent chain?
+00:39:09	Steffi LaZerte (she/her):	Reacted to "but it always looks ..." with 👍🏻
+00:39:24	Jo Hardin:	Replying to "but what you are sho..."
+
+doesn’t really matter whether the parent is global or any other environment, right?
+00:39:35	Jo Hardin:	Reacted to ""The distinction bet..." with ❤️
+00:41:33	Steffi LaZerte (she/her):	Replying to "but what you are sho..."
+
+I think there is a difference if it's a function you create in the global vs. one in a package environment
+00:41:49	Steffi LaZerte (she/her):	Replying to "but what you are sho..."
+
+because package functions won't use variables in your global environment
+00:42:09	Jo Hardin:	Replying to "but what you are sho..."
+
+well, that’s because functions in packages don’t have global as a parent.  right?
+00:42:25	Steffi LaZerte (she/her):	Replying to "but what you are sho..."
+
+Hmmm... that's a good point!
+00:42:45	Steffi LaZerte (she/her):	Reacted to "Just want to include..." with 👍
+00:43:58	Jo Hardin:	can you copy and paste your code into the chat?  i’d love to play with it!
+00:46:32	Olivier Leroy:	ei$a
+00:49:07	Diana Garcia Cortes:	g <- "hello"
+
+e1 <- env(
+  g = 10,
+  a = 78
+)
+
+e1$funcion_in_e1 <- function(x = a) {
+  print(x)
+  g
+}
+
+fn_env(e1$funcion_in_e1)
+e1$funcion_in_e1(e1$a)
+00:49:36	Jo Hardin:	Replying to "g <- "hello"
+
+e1 <- ..."
+
+thank you!
+00:49:41	Olivier Leroy:	Reacted to "g <- "hello"
+
+e1 <- ..." with 👍
+00:49:54	Derek Sollberger (he/him):	Reacted to "g <- "hello"
+
+e1 <- ..." with 😻
+00:50:40	Olivier Leroy:	It matter for us but not for the package namepace
+00:58:54	Olivier Leroy:	I am so bad with reading “!”
+01:03:35	Jo Hardin:	Really great, thank you!
+01:05:04	Jo Hardin:	i teach, so i like getting as much done before the semester starts.
+01:05:21	Derek Sollberger (he/him):	Reacted to "i teach, so i like g..." with 💯
+01:05:46	Diana Garcia Cortes:	Reacted to "Just want to include..." with 👍
+01:05:54	Jo Hardin:	thanks everyone.  see you next week.
+01:05:58	Tinashe Tapera:	Good job everybody
+01:06:04	Tinashe Tapera:	See you next time
+01:06:08	Olivier Leroy:	End
+```
+</details>

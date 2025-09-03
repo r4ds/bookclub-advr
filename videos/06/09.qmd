@@ -1,0 +1,190 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/krPNeIt9qU4 >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:11:08	Steffi LaZerte (she/her):	I'll have to leave about 15-20min early today, sorry in advance!
+00:11:40	Olivier Leroy:	start
+00:16:14	Steffi LaZerte (she/her):	https://www.rstudio.com/wp-content/uploads/2016/02/advancedR.pdf
+00:16:27	Howard Baek:	Reacted to "https://www.rstudio...." with 👍
+00:16:30	Jeffrey Stevens:	Reacted to "https://www.rstudio...." with 👍
+00:16:32	Olivier Leroy:	https://www.rstudio.com/wp-content/uploads/2016/02/advancedR.pdf
+00:16:34	Olivier Leroy:	Reacted to "https://www.rstudio...." with 👍
+00:16:41	Olivier Leroy:	Ahah you were faster :p
+00:16:55	Steffi LaZerte (she/her):	Reacted to "Ahah you were faster..." with 😛
+00:18:47	Gabby Palomo Munoz:	I think you mean the arguments.
+00:19:12	Olivier Leroy:	Btw R return the last statement in a body function (always bit me) unless you have return()
+00:19:50	Jo Hardin:	what happens if you have two `return()` statements?
+00:20:31	Steffi LaZerte (she/her):	I think the first one it hits is the one it uses, so if you have an if / else you can have multiple returns
+00:20:35	Olivier Leroy:	The first one, I think has it exit the function to the parent environment
+00:20:43	Jo Hardin:	i’ve also always called them “arguments” but the chapter makes a big deal about calling them “formals”.
+00:21:18	Olivier Leroy:	formal() ?
+00:21:19	Jo Hardin:	does anyone know why “formals” instead of “arguments”? and how they might be different?
+00:21:20	Steffi LaZerte (she/her):	I use options > arguments > (and now) formals, in order of increasing complexity or nit-pickyness :D
+00:21:38	Gabby Palomo Munoz:	formals? interesting? I thought it was arguments
+00:22:07	Olivier Leroy:	> sum
+function (..., na.rm = FALSE)  .Primitive("sum")
+00:23:47	Steffi LaZerte (she/her):	Replying to "does anyone know why..."
+
+In the ?formals, they call them "formal arguments"
+00:24:47	Olivier Leroy:	Mean seems to dispatch
+00:27:29	Olivier Leroy:	I have this one on env function that always blew my mind: 
+
+  ctr <- 0
+  f <- function(){
+    ctr <<- ctr + 1
+    cat("this count currently has value", ctr, "\n")
+  }
+}
+
+c1 <- counter()
+c2 <- counter()
+
+
+c1()
+c1()
+c2()
+ctr
+00:28:40	Steffi LaZerte (she/her):	Replying to "I have this one on e..."
+
+I hate this 😅
+00:28:45	Steffi LaZerte (she/her):	So scary!
+00:30:26	Olivier Leroy:	Reacted to "So scary!" with 👻
+00:31:49	Howard Baek:	Inside purrr functions
+00:31:52	Gabby Palomo Munoz:	Reacted to "Inside purrr functio..." with 💯
+00:31:59	Diana Garcia Cortes:	Reacted to "Inside purrr functio..." with 💯
+00:31:59	Gabby Palomo Munoz:	Replying to "Inside purrr functio..."
+
+I was just gonna say this :D
+00:32:27	Howard Baek:	Replying to "Inside purrr functio..."
+
+That’s the only place I use em 😄
+00:32:44	Gabby Palomo Munoz:	Replying to "Inside purrr functio..."
+
+Yes apply and purrr ... trying to think where else...
+00:34:53	Steffi LaZerte (she/her):	Replying to "Inside purrr functio..."
+
+Me too, I was thinking today how much I've been using multiline anonymous functions to map over a set of database connections in one of my projects
+00:35:36	Derek Sollberger (he/him):	"funs" here seems like when many R programmers would make a code package instead
+00:38:20	Gabby Palomo Munoz:	If we are going to see this later in another chapter maybe we can just move on with the rest. I'm sorry, not trying to be mean but we only have an hour.
+00:38:35	Gabby Palomo Munoz:	Ha 'mean' no pun intended.
+00:38:46	Olivier Leroy:	r$> mean[1]
+Error in mean[1] : object of type 'closure' is not subsettable
+00:38:55	Steffi LaZerte (she/her):	That's where I know the term! Yes! "Closure is not subsettable"
+00:39:23	Steffi LaZerte (she/her):	Reacted to "Ha 'mean' no pun int..." with 😅
+00:40:31	Derek Sollberger (he/him):	Replying to "That's where I know ..."
+
+Jenny Bryan's famous rstudio::conf() 2020 talk "Object of type 'closure' is not subsettable" (about debugging)
+
+https://www.youtube.com/watch?v=vgYS-F8opgE
+00:40:41	Gabby Palomo Munoz:	Reacted to "Jenny Bryan's famous..." with 💯
+00:41:09	Steffi LaZerte (she/her):	Reacted to "Jenny Bryan's famous..." with 💯
+00:41:12	Olivier Leroy:	Reacted to "Jenny Bryan's famous..." with 💯
+00:41:16	Gabby Palomo Munoz:	Replying to "That's where I know ..."
+
+I swear there's always a Jenny Bryan's talk somewhere to clarify any complex topic
+00:41:33	Jo Hardin:	Reacted to "I swear there's alwa..." with 💯
+00:43:29	Olivier Leroy:	do.call(rbind, lapply(bucket[["Contents"]]), function(x) x[["Key"]])
+
+Is a way to list all key in a s3 bucket as an example of args/anonymous function
+00:44:29	Gabby Palomo Munoz:	Quick question about do.call() Let's say I have a function I created that has three arguments. my_fun <- function(x, y, z){ body} and then I use it in do.call(). I just list the arguments as this: do.call(list, list$x, list$y, list$z)
+00:44:42	Olivier Leroy:	Reacted to "Quick question about..." with 👍
+00:44:45	Gabby Palomo Munoz:	I am always confused by this which is why I go to lapply LOL but I like do.call()
+00:45:15	Olivier Leroy:	Do.call(function, list(named args))
+00:45:35	Derek Sollberger (he/him):	Replying to "I am always confused..."
+
+Agree.  I think do.call() is useful to mention en route to learning about *apply()
+00:45:41	Gabby Palomo Munoz:	Replying to "Quick question about..."
+
+Yes the function goes first lol, and then I list the arguments. Oh perfect. thanks Olivier!!!
+00:45:50	Olivier Leroy:	Reacted to "Yes the function goe..." with 👍
+00:45:50	Gabby Palomo Munoz:	Reacted to "Agree.  I think do.c..." with ❤️
+00:46:51	Olivier Leroy:	This one overwriting the same name is so dangerous 😛
+00:47:23	Gabby Palomo Munoz:	Replying to "This one overwriting..."
+
+temp
+00:47:38	Gabby Palomo Munoz:	Reacted to "This one overwriting..." with 💯
+00:48:36	Derek Sollberger (he/him):	caution: the magrittr pipe might still be needed for ".", for example:
+
+df %>% lm(y ~ x, data = .)
+00:48:54	Steffi LaZerte (she/her):	Replying to "caution: the magritt..."
+
+You can use
+00:48:55	Gabby Palomo Munoz:	Replying to "caution: the magritt..."
+
+but not with the native pipe?
+00:49:01	Steffi LaZerte (she/her):	Replying to "caution: the magritt..."
+
+df |> lm(y ~ x, data = _)
+00:49:07	Derek Sollberger (he/him):	Reacted to "df |> lm(y ~ x, data..." with 😻
+00:49:14	Gabby Palomo Munoz:	Replying to "caution: the magritt..."
+
+Actually, I am not clear on when to use the . so I use it whenever I see an error
+00:49:26	Steffi LaZerte (she/her):	Replying to "caution: the magritt..."
+
+But it's not as flexible and must be a named argument and can't be inside another nested function (drives me nuts!)
+00:49:35	Gabby Palomo Munoz:	Reacted to "df |> lm(y ~ x, data..." with 🤯
+00:49:35	Howard Baek:	Do you guys load magrittr when you are using its other operators like %T>%?
+00:50:28	Gabby Palomo Munoz:	Replying to "Do you guys load mag..."
+
+I use |> but I have it set like this in RStudio settings. If you have the magrittr pipe as default then you don't have to load the package. At least that's my understanding.
+00:50:38	Steffi LaZerte (she/her):	Replying to "Do you guys load mag..."
+
+Sometimes, but I use that operator so rarely, it's usually easier (and easier to read) to just break out of the pipe for it
+00:50:48	Howard Baek:	Replying to "Do you guys load mag..."
+
+Yeah I agree
+00:51:18	Steffi LaZerte (she/her):	Replying to "Do you guys load mag..."
+
+Now I'm trying to use the base pipe as my default (it also looks better in my font :D )
+00:51:26	Derek Sollberger (he/him):	Reacted to "I use |> but I have ..." with 🧐
+00:52:01	Howard Baek:	Replying to "Do you guys load mag..."
+
+Are you using the Hadley font?
+00:52:20	Olivier Leroy:	Reacted to "df |> lm(y ~ x, data..." with 🤯
+00:52:25	Steffi LaZerte (she/her):	Replying to "Do you guys load mag..."
+
+Fira Code
+00:52:33	Steffi LaZerte (she/her):	Replying to "Do you guys load mag..."
+
+I had no idea there was a Hadley font!
+00:52:34	Howard Baek:	Replying to "Do you guys load mag..."
+
+Yeah same haha
+00:52:42	Gabby Palomo Munoz:	Replying to "Do you guys load mag..."
+
+the native pipe is so much cleaner looking I agree
+00:52:45	Steffi LaZerte (she/her):	I have to run everyone, sorry! It's been a great conversation, see you next week!
+00:52:51	Olivier Leroy:	Reacted to "I have to run everyo..." with 👋
+00:52:51	Howard Baek:	Replying to "Do you guys load mag..."
+
+Oh I meant the font that Hadley Wickham uses, which is FiraCode
+00:52:52	Gabby Palomo Munoz:	Reacted to "I have to run everyo..." with 👍🏻
+00:52:55	Howard Baek:	Reacted to "I have to run everyo..." with 👋
+00:52:58	Howard Baek:	Reacted to "I have to run everyo..." with 👍🏻
+00:52:59	Steffi LaZerte (she/her):	Replying to "Do you guys load mag..."
+
+Ohhhhhhh!
+00:53:04	Howard Baek:	Reacted to "Ohhhhhhh!" with 😂
+00:55:30	Gabby Palomo Munoz:	I found this for the FiraCode Font because if Hadley uses it I want it LOL https://github.com/tonsky/FiraCode/wiki/RStudio-instructions
+00:56:52	Howard Baek:	Replying to "I found this for the..."
+
+Yes, that is exactly why I’m using FiraCode
+00:56:58	Howard Baek:	Reacted to "I found this for the..." with 😂
+00:57:07	Gabby Palomo Munoz:	Reacted to "Yes, that is exactly..." with 😂
+00:57:20	Gabby Palomo Munoz:	Replying to "I found this for the..."
+
+Well I am copying you now LOL
+00:57:27	Howard Baek:	Reacted to "Well I am copying yo..." with 😂
+00:58:07	Howard Baek:	I gotta run everyone, see you all next week!!!
+00:58:12	Olivier Leroy:	Reacted to "I gotta run everyone..." with 👋
+00:58:53	Gabby Palomo Munoz:	Reacted to "I gotta run everyone..." with 👋
+01:07:34	Diana Garcia Cortes:	great! Thank you
+01:07:38	Olivier Leroy:	end
+```
+</details>

@@ -1,0 +1,23 @@
+---
+title: Cohort 8
+---
+
+{{< video https://www.youtube.com/embed/UD4DCDuUpg0 >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:12:27	Federica Gazzelloni:	start
+00:42:47	jim :	Promises are covered in later chapter
+00:42:58	Rebecca Butler:	Reacted to "Promises are covered..." with 👍
+00:49:40	jim :	Yes
+00:49:47	jim :	Lazy eval
+00:52:20	jim :	X is evaluated only at very last moment
+00:56:24	Rebecca Butler:	Reacted to "X is evaluated only ..." with 👍
+01:08:29	Federica Gazzelloni:	stop
+01:08:52	jim :	Thx
+```
+</details>
+
+{{< video https://www.youtube.com/embed/YdIt-ATfTQo >}}

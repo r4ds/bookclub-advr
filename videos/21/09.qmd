@@ -1,0 +1,25 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/REfQOHep_Ok >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:15:14	Olivier Leroy:	Start
+00:17:21	Steffi:	A whisker plot 😂
+00:17:27	Olivier Leroy:	Reacted to "A whisker plot 😂 " with 😄
+00:19:28	Olivier Leroy:	I did not understand that well but that was not really the goal of the chapter (void tag).
+00:21:05	Olivier Leroy:	Hadley really not liking paste()
+00:26:26	Steffi:	dots_partition(!!x)
+00:29:31	Olivier Leroy:	Apparently list2() do not mind ending with , also but not sure if that matters here
+00:30:08	Steffi:	Reacted to "Apparently list2() d..." with 👍
+00:34:52	Olivier Leroy:	Br is a good example
+00:50:27	Olivier Leroy:	Overbox is full  ..
+00:53:28	Olivier Leroy:	I bugged on that until I realized that latex probably want to keep ( as text and not as function
+00:58:39	Olivier Leroy:	Omicron!
+01:07:13	Olivier Leroy:	end
+```
+</details>

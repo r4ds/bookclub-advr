@@ -1,0 +1,27 @@
+---
+title: Cohort 8
+---
+
+{{< video https://www.youtube.com/embed/LnoOo-TFGkI >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:04:59	Federica Gazzelloni (she/her):	start
+00:44:21	Betsy:	text <- c("al", "bob", "charlie")
+
+for (i in seq_along(text)) {
+  print(text[[i]])
+}
+
+for (i in seq_along(text)) {
+  print(i)
+}
+
+for (name in text) {
+  print(name)
+}
+00:53:43	Federica Gazzelloni (she/her):	Stop
+```
+</details>

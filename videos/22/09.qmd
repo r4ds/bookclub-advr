@@ -1,0 +1,45 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/498yvFZwPrM >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:13:32	Olivier Leroy:	Start
+00:15:27	Olivier Leroy:	It is also good to change mindset: debugging is fun!
+00:17:46	Olivier Leroy:	I use DDG
+00:18:58	Jo Hardin:	no, never
+00:20:13	Olivier Leroy:	It is always NULL 😛
+00:21:14	Steffi LaZerte (she/her):	Reacted to "It is always NULL 😛" with 😁
+00:22:11	Derek Sollberger:	still describe the bug(s) to the rubber duck
+
+https://en.wikipedia.org/wiki/Rubber_duck_debugging
+00:22:26	Olivier Leroy:	Reacted to "still describe the b..." with 🦆
+00:22:39	Diana Garcia:	Reacted to "still describe the b..." with 🦆
+00:22:47	Jo Hardin:	the title of her talk is: object of type closure is not subsettable
+00:23:06	Olivier Leroy:	Reacted to "the title of her tal..." with 👻
+00:23:38	Derek Sollberger:	Reacted to "the title of her tal..." with 👻
+00:25:14	Steffi LaZerte (she/her):	Replying to "still describe the b..."
+
+With rOpenSci coworking, we always have a 5min scavenger hunt in the middle ("You have 30s to find something that is round", etc.) We get soooo many different rubber duckies 😁
+00:25:26	Derek Sollberger:	Reacted to "With rOpenSci cowork..." with 💜
+00:25:26	Steffi LaZerte (she/her):	Reacted to "the title of her tal..." with 😅
+00:26:44	Olivier Leroy:	Reacted to "With rOpenSci cowork..." with 😄
+00:37:20	Steffi LaZerte (she/her):	This is super helpful, because I've never understood all the nuanced steps within browser(). I just move the browser() statement and rerun 😅
+00:38:09	Steffi LaZerte (she/her):	Escape also kicks you out (usually but not always)
+00:45:24	Steffi LaZerte (she/her):	I'm dual-tasking a bit and was excited that your example walked me through using a breakpoint right when I needed it 😁
+00:47:44	Jeffrey Stevens:	Reacted to "I'm dual-tasking a b..." with 😂
+00:51:15	Olivier Leroy:	I was searching from scholar article on history of debugger but my googlefu is bad now
+01:04:01	Derek Sollberger:	I just need the warnings to be in a different color (so that my students stop freaking out)
+01:04:09	Olivier Leroy:	Reacted to "I just need the warn..." with 😄
+01:04:57	Steffi LaZerte (she/her):	Hahaha! Yes, I usually spend some time in the first class explaining the difference between Messages, Warnings and Errors :D to try and get them to relax a bit!
+01:06:58	Jo Hardin:	gotta run.  thanks, Jeffery, this was fantastic!
+01:11:07	Jeffrey Stevens:	end
+01:11:43	Derek Sollberger:	Another mental boost from Hadley Wickham: "It’s easy when you start out programming to get really frustrated and think, “Oh it’s me, I’m really stupid,” or, “I’m not made out to program.” But, that is absolutely not the case. Everyone gets frustrated. I still get frustrated occasionally when writing R code. It’s just a natural part of programming. So, it happens to everyone and gets less and less over time. Don’t blame yourself. Just take a break, do something fun, and then come back and try again later."
+01:11:58	Olivier Leroy:	Reacted to "Another mental boost..." with 👍
+01:12:11	Diana Garcia:	Reacted to "Another mental boost..." with 👍
+```
+</details>

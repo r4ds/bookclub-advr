@@ -1,0 +1,25 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/EUYeZmskHkE >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:15:40	Derek Sollberger:	I tend to measure performance when trying to solve Advent of Code puzzles
+00:16:45	Jeffrey Stevens:	Do we need to add the chat start?
+00:16:51	Olivier Leroy:	start
+00:21:07	Derek Sollberger:	My students and I are currently looking at data about autonomous cars, so the goals of optimizing for smaller computers are indeed incoming
+00:21:23	Olivier Leroy:	Reacted to "My students and I ar..." with 👍
+00:22:11	Steffi LaZerte (she/her):	Reacted to "I tend to measure pe..." with 😁
+00:28:27	Steffi LaZerte (she/her):	I don't think I ever realized that GC was garbage collection and that that could contribute to taking up so much time!
+00:28:47	Steffi LaZerte (she/her):	In other examples ;)
+00:39:02	Derek Sollberger:	math aside: the square root algorithms date back to the Babylonians :-)
+00:41:03	Steffi LaZerte (she/her):	Reacted to "math aside: the squa..." with 😀
+01:02:23	Derek Sollberger:	The `e1071` R package of miscellaneous functions is also useful for statistical work
+01:07:04	Jeffrey Stevens:	Gotta go. See you all for the last week next week!
+01:08:10	Olivier Leroy:	end
+```
+</details>

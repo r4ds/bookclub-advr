@@ -1,0 +1,43 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/6yW9dlErLv0 >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:08:26	Olivier Leroy:	Start
+00:11:23	Olivier Leroy:	Yeah unsure that s3 count as OOP it really def or your def of OOP 😛
+00:12:57	Olivier Leroy:	Is S still in dev. ?
+00:14:53	Jeffrey Stevens:	From Wikipedia:
+The latest version of the S standard is S4, released in 1998.[17] It provides advanced object-oriented features. S4 classes differ markedly from S3 classes; S4 formally defines the representation and inheritance for each class, and has multiple dispatch: the generic function can be dispatched to a method based on the class of any number of arguments, not just one.
+00:15:20	Derek Sollberger (he/him):	"S7 = S3 + S4
+00:15:28	Diana Garcia Cortes:	Reacted to ""S7 = S3 + S4" with 😂
+00:15:36	Olivier Leroy:	Reacted to ""S7 = S3 + S4" with 😂
+00:17:03	Olivier Leroy:	“The S7 package is a new OOP system designed to be a successor to S3 and S4” (https://rconsortium.github.io/S7/)
+00:21:05	Jeffrey Stevens:	"S-PLUS 7.0 released in 2005" (https://en.wikipedia.org/wiki/S-PLUS)
+00:22:04	Diana Garcia Cortes:	I guess we got an example of encapsulation last week when we used ::: to access some internal method (although I don’t recall why we did that)
+00:22:34	Olivier Leroy:	Inheritance is weird in s3, example an object that is tibble, data.frame, list. It dispatch to tibble class then data.frame
+00:22:38	Olivier Leroy:	Reacted to "I guess we got an ex..." with 👍
+00:24:51	Diana Garcia Cortes:	Reacted to "Inheritance is weird..." with 👍
+00:27:08	Olivier Leroy:	The sf packages use s3 a lot
+00:29:33	Olivier Leroy:	Example of R6 (I think) https://gargle.r-lib.org/ example: https://gargle.r-lib.org/reference/Gargle-class.html
+00:39:22	Olivier Leroy:	One stuff that bother me with s3 class definition is that I do not think they are clear organizational rules on were the class definition should be put in a package (I will maybe proved wrong soon)
+00:40:24	Diana Garcia Cortes:	Reacted to "One stuff that bothe..." with 😯
+00:41:42	Olivier Leroy:	typeof(as.raw(0x0f)) also ...
+00:46:55	Olivier Leroy:	>  ‘as.numeric’ is a generic function, but S3 methods must be written
+     for ‘as.double’.  It is identical to ‘as.double’.
+00:46:59	Olivier Leroy:	From the doc 😛
+00:49:09	Olivier Leroy:	Isn’t it because is.nuneric on class factor is diffrent?
+00:50:34	Jeffrey Stevens:	Why does is.integer(typeof(factor("x"))) show up as false?
+00:51:06	Olivier Leroy:	"Integer”
+00:51:20	Diana Garcia Cortes:	typeof(...)
+00:51:36	Diana Garcia Cortes:	> typeof(...)
+Error: '...' used in an incorrect context
+> typeof(`...`)
+Error: '...' used in an incorrect context
+00:52:56	Olivier Leroy:	End
+```
+</details>

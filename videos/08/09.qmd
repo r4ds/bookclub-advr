@@ -1,0 +1,102 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/IcYVNhpoB3w >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:05:48	Jeffrey Stevens:	I"ve never understood tryCatch()
+00:09:29	Jo Hardin:	you are a great facilitator, Olivier!
+00:09:34	Olivier Leroy:	start
+00:09:41	Jeffrey Stevens:	Reacted to "you are a great faci..." with 💯
+00:10:09	Diana Garcia Cortes:	Reacted to "you are a great faci..." with 💯
+00:12:59	Leo:	Reacted to "you are a great faci..." with 🎉
+00:15:12	Howard Baek:	https://style.tidyverse.org/error-messages.html
+00:15:29	Olivier Leroy:	The stop function take … as arguments
+00:17:48	Olivier Leroy:	I had a “how now I understand why warning are staking moment reading that part”
+00:21:10	Diana Garcia Cortes:	https://statisticsglobe.com/errors-warnings-r
+00:29:42	Olivier Leroy:	I use message to return side effect like “where the file is downloaded” even if you can hide that in other pLACE
+00:31:52	Steffi LaZerte (she/her):	Sorry I'm late!
+00:32:18	Jeffrey Stevens:	Reacted to "Sorry I'm late!" with 👋
+00:32:28	Olivier Leroy:	Replying to "Sorry I'm late!"
+
+No worries welcome!
+00:32:30	Diana Garcia Cortes:	From the ComplexHeatmap package from Bioconductor:
+
+library(ComplexHeatmap)
+Loading required package: grid
+========================================
+ComplexHeatmap version 2.18.0
+Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/
+Github page: https://github.com/jokergoo/ComplexHeatmap
+Documentation: http://jokergoo.github.io/ComplexHeatmap-reference
+
+If you use it in published research, please cite either one:
+- Gu, Z. Complex Heatmap Visualization. iMeta 2022.
+- Gu, Z. Complex heatmaps reveal patterns and correlations in multidimensional 
+    genomic data. Bioinformatics 2016.
+
+
+The new InteractiveComplexHeatmap package can directly export static 
+complex heatmaps into an interactive Shiny app with zero effort. Have a try!
+
+This message can be suppressed by:
+  suppressPackageStartupMessages(library(ComplexHeatmap))
+========================================
+00:32:50	Olivier Leroy:	Reacted to "From the ComplexHeat..." with 👻
+00:33:08	Jeffrey Stevens:	Reacted to "From the ComplexHeat..." with 😱
+00:33:52	Olivier Leroy:	Reacted to "Sorry I'm late!" with 👋
+00:34:36	Olivier Leroy:	Just new line
+00:35:45	Olivier Leroy:	That is how you can create nice message in ComplexHeatmap 🙂
+00:35:59	Jeffrey Stevens:	What's the difference between cat() and print()?
+00:36:17	Steffi LaZerte (she/her):	Reacted to "No worries welcome!" with 😅
+00:37:08	Jeffrey Stevens:	print() is creating a vector?
+00:38:24	Diana Garcia Cortes:	Print receives an object  as an argument, cat has …
+00:38:37	Jeffrey Stevens:	OK, thanks
+00:38:56	Howard Baek:	https://stackoverflow.com/questions/31843662/what-is-the-difference-between-cat-and-print
+00:40:40	Diana Garcia Cortes:	I’ll start using message() instead of cat() to tell myself what I’m doing in my own code 😆
+00:41:11	Olivier Leroy:	Replying to "I’ll start using mes..."
+
+I am an huge print user also 😛
+00:41:28	Diana Garcia Cortes:	Reacted to "I am an huge print u..." with 😃
+00:41:30	Steffi LaZerte (she/her):	Message is much nicer to handle, I find. I use cat() if I'm print text that I need to copy/paste elsewhere
+00:41:36	Olivier Leroy:	Reacted to "I’ll start using mes..." with ✊
+00:42:26	Diana Garcia Cortes:	Reacted to "Message is much nice..." with 😮
+00:42:42	Steffi LaZerte (she/her):	Another difference between cat and print is that cat will 'print' the line breaks appropriately: 
+
+> print("hi\neveryone")
+[1] "hi\neveryone"
+> cat("hi\neveryone")
+hi
+everyone
+> 
+00:42:56	Olivier Leroy:	Reacted to "Another difference b..." with 👍
+00:44:53	Diana Garcia Cortes:	Reacted to "Another difference b..." with 👍
+00:46:10	Steffi LaZerte (she/her):	I've always used what they don't recommend here, using try() and checking the class for "try-error" rather than using tryCatch() because I could never understand how to use tryCatch() 😅  
+
+I'm looking forward to figuring this out!
+00:46:32	Jeffrey Stevens:	Reacted to "I've always used wha..." with 💯
+00:49:34	Olivier Leroy:	Add a print so we had to path to check 😛
+00:50:25	Steffi LaZerte (she/her):	Reacted to "Add a print so we ha..." with 🤣
+00:51:38	Jo Hardin:	i totally agree Olivier.  seems like it’s very hard to understand the `tryCatch()` flow.
+00:54:19	Jo Hardin:	it makes me think a little bit about the logic / flow of the arguments in `ifelse()` or `case_when()`.
+00:54:52	Diana Garcia Cortes:	rows <- tryCatch({
+  vroom(snakemake@params[["row_filter_file"]], delim = "\t") %>% 
+    clean_names() %>% pull(1)
+}, error = function(e) {
+  print("No row filter file found")
+  NULL
+  message(“No row filter file found")
+
+})
+01:03:04	Jeffrey Stevens:	I'm surprised the chapter didn't reference the {cli} package. Do you all use it?
+https://cli.r-lib.org/index.html
+01:03:54	Jeffrey Stevens:	Beautiful messaging
+01:04:20	Steffi LaZerte (she/her):	Reacted to "rows <- tryCatch({
+ ..." with 💯
+01:04:57	Olivier Leroy:	End
+```
+</details>

@@ -1,0 +1,176 @@
+---
+title: Cohort 9
+---
+
+{{< video https://www.youtube.com/embed/gwsc8fjMqXQ >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:10:23	Steffi LaZerte (she/her):	start
+00:16:13	Steffi LaZerte (she/her):	isTRUE(x) is a really specific test of whether something is TRUE
+00:17:49	Joel Liebert:	Thanks Steffi, I wasn't familiar with that function. From the docs: "isTRUE(x) is the same as { is.logical(x) && length(x) == 1 && !is.na(x) && x }"
+00:17:58	Steffi LaZerte (she/her):	Reacted to "Thanks Steffi, I was..." with 👍🏻
+00:19:11	Steffi LaZerte (she/her):	This was brand new to me! I had no idea that the implied FALSE was NULL.
+00:19:12	Derek Sollberger (he/him):	neat! … I hadn't heard that function called "paste oh" before
+00:19:43	Steffi LaZerte (she/her):	paste0() changed my life :🤣
+00:20:00	Gabby Palomo:	I have always had problems coming out in ways to use if else etc in my functions. I guess the best example is the function if the package is not installed then install it. But I was wondering if anyone else had examples on your blog or GitHub please share them with me here or on Slack. I feel like if I see examples then I will start to see how to use them in my own functions.
+00:20:25	Gabby Palomo:	paste0 for the win. But I want to start using glue too.
+00:20:34	Steffi LaZerte (she/her):	Reacted to "paste0 for the win. ..." with 👍🏻
+00:21:51	Derek Sollberger (he/him):	Replying to "I have always had pr..."
+
+as a teacher, I tend to use if_else() en route to teaching about dummy variables (one-hot encoding)
+
+new_col = if_else(chr_vec == "this label", 1, 0)
+00:22:18	tataphani:	Are there any difference between paste and glue we can discuss later
+00:22:19	Gabby Palomo:	Reacted to "as a teacher, I tend..." with 💯
+00:22:40	tataphani:	sure
+00:23:33	Steffi LaZerte (she/her):	Replying to "I have always had pr..."
+
+I use it a lot when evaluating different arguments in a function. So if the function could have an argument of blue or green, I'll use an ifelse() to deal with the switch. Or if the argument is something like "total" vs. "summary", I'll use if() {} else {} to do different calculations based on that argument. Is this the kind of example you were thinking about?
+00:24:29	Steffi LaZerte (she/her):	If anyone uses chunk options in Quarto/Rmarkdown, I always make the mistake of forgetting that in THOSE cases it really is 'true' and not TRUE :)
+00:24:36	Gabby Palomo:	Replying to "I have always had pr..."
+
+I totally see the total and summary!! You are right, perfect example to use if else etc. I see this. YEs this is what I'm looking for.
+00:24:59	Gabby Palomo:	Replying to "If anyone uses chunk..."
+
+yeah in the yaml too
+00:25:00	Derek Sollberger (he/him):	Reacted to "I use it a lot when ..." with 😻
+00:25:08	Steffi LaZerte (she/her):	Reacted to "I totally see the to..." with 👍🏻
+00:25:25	Steffi LaZerte (she/her):	Reacted to "yeah in the yaml too" with 💯
+00:27:14	Leo:	our conclusion from the first 2 sections is that "if (anytext)" will always return FALSE?
+00:30:03	Steffi LaZerte (she/her):	I'm glad you brought this up! I totally missed the idea of cascading 'true' to TRUE, yikes!
+00:30:29	tataphani:	Replying to "our conclusion from ..."
+
+is it true for other
+00:30:37	tataphani:	Replying to "our conclusion from ..."
+
+like FALSE
+00:30:42	tataphani:	Replying to "our conclusion from ..."
+
+or NA
+00:31:03	tataphani:	Replying to "our conclusion from ..."
+
+or something
+00:35:14	tataphani:	Replying to "our conclusion from ..."
+
+it is like CASE and WHEN in SAS
+00:35:36	tataphani:	Replying to "our conclusion from ..."
+
+?
+00:38:00	Steffi LaZerte (she/her):	I think you can quote or not the switch labels (like a named vector or list)
+00:39:05	tataphani:	Replying to "our conclusion from ..."
+
+never mind
+00:41:15	Steffi LaZerte (she/her):	dplyr::case_match() is another option, more similar to base switch() (but I can't say I'm very comfortable using it!)
+00:43:47	Gabby Palomo:	Reacted to "dplyr::case_match() ..." with 🤯
+00:46:44	Gabby Palomo:	That explained it perfectly Steffi!!
+00:47:26	Gabby Palomo:	I don't want to rush things because I love these discussions but it's 40 min after the hour.
+00:48:30	Leo:	the .default argument is used to set what NA would return?
+00:49:13	Steffi LaZerte (she/her):	It would return the value if none of the other options matched
+00:49:33	tataphani:	soory
+00:49:54	Steffi LaZerte (she/her):	I'm just as bad 😁  Just means it's a good discussion!
+00:50:37	Diana Garcia Cortes:	Small example in the iris dataset: 
+as_tibble(iris) %>% 
+  janitor::clean_names() %>%
+  mutate(
+    is_setosa = case_match(species, "setosa" ~ "yes", .default = "no"),
+    big_sepal = case_when(sepal_length > 5  & sepal_width > 3 ~ "big", .default = "small")
+  )
+00:50:55	Steffi LaZerte (she/her):	Reacted to "Small example in the..." with 💯
+00:50:57	Gabby Palomo:	Oh I love them too!! Don't get me wrong, but maybe we can save some of them and review them all at the end once we've gone over the chapter.
+00:51:01	Derek Sollberger (he/him):	Reacted to "Small example in the..." with 👍
+00:51:09	Steffi LaZerte (she/her):	Reacted to "Oh I love them too!!..." with 👍🏻
+00:51:23	Gabby Palomo:	Reacted to "Small example in the..." with 💯
+00:52:10	tataphani:	Reacted to "Small example in the..." with 👍
+00:52:17	Gabby Palomo:	I love using i j k it makes me feel like a mathematician LOL
+00:52:24	Gabby Palomo:	Don't take them from me!!!
+00:52:36	Diana Garcia Cortes:	Reacted to "I love using i j k i..." with ❤️
+00:52:41	Steffi LaZerte (she/her):	Reacted to "Don't take them from..." with 🤣
+00:56:18	Gabby Palomo:	seq_along is similar to using length(vector) ?
+00:56:40	Steffi LaZerte (she/her):	And safer
+00:56:57	Gabby Palomo:	switching to seq_along() from now on
+00:57:00	Leo:	is it correct that for loop can pretty much be replaced by ifelse statement? and usually ifelse would be faster?
+00:57:07	Steffi LaZerte (she/her):	I always get it mixed up with seq_len() though
+00:57:39	Steffi LaZerte (she/her):	Replying to "is it correct that f..."
+
+Not quite. A For loop is more about repitition rather than choices
+00:57:41	Gabby Palomo:	Oh no... what? So what's the difference?
+01:00:22	Steffi LaZerte (she/her):	Replying to "is it correct that f..."
+
+So a for loop repeats a set of code over and over, but a if/else does code 1 if true and code 2 if false, but only once
+01:00:26	Diana Garcia Cortes:	seq_len(iris) -> error
+01:00:35	Diana Garcia Cortes:	seq_along(iris)
+[1] 1 2 3 4 5 6 7
+01:00:36	Gabby Palomo:	YES MAP AND APPLY!!
+01:00:37	Steffi LaZerte (she/her):	Reacted to "seq_len(iris) -> err..." with 😞
+01:00:40	Gabby Palomo:	I was gonna ask that
+01:00:57	Diana Garcia Cortes:	Reacted to "          YES MAP AN..." with 👍
+01:00:58	Steffi LaZerte (she/her):	Replying to "seq_along(iris)
+[1] ..."
+
+seq_len(nrow(iris))
+01:01:10	Steffi LaZerte (she/her):	Replying to "seq_along(iris)
+[1] ..."
+
+> seq_len(nrow(iris))
+[1] 1 2 3 4 5 6 7 8 ....
+01:01:24	Joel Liebert:	repeat() seems similar to  `while(true)` 
+
+x <- 1
+repeat {
+  print(x)
+  x = x+1
+  if (x == 6){
+    break
+  }
+}
+01:02:19	Leo:	Replying to "is it correct that f..."
+
+thank you
+01:02:54	Derek Sollberger (he/him):	When _apply was faster than loops, it was maybe back when loops created new value spaces at each iteration? (referring back to chapter 2)
+01:04:10	Steffi LaZerte (she/her):	Replying to "When _apply was fast..."
+
+Yes! I was wondering about that too! I had also heard that for loops used to be less efficient but that had changed.
+01:04:21	Gabby Palomo:	Reacted to "When _apply was fast..." with 💯
+01:05:41	Gabby Palomo:	Loved that Diana thanks!!
+01:06:09	Gabby Palomo:	Readable code. I love that reason.
+01:07:26	Gabby Palomo:	My cognitive load or the computers?
+01:07:33	Diana Garcia Cortes:	Sorry, the phrase I was looking for was: avoid side effects.
+01:07:40	Diana Garcia Cortes:	https://medium.com/@alonr110/elevate-your-code-best-practices-for-function-writing-16d96481c0c7
+01:07:44	Gabby Palomo:	Reacted to "Sorry, the phrase I ..." with 🤯
+01:07:49	tataphani:	was that the Idea of DPLYR
+01:07:50	Gabby Palomo:	Reacted to "https://medium.com/@..." with 💯
+01:08:05	Steffi LaZerte (she/her):	One thing that is nice about for loops is that you can 'jump' in at any time to test things out. But if you learn the browser() function to put that in your map functions, that gives you the same power :D
+01:08:29	Gabby Palomo:	Replying to "One thing that is ni..."
+
+teach me your esoteric ways!!!!
+01:08:31	Steffi LaZerte (she/her):	Replying to "My cognitive load or..."
+
+I think yours :D
+01:08:47	Steffi LaZerte (she/her):	end
+01:08:56	Derek Sollberger (he/him):	Reacted to "One thing that is ni..." with 🧐
+01:09:34	Gabby Palomo:	Reacted to "One thing that is ni..." with 🧐
+01:10:22	Steffi LaZerte (she/her):	Replying to "One thing that is ni..."
+
+We'll get to it! https://adv-r.hadley.nz/debugging.html#browser
+01:10:36	Steffi LaZerte (she/her):	Replying to "One thing that is ni..."
+
+Another function that changed my life :)
+01:11:32	Gabby Palomo:	Replying to "One thing that is ni..."
+
+I am an old Padawan I have much to learn
+01:11:50	Gabby Palomo:	Reacted to "We'll get to it! htt..." with 💯
+01:12:12	Steffi LaZerte (she/her):	Replying to "One thing that is ni..."
+
+It never stops!
+01:12:20	Gabby Palomo:	Reacted to "It never stops!" with ❤️
+01:12:23	Derek Sollberger (he/him):	Thank you for this great example of `glue`
+01:12:35	Gabby Palomo:	Reacted to "Thank you for this g..." with 💯
+01:12:37	Diana Garcia Cortes:	Ok like python f-strings
+01:13:27	Diana Garcia Cortes:	Thanks! I didn’t know the glue package
+01:14:23	Leo:	many thanks
+01:15:54	tataphani:	thanks
+```
+</details>
