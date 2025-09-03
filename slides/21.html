@@ -110,6 +110,7 @@
     }
     .reveal .slide:not(.center) {
       height: 100%;
+      overflow-y: auto;
     }
     .reveal .slide.scrollable {
       overflow-y: auto;
@@ -307,7 +308,7 @@ Session Info
 </div>
 </details>
 </section>
-<section id="case-study-mcq" class="slide level2">
+<section id="case-study-mcq" class="slide level2 scrollable">
 <h2>Case Study: MCQ</h2>
 <p>We are going to use R code to generate HTML or LaTeX to produce multiple-choice questions such as</p>
 <h3 id="pop-quiz">Pop Quiz!</h3>
@@ -331,7 +332,7 @@ Session Info
 <li>Will we have to quote inputs from the user (math teacher)?</li>
 </ul>
 </section>
-<section id="html" class="slide level2">
+<section id="html" class="slide level2 scrollable">
 <h2>HTML</h2>
 <p>We are trying to produce</p>
 <pre><code>&lt;body&gt;
@@ -651,7 +652,7 @@ Venn Diagram
 </div>
 </div>
 </section>
-<section id="bringing-the-html-together" class="slide level2">
+<section id="bringing-the-html-together" class="slide level2 scrollable">
 <h2>Bringing the HTML Together</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>with_html <span class="ot">&lt;-</span> <span class="cf">function</span>(code) {</span>

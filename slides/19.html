@@ -110,6 +110,7 @@
     }
     .reveal .slide:not(.center) {
       height: 100%;
+      overflow-y: auto;
     }
     .reveal .slide.scrollable {
       overflow-y: auto;
@@ -210,7 +211,7 @@
 <span id="cb1-2"><a></a><span class="fu">library</span>(purrr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="introduction" class="slide level2">
+<section id="introduction" class="slide level2 scrollable">
 <h2>Introduction</h2>
 <p>Three pillars of <em>tidy</em> evaluation</p>
 <ol type="1">
@@ -291,7 +292,7 @@
 </div>
 </div>
 </section>
-<section id="quoting" class="slide level2">
+<section id="quoting" class="slide level2 scrollable">
 <h2>Quoting</h2>
 <p><strong>Capture expressions without evaluating them</strong></p>
 <div class="cell">
@@ -930,7 +931,7 @@
 <span id="cb33-5"><a></a><span class="co">#&gt; sd(a + b + c/d)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="non-quoting" class="slide level2">
+<section id="non-quoting" class="slide level2 scrollable">
 <h2>Non-quoting</h2>
 <p>Only <code>bquote()</code> provides a limited form of quasiquotation.</p>
 <p>The rest of base selectively uses or does not use quoting (rather than unquoting).</p>

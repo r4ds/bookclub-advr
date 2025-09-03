@@ -110,6 +110,7 @@
     }
     .reveal .slide:not(.center) {
       height: 100%;
+      overflow-y: auto;
     }
     .reveal .slide.scrollable {
       overflow-y: auto;
@@ -230,7 +231,7 @@
 </div>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">obj_addr</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226bfbc968"</code></pre>
+<pre><code>#&gt; [1] "0x1624dfae968"</code></pre>
 </div>
 </div>
 </section>
@@ -240,11 +241,11 @@
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>b <span class="ot">&lt;-</span> a</span>
 <span id="cb6-2"><a></a><span class="fu">obj_addr</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226bfbc968"</code></pre>
+<pre><code>#&gt; [1] "0x1624dfae968"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">obj_addr</span>(b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226bfbc968"</code></pre>
+<pre><code>#&gt; [1] "0x1624dfae968"</code></pre>
 </div>
 </div>
 </section>
@@ -254,11 +255,11 @@
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>b[[<span class="dv">1</span>]] <span class="ot">&lt;-</span> <span class="dv">5</span></span>
 <span id="cb10-2"><a></a><span class="fu">obj_addr</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226bfbc968"</code></pre>
+<pre><code>#&gt; [1] "0x1624dfae968"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">obj_addr</span>(b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226fda7278"</code></pre>
+<pre><code>#&gt; [1] "0x16249d8f228"</code></pre>
 </div>
 </div>
 </section>
@@ -271,15 +272,15 @@
 <span id="cb14-4"><a></a></span>
 <span id="cb14-5"><a></a><span class="fu">obj_addr</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x22271c9e7b0"</code></pre>
+<pre><code>#&gt; [1] "0x1624bd3f5e8"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">obj_addr</span>(b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x22271c9e7b0"</code></pre>
+<pre><code>#&gt; [1] "0x1624bd3f5e8"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">obj_addr</span>(c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x22271d77708"</code></pre>
+<pre><code>#&gt; [1] "0x1624bd7a540"</code></pre>
 </div>
 </div>
 </section>
@@ -288,15 +289,15 @@
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">obj_addr</span>(mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226f891738"</code></pre>
+<pre><code>#&gt; [1] "0x162498c1738"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">obj_addr</span>(base<span class="sc">::</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226f891738"</code></pre>
+<pre><code>#&gt; [1] "0x162498c1738"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">obj_addr</span>(<span class="fu">get</span>(<span class="st">"mean"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226f891738"</code></pre>
+<pre><code>#&gt; [1] "0x162498c1738"</code></pre>
 </div>
 </div>
 </section>
@@ -306,17 +307,17 @@
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>d <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
 <span id="cb26-2"><a></a><span class="fu">obj_addr</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226b7489d8"</code></pre>
+<pre><code>#&gt; [1] "0x1624d749900"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>e <span class="ot">&lt;-</span> d</span>
 <span id="cb28-2"><a></a>e[[<span class="st">'a'</span>]] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
 <span id="cb28-3"><a></a><span class="fu">obj_addr</span>(e)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226b7489d8"</code></pre>
+<pre><code>#&gt; [1] "0x1624d749900"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">obj_addr</span>(d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226b7489d8"</code></pre>
+<pre><code>#&gt; [1] "0x1624d749900"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>d[[<span class="st">'a'</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -364,11 +365,11 @@
 <span id="cb36-7"><a></a></span>
 <span id="cb36-8"><a></a><span class="fu">obj_addr</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226bdb8738"</code></pre>
+<pre><code>#&gt; [1] "0x1624dda26e8"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="fu">obj_addr</span>(z) <span class="co"># No address change </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226bdb8738"</code></pre>
+<pre><code>#&gt; [1] "0x1624dda26e8"</code></pre>
 </div>
 </div>
 </div><div class="column">
@@ -400,21 +401,21 @@
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>l1 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
 <span id="cb40-2"><a></a><span class="fu">obj_addr</span>(l1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x2226c315db8"</code></pre>
+<pre><code>#&gt; [1] "0x1624e315d68"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>l2 <span class="ot">&lt;-</span> l1</span>
 <span id="cb42-2"><a></a>l2[[<span class="dv">3</span>]] <span class="ot">&lt;-</span> <span class="dv">4</span></span>
 <span id="cb42-3"><a></a><span class="fu">ref</span>(l1, l2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x2226c315db8] &lt;list&gt; 
-#&gt; ├─[2:0x2226c730078] &lt;dbl&gt; 
-#&gt; ├─[3:0x2226c75cdc8] &lt;dbl&gt; 
-#&gt; └─[4:0x2226c75cc08] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x1624e315d68] &lt;list&gt; 
+#&gt; ├─[2:0x1624e77ebd0] &lt;dbl&gt; 
+#&gt; ├─[3:0x1624e77ea10] &lt;dbl&gt; 
+#&gt; └─[4:0x1624e77e850] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [5:0x2226c36cd68] &lt;list&gt; 
-#&gt; ├─[2:0x2226c730078] 
-#&gt; ├─[3:0x2226c75cdc8] 
-#&gt; └─[6:0x2226c75b318] &lt;dbl&gt;</code></pre>
+#&gt; █ [5:0x1624e34ed18] &lt;list&gt; 
+#&gt; ├─[2:0x1624e77ebd0] 
+#&gt; ├─[3:0x1624e77ea10] 
+#&gt; └─[6:0x1624e754e70] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 </div><div class="column">
@@ -429,13 +430,13 @@
 <span id="cb44-3"><a></a>d2[, <span class="dv">2</span>] <span class="ot">&lt;-</span> d2[, <span class="dv">2</span>] <span class="sc">*</span> <span class="dv">2</span></span>
 <span id="cb44-4"><a></a><span class="fu">ref</span>(d1, d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x2226cca93c8] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x22272216148] &lt;dbl&gt; 
-#&gt; └─y = [3:0x222722160f8] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x1624ec8d348] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x1624f230148] &lt;dbl&gt; 
+#&gt; └─y = [3:0x1624f2300f8] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [4:0x2226ce0cf48] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x22272216148] 
-#&gt; └─y = [5:0x222727b0c38] &lt;dbl&gt;</code></pre>
+#&gt; █ [4:0x1624ee2aec8] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x1624f230148] 
+#&gt; └─y = [5:0x1624f7aab98] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 </section>
@@ -447,13 +448,13 @@
 <span id="cb46-3"><a></a>d2[<span class="dv">1</span>, ] <span class="ot">&lt;-</span> d2[<span class="dv">1</span>, ] <span class="sc">*</span> <span class="dv">2</span></span>
 <span id="cb46-4"><a></a><span class="fu">ref</span>(d1, d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x22272912588] &lt;df[,2]&gt; 
-#&gt; ├─x = [2:0x222730bd408] &lt;dbl&gt; 
-#&gt; └─y = [3:0x222730bd3b8] &lt;dbl&gt; 
+<pre><code>#&gt; █ [1:0x1624f91a508] &lt;df[,2]&gt; 
+#&gt; ├─x = [2:0x16250095318] &lt;dbl&gt; 
+#&gt; └─y = [3:0x162500952c8] &lt;dbl&gt; 
 #&gt;  
-#&gt; █ [4:0x22272b0e548] &lt;df[,2]&gt; 
-#&gt; ├─x = [5:0x222731501d8] &lt;dbl&gt; 
-#&gt; └─y = [6:0x22273150188] &lt;dbl&gt;</code></pre>
+#&gt; █ [4:0x1624fb324c8] &lt;df[,2]&gt; 
+#&gt; ├─x = [5:0x162501700e8] &lt;dbl&gt; 
+#&gt; └─y = [6:0x16250170098] &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <aside class="notes">
@@ -480,26 +481,26 @@
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span></span>
 <span id="cb48-2"><a></a><span class="fu">ref</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1:0x22272f78460] &lt;int&gt;</code></pre>
+<pre><code>#&gt; [1:0x1624ff60cb0] &lt;int&gt;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a>y <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span></span>
 <span id="cb50-2"><a></a><span class="fu">ref</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1:0x222730899d8] &lt;int&gt;</code></pre>
+<pre><code>#&gt; [1:0x162500b4318] &lt;int&gt;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"a"</span>, <span class="st">"b"</span>)</span>
 <span id="cb52-2"><a></a><span class="fu">ref</span>(x, <span class="at">character =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x2227394f1d8] &lt;chr&gt; 
-#&gt; ├─[2:0x22267d9b118] &lt;string: "a"&gt; 
-#&gt; ├─[2:0x22267d9b118] 
-#&gt; └─[3:0x2226e17f3b8] &lt;string: "b"&gt;</code></pre>
+<pre><code>#&gt; █ [1:0x1625089a188] &lt;chr&gt; 
+#&gt; ├─[2:0x16241da3118] &lt;string: "a"&gt; 
+#&gt; ├─[2:0x16241da3118] 
+#&gt; └─[3:0x1624818b3b8] &lt;string: "b"&gt;</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>)</span>
 <span id="cb54-2"><a></a><span class="fu">ref</span>(y, <span class="at">character =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █ [1:0x2227397fce8] &lt;chr&gt; 
-#&gt; └─[2:0x22267d9b118] &lt;string: "a"&gt;</code></pre>
+<pre><code>#&gt; █ [1:0x16250892930] &lt;chr&gt; 
+#&gt; └─[2:0x16241da3118] &lt;string: "a"&gt;</code></pre>
 </div>
 </div>
 </div><div class="column">
@@ -528,7 +529,7 @@
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a>banana <span class="ot">&lt;-</span> <span class="st">"bananas bananas bananas"</span></span>
 <span id="cb56-2"><a></a><span class="fu">obj_addr</span>(banana)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "0x22271bc25b8"</code></pre>
+<pre><code>#&gt; [1] "0x1624bb90318"</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="fu">obj_size</span>(banana)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -571,8 +572,8 @@
 <pre><code>#&gt; # A tibble: 2 × 3
 #&gt;        min   median mem_alloc
 #&gt;   &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
-#&gt; 1   52.7µs   66.6µs     491KB
-#&gt; 2   22.8µs   33.7µs     391KB</code></pre>
+#&gt; 1   52.7µs   71.2µs     491KB
+#&gt; 2   16.8µs   35.1µs     391KB</code></pre>
 </div>
 </div>
 <aside class="notes">
@@ -600,8 +601,8 @@
 <span id="cb66-4"><a></a><span class="fu">gc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;           used (Mb) gc trigger (Mb) max used (Mb)
-#&gt; Ncells  791104 42.3    1505464 80.5  1505464 80.5
-#&gt; Vcells 1497631 11.5    8388608 64.0  8388482 64.0</code></pre>
+#&gt; Ncells  791094 42.3    1505455 80.4  1505455 80.4
+#&gt; Vcells 1497588 11.5    8388608 64.0  8388528 64.0</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a>lobstr<span class="sc">::</span><span class="fu">mem_used</span>() <span class="co"># Wrapper around gc()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
