@@ -5,6 +5,7 @@ format:
     link-external-newwindow: true
     transition: slide
     incremental: false
+    scrollable: true
 execute:
   eval: true
   echo: true

@@ -110,9 +110,9 @@ untracemem(y)
 
 ## A function's environment follows copy-on-modify rules
 
-:::: {.columns}
+:::: columns
 
-::: {.column}
+::: column
 ```{r}
 f <- function(a) {
   a
@@ -126,7 +126,7 @@ obj_addr(z) # No address change
 ```
 :::
 
-::: {.column}
+::: column
 ![](images/02-trace.png)
 :::
 
@@ -141,9 +141,9 @@ obj_addr(z) # No address change
 
 ## `ref()` shows the memory address of a list and its *elements*
 
-:::: {.columns}
+:::: columns
 
-::: {.column}
+::: column
 ```{r}
 l1 <- list(1, 2, 3)
 obj_addr(l1)
@@ -153,7 +153,7 @@ ref(l1, l2)
 ```
 :::
 
-::: {.column}
+::: column
 ![](images/02-l-modify-2.png){width=50%}
 :::
 
@@ -183,9 +183,9 @@ ref(d1, d2)
 
 ## Characters are unique due to the global string pool
 
-:::: {.columns}
+:::: columns
 
-::: {.column}
+::: column
 ```{r}
 x <- 1:4
 ref(x)
@@ -198,7 +198,7 @@ ref(y, character = TRUE)
 ```
 :::
 
-::: {.column}
+::: column
 ![](images/02-character-2.png)
 :::
 
