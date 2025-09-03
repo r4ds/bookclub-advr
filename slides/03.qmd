@@ -103,7 +103,7 @@ Closely related but not technically a vector:
 
 ## Types of Atomic Vectors (1/2)
 
-![Image Credit: Advanced R](images/vectors/summary-tree-atomic.png){height=70%} 
+![Image Credit: Advanced R](images/vectors/summary-tree-atomic.png){width=50%} 
 
 ## Types of Atomic Vectors (2/2)
 
@@ -159,7 +159,7 @@ Strings can use single or double quotes and special characters are escaped with 
 str1 <- "hello" # double quotes
 str2 <- 'hello' # single quotes
 str3 <- "مرحبًا" # Unicode
-str4 <- "\U0001f605" # sweaty_smile
+str4 <- "\U0001f605" # sweaty_smile 😅
 ```
 
 ## Longer 1/2
@@ -184,31 +184,6 @@ chr_var <- c("these are", "some strings")
 ```{r long_vec}
 c(c(1, 2), c(3, 4)) # output is not nested
 ```
-
-## Rlang version
-
-<details>
-<summary>Side Quest: rlang</summary>
-
-`{rlang}` has [vector constructor functions too](https://rlang.r-lib.org/reference/vector-construction.html):
-
--   `rlang::lgl(...)`
--   `rlang::int(...)`
--   `rlang::dbl(...)`
--   `rlang::chr(...)`
-
-They look to do both more and less than `c()`.
-
--   More:
-    -   Enforce type
-    -   Splice lists
-    -   More types: `rlang::bytes()`, `rlang::cpl(...)`
--   Less:
-    -   Stricter rules on names
-
-Note: currently has `questioning` lifecycle badge, since these constructors may get moved to `vctrs`
-
-</details>
 
 ## Type and Length
 
@@ -260,8 +235,9 @@ type_length_df |>
   )
 ```
 
+## Side Quest: Penguins
+
 <details>
-<summary>Side Quest: Penguins</summary>
 ```{r}
 typeof(penguins$species)
 class(penguins$species)
@@ -320,8 +296,6 @@ is.na(x)
 ## Missing Values: NA Types 
 
 <details>
-<summary>Side Quest: NA Types</summary>
-
 Each type has its own NA type
 
 -   Logical: `NA`
@@ -331,7 +305,7 @@ Each type has its own NA type
 
 This may not matter in many contexts.
 
-But this does matter for operations where types matter like `dplyr::if_else()`.
+Can matter for operations where types matter like `dplyr::if_else()`.
 </details>
 
 
@@ -359,10 +333,10 @@ Don't test objects with these tools:
 
 They don’t test if you have a vector, atomic vector, or numeric vector; you’ll need to carefully read the documentation to figure out what they actually do (preview: *attributes*)
 
-<details>
-<summary>Side Quest: rlang</summary>
+## Side Quest: rlang `is_*()`
 
-Instead, maybe, use `{rlang}`
+<details>
+<summary>Maybe use `{rlang}`?</summary>
 
 -   `rlang::is_vector`
 -   `rlang::is_atomic`
@@ -534,19 +508,17 @@ The presence of missing values shouldn’t affect the type of an object. Recall 
 5. Precisely what do `is.atomic()`, `is.numeric()`, and `is.vector()` test for?
 
 <details><summary>Answer(s)</summary>
-The documentation states that:
 
-* `is.atomic()` tests if an object is an atomic vector (as defined in *Advanced R*) or is `NULL` (!).
+* `is.atomic()` tests if an object is an atomic vector or is `NULL` (!). Atomic vectors are objects of type logical, integer, double, complex, character or raw.
 * `is.numeric()` tests if an object has type integer or double and is not of class `factor`, `Date`, `POSIXt` or `difftime`.
-* `is.vector()` tests if an object is a vector (as defined in *Advanced R*) or an expression and has no attributes, apart from names.
-
-Atomic vectors are defined in *Advanced R* as objects of type logical, integer, double, complex, character or raw. Vectors are defined as atomic vectors or lists.
+* `is.vector()` tests if an object is a vector or an expression and has no attributes, apart from names. Vectors are atomic vectors or lists.
+ 
 </details>
 
 
 ## Attributes
 
-Attributes are name-value pairs that attach metadata to an object(vector).
+Attributes are name-value pairs that attach metadata to an object (vector).
 
 * **Name-value pairs**: attributes have a name and a value
 * **Metadata**: not data itself, but data about the data
@@ -576,49 +548,32 @@ attr(a, "attribute_name")
 
 ## Multiple attributes
 
-To set multiple attributes, use `structure()` To get multiple attributes, use `attributes()`
+`structure()`: set multiple attributes, `attributes()`: get multiple attributes
 
-```{r attr_multiple_not_from_textbook, echo = FALSE}
-# b <- c(4, 5, 6)
-# 
-# # set
-# b <- structure(
-#   .Data = b,
-#   attrib1_name = "first_attribute",
-#   attrib2_name = "second_attribute"
-# )
-# 
-# # get
-# attributes(b)
-# str(attributes(b))
-```
-
-
-```{r attr_multiple, eval = FALSE}
+:::: columns
+::: column
+```{r attr_multiple}
 a <- 1:3
 attr(a, "x") <- "abcdef"
 attr(a, "x")
-#> [1] "abcdef"
 
 attr(a, "y") <- 4:6
 str(attributes(a))
-#> List of 2
-#>  $ x: chr "abcdef"
-#>  $ y: int [1:3] 4 5 6
 
-# Or equivalently
-a <- structure(
+b <- structure(
   1:3, 
   x = "abcdef",
   y = 4:6
 )
-str(attributes(a))
-#> List of 2
-#>  $ x: chr "abcdef"
-#>  $ y: int [1:3] 4 5 6
+identical(a, b)
 ```
+:::
 
+::: column
 ![Image Credit: Advanced R](images/vectors/attr.png) 
+:::
+::::
+
 
 ## Why
 
@@ -634,23 +589,22 @@ Most attributes are lost by most operations.  Only two attributes are routinely 
 
 ~~Three~~ Four ways to name:
 
-:::: {.columns}
+:::: columns
 
 ::: {.column width="50%"}
 ```{r names}
-# (1) When creating it: 
+# (1) On creation: 
 x <- c(A = 1, B = 2, C = 3)
 x
 
-# (2) By assigning a character vector to names()
+# (2) Assign to names():
 y <- 1:3
 names(y) <- c("a", "b", "c")
 y
 
-# (3) Inline, with setNames():
+# (3) Inline:
 z <- setNames(1:3, c("a", "b", "c"))
 z
-
 ```
 :::
 
@@ -662,18 +616,17 @@ z
 
 ## rlang Names
 
-:::: {.columns}
+:::: columns
 
 ::: {.column width="50%"}
 
 ```{r names_via_rlang}
-# (4) By setting names--with {rlang}
+# (4) Inline with {rlang}:
 a <- 1:3
 rlang::set_names(
-  x = a,
-  nm = c("a", "b", "c")
+  a,
+  c("a", "b", "c")
 )
-
 ```
 
 :::
@@ -687,30 +640,33 @@ rlang::set_names(
 
 ## Removing names
 
-
-* You can remove names from a vector by using `x <- unname(x)` or `names(x) <- NULL`.
+* `x <- unname(x)` or `names(x) <- NULL`
 * Thematically but not directly related: labelled class vectors with `haven::labelled()`
 
 
-## Dimensions
-
-Create matrices and arrays with `matrix()` and `array()`, or by using the assignment form of `dim()`:
+## Dimensions: `matrix()` and `array()`
 
 ```{r dimensions}
 # Two scalar arguments specify row and column sizes
 x <- matrix(1:6, nrow = 2, ncol = 3)
 x
 # One vector argument to describe all dimensions
-y <- array(1:24, c(2, 3, 4)) # rows, columns, no of arrays
+y <- array(1:12, c(2, 3, 2)) # rows, columns, no of arrays
 y
+```
+
+## Dimensions: assign to `dim()`
+
+```{r dimensions2}
 # You can also modify an object in place by setting dim()
 z <- 1:6
 dim(z) <- c(2, 3) # rows, columns
 z
-a <- 1:24
-dim(a) <- c(2, 3, 4) # rows, columns, no of arrays
+a <- 1:12
+dim(a) <- c(2, 3, 2) # rows, columns, no of arrays
 a
 ```
+
 
 ## Functions for working with vectors, matrices and arrays (1/2):
 
@@ -722,7 +678,7 @@ Vector | Matrix	| Array
 — | `t()` | `aperm()`
 `is.null(dim(x))` | `is.matrix()` | `is.array()`
 
-* **Caution**: A vector without a `dim` attribute set is often thought of as 1-dimensional, but actually has `NULL` dimensions.
+* **Caution**: Vector without `dim` set has `NULL` dimensions, not `1`.
 * One dimension?
 
 ## Functions for working with vectors, matrices and arrays (2/2):
@@ -741,10 +697,9 @@ str(array(1:3, 3))         # "array" vector
 
 ## Exercises 1/4
 
-1. How is `setNames()` implemented? How is `unname()` implemented? Read the source code.
+1. How is `setNames()` implemented? Read the source code.
 
 <details><summary>Answer(s)</summary>
-`setNames()` is implemented as:
 
 ```{r, eval = FALSE}
 setNames <- function(object = nm, nm) {
@@ -753,15 +708,21 @@ setNames <- function(object = nm, nm) {
 }
 ```
 
-Because the data argument comes first, `setNames()` also works well with the magrittr-pipe operator. When no first argument is given, the result is a named vector (this is rather untypical as required arguments usually come first):
+- Data arg 1st = works well with pipe.
+- 1st arg is optional
 
 ```{r, eval = FALSE}
 setNames( , c("a", "b", "c"))
 #>   a   b   c 
 #> "a" "b" "c"
 ```
+</details>
 
-`unname()` is implemented in the following way:
+## Exercises 1/4 (cont)
+
+1. How is `unname()` implemented? Read the source code.
+
+<details><summary>Answer(s)</summary>
 
 ```{r, eval = FALSE}
 unname <- function(obj, force = FALSE) {
@@ -772,8 +733,7 @@ unname <- function(obj, force = FALSE) {
   obj
 }
 ```
-
-`unname()` removes existing names (or dimnames) by setting them to `NULL`.
+`unname()` sets existing `names` or `dimnames` to `NULL`.
 </details>
 
 ## Exercises 2/4
@@ -782,20 +742,16 @@ unname <- function(obj, force = FALSE) {
 
 <details><summary>Answer(s)</summary>
 
-> dim() will return NULL when applied to a 1d vector.
+> `dim()` returns `NULL` when applied to a 1d vector.
 
-One may want to use `NROW()` or `NCOL()` to handle atomic vectors, lists and NULL values in the same way as one column matrices or data frames. For these objects `nrow()` and `ncol()` return NULL:
+`NROW()` and `NCOL()` treats `NULL` and vectors like they have dimensions:
 
 ```{r, eval = FALSE}
 x <- 1:10
-
-# Return NULL
 nrow(x)
 #> NULL
 ncol(x)
 #> NULL
-
-# Pretend it's a column vector
 NROW(x)
 #> [1] 10
 NCOL(x)
@@ -831,18 +787,21 @@ structure(1:5, comment = "my attribute")
 #> [1] 1 2 3 4 5
 ```
 
-But when you print that object you don’t see the comment attribute. Why? Is the attribute missing, or is there something else special about it?
+Why don't you see the comment attribute on print? Is the attribute missing, or is there something else special about it?
 
 <details><summary>Answer(s)</summary>
 The documentation states (see `?comment`):
 
 > Contrary to other attributes, the comment is not printed (by print or print.default).
 
+## Exercises 4/4 (cont)
+
+<details><summary>Answer(s)</summary>
 Also, from `?attributes:`
 
 > Note that some attributes (namely class, comment, dim, dimnames, names, row.names and tsp) are treated specially and have restrictions on the values which can be set.
 
-We can retrieve comment attributes by calling them explicitly:
+Retrieve comment attributes with `attr()`:
 
 ```{r, eval = FALSE}
 foo <- structure(1:5, comment = "my attribute")
@@ -892,27 +851,30 @@ Factors are integer vectors with:
 
 ```{r factor}
 colors = c('red', 'blue', 'green','red','red', 'green')
-# Build a factor
-a_factor <- factor(
-  # values
-  x = colors,
-  # exhaustive list of values
-  levels = c('red', 'blue', 'green', 'yellow')
+colors_factor <- factor(
+  x = colors, levels = c('red', 'blue', 'green', 'yellow')
 )
 ```
 
+:::: columns
+
+::: column
+
 ```{r factor_table}
-# Useful when some possible values are not present in the data
 table(colors)
-table(a_factor)
-
-# - type
-typeof(a_factor)
-class(a_factor)
-
-# - attributes
-attributes(a_factor)
+table(colors_factor)
 ```
+:::
+
+::: column
+```{r factor_type}
+typeof(colors_factor)
+class(colors_factor)
+
+attributes(colors_factor)
+```
+:::
+::::
 
 ## Custom Order
 
@@ -921,15 +883,10 @@ Factors can be ordered. This can be useful for models or visualizations where or
 ```{r factor_ordered}
 
 values <- c('high', 'med', 'low', 'med', 'high', 'low', 'med', 'high')
-
 ordered_factor <- ordered(
-  # values
   x = values,
-  # levels in ascending order
-  levels = c('low', 'med', 'high')
+  levels = c('low', 'med', 'high') # in order
 )
-
-# Inspect
 ordered_factor
 
 table(values)
@@ -1140,8 +1097,6 @@ as.integer(f3)
 #> [26]  1
 ```
 </details>
-
-
 
 
 ## Lists
@@ -1544,7 +1499,7 @@ Tibbles do only what they're asked and complain if what they're asked doesn't ma
 -   Subsetting always yields a tibble
 -   Complains if cannot find column
 
-## Subsetting always yields a tibble**
+## Subsetting always yields a tibble
 
 ```{r tbl_subset}
 # data frame
@@ -1669,7 +1624,7 @@ df5 <- data.frame(
 df5
 ```
 
-## Tibles: Matrix and data frame columns
+## Tibbles: Matrix and data frame columns
 
 - As long as the number of rows matches the data frame, it’s also possible to have a matrix or data frame as a column of a data frame.
 - same as list-columns, must either addi the list-column after creation or wrapping the list in `I()`
@@ -1987,7 +1942,7 @@ head(penguins_df_sp_se$s)
 The four common types of atomic vector are logical, integer, double and character. The two rarer types are complex and raw.
 </details>
 
-## Exercises 2/5
+## Chapter Quiz 2/5
 
 2. What are attributes? How do you get them and set them?
 
@@ -1995,7 +1950,7 @@ The four common types of atomic vector are logical, integer, double and characte
 Attributes allow you to associate arbitrary additional metadata to any object. You can get and set individual attributes with `attr(x, "y")` and `attr(x, "y") <- value`; or you can get and set all attributes at once with `attributes()`.
 </details>
 
-## Exercises 3/5
+## Chapter Quiz 3/5
 
 3. How is a list different from an atomic vector? How is a matrix different from a data frame?
 
@@ -2003,7 +1958,7 @@ Attributes allow you to associate arbitrary additional metadata to any object. Y
 The elements of a list can be any type (even a list); the elements of an atomic vector are all of the same type. Similarly, every element of a matrix must be the same type; in a data frame, different columns can have different types.
 </details>
 
-## Exercises 4/5
+## Chapter Quiz 4/5
 
 4. Can you have a list that is a matrix? Can a data frame have a column that is a matrix?
 
@@ -2011,7 +1966,7 @@ The elements of a list can be any type (even a list); the elements of an atomic 
 You can make a list-array by assigning dimensions to a list. You can make a matrix a column of a data frame with `df$x <- matrix()`, or by using `I()` when creating a new data frame `data.frame(x = I(matrix()))`.
 </details>
 
-## Exercises 5/5
+## Chapter Quiz 5/5
 
 5. How do tibbles behave differently from data frames?
 

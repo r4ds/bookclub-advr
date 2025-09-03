@@ -1,0 +1,21 @@
+---
+title: Cohort 8
+---
+
+{{< video https://www.youtube.com/embed/Eh3X4ixdM2g >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:11:53	Federica Gazzelloni (she/her):	start
+00:16:39	bdair:	Hello Just listening for now happy to be here
+00:18:21	Betsy:	Reacted to "Hello Just listening..." with 👍
+00:24:52	Federica Gazzelloni (she/her):	https://r4ds.github.io/bookclub-advr/introduction.html
+00:25:02	Federica Gazzelloni (she/her):	https://adv-r.hadley.nz/index.html
+00:28:57	Federica Gazzelloni (she/her):	https://docs.google.com/spreadsheets/d/1loyBrLdfbBl2NDc-eoXKTJSnaQKm5Z-D_X1hx_GF8Q8/edit
+00:35:40	Federica Gazzelloni (she/her):	https://advanced-r-solutions.rbind.io/
+00:53:25	Silvana Acosta:	You are on mute Federica
+01:06:31	Betsy:	https://adv-r.hadley.nz/names-values.html#copy-on-modify
+```
+</details>
