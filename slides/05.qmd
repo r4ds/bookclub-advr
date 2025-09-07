@@ -95,7 +95,7 @@ ifelse(x %% 2 == 0, "even", "odd")
 ```
 
 ::: {.callout-tip}
-Only use `ifesle()` if both results are of the same type; otherwise output type is hard to predict.
+Only use `ifelse()` if both results are of the same type; otherwise output type is hard to predict.
 :::
 
 ## Use `dplyr::case_when()` for multiple condition-vector pairs
@@ -113,10 +113,8 @@ dplyr::case_when(
 
 [Section 5.2.3 switch()]: #
 
-## `switch()` is a special purpose equivalent to `if` that can be used to compact code
+## `switch()` is a special purpose equivalent to `if` that can be used to compact code {transition="none-out"}
 
-::: {.r-stack}
-::: {.fragment .fade-out fragment-index=1}
 :::: {.columns}
 ::: {.column}
 ```{r}
@@ -147,9 +145,9 @@ x_option <- function(x) {
 ```
 :::
 ::::
-:::
 
-::: {.fragment .fade-up fragment-index=1}
+## `switch()` is a special purpose equivalent to `if` that can be used to compact code {transition="none-in"}
+
 ::: {.callout-tip}
  - The last component of a `switch()` should always throw an error, otherwise unmatched inputs will invisibly return `NULL`.
  - Only use `switch()` with character inputs. Numeric inputs are hard to read and have undesirable failure modes.
@@ -158,8 +156,7 @@ x_option <- function(x) {
 ::: {.callout-caution}
 Like `if`, `switch()` can only take a single condition, not vector conditions
 :::
-:::
-:::
+
 
 ## Avoid repeat outputs by leaving the right side of `=` empty
 
@@ -185,10 +182,7 @@ legs("dog")
 
 # Loops
 
-## To iterate over items in a vector, use `for`
-
-:::{.r-stack}
-:::{.fragment .fade-out fragment-index=1}
+## To iterate over items in a vector, use a `for` **loop**
 
 ```{r}
 #| eval: false
@@ -204,27 +198,20 @@ for (i in 1:3) {
 ::: {.callout-note}
 Convention uses short variables like `i`, `j`, or `k` for iterating vector indices
 :::
-:::
-::: {.fragment .fade-up fragment-index=1}
-::: {.callout-caution}
-`for` will overwrite existing variables in the current environment
-:::
+
+## `for` will overwrite existing variables in the current environment
+
 ```{r}
 i <- 100
 for (i in 1:3) {}
 i
 ```
-:::
-:::
 
-## Use `next` or `break` to terminate loops early
-
-::: {.r-stack}
-::: {.fragment .fade-out fragment-index=1}
+## Use `next` or `break` to terminate loops early {transition="none-out"}
 - `next` exits the current iteration, but continues the loop
 - `break` exits the entire loop
-:::
-::: {.fragment .fade-up fragment-index=1}
+
+## Use `next` or `break` to terminate loops early {transition="none-in"}
 ```{r}
 for (i in 1:10) {
   if (i < 3) 
@@ -236,8 +223,6 @@ for (i in 1:10) {
     break
 }
 ```
-:::
-:::
 
 [Section 5.3.1 Common pitfalls]: #
 
@@ -255,19 +240,16 @@ for (i in 1:length(means)) {
 `vector()` function is helpful for preallocation
 :::
 
-## Use `seq_along(x)` instead of `1:length(x)`
-
-::: {.r-stack}
-::: {.fragment .fade-out fragment-index=1}
- - `1:length(x)` causes unexpected failure for 0 length vectors
- - `:` works with both increasing and decreasing sequences
+## Use `seq_along(x)` instead of `1:length(x)` {transition="none-out"}
+- `1:length(x)` causes unexpected failure for 0 length vectors
+- `:` works with both increasing and decreasing sequences
 ```{r}
 means <- c()
 1:length(means)
 seq_along(means)
 ```
-:::
-::: {.fragment .fade-up fragment-index=1}
+
+## Use `seq_along(x)` instead of `1:length(x)` {transition="none-in"}
 :::: {.columns}
 ::: {.column}
 ```{r}
@@ -276,7 +258,6 @@ out <- vector("list", length(means))
 for (i in 1:length(means)) {
   out[[i]] <- rnorm(10, means[[i]])
 }
-out
 ```
 :::
 ::: {.column}
@@ -289,15 +270,17 @@ out
 ```
 :::
 ::::
-:::
-:::
 
-## Avoid problems when iterating over S3 vectors by using seq_along(x) and x[[i]]
+## Avoid problems when iterating over S3 vectors by using `seq_along(x)` and `x[[i]]`
+::: {}
 - loops typically strip attributes
+```{r}
+xs <- as.Date(c("2020-01-01", "2010-01-01"))
+```
+:::
 :::: {.columns}
 ::: {.column}
 ```{r}
-xs <- as.Date(c("2020-01-01", "2010-01-01"))
 for (x in xs) {
   print(x)
 }
@@ -310,6 +293,7 @@ for (i in seq_along(xs)) {
 }
 ```
 :::
+::::
  
 [Section 5.3.2 Related tools]: #
  
@@ -325,29 +309,38 @@ for (i in seq_along(xs)) {
 
 # Quiz & Exercises {visibility="uncounted"}
 
-[Section 5.1 Quiz]
+[Section 5.1 Quiz]: #
 
-## What is the difference between if and ifelse()?
+## What is the difference between if and ifelse()? {visibility="uncounted"}
 
 ::: {.fragment .fade-in}
 `if` works with scalars; `ifelse()` works with vectors.
 :::
 
-## In the following code, what will the value of y be if x is TRUE? What if x is FALSE? What if x is NA?
+## In the following code, what will the value of `y` be if `x` is `TRUE`? What if `x` is `FALSE`? What if `x` is `NA`? {visibility="uncounted"}
 
-::: {.r-stack}
-::: {.fragment .fade-out fragment-index=1}
+
 ```{r}
 #| eval: false
 y <- if (x) 3
 ```
-:::
+
 ::: {.fragment .fade-up fragment-index=1}
 When `x` is `TRUE`, `y` will be `3`; when `FALSE`, `y` will be `NULL`; when `NA` the `if` statement will throw an error.
 :::
-:::
 
-## What does `switch("x", x = , y = 2, z = 3)` return?
+## What does `switch("x", x = , y = 2, z = 3)` return? {visibility="uncounted"}
+
+
+```{r}
+#| eval: false
+switch(
+  "x",
+  x = ,
+  y = 2,
+  x = 3
+)
+```
 
 ::: {.fragment .fade-in}
 This `switch()` statement makes use of fall-through so it will return `2`.
@@ -355,10 +348,9 @@ This `switch()` statement makes use of fall-through so it will return `2`.
 
 [Section 5.2.4 Exercises]: #
 
-## What type of vector does each of the following calls to ifelse() return?
+## What type of vector does each of the following calls to ifelse() return? {visibility="uncounted" transition="none-out"}
 
-::: {.r-stack}
-::: {.fragment .fade-out fragment-index=1}
+Read the documentation and write down the rules in your own words.
 ```{r}
 #| eval: false
 ifelse(TRUE, 1, "no")
@@ -366,18 +358,20 @@ ifelse(FALSE, 1, "no")
 ifelse(NA, 1, "no")
 ```
 
-Read the documentation and write down the rules in your own words.
-:::
-::: {.fragment .fade-up fragment-index=1}
-::: {.fragment .fade-out fragment-index=2}
+## What type of vector does each of the following calls to ifelse() return? {visibility="uncounted" transition="none"}
+
 The arguments of `ifelse()` are named `test`, `yes` and `no`.
 In general, `ifelse()` returns the entry for `yes` when `test` is `TRUE`,
 the entry for `no` when `test` is `FALSE` 
 and `NA` when `test` is `NA`.
-Therefore, the expressions above return vectors of type `double (1)`, `character ("no")` and `logical (NA)`.
-:::
-:::
-::: {.fragment .fade-up fragment-index=2}
+
+```{r}
+ifelse(TRUE, 1, "no")
+ifelse(FALSE, 1, "no")
+ifelse(NA, 1, "no")
+```
+
+## What type of vector does each of the following calls to ifelse() return? {visibility="uncounted" transition="none-in"}
 In practice, `test` is first converted to `logical` and if the result is neither `TRUE` nor `FALSE`, then `as.logical(test)` is returned.
 ```{r}
 ifelse(logical(), 1, "no")
@@ -386,29 +380,23 @@ ifelse(NA_character_, 1, "no")
 ifelse("a", 1, "no")
 ifelse("true", 1, "no")
 ```
-:::
-:::
 
-## Why does the following code work?
+## Why does the following code work? {visibility="uncounted"}
 
-::: {.r-stack}
-::: {.fragment .fade-out fragment-index=1}
 ```{r}
 x <- 1:10
 if (length(x)) "not empty" else "empty"
 x <- numeric()
 if (length(x)) "not empty" else "empty"
 ```
-:::
 ::: {.fragment .fade-up fragment-index=1}
 `if()` expects a logical condition, but also accepts a numeric vector where `0` is treated as `FALSE` and all other numbers are treated as `TRUE`.
 Numerical missing values (including `NaN`) lead to an error in the same way that a logical missing, `NA`, does.
 :::
-:::
 
 [Section 5.3.3 Exercises]: #
 
-## Why does this code succeed without errors or warnings?
+## Why does this code succeed without errors or warnings? {visibility="uncounted" transition="none-out"}
 
 ```{r}
 x <- numeric()
@@ -419,17 +407,51 @@ for (i in 1:length(x)) {
 out
 ```
 
-## Answer
+## Why does this code succeed without errors or warnings? {visibility="uncounted" transition="none-in"}
+- Subsetting behavior for out-of-bounds & `0` indices when using `[<-` and `[`
+- `x[1]` generates an `NA`. `NA` is assigned to the empty length-1 list `out[1]`
+- `x[0]` returns `numeric(0)`. `numeric(0)` is assigned to `out[0]`. Assigning a 0-length vector to a 0-length subset doesn't change the object.
+- Each step includes valid R operations (even though the result may not be what the user intended).
 
-As we use `[<-` and `[` for indexing 0-length vectors at their first and zeroth position, we need to be aware of their subsetting behaviour for out-of-bounds and zero indices.
+## Walk-through {visibility="uncounted" transition="none-out"}
 
-During the first iteration `x[1]` will generate an `NA` (out-of-bounds indexing for atomics). The resulting `NA` (from squaring) will be assigned to the empty length-1 list `out[1]` (out-of-bounds indexing for lists).
+Setup
+```{r}
+x <- numeric()
+out <- vector("list", length(x))
+1:length(x)
+```
 
-In the next iteration, `x[0]` will return `numeric(0)` (zero indexing for atomics). Again, squaring doesn't change the value and `numeric(0)` is assigned to `out[0]` (zero indexing for lists). Assigning a 0-length vector to a 0-length subset works but doesn't change the object.
+## Walk-through {visibility="uncounted" transition="none"}
 
-Overall, the code works, because each step includes valid R operations (even though the result may not be what the user intended).
+First Iteration
+```{r}
+x[1]
+x[1]^2
+out[1]
+out[1] <- x[1]^2
+out[1]
+```
 
-## When the following code is evaluated, what can you say about the vector being iterated?
+## Walk-through {visibility="uncounted" transition="none"}
+
+Second Iteration
+```{r}
+x[0]
+x[0]^2
+out[0]
+out[0] <- x[0]^2
+out[0]
+```
+
+## Walk-through {visibility="uncounted" transition="none-in"}
+
+Final Result
+```{r}
+out
+```
+
+## When the following code is evaluated, what can you say about the vector being iterated? {visibility="uncounted"}
 
 ```{r}
 xs <- c(1, 2, 3)
@@ -443,7 +465,7 @@ xs
 In this loop `x` takes on the values of the initial `xs` (`1`, `2` and `3`), indicating that it is evaluated just once in the beginning of the loop, not after each iteration. (Otherwise, we would run into an infinite loop.)
 :::
 
-## What does the following code tell you about when the index is updated?
+## What does the following code tell you about when the index is updated? {visibility="uncounted"}
 
 ```{r}
 for (i in 1:3) {
