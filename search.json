@@ -1223,91 +1223,245 @@
     "href": "slides/05.html#learning-objectives",
     "title": "Control flow",
     "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nLearn the tools for controlling flow of execution.\nLearn some technical pitfalls and (perhaps lesser known) useful features."
+    "text": "Learning objectives:\n\nUnderstand the two primary tools for control flow: choices and loops\nLearn best practices to void common pitfalls\nDistinguish when to use if, ifelse(), and switch() for choices\nDistinguish when to use for, while, and repeat for loops\n\n\n\n\n\n\n\nNote\n\n\nBasic familiarity with choices and loops is assumed."
   },
   {
-    "objectID": "slides/05.html#introduction",
-    "href": "slides/05.html#introduction",
+    "objectID": "slides/05.html#if-is-the-basic-statement-for-a-choice",
+    "href": "slides/05.html#if-is-the-basic-statement-for-a-choice",
     "title": "Control flow",
-    "section": "Introduction",
-    "text": "Introduction\nThere are two main groups of flow control tools: choices and loops:\n\nChoices (if, switch, ifelse, dplyr::if_else, dplyr::case_when) allow you to run different code depending on the input.\nLoops (for, while, repeat) allow you to repeatedly run code"
+    "section": "if is the basic statement for a choice",
+    "text": "if is the basic statement for a choice\nSingle line format\n\nif (condition) true_action\nif (condition) true_action else false_action\n\nCompound statement within {\n\ngrade &lt;- function(x) {\n  if (x &gt; 90) {\n    \"A\"\n  } else if (x &gt; 80) {\n    \"B\"\n  } else if (x &gt; 50) {\n    \"C\"\n  } else {\n    \"F\"\n  }\n}"
   },
   {
-    "objectID": "slides/05.html#choices",
-    "href": "slides/05.html#choices",
+    "objectID": "slides/05.html#results-of-if-can-be-assigned",
+    "href": "slides/05.html#results-of-if-can-be-assigned",
     "title": "Control flow",
-    "section": "Choices",
-    "text": "Choices\nif() and else\nUse if to specify a block of code to be executed, if a specified condition is true. Use else to specify a block of code to be executed, if the same condition is false.\n\nif (condition) true_action\nif (condition) true_action else false_action\n\n(Note braces are only needed for compound expressions)\n\nif (test_expression) {   \n  true_action\n} else {\n  false_action\n}\n\nCan be expanded to more alternatives:\n\nif (test_expression) {   \n  true_action\n} else if (other_test_expression) {\n  other_action\n} else {\n  false_action\n}"
+    "section": "Results of if can be assigned",
+    "text": "Results of if can be assigned\n\nx1 &lt;- if (TRUE) 1 else 2\nx2 &lt;- if (FALSE) 1 else 2\n\nc(x1, x2)\n\n#&gt; [1] 1 2\n\n\n\n\n\n\n\n\nTip\n\n\nOnly recommended with single line format; otherwise hard to read."
   },
   {
-    "objectID": "slides/05.html#exercise",
-    "href": "slides/05.html#exercise",
+    "objectID": "slides/05.html#if-without-else-can-be-combined-with-c-or-paste-to-create-compact-expressions",
+    "href": "slides/05.html#if-without-else-can-be-combined-with-c-or-paste-to-create-compact-expressions",
     "title": "Control flow",
-    "section": "Exercise",
-    "text": "Exercise\nWhy does this work?\nx &lt;- 1:10\nif (length(x)) \"not empty\" else \"empty\"\n#&gt; [1] \"not empty\"\n\nx &lt;- numeric()\nif (length(x)) \"not empty\" else \"empty\"\n#&gt; [1] \"empty\"\nif returns a value which can be assigned\n\nx1 &lt;- if (TRUE) 1 else 2\nx2 &lt;- if (FALSE) 1 else 2\n\nc(x1, x2)\n\n#&gt; [1] 1 2\n\n\nThe book recommends assigning the results of an if statement only when the entire expression fits on one line; otherwise it tends to be hard to read."
+    "section": "if without else can be combined with c() or paste() to create compact expressions",
+    "text": "if without else can be combined with c() or paste() to create compact expressions\n\nif without else invisibly returns NULL when FALSE.\n\n\ngreet &lt;- function(name, birthday = FALSE) {\n  paste0(\n    \"Hi \", name,\n    if (birthday) \" and HAPPY BIRTHDAY\"\n  )\n}\ngreet(\"Maria\", FALSE)\n\n#&gt; [1] \"Hi Maria\"\n\ngreet(\"Jaime\", TRUE)\n\n#&gt; [1] \"Hi Jaime and HAPPY BIRTHDAY\""
   },
   {
-    "objectID": "slides/05.html#single-if-without-else",
-    "href": "slides/05.html#single-if-without-else",
+    "objectID": "slides/05.html#if-should-have-a-single-true-or-false-condition-other-inputs-generate-errors",
+    "href": "slides/05.html#if-should-have-a-single-true-or-false-condition-other-inputs-generate-errors",
     "title": "Control flow",
-    "section": "Single if without else",
-    "text": "Single if without else\nWhen you use the single argument form without an else statement, if invisibly (Section 6.7.2) returns NULL if the condition is FALSE. Since functions like c() and paste() drop NULL inputs, this allows for a compact expression of certain idioms:\n\ngreet &lt;- function(name, birthday = FALSE) {\n  paste0(\n    \"Hi \", name,\n    if (birthday) \" and HAPPY BIRTHDAY\"\n  )\n}\ngreet(\"Maria\", FALSE)\n#&gt; [1] \"Hi Maria\"\ngreet(\"Jaime\", TRUE)\n#&gt; [1] \"Hi Jaime and HAPPY BIRTHDAY\"\n\n\nformat_lane_text &lt;- function(number){\n\n  paste0(\n    number,\n    \" lane\",\n    if (number &gt; 1) \"s\",\n    \" of sequencing\"\n  )\n}\n\nformat_lane_text(1)\n#&gt; [1] \"1 lane of sequencing\"\nformat_lane_text(4)\n#&gt; [1] \"4 lanes of sequencing\""
+    "section": "if should have a single TRUE or FALSE condition, other inputs generate errors",
+    "text": "if should have a single TRUE or FALSE condition, other inputs generate errors\n\nif (\"x\") 1\n\n#&gt; Error in if (\"x\") 1: argument is not interpretable as logical\n\nif (logical()) 1\n\n#&gt; Error in if (logical()) 1: argument is of length zero\n\nif (NA) 1\n\n#&gt; Error in if (NA) 1: missing value where TRUE/FALSE needed\n\nif (c(TRUE, FALSE)) 1\n\n#&gt; Error in if (c(TRUE, FALSE)) 1: the condition has length &gt; 1"
   },
   {
-    "objectID": "slides/05.html#invalid-inputs",
-    "href": "slides/05.html#invalid-inputs",
+    "objectID": "slides/05.html#use-ifelse-for-vectorized-conditions",
+    "href": "slides/05.html#use-ifelse-for-vectorized-conditions",
     "title": "Control flow",
-    "section": "Invalid inputs",
-    "text": "Invalid inputs\n\nCondition must evaluate to a single TRUE or FALSE\n\nA single number gets coerced to a logical type.\n\nif (56) 1\n#&gt; [1] 1\nif (0.3) 1\n#&gt; [1] 1\nif (0) 1\n\nIf the condition cannot evaluate to a single TRUE or FALSE, an error is (usually) produced.\n\nif (\"text\") 1\n#&gt; Error in if (\"text\") 1: argument is not interpretable as logical\nif (\"true\") 1 \n#&gt; 1\nif (numeric()) 1\n#&gt; Error in if (numeric()) 1: argument is of length zero\nif (NULL) 1\n#&gt; Error in if (NULL) 1 : argument is of length zero\nif (NA) 1\n#&gt; Error in if (NA) 1: missing value where TRUE/FALSE needed\n\nException is a logical vector of length greater than 1, which only generates a warning, unless you have _R_CHECK_LENGTH_1_CONDITION_ set to TRUE.\nThis seems to have been the default since R-4.2.0\n\nif (c(TRUE, FALSE)) 1\n#&gt;Error in if (c(TRUE, FALSE)) 1 : the condition has length &gt; 1"
+    "section": "Use ifelse() for vectorized conditions",
+    "text": "Use ifelse() for vectorized conditions\n\nx &lt;- 1:10\nifelse(x %% 5 == 0, \"XXX\", as.character(x))\n\n#&gt;  [1] \"1\"   \"2\"   \"3\"   \"4\"   \"XXX\" \"6\"   \"7\"   \"8\"   \"9\"   \"XXX\"\n\nifelse(x %% 2 == 0, \"even\", \"odd\")\n\n#&gt;  [1] \"odd\"  \"even\" \"odd\"  \"even\" \"odd\"  \"even\" \"odd\"  \"even\" \"odd\"  \"even\"\n\n\n\n\n\n\n\n\nTip\n\n\nOnly use ifelse() if both results are of the same type; otherwise output type is hard to predict."
   },
   {
-    "objectID": "slides/05.html#vectorized-choices",
-    "href": "slides/05.html#vectorized-choices",
+    "objectID": "slides/05.html#use-dplyrcase_when-for-multiple-condition-vector-pairs",
+    "href": "slides/05.html#use-dplyrcase_when-for-multiple-condition-vector-pairs",
     "title": "Control flow",
-    "section": "Vectorized choices",
-    "text": "Vectorized choices\n\nifelse() is a vectorized version of if:\n\n\nx &lt;- 1:10\nifelse(x %% 5 == 0, \"XXX\", as.character(x))\n#&gt;  [1] \"1\"   \"2\"   \"3\"   \"4\"   \"XXX\" \"6\"   \"7\"   \"8\"   \"9\"   \"XXX\"\n\nifelse(x %% 2 == 0, \"even\", \"odd\")\n#&gt;  [1] \"odd\"  \"even\" \"odd\"  \"even\" \"odd\"  \"even\" \"odd\"  \"even\" \"odd\"  \"even\"\n\n\ndplyr::if_else()\nBook recommends only using ifelse() “only when the yes and no vectors are the same type as it is otherwise hard to predict the output type.”\ndplyr::if_else() enforces this recommendation.\n\nFor example:\n\nifelse(c(TRUE,TRUE,FALSE),\"a\",3)\n#&gt; [1] \"a\" \"a\" \"3\"\ndplyr::if_else(c(TRUE,TRUE,FALSE),\"a\",3)\n#&gt; Error in `dplyr::if_else()`:\n#&gt; ! `false` must be a character vector, not a double vector."
+    "section": "Use dplyr::case_when() for multiple condition-vector pairs",
+    "text": "Use dplyr::case_when() for multiple condition-vector pairs\n\ndplyr::case_when(\n  x %% 35 == 0 ~ \"fizz buzz\",\n  x %% 5 == 0 ~ \"fizz\",\n  x %% 7 == 0 ~ \"buzz\",\n  is.na(x) ~ \"???\",\n  TRUE ~ as.character(x)\n)\n\n#&gt;  [1] \"1\"    \"2\"    \"3\"    \"4\"    \"fizz\" \"6\"    \"buzz\" \"8\"    \"9\"    \"fizz\""
   },
   {
-    "objectID": "slides/05.html#switch",
-    "href": "slides/05.html#switch",
+    "objectID": "slides/05.html#switch-is-a-special-purpose-equivalent-to-if-that-can-be-used-to-compact-code",
+    "href": "slides/05.html#switch-is-a-special-purpose-equivalent-to-if-that-can-be-used-to-compact-code",
     "title": "Control flow",
-    "section": "Switch",
-    "text": "Switch\nRather then string together multiple if - else if chains, you can often use switch.\n\ncentre &lt;- function(x, type) {\n  switch(type,\n    mean = mean(x),\n    median = median(x),\n    trimmed = mean(x, trim = .1),\n    stop(\"Invalid `type` value\")\n  )\n}\n\nLast component should always throw an error, as unmatched inputs would otherwise invisibly return NULL. Book recommends to only use character inputs for switch().\n\nvec &lt;- c(1:20,50:55)\ncentre(vec, \"mean\")\n#&gt; [1] 20.19231\ncentre(vec, \"median\")\n#&gt; [1] 13.5\ncentre(vec, \"trimmed\")\n#&gt; [1] 18.77273\n\n\nset.seed(123)\nx &lt;- rlnorm(100)\n\ncenters &lt;- data.frame(type = c('mean', 'median', 'trimmed'))\ncenters$value = sapply(centers$type, \\(t){centre(x,t)})\n\nrequire(ggplot2)\nggplot(data = data.frame(x), aes(x))+\n  geom_density()+\n  geom_vline(data = centers, \n             mapping = aes(color = type, xintercept = value), \n             linewidth=0.5,linetype=\"dashed\") +\n  xlim(-1,10)+\n  theme_bw()\n\n\nExample from book of “falling through” to next value\n\nlegs &lt;- function(x) {\n  switch(x,\n    cow = ,\n    horse = ,\n    dog = 4,\n    human = ,\n    chicken = 2,\n    plant = 0,\n    stop(\"Unknown input\")\n  )\n}\nlegs(\"cow\")\n\n#&gt; [1] 4\n\n#&gt; [1] 4\nlegs(\"dog\")\n\n#&gt; [1] 4\n\n#&gt; [1] 4"
+    "section": "switch() is a special purpose equivalent to if that can be used to compact code",
+    "text": "switch() is a special purpose equivalent to if that can be used to compact code\n\n\n\nx_option &lt;- function(x) {\n  if (x == \"a\") {\n    \"option 1\"\n  } else if (x == \"b\") {\n    \"option 2\" \n  } else if (x == \"c\") {\n    \"option 3\"\n  } else {\n    stop(\"Invalid `x` value\")\n  }\n}\n\n\n\nx_option &lt;- function(x) {\n  switch(x,\n    a = \"option 1\",\n    b = \"option 2\",\n    c = \"option 3\",\n    stop(\"Invalid `x` value\")\n  )\n}"
   },
   {
-    "objectID": "slides/05.html#using-dplyrcase_when",
-    "href": "slides/05.html#using-dplyrcase_when",
+    "objectID": "slides/05.html#switch-is-a-special-purpose-equivalent-to-if-that-can-be-used-to-compact-code-1",
+    "href": "slides/05.html#switch-is-a-special-purpose-equivalent-to-if-that-can-be-used-to-compact-code-1",
     "title": "Control flow",
-    "section": "Using dplyr::case_when",
-    "text": "Using dplyr::case_when\n\ncase_when is a more general if_else and can be used often in place of multiple chained if_else or sapply’ing switch.\nIt uses a special syntax to allow any number of condition-vector pairs:\n\n\nset.seed(123)\nx &lt;- rlnorm(100)\n\ncenters &lt;- data.frame(type = c('mean', 'median', 'trimmed'))\n\ncenters$value = dplyr::case_when(\n  centers$type == 'mean' ~ mean(x),\n  centers$type == 'median' ~ median(x),\n  centers$type == 'trimmed' ~ mean(x, trim = 0.1),\n  .default = 1000\n  )\n\ncenters\n\n#&gt;      type    value\n#&gt; 1    mean 1.652545\n#&gt; 2  median 1.063744\n#&gt; 3 trimmed 1.300568"
+    "section": "switch() is a special purpose equivalent to if that can be used to compact code",
+    "text": "switch() is a special purpose equivalent to if that can be used to compact code\n\n\n\n\n\n\nTip\n\n\n\nThe last component of a switch() should always throw an error, otherwise unmatched inputs will invisibly return NULL.\nOnly use switch() with character inputs. Numeric inputs are hard to read and have undesirable failure modes.\n\n\n\n\n\n\n\n\n\n\nCaution\n\n\nLike if, switch() can only take a single condition, not vector conditions"
   },
   {
-    "objectID": "slides/05.html#loops",
-    "href": "slides/05.html#loops",
+    "objectID": "slides/05.html#avoid-repeat-outputs-by-leaving-the-right-side-of-empty",
+    "href": "slides/05.html#avoid-repeat-outputs-by-leaving-the-right-side-of-empty",
     "title": "Control flow",
-    "section": "Loops",
-    "text": "Loops\n\nIteration over a elements of a vector\n\nfor (item in vector) perform_action\nFirst example\n\nfor(i in 1:5) {\n  print(1:i)\n}\n\n#&gt; [1] 1\n#&gt; [1] 1 2\n#&gt; [1] 1 2 3\n#&gt; [1] 1 2 3 4\n#&gt; [1] 1 2 3 4 5\n\nx &lt;- numeric(length=5L)\ndf &lt;- data.frame(x=1:5)\n\nfor(i in 1:5) {\n  df$y[[i]] &lt;- i+1\n}\n\nSecond example: terminate a for loop earlier\n\nnext skips rest of current iteration\nbreak exits the loop entirely\n\n\nfor (i in 1:10) {\n  if (i &lt; 3) \n    next\n\n  print(i)\n  \n  if (i &gt;= 5)\n    break\n}\n\n#&gt; [1] 3\n#&gt; [1] 4\n#&gt; [1] 5"
+    "section": "Avoid repeat outputs by leaving the right side of = empty",
+    "text": "Avoid repeat outputs by leaving the right side of = empty\n\nInputs will “fall through” to the next value.\n\n\nlegs &lt;- function(x) {\n  switch(x,\n    cow = ,\n    horse = ,\n    dog = 4,\n    human = ,\n    chicken = 2,\n    plant = 0,\n    stop(\"Unknown input\")\n  )\n}\nlegs(\"cow\")\n\n#&gt; [1] 4\n\nlegs(\"dog\")\n\n#&gt; [1] 4"
   },
   {
-    "objectID": "slides/05.html#exercise-1",
-    "href": "slides/05.html#exercise-1",
+    "objectID": "slides/05.html#to-iterate-over-items-in-a-vector-use-a-for-loop",
+    "href": "slides/05.html#to-iterate-over-items-in-a-vector-use-a-for-loop",
     "title": "Control flow",
-    "section": "Exercise",
-    "text": "Exercise\nWhen the following code is evaluated, what can you say about the vector being iterated?\nxs &lt;- c(1, 2, 3)\nfor (x in xs) {\n  xs &lt;- c(xs, x * 2)\n}\nxs\n#&gt; [1] 1 2 3 2 4 6"
+    "section": "To iterate over items in a vector, use a for loop",
+    "text": "To iterate over items in a vector, use a for loop\n\nfor (item in vector) perform_action\n\n\nfor (i in 1:3) {\n  print(i)\n}\n\n#&gt; [1] 1\n#&gt; [1] 2\n#&gt; [1] 3\n\n\n\n\n\n\n\n\nNote\n\n\nConvention uses short variables like i, j, or k for iterating vector indices"
   },
   {
-    "objectID": "slides/05.html#pitfalls",
-    "href": "slides/05.html#pitfalls",
+    "objectID": "slides/05.html#for-will-overwrite-existing-variables-in-the-current-environment",
+    "href": "slides/05.html#for-will-overwrite-existing-variables-in-the-current-environment",
     "title": "Control flow",
-    "section": "Pitfalls",
-    "text": "Pitfalls\n\nPreallocate output containers to avoid slow code.\nBeware that 1:length(v) when v has length 0 results in a iterating backwards over 1:0, probably not what is intended. Use seq_along(v) instead.\nWhen iterating over S3 vectors, use [[]] yourself to avoid stripping attributes.\n\nxs &lt;- as.Date(c(\"2020-01-01\", \"2010-01-01\"))\nfor (x in xs) {\n  print(x)\n}\n#&gt; [1] 18262\n#&gt; [1] 14610\nvs. \nfor (i in seq_along(xs)) {\n  print(xs[[i]])\n}\n#&gt; [1] \"2020-01-01\"\n#&gt; [1] \"2010-01-01\""
+    "section": "for will overwrite existing variables in the current environment",
+    "text": "for will overwrite existing variables in the current environment\n\ni &lt;- 100\nfor (i in 1:3) {}\ni\n\n#&gt; [1] 3"
   },
   {
-    "objectID": "slides/05.html#related-tools",
-    "href": "slides/05.html#related-tools",
+    "objectID": "slides/05.html#use-next-or-break-to-terminate-loops-early",
+    "href": "slides/05.html#use-next-or-break-to-terminate-loops-early",
     "title": "Control flow",
-    "section": "Related tools",
-    "text": "Related tools\n\nwhile(condition) action: performs action while condition is TRUE.\nrepeat(action): repeats action forever (i.e. until it encounters break).\nNote that for can be rewritten as while and while can be rewritten as repeat (this goes in one direction only!); however:\n\n\nGood practice is to use the least-flexible solution to a problem, so you should use for wherever possible. BUT you shouldn’t even use for loops for data analysis tasks as map() and apply() already provide less flexible solutions to most problems. (More in Chapter 9.)\n\n\nfor (i in 1:5) {\n  print(i)\n}\n\n#&gt; [1] 1\n#&gt; [1] 2\n#&gt; [1] 3\n#&gt; [1] 4\n#&gt; [1] 5\n\n\n\nx_option &lt;- function(x) {\n  switch(x,\n    a = \"option 1\",\n    b = \"option 2\",\n    c = \"option 3\"#,\n    #stop(\"Invalid `x` value\")\n  )\n}\n\n\ni &lt;- 1\n\nwhile(i &lt;=5 ) {\n  print(i)\n  i &lt;- i+1\n}\n\n#&gt; [1] 1\n#&gt; [1] 2\n#&gt; [1] 3\n#&gt; [1] 4\n#&gt; [1] 5\n\n\n\ni &lt;- 1\n\nrepeat {\n  print(i)\n  i &lt;- i+1\n  if (i &gt; 5) break\n}\n\n#&gt; [1] 1\n#&gt; [1] 2\n#&gt; [1] 3\n#&gt; [1] 4\n#&gt; [1] 5"
+    "section": "Use next or break to terminate loops early",
+    "text": "Use next or break to terminate loops early\n\nnext exits the current iteration, but continues the loop\nbreak exits the entire loop"
+  },
+  {
+    "objectID": "slides/05.html#use-next-or-break-to-terminate-loops-early-1",
+    "href": "slides/05.html#use-next-or-break-to-terminate-loops-early-1",
+    "title": "Control flow",
+    "section": "Use next or break to terminate loops early",
+    "text": "Use next or break to terminate loops early\n\nfor (i in 1:10) {\n  if (i &lt; 3) \n    next\n\n  print(i)\n  \n  if (i &gt;= 5)\n    break\n}\n\n#&gt; [1] 3\n#&gt; [1] 4\n#&gt; [1] 5"
+  },
+  {
+    "objectID": "slides/05.html#preallocate-an-output-container-to-avoid-slow-loops",
+    "href": "slides/05.html#preallocate-an-output-container-to-avoid-slow-loops",
+    "title": "Control flow",
+    "section": "Preallocate an output container to avoid slow loops",
+    "text": "Preallocate an output container to avoid slow loops\n\nmeans &lt;- c(1, 50, 20)\nout &lt;- vector(\"list\", length(means))\nfor (i in 1:length(means)) {\n  out[[i]] &lt;- rnorm(10, means[[i]])\n}\n\n\n\n\n\n\n\nTip\n\n\nvector() function is helpful for preallocation"
+  },
+  {
+    "objectID": "slides/05.html#use-seq_alongx-instead-of-1lengthx",
+    "href": "slides/05.html#use-seq_alongx-instead-of-1lengthx",
+    "title": "Control flow",
+    "section": "Use seq_along(x) instead of 1:length(x)",
+    "text": "Use seq_along(x) instead of 1:length(x)\n\n1:length(x) causes unexpected failure for 0 length vectors\n: works with both increasing and decreasing sequences\n\n\nmeans &lt;- c()\n1:length(means)\n\n#&gt; [1] 1 0\n\nseq_along(means)\n\n#&gt; integer(0)"
+  },
+  {
+    "objectID": "slides/05.html#use-seq_alongx-instead-of-1lengthx-1",
+    "href": "slides/05.html#use-seq_alongx-instead-of-1lengthx-1",
+    "title": "Control flow",
+    "section": "Use seq_along(x) instead of 1:length(x)",
+    "text": "Use seq_along(x) instead of 1:length(x)\n\n\n\nout &lt;- vector(\"list\", length(means))\nfor (i in 1:length(means)) {\n  out[[i]] &lt;- rnorm(10, means[[i]])\n}\n\n#&gt; Error in rnorm(10, means[[i]]): invalid arguments\n\n\n\n\nout &lt;- vector(\"list\", length(means))\nfor (i in seq_along(means)) {\n  out[[i]] &lt;- rnorm(10, means[[i]])\n}\nout\n\n#&gt; list()"
+  },
+  {
+    "objectID": "slides/05.html#avoid-problems-when-iterating-over-s3-vectors-by-using-seq_alongx-and-xi",
+    "href": "slides/05.html#avoid-problems-when-iterating-over-s3-vectors-by-using-seq_alongx-and-xi",
+    "title": "Control flow",
+    "section": "Avoid problems when iterating over S3 vectors by using seq_along(x) and x[[i]]",
+    "text": "Avoid problems when iterating over S3 vectors by using seq_along(x) and x[[i]]\n\n\nloops typically strip attributes\n\n\nxs &lt;- as.Date(c(\"2020-01-01\", \"2010-01-01\"))\n\n\n\n\n\nfor (x in xs) {\n  print(x)\n}\n\n#&gt; [1] 18262\n#&gt; [1] 14610\n\n\n\n\nfor (i in seq_along(xs)) {\n  print(xs[[i]])\n}\n\n#&gt; [1] \"2020-01-01\"\n#&gt; [1] \"2010-01-01\""
+  },
+  {
+    "objectID": "slides/05.html#use-while-or-repeat-when-you-dont-know-the-number-of-iterations",
+    "href": "slides/05.html#use-while-or-repeat-when-you-dont-know-the-number-of-iterations",
+    "title": "Control flow",
+    "section": "Use while or repeat when you don’t know the number of iterations",
+    "text": "Use while or repeat when you don’t know the number of iterations\n\nwhile(condition) action: perfoms action while condition is TRUE\nrepeat(action): repeats action forever (or until a break)"
+  },
+  {
+    "objectID": "slides/05.html#always-use-the-least-flexible-loop-option-possible",
+    "href": "slides/05.html#always-use-the-least-flexible-loop-option-possible",
+    "title": "Control flow",
+    "section": "Always use the least-flexible loop option possible",
+    "text": "Always use the least-flexible loop option possible\n\nUse for before while or repeat\nIn data analysis use apply() or purrr::map() before for"
+  },
+  {
+    "objectID": "slides/05.html#what-is-the-difference-between-if-and-ifelse",
+    "href": "slides/05.html#what-is-the-difference-between-if-and-ifelse",
+    "title": "Control flow",
+    "section": "What is the difference between if and ifelse()?",
+    "text": "What is the difference between if and ifelse()?\n\nif works with scalars; ifelse() works with vectors."
+  },
+  {
+    "objectID": "slides/05.html#in-the-following-code-what-will-the-value-of-y-be-if-x-is-true-what-if-x-is-false-what-if-x-is-na",
+    "href": "slides/05.html#in-the-following-code-what-will-the-value-of-y-be-if-x-is-true-what-if-x-is-false-what-if-x-is-na",
+    "title": "Control flow",
+    "section": "In the following code, what will the value of y be if x is TRUE? What if x is FALSE? What if x is NA?",
+    "text": "In the following code, what will the value of y be if x is TRUE? What if x is FALSE? What if x is NA?\n\ny &lt;- if (x) 3\n\n\nWhen x is TRUE, y will be 3; when FALSE, y will be NULL; when NA the if statement will throw an error."
+  },
+  {
+    "objectID": "slides/05.html#what-does-switchx-x-y-2-z-3-return",
+    "href": "slides/05.html#what-does-switchx-x-y-2-z-3-return",
+    "title": "Control flow",
+    "section": "What does switch(\"x\", x = , y = 2, z = 3) return?",
+    "text": "What does switch(\"x\", x = , y = 2, z = 3) return?\n\nswitch(\n  \"x\",\n  x = ,\n  y = 2,\n  x = 3\n)\n\n\nThis switch() statement makes use of fall-through so it will return 2."
+  },
+  {
+    "objectID": "slides/05.html#what-type-of-vector-does-each-of-the-following-calls-to-ifelse-return",
+    "href": "slides/05.html#what-type-of-vector-does-each-of-the-following-calls-to-ifelse-return",
+    "title": "Control flow",
+    "section": "What type of vector does each of the following calls to ifelse() return?",
+    "text": "What type of vector does each of the following calls to ifelse() return?\nRead the documentation and write down the rules in your own words.\n\nifelse(TRUE, 1, \"no\")\nifelse(FALSE, 1, \"no\")\nifelse(NA, 1, \"no\")"
+  },
+  {
+    "objectID": "slides/05.html#what-type-of-vector-does-each-of-the-following-calls-to-ifelse-return-1",
+    "href": "slides/05.html#what-type-of-vector-does-each-of-the-following-calls-to-ifelse-return-1",
+    "title": "Control flow",
+    "section": "What type of vector does each of the following calls to ifelse() return?",
+    "text": "What type of vector does each of the following calls to ifelse() return?\nThe arguments of ifelse() are named test, yes and no. In general, ifelse() returns the entry for yes when test is TRUE, the entry for no when test is FALSE and NA when test is NA.\n\nifelse(TRUE, 1, \"no\")\n\n#&gt; [1] 1\n\nifelse(FALSE, 1, \"no\")\n\n#&gt; [1] \"no\"\n\nifelse(NA, 1, \"no\")\n\n#&gt; [1] NA"
+  },
+  {
+    "objectID": "slides/05.html#what-type-of-vector-does-each-of-the-following-calls-to-ifelse-return-2",
+    "href": "slides/05.html#what-type-of-vector-does-each-of-the-following-calls-to-ifelse-return-2",
+    "title": "Control flow",
+    "section": "What type of vector does each of the following calls to ifelse() return?",
+    "text": "What type of vector does each of the following calls to ifelse() return?\nIn practice, test is first converted to logical and if the result is neither TRUE nor FALSE, then as.logical(test) is returned.\n\nifelse(logical(), 1, \"no\")\n\n#&gt; logical(0)\n\nifelse(NaN, 1, \"no\")\n\n#&gt; [1] NA\n\nifelse(NA_character_, 1, \"no\")\n\n#&gt; [1] NA\n\nifelse(\"a\", 1, \"no\")\n\n#&gt; [1] NA\n\nifelse(\"true\", 1, \"no\")\n\n#&gt; [1] 1"
+  },
+  {
+    "objectID": "slides/05.html#why-does-the-following-code-work",
+    "href": "slides/05.html#why-does-the-following-code-work",
+    "title": "Control flow",
+    "section": "Why does the following code work?",
+    "text": "Why does the following code work?\n\nx &lt;- 1:10\nif (length(x)) \"not empty\" else \"empty\"\n\n#&gt; [1] \"not empty\"\n\nx &lt;- numeric()\nif (length(x)) \"not empty\" else \"empty\"\n\n#&gt; [1] \"empty\"\n\n\n\nif() expects a logical condition, but also accepts a numeric vector where 0 is treated as FALSE and all other numbers are treated as TRUE. Numerical missing values (including NaN) lead to an error in the same way that a logical missing, NA, does."
+  },
+  {
+    "objectID": "slides/05.html#why-does-this-code-succeed-without-errors-or-warnings",
+    "href": "slides/05.html#why-does-this-code-succeed-without-errors-or-warnings",
+    "title": "Control flow",
+    "section": "Why does this code succeed without errors or warnings?",
+    "text": "Why does this code succeed without errors or warnings?\n\nx &lt;- numeric()\nout &lt;- vector(\"list\", length(x))\nfor (i in 1:length(x)) {\n  out[i] &lt;- x[i] ^ 2\n}\nout\n\n#&gt; [[1]]\n#&gt; [1] NA"
+  },
+  {
+    "objectID": "slides/05.html#why-does-this-code-succeed-without-errors-or-warnings-1",
+    "href": "slides/05.html#why-does-this-code-succeed-without-errors-or-warnings-1",
+    "title": "Control flow",
+    "section": "Why does this code succeed without errors or warnings?",
+    "text": "Why does this code succeed without errors or warnings?\n\nSubsetting behavior for out-of-bounds & 0 indices when using [&lt;- and [\nx[1] generates an NA. NA is assigned to the empty length-1 list out[1]\nx[0] returns numeric(0). numeric(0) is assigned to out[0]. Assigning a 0-length vector to a 0-length subset doesn’t change the object.\nEach step includes valid R operations (even though the result may not be what the user intended)."
+  },
+  {
+    "objectID": "slides/05.html#walk-through",
+    "href": "slides/05.html#walk-through",
+    "title": "Control flow",
+    "section": "Walk-through",
+    "text": "Walk-through\nSetup\n\nx &lt;- numeric()\nout &lt;- vector(\"list\", length(x))\n1:length(x)\n\n#&gt; [1] 1 0"
+  },
+  {
+    "objectID": "slides/05.html#walk-through-1",
+    "href": "slides/05.html#walk-through-1",
+    "title": "Control flow",
+    "section": "Walk-through",
+    "text": "Walk-through\nFirst Iteration\n\nx[1]\n\n#&gt; [1] NA\n\nx[1]^2\n\n#&gt; [1] NA\n\nout[1]\n\n#&gt; [[1]]\n#&gt; NULL\n\nout[1] &lt;- x[1]^2\nout[1]\n\n#&gt; [[1]]\n#&gt; [1] NA"
+  },
+  {
+    "objectID": "slides/05.html#walk-through-2",
+    "href": "slides/05.html#walk-through-2",
+    "title": "Control flow",
+    "section": "Walk-through",
+    "text": "Walk-through\nSecond Iteration\n\nx[0]\n\n#&gt; numeric(0)\n\nx[0]^2\n\n#&gt; numeric(0)\n\nout[0]\n\n#&gt; list()\n\nout[0] &lt;- x[0]^2\nout[0]\n\n#&gt; list()"
+  },
+  {
+    "objectID": "slides/05.html#walk-through-3",
+    "href": "slides/05.html#walk-through-3",
+    "title": "Control flow",
+    "section": "Walk-through",
+    "text": "Walk-through\nFinal Result\n\nout\n\n#&gt; [[1]]\n#&gt; [1] NA"
+  },
+  {
+    "objectID": "slides/05.html#when-the-following-code-is-evaluated-what-can-you-say-about-the-vector-being-iterated",
+    "href": "slides/05.html#when-the-following-code-is-evaluated-what-can-you-say-about-the-vector-being-iterated",
+    "title": "Control flow",
+    "section": "When the following code is evaluated, what can you say about the vector being iterated?",
+    "text": "When the following code is evaluated, what can you say about the vector being iterated?\n\nxs &lt;- c(1, 2, 3)\nfor (x in xs) {\n  xs &lt;- c(xs, x * 2)\n}\nxs\n\n#&gt; [1] 1 2 3 2 4 6\n\n\n\nIn this loop x takes on the values of the initial xs (1, 2 and 3), indicating that it is evaluated just once in the beginning of the loop, not after each iteration. (Otherwise, we would run into an infinite loop.)"
+  },
+  {
+    "objectID": "slides/05.html#what-does-the-following-code-tell-you-about-when-the-index-is-updated",
+    "href": "slides/05.html#what-does-the-following-code-tell-you-about-when-the-index-is-updated",
+    "title": "Control flow",
+    "section": "What does the following code tell you about when the index is updated?",
+    "text": "What does the following code tell you about when the index is updated?\n\nfor (i in 1:3) {\n  i &lt;- i * 2\n  print(i) \n}\n\n#&gt; [1] 2\n#&gt; [1] 4\n#&gt; [1] 6\n\n\n\nIn a for loop the index is updated in the beginning of each iteration. Therefore, reassigning the index symbol during one iteration doesn’t affect the following iterations. (Again, we would otherwise run into an infinite loop.)"
   },
   {
     "objectID": "slides/03.html#learning-objectives",
