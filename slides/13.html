@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.34">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.24">
 
   <title>Advanced R Book Club – S3</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -94,7 +94,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5fa723a4ee799f64e44b6fe0747a0a63.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5079db4132f0eaf0a29ac93fceccb8c9.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -229,12 +229,12 @@
 <li>After object creation</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="co"># at time of object creation</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="co"># at time of object creation</span></span>
 <span id="cb1-2"><a></a>x <span class="ot">&lt;-</span> <span class="fu">structure</span>(<span class="fu">list</span>(), <span class="at">class =</span> <span class="st">"my_class"</span>)</span>
 <span id="cb1-3"><a></a></span>
 <span id="cb1-4"><a></a><span class="co"># after object creation</span></span>
 <span id="cb1-5"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb1-6"><a></a><span class="fu">class</span>(x) <span class="ot">&lt;-</span> <span class="st">"my_class"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a></a><span class="fu">class</span>(x) <span class="ot">&lt;-</span> <span class="st">"my_class"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Some advice on style:</p>
 <ul>
@@ -252,7 +252,7 @@
 <h3 id="constructors">Constructors</h3>
 <p>Help developers construct an object of the target class:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>new_difftime <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">double</span>(), <span class="at">units =</span> <span class="st">"secs"</span>) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>new_difftime <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">double</span>(), <span class="at">units =</span> <span class="st">"secs"</span>) {</span>
 <span id="cb2-2"><a></a>  <span class="co"># check inputs</span></span>
 <span id="cb2-3"><a></a>  <span class="co"># issue generic system error if unexpected type or value</span></span>
 <span id="cb2-4"><a></a>  <span class="fu">stopifnot</span>(<span class="fu">is.double</span>(x))</span>
@@ -263,12 +263,12 @@
 <span id="cb2-9"><a></a>    <span class="at">class =</span> <span class="st">"difftime"</span>,</span>
 <span id="cb2-10"><a></a>    <span class="at">units =</span> units</span>
 <span id="cb2-11"><a></a>  )</span>
-<span id="cb2-12"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-12"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <h3 id="validators">Validators</h3>
 <p>Contrast a constructor, aimed at quickly creating instances of a class, which only checks type of inputs …</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>new_factor <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">integer</span>(), <span class="at">levels =</span> <span class="fu">character</span>()) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>new_factor <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">integer</span>(), <span class="at">levels =</span> <span class="fu">character</span>()) {</span>
 <span id="cb3-2"><a></a>  <span class="fu">stopifnot</span>(<span class="fu">is.integer</span>(x))</span>
 <span id="cb3-3"><a></a>  <span class="fu">stopifnot</span>(<span class="fu">is.character</span>(levels))</span>
 <span id="cb3-4"><a></a></span>
@@ -280,14 +280,14 @@
 <span id="cb3-10"><a></a>}</span>
 <span id="cb3-11"><a></a></span>
 <span id="cb3-12"><a></a><span class="co"># error messages are for system default and developer-facing</span></span>
-<span id="cb3-13"><a></a><span class="fu">new_factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">"a"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-13"><a></a><span class="fu">new_factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">"a"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in as.character.factor(x): malformed factor</code></pre>
 </div>
 </div>
 <p>… with a validator, aimed at emitting errors if inputs pose problems, which makes more expensive checks</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>validate_factor <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>validate_factor <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb5-2"><a></a>  values <span class="ot">&lt;-</span> <span class="fu">unclass</span>(x)</span>
 <span id="cb5-3"><a></a>  levels <span class="ot">&lt;-</span> <span class="fu">attr</span>(x, <span class="st">"levels"</span>)</span>
 <span id="cb5-4"><a></a></span>
@@ -309,7 +309,7 @@
 <span id="cb5-20"><a></a>}</span>
 <span id="cb5-21"><a></a></span>
 <span id="cb5-22"><a></a><span class="co"># error messages are informative and user-facing</span></span>
-<span id="cb5-23"><a></a><span class="fu">validate_factor</span>(<span class="fu">new_factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">"a"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-23"><a></a><span class="fu">validate_factor</span>(<span class="fu">new_factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">"a"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error: There must be at least as many `levels` as possible values in `x`</code></pre>
 </div>
@@ -320,12 +320,12 @@
 <li>If so, why do the integers need to start at 1 and be consecutive? And if they need to be as such, we should tell the user, right?</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">validate_factor</span>(<span class="fu">new_factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">validate_factor</span>(<span class="fu">new_factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] a b c
 #&gt; Levels: a b c</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">validate_factor</span>(<span class="fu">new_factor</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">validate_factor</span>(<span class="fu">new_factor</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error: There must be at least as many `levels` as possible values in `x`</code></pre>
 </div>
@@ -342,14 +342,14 @@
 <p>Q: Read the documentation for <code>utils::as.roman()</code>. How would you write a constructor for this class? Does it need a validator? What might a helper do?</p>
 <p>A: This function transforms numeric input into Roman numbers. It is built on the integer type, which results in the following constructor.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>new_roman <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">integer</span>()) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>new_roman <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">integer</span>()) {</span>
 <span id="cb11-2"><a></a>  <span class="fu">stopifnot</span>(<span class="fu">is.integer</span>(x))</span>
 <span id="cb11-3"><a></a>  <span class="fu">structure</span>(x, <span class="at">class =</span> <span class="st">"roman"</span>)</span>
-<span id="cb11-4"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The documentation tells us, that only values between 1 and 3899 are uniquely represented, which we then include in our validation function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>validate_roman <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>validate_roman <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb12-2"><a></a>  values <span class="ot">&lt;-</span> <span class="fu">unclass</span>(x)</span>
 <span id="cb12-3"><a></a>  </span>
 <span id="cb12-4"><a></a>  <span class="cf">if</span> (<span class="fu">any</span>(values <span class="sc">&lt;</span> <span class="dv">1</span> <span class="sc">|</span> values <span class="sc">&gt;</span> <span class="dv">3899</span>)) {</span>
@@ -359,22 +359,22 @@
 <span id="cb12-8"><a></a>    )</span>
 <span id="cb12-9"><a></a>  }</span>
 <span id="cb12-10"><a></a>  x</span>
-<span id="cb12-11"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-11"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>For convenience, we allow the user to also pass real values to a helper function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>roman <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">integer</span>()) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>roman <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">integer</span>()) {</span>
 <span id="cb13-2"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(x)</span>
 <span id="cb13-3"><a></a>  </span>
 <span id="cb13-4"><a></a>  <span class="fu">validate_roman</span>(<span class="fu">new_roman</span>(x))</span>
 <span id="cb13-5"><a></a>}</span>
 <span id="cb13-6"><a></a></span>
 <span id="cb13-7"><a></a><span class="co"># Test</span></span>
-<span id="cb13-8"><a></a><span class="fu">roman</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">753</span>, <span class="dv">2024</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-8"><a></a><span class="fu">roman</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">753</span>, <span class="dv">2024</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] I       DCCLIII MMXXIV</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">roman</span>(<span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">roman</span>(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error: Roman numbers must fall between 1 and 3899.</code></pre>
 </div>
@@ -388,9 +388,9 @@
 <li>Pass arguments from the generic to the dispatched method “auto-magically”</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>my_new_generic <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>my_new_generic <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb17-2"><a></a>  <span class="fu">UseMethod</span>(<span class="st">"my_new_generic"</span>)</span>
-<span id="cb17-3"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-3"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <h3 id="method-dispatch">Method dispatch</h3>
 <ul>
@@ -402,8 +402,8 @@
 </ul></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">Sys.Date</span>()</span>
-<span id="cb18-2"><a></a>sloop<span class="sc">::</span><span class="fu">s3_dispatch</span>(<span class="fu">print</span>(x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">Sys.Date</span>()</span>
+<span id="cb18-2"><a></a>sloop<span class="sc">::</span><span class="fu">s3_dispatch</span>(<span class="fu">print</span>(x))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; =&gt; print.Date
 #&gt;  * print.default</code></pre>
@@ -415,7 +415,7 @@
 <li>For a generic</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_methods_generic</span>(<span class="st">"mean"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_methods_generic</span>(<span class="st">"mean"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 7 × 4
 #&gt;   generic class      visible source             
@@ -433,7 +433,7 @@
 <li>For a class</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_methods_class</span>(<span class="st">"ordered"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_methods_class</span>(<span class="st">"ordered"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 4 × 4
 #&gt;   generic       class   visible source             
@@ -456,7 +456,7 @@
 <p>Carefully read the documentation for <code>UseMethod()</code> and explain why the following code returns the results that it does. What two usual rules of function evaluation does <code>UseMethod()</code> violate?</p>
 </blockquote>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb24-2"><a></a>  x <span class="ot">&lt;-</span> <span class="dv">10</span></span>
 <span id="cb24-3"><a></a>  y <span class="ot">&lt;-</span> <span class="dv">10</span></span>
 <span id="cb24-4"><a></a>  <span class="fu">UseMethod</span>(<span class="st">"g"</span>)</span>
@@ -465,12 +465,12 @@
 <span id="cb24-7"><a></a></span>
 <span id="cb24-8"><a></a>x <span class="ot">&lt;-</span> <span class="dv">1</span></span>
 <span id="cb24-9"><a></a>y <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb24-10"><a></a><span class="fu">g</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-10"><a></a><span class="fu">g</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; x y 
 #&gt; 1 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">g.default</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">g.default</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; x y 
 #&gt; 1 1</code></pre>
@@ -493,11 +493,11 @@
 <li>Class is a vector of classes</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">class</span>(<span class="fu">ordered</span>(<span class="st">"x"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">class</span>(<span class="fu">ordered</span>(<span class="st">"x"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "ordered" "factor"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">class</span>(<span class="fu">Sys.time</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">class</span>(<span class="fu">Sys.time</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "POSIXct" "POSIXt"</code></pre>
 </div>
@@ -506,7 +506,7 @@
 <li>Dispatch moves through class vector until it finds a defined method</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_dispatch</span>(<span class="fu">print</span>(<span class="fu">ordered</span>(<span class="st">"x"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_dispatch</span>(<span class="fu">print</span>(<span class="fu">ordered</span>(<span class="st">"x"</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    print.ordered
 #&gt; =&gt; print.factor
@@ -517,7 +517,7 @@
 <li>Method can delegate to another method via <code>NextMethod()</code>, which is indicated by <code>-&gt;</code> as below:</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_dispatch</span>(<span class="fu">ordered</span>(<span class="st">"x"</span>)[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_dispatch</span>(<span class="fu">ordered</span>(<span class="st">"x"</span>)[<span class="dv">1</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    [.ordered
 #&gt; =&gt; [.factor
@@ -528,7 +528,7 @@
 <h3 id="nextmethod"><code>NextMethod()</code></h3>
 <p>Consider <code>secret</code> class that masks each character of the input with <code>x</code> in output</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>new_secret <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">double</span>()) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>new_secret <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="fu">double</span>()) {</span>
 <span id="cb36-2"><a></a>  <span class="fu">stopifnot</span>(<span class="fu">is.double</span>(x))</span>
 <span id="cb36-3"><a></a>  <span class="fu">structure</span>(x, <span class="at">class =</span> <span class="st">"secret"</span>)</span>
 <span id="cb36-4"><a></a>}</span>
@@ -539,20 +539,20 @@
 <span id="cb36-9"><a></a>}</span>
 <span id="cb36-10"><a></a></span>
 <span id="cb36-11"><a></a>y <span class="ot">&lt;-</span> <span class="fu">new_secret</span>(<span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">1</span>, <span class="dv">456</span>))</span>
-<span id="cb36-12"><a></a>y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb36-12"><a></a>y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "xx"  "x"   "xxx"</code></pre>
 </div>
 </div>
 <p>Notice that the <code>[</code> method is problematic in that it does not preserve the <code>secret</code> class. Additionally, it returns <code>15</code> as the first element instead of <code>xx</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_dispatch</span>(y[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_dispatch</span>(y[<span class="dv">1</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    [.secret
 #&gt;    [.default
 #&gt; =&gt; [ (internal)</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>y[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>y[<span class="dv">1</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 15</code></pre>
 </div>
@@ -560,29 +560,29 @@
 <p>Fix this with a <code>[.secret</code> method:</p>
 <p>The first fix (not run) is inefficient because it creates a copy of <code>y</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="co"># not run</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="co"># not run</span></span>
 <span id="cb42-2"><a></a><span class="st">`</span><span class="at">[.secret</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x, i) {</span>
 <span id="cb42-3"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">unclass</span>(x)</span>
 <span id="cb42-4"><a></a>  <span class="fu">new_secret</span>(x[i])</span>
-<span id="cb42-5"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb42-5"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>NextMethod()</code> is more efficient.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="st">`</span><span class="at">[.secret</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x, i) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="st">`</span><span class="at">[.secret</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="cf">function</span>(x, i) {</span>
 <span id="cb43-2"><a></a>  <span class="co"># first, dispatch to `[`</span></span>
 <span id="cb43-3"><a></a>  <span class="co"># then, coerce subset value to `secret` class</span></span>
 <span id="cb43-4"><a></a>  <span class="fu">new_secret</span>(<span class="fu">NextMethod</span>())</span>
-<span id="cb43-5"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb43-5"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Notice that <code>[.secret</code> is selected for dispatch, but that the method delegates to the internal <code>[</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_dispatch</span>(y[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_dispatch</span>(y[<span class="dv">1</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; =&gt; [.secret
 #&gt;    [.default
 #&gt; -&gt; [ (internal)</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>y[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>y[<span class="dv">1</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "xx"</code></pre>
 </div>
@@ -595,7 +595,7 @@
 <li><code>class</code> for defining the subclass</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>new_secret <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ..., <span class="at">class =</span> <span class="fu">character</span>()) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>new_secret <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ..., <span class="at">class =</span> <span class="fu">character</span>()) {</span>
 <span id="cb48-2"><a></a>  <span class="fu">stopifnot</span>(<span class="fu">is.double</span>(x))</span>
 <span id="cb48-3"><a></a></span>
 <span id="cb48-4"><a></a>  <span class="fu">structure</span>(</span>
@@ -603,18 +603,18 @@
 <span id="cb48-6"><a></a>    ...,</span>
 <span id="cb48-7"><a></a>    <span class="at">class =</span> <span class="fu">c</span>(class, <span class="st">"secret"</span>)</span>
 <span id="cb48-8"><a></a>  )</span>
-<span id="cb48-9"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb48-9"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>To create the subclass, simply invoke the parent class constructor inside of the subclass constructor:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a>new_supersecret <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a>new_supersecret <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb49-2"><a></a>  <span class="fu">new_secret</span>(x, <span class="at">class =</span> <span class="st">"supersecret"</span>)</span>
 <span id="cb49-3"><a></a>}</span>
 <span id="cb49-4"><a></a></span>
 <span id="cb49-5"><a></a>print.supersecret <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
 <span id="cb49-6"><a></a>  <span class="fu">print</span>(<span class="fu">rep</span>(<span class="st">"xxxxx"</span>, <span class="fu">length</span>(x)))</span>
 <span id="cb49-7"><a></a>  <span class="fu">invisible</span>(x)</span>
-<span id="cb49-8"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb49-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>But this means the subclass inherits all parent methods and needs to overwrite all parent methods with subclass methods that return the sublclass rather than the parent class.</p>
 <p>There’s no easy solution to this problem in base R.</p>
@@ -812,7 +812,7 @@
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -886,13 +886,14 @@
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy

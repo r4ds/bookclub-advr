@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.34">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.24">
 
   <title>Advanced R Book Club – R6</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -94,7 +94,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5fa723a4ee799f64e44b6fe0747a0a63.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5079db4132f0eaf0a29ac93fceccb8c9.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -228,10 +228,10 @@
 </ul></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">install.packages</span>(<span class="st">"R6"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">install.packages</span>(<span class="st">"R6"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">library</span>(R6)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">library</span>(R6)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>R6 classes have two special properties:
@@ -261,13 +261,13 @@
 <li>Really simple to do, just use the <code>R6::R6Class()</code> function.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>Accumulator <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Accumulator"</span>, <span class="fu">list</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>Accumulator <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Accumulator"</span>, <span class="fu">list</span>(</span>
 <span id="cb3-2"><a></a>  <span class="at">sum =</span> <span class="dv">0</span>,</span>
 <span id="cb3-3"><a></a>  <span class="at">add =</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) {</span>
 <span id="cb3-4"><a></a>    self<span class="sc">$</span>sum <span class="ot">&lt;-</span> self<span class="sc">$</span>sum <span class="sc">+</span> x</span>
 <span id="cb3-5"><a></a>    <span class="fu">invisible</span>(self)</span>
 <span id="cb3-6"><a></a>  }</span>
-<span id="cb3-7"><a></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-7"><a></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>Two important arguments:
@@ -290,11 +290,11 @@
 <li>Just use <code>$new()</code></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>x <span class="ot">&lt;-</span> Accumulator<span class="sc">$</span><span class="fu">new</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>x <span class="ot">&lt;-</span> Accumulator<span class="sc">$</span><span class="fu">new</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>x<span class="sc">$</span><span class="fu">add</span>(<span class="dv">4</span>)</span>
-<span id="cb5-2"><a></a>x<span class="sc">$</span>sum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>x<span class="sc">$</span><span class="fu">add</span>(<span class="dv">4</span>)</span>
+<span id="cb5-2"><a></a>x<span class="sc">$</span>sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 4</code></pre>
 </div>
@@ -307,19 +307,19 @@
 <li>This allows for method chaining.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>x<span class="sc">$</span><span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span><span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span>sum</span>
-<span id="cb7-2"><a></a><span class="co"># [1] 24</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>x<span class="sc">$</span><span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span><span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span>sum</span>
+<span id="cb7-2"><a></a><span class="co"># [1] 24</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>To improve readability:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="co"># Method chaining</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="co"># Method chaining</span></span>
 <span id="cb8-2"><a></a>x<span class="sc">$</span></span>
 <span id="cb8-3"><a></a>  <span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span></span>
 <span id="cb8-4"><a></a>  <span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span></span>
 <span id="cb8-5"><a></a>  sum</span>
-<span id="cb8-6"><a></a><span class="co"># [1] 44</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-6"><a></a><span class="co"># [1] 44</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="r6-useful-methods" class="slide level2">
@@ -338,7 +338,7 @@
 <section id="constructing-a-bank-account-class" class="slide level2">
 <h2>Constructing a bank account class</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>BankAccount <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccount"</span>, <span class="fu">list</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>BankAccount <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccount"</span>, <span class="fu">list</span>(</span>
 <span id="cb9-2"><a></a>  <span class="at">owner =</span> <span class="cn">NULL</span>,</span>
 <span id="cb9-3"><a></a>  <span class="at">type =</span> <span class="cn">NULL</span>,</span>
 <span id="cb9-4"><a></a>  <span class="at">balance =</span> <span class="dv">0</span>,</span>
@@ -354,15 +354,15 @@
 <span id="cb9-14"><a></a>    self<span class="sc">$</span>balance <span class="ot">&lt;-</span> self<span class="sc">$</span>balance <span class="sc">-</span> amount</span>
 <span id="cb9-15"><a></a>    <span class="fu">invisible</span>(self)</span>
 <span id="cb9-16"><a></a>  }</span>
-<span id="cb9-17"><a></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-17"><a></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="simple-transactions" class="slide level2">
 <h2>Simple transactions</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>collinsavings <span class="ot">&lt;-</span> BankAccount<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Collin"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>collinsavings <span class="ot">&lt;-</span> BankAccount<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Collin"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
 <span id="cb10-2"><a></a>collinsavings<span class="sc">$</span><span class="fu">deposit</span>(<span class="dv">10</span>)</span>
-<span id="cb10-3"><a></a>collinsavings</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-3"><a></a>collinsavings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;BankAccount&gt;
 #&gt;   Public:
@@ -376,8 +376,8 @@
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>collinsavings<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">10</span>)</span>
-<span id="cb12-2"><a></a>collinsavings</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>collinsavings<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">10</span>)</span>
+<span id="cb12-2"><a></a>collinsavings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;BankAccount&gt;
 #&gt;   Public:
@@ -394,7 +394,7 @@
 <section id="modifying-the-print-method" class="slide level2">
 <h2>Modifying the <code>$print()</code> method</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>BankAccount <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccount"</span>, <span class="fu">list</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>BankAccount <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccount"</span>, <span class="fu">list</span>(</span>
 <span id="cb14-2"><a></a>  <span class="at">owner =</span> <span class="cn">NULL</span>,</span>
 <span id="cb14-3"><a></a>  <span class="at">type =</span> <span class="cn">NULL</span>,</span>
 <span id="cb14-4"><a></a>  <span class="at">balance =</span> <span class="dv">0</span>,</span>
@@ -419,7 +419,7 @@
 <span id="cb14-23"><a></a>    <span class="fu">cat</span>(<span class="st">"  Balance: "</span>, self<span class="sc">$</span>balance, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
 <span id="cb14-24"><a></a>    <span class="fu">invisible</span>(self)</span>
 <span id="cb14-25"><a></a>  }</span>
-<span id="cb14-26"><a></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-26"><a></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>Important point: Methods are bound to individual objects.
@@ -428,11 +428,11 @@
 </ul></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>collinsavings</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>collinsavings</span>
 <span id="cb15-2"><a></a></span>
 <span id="cb15-3"><a></a>hadleychecking <span class="ot">&lt;-</span> BankAccount<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Hadley"</span>, <span class="at">type =</span> <span class="st">"Checking"</span>)</span>
 <span id="cb15-4"><a></a></span>
-<span id="cb15-5"><a></a>hadleychecking</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-5"><a></a>hadleychecking</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="how-does-this-work" class="slide level2">
@@ -450,12 +450,12 @@
 <li>Keep in mind methods added with <code>$set()</code> are only available with new objects.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>Accumulator <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Accumulator"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>Accumulator <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Accumulator"</span>)</span>
 <span id="cb16-2"><a></a>Accumlator<span class="sc">$</span><span class="fu">set</span>(<span class="st">"public"</span>, <span class="st">"sum"</span>, <span class="dv">0</span>)</span>
 <span id="cb16-3"><a></a>Accumulator<span class="sc">$</span><span class="fu">set</span>(<span class="st">"public"</span>, <span class="st">"add"</span>, <span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) {</span>
 <span id="cb16-4"><a></a>  self<span class="sc">$</span>sum <span class="ot">&lt;-</span> self<span class="sc">$</span>sum <span class="sc">+</span> x</span>
 <span id="cb16-5"><a></a>  <span class="fu">invisible</span>(self)</span>
-<span id="cb16-6"><a></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-6"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="inheritance" class="slide level2">
@@ -465,7 +465,7 @@
 <li>This example also provides a good example on how to <a href="">debug</a> an R6 class.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>BankAccountOverDraft <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccountOverDraft"</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>BankAccountOverDraft <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccountOverDraft"</span>,</span>
 <span id="cb17-2"><a></a>  <span class="at">inherit =</span> BankAccount,</span>
 <span id="cb17-3"><a></a>  <span class="at">public =</span> <span class="fu">list</span>(</span>
 <span id="cb17-4"><a></a>    <span class="at">withdraw =</span> <span class="cf">function</span>(amount) {</span>
@@ -477,40 +477,40 @@
 <span id="cb17-10"><a></a>      <span class="fu">invisible</span>(self)</span>
 <span id="cb17-11"><a></a>    }</span>
 <span id="cb17-12"><a></a>  )</span>
-<span id="cb17-13"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-13"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <h3 id="future-instances-debugging">Future instances debugging</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>BankAccountOverDraft<span class="sc">$</span><span class="fu">debug</span>(<span class="st">"withdraw"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>BankAccountOverDraft<span class="sc">$</span><span class="fu">debug</span>(<span class="st">"withdraw"</span>)</span>
 <span id="cb18-2"><a></a>x <span class="ot">&lt;-</span> BankAccountOverDraft<span class="sc">$</span><span class="fu">new</span>(<span class="st">"x"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
 <span id="cb18-3"><a></a>x<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">20</span>)</span>
 <span id="cb18-4"><a></a></span>
 <span id="cb18-5"><a></a><span class="co"># Turn debugging off</span></span>
-<span id="cb18-6"><a></a>BankAccountOverDraft<span class="sc">$</span><span class="fu">undebug</span>(<span class="st">"withdraw"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-6"><a></a>BankAccountOverDraft<span class="sc">$</span><span class="fu">undebug</span>(<span class="st">"withdraw"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <h3 id="individual-object-debugging">Individual object debugging</h3>
 <ul>
 <li>Use the <code>debug()</code> function.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>x <span class="ot">&lt;-</span> BankAccountOverDraft<span class="sc">$</span><span class="fu">new</span>(<span class="st">"x"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>x <span class="ot">&lt;-</span> BankAccountOverDraft<span class="sc">$</span><span class="fu">new</span>(<span class="st">"x"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
 <span id="cb19-2"><a></a><span class="co"># Turn on debugging</span></span>
 <span id="cb19-3"><a></a><span class="fu">debug</span>(x<span class="sc">$</span>withdraw)</span>
 <span id="cb19-4"><a></a>x<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">10</span>)</span>
 <span id="cb19-5"><a></a></span>
 <span id="cb19-6"><a></a><span class="co"># Turn off debugging</span></span>
 <span id="cb19-7"><a></a><span class="fu">undebug</span>(x<span class="sc">$</span>withdraw)</span>
-<span id="cb19-8"><a></a>x<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-8"><a></a>x<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <h3 id="test-out-our-debugged-class">Test out our debugged class</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>collinsavings <span class="ot">&lt;-</span> BankAccountOverDraft<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Collin"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>collinsavings <span class="ot">&lt;-</span> BankAccountOverDraft<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Collin"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
 <span id="cb20-2"><a></a>collinsavings</span>
 <span id="cb20-3"><a></a>collinsavings<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">10</span>)</span>
 <span id="cb20-4"><a></a>collinsavings</span>
 <span id="cb20-5"><a></a>collinsavings<span class="sc">$</span><span class="fu">deposit</span>(<span class="dv">5</span>)</span>
 <span id="cb20-6"><a></a>collinsavings</span>
-<span id="cb20-7"><a></a>collinsavings<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-7"><a></a>collinsavings<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="introspection" class="slide level2">
@@ -520,13 +520,13 @@
 <li>Use the <code>class()</code> function to determine class (and all classes it inherits from).</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">class</span>(collinsavings)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">class</span>(collinsavings)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>You can also list all methods and fields of an R6 object with <code>names()</code>.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">names</span>(collinsavings)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">names</span>(collinsavings)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="controlling-access" class="slide level2">
@@ -577,7 +577,7 @@
 <section id="adding-a-read-only-bank-account-number" class="slide level2">
 <h2>Adding a read-only bank account number</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>BankAccount <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccount"</span>, <span class="at">public =</span> <span class="fu">list</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>BankAccount <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccount"</span>, <span class="at">public =</span> <span class="fu">list</span>(</span>
 <span id="cb23-2"><a></a>  <span class="at">owner =</span> <span class="cn">NULL</span>,</span>
 <span id="cb23-3"><a></a>  <span class="at">type =</span> <span class="cn">NULL</span>,</span>
 <span id="cb23-4"><a></a>  <span class="at">balance =</span> <span class="dv">0</span>,</span>
@@ -614,14 +614,14 @@
 <span id="cb23-35"><a></a>      }</span>
 <span id="cb23-36"><a></a>    }</span>
 <span id="cb23-37"><a></a>  )</span>
-<span id="cb23-38"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-38"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>collinsavings <span class="ot">&lt;-</span> BankAccount<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Collin"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>collinsavings <span class="ot">&lt;-</span> BankAccount<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Collin"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
 <span id="cb24-2"><a></a>collinsavings<span class="sc">$</span>create_acct_num</span>
 <span id="cb24-3"><a></a><span class="co"># Stops because account number is assigned</span></span>
 <span id="cb24-4"><a></a>collinsavings<span class="sc">$</span><span class="fu">create_acct_num</span>()</span>
-<span id="cb24-5"><a></a>collinsavings<span class="sc">$</span><span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-5"><a></a>collinsavings<span class="sc">$</span><span class="fu">print</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="how-does-an-active-field-work" class="slide level2">
@@ -657,7 +657,7 @@
 <li>Reference semantics makes code harder to reason about.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>)</span>
 <span id="cb25-2"><a></a>y <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">b =</span> <span class="dv">2</span>)</span>
 <span id="cb25-3"><a></a></span>
 <span id="cb25-4"><a></a><span class="co"># Here we know the final line only modifies z</span></span>
@@ -671,7 +671,7 @@
 <span id="cb25-12"><a></a><span class="co"># If x or y is a method, we don't know if it modifies</span></span>
 <span id="cb25-13"><a></a><span class="co"># something other than z. Is this a limitation of</span></span>
 <span id="cb25-14"><a></a><span class="co"># abstraction?</span></span>
-<span id="cb25-15"><a></a>z <span class="ot">&lt;-</span> <span class="fu">f</span>(x, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-15"><a></a>z <span class="ot">&lt;-</span> <span class="fu">f</span>(x, y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>I understand the basics, but not necessarily the tradeoffs.
@@ -692,7 +692,7 @@
 </ul></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>TemporaryFile <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"TemporaryFile"</span>, <span class="fu">list</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>TemporaryFile <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"TemporaryFile"</span>, <span class="fu">list</span>(</span>
 <span id="cb26-2"><a></a>  <span class="at">path =</span> <span class="cn">NULL</span>,</span>
 <span id="cb26-3"><a></a>  <span class="at">initialize =</span> <span class="cf">function</span>() {</span>
 <span id="cb26-4"><a></a>    self<span class="sc">$</span>path <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
@@ -701,12 +701,12 @@
 <span id="cb26-7"><a></a>    <span class="fu">message</span>(<span class="st">"Cleaning up "</span>, self<span class="sc">$</span>path)</span>
 <span id="cb26-8"><a></a>    <span class="fu">unlink</span>(self<span class="sc">$</span>path)</span>
 <span id="cb26-9"><a></a>  }</span>
-<span id="cb26-10"><a></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-10"><a></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>tf <span class="ot">&lt;-</span> TemporaryFile<span class="sc">$</span><span class="fu">new</span>()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>tf <span class="ot">&lt;-</span> TemporaryFile<span class="sc">$</span><span class="fu">new</span>()</span>
 <span id="cb27-2"><a></a><span class="co"># The finalizer will clean up, once the R6 object is deleted.</span></span>
-<span id="cb27-3"><a></a><span class="fu">rm</span>(tf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-3"><a></a><span class="fu">rm</span>(tf)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="consequences-of-r6-fields" class="slide level2">
@@ -715,7 +715,7 @@
 <li>If you use an R6 class as the default value of a field, it will be shared across all instances of the object.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>TemporaryDatabase <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"TemporaryDatabase"</span>, <span class="fu">list</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>TemporaryDatabase <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"TemporaryDatabase"</span>, <span class="fu">list</span>(</span>
 <span id="cb28-2"><a></a>  <span class="at">con =</span> <span class="cn">NULL</span>,</span>
 <span id="cb28-3"><a></a>  <span class="at">file =</span> TemporaryFile<span class="sc">$</span><span class="fu">new</span>(),</span>
 <span id="cb28-4"><a></a>  <span class="at">initialize =</span> <span class="cf">function</span>() {</span>
@@ -730,13 +730,13 @@
 <span id="cb28-13"><a></a>db_b <span class="ot">&lt;-</span> TemporaryDatabase<span class="sc">$</span><span class="fu">new</span>()</span>
 <span id="cb28-14"><a></a></span>
 <span id="cb28-15"><a></a>db_a<span class="sc">$</span>file<span class="sc">$</span>path <span class="sc">==</span> db_b<span class="sc">$</span>file<span class="sc">$</span>path</span>
-<span id="cb28-16"><a></a><span class="co">#&gt; [1] TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-16"><a></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>To fix this, we need to move the class method call to <code>$intialize()</code></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>TemporaryDatabase <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"TemporaryDatabase"</span>, <span class="fu">list</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>TemporaryDatabase <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"TemporaryDatabase"</span>, <span class="fu">list</span>(</span>
 <span id="cb29-2"><a></a>  <span class="at">con =</span> <span class="cn">NULL</span>,</span>
 <span id="cb29-3"><a></a>  <span class="at">file =</span> <span class="cn">NULL</span>,</span>
 <span id="cb29-4"><a></a>  <span class="at">initialize =</span> <span class="cf">function</span>() {</span>
@@ -752,7 +752,7 @@
 <span id="cb29-14"><a></a>db_b <span class="ot">&lt;-</span> TemporaryDatabase<span class="sc">$</span><span class="fu">new</span>()</span>
 <span id="cb29-15"><a></a></span>
 <span id="cb29-16"><a></a>db_a<span class="sc">$</span>file<span class="sc">$</span>path <span class="sc">==</span> db_b<span class="sc">$</span>file<span class="sc">$</span>path</span>
-<span id="cb29-17"><a></a><span class="co">#&gt; [1] FALSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-17"><a></a><span class="co">#&gt; [1] FALSE</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="why-use-r6" class="slide level2">
@@ -966,7 +966,7 @@
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -1040,13 +1040,14 @@
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy

@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.34">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.24">
 
   <title>Advanced R Book Club – Function operators</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -94,7 +94,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5fa723a4ee799f64e44b6fe0747a0a63.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5079db4132f0eaf0a29ac93fceccb8c9.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -219,7 +219,7 @@ knitr::include_graphics("images/11-maths_example.png")
 <li><p>They are often used to wrap an existing function to provide additional capability, similar to python’s <strong>decorators</strong>.</p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>chatty <span class="ot">&lt;-</span> <span class="cf">function</span>(f) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>chatty <span class="ot">&lt;-</span> <span class="cf">function</span>(f) {</span>
 <span id="cb1-2"><a></a>  <span class="fu">force</span>(f)</span>
 <span id="cb1-3"><a></a>  </span>
 <span id="cb1-4"><a></a>  <span class="cf">function</span>(x, ...) {</span>
@@ -232,7 +232,7 @@ knitr::include_graphics("images/11-maths_example.png")
 <span id="cb1-11"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">^</span> <span class="dv">2</span></span>
 <span id="cb1-12"><a></a>s <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>)</span>
 <span id="cb1-13"><a></a></span>
-<span id="cb1-14"><a></a>purrr<span class="sc">::</span><span class="fu">map_dbl</span>(s, <span class="fu">chatty</span>(f))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-14"><a></a>purrr<span class="sc">::</span><span class="fu">map_dbl</span>(s, <span class="fu">chatty</span>(f))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Processing 3
 #&gt; Processing 2
@@ -247,31 +247,31 @@ knitr::include_graphics("images/11-maths_example.png")
 <h2>Existing function operators</h2>
 <p>Two function operator examples are <code>purrr:safely()</code> and <code>memoise::memoise()</code>. These can be found in <code>purr</code> and <code>memoise</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">library</span>(purrr)</span>
-<span id="cb4-2"><a></a><span class="fu">library</span>(memoise)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">library</span>(purrr)</span>
+<span id="cb4-2"><a></a><span class="fu">library</span>(memoise)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="purrrsafely" class="slide level2 unnumbered">
 <h2>purrr::safely</h2>
 <p>Capturing Errors: turns errors into data!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb5-2"><a></a>  <span class="fu">c</span>(<span class="fl">0.512</span>, <span class="fl">0.165</span>, <span class="fl">0.717</span>),</span>
 <span id="cb5-3"><a></a>  <span class="fu">c</span>(<span class="fl">0.064</span>, <span class="fl">0.781</span>, <span class="fl">0.427</span>),</span>
 <span id="cb5-4"><a></a>  <span class="fu">c</span>(<span class="fl">0.890</span>, <span class="fl">0.785</span>, <span class="fl">0.495</span>),</span>
 <span id="cb5-5"><a></a>  <span class="st">"oops"</span></span>
-<span id="cb5-6"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">map_dbl</span>(x, sum)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">map_dbl</span>(x, sum)</span>
 <span id="cb6-2"><a></a><span class="co">#&gt; Error in .Primitive("sum")(..., na.rm = na.rm): invalid 'type' (character) of</span></span>
-<span id="cb6-3"><a></a><span class="co">#&gt; argument</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-3"><a></a><span class="co">#&gt; argument</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># note use of map (not map_dbl), safely returns a lisst</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># note use of map (not map_dbl), safely returns a lisst</span></span>
 <span id="cb7-2"><a></a></span>
 <span id="cb7-3"><a></a>out <span class="ot">&lt;-</span> <span class="fu">map</span>(x, <span class="fu">safely</span>(sum))</span>
-<span id="cb7-4"><a></a><span class="fu">str</span>(<span class="fu">transpose</span>(out))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-4"><a></a><span class="fu">str</span>(<span class="fu">transpose</span>(out))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; List of 2
 #&gt;  $ result:List of 4
@@ -314,11 +314,11 @@ knitr::include_graphics("images/11-maths_example.png")
 <h2>memoise::memoise</h2>
 <p>Caching computations: avoid repeated computations!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>slow_function <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>slow_function <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb10-2"><a></a>  <span class="fu">Sys.sleep</span>(<span class="dv">1</span>)</span>
 <span id="cb10-3"><a></a>  x <span class="sc">*</span> <span class="dv">10</span> <span class="sc">*</span> <span class="fu">runif</span>(<span class="dv">1</span>)</span>
 <span id="cb10-4"><a></a>}</span>
-<span id="cb10-5"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">slow_function</span>(<span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-5"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">slow_function</span>(<span class="dv">1</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 3.054764</code></pre>
 </div>
@@ -326,7 +326,7 @@ knitr::include_graphics("images/11-maths_example.png")
 <pre><code>#&gt;    user  system elapsed 
 #&gt;    0.02    0.00    1.02</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">slow_function</span>(<span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">slow_function</span>(<span class="dv">1</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 3.644634</code></pre>
 </div>
@@ -336,8 +336,8 @@ knitr::include_graphics("images/11-maths_example.png")
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>fast_function <span class="ot">&lt;-</span> memoise<span class="sc">::</span><span class="fu">memoise</span>(slow_function)</span>
-<span id="cb16-2"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">fast_function</span>(<span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>fast_function <span class="ot">&lt;-</span> memoise<span class="sc">::</span><span class="fu">memoise</span>(slow_function)</span>
+<span id="cb16-2"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">fast_function</span>(<span class="dv">1</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 7.451108</code></pre>
 </div>
@@ -345,7 +345,7 @@ knitr::include_graphics("images/11-maths_example.png")
 <pre><code>#&gt;    user  system elapsed 
 #&gt;    0.00    0.00    1.01</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">fast_function</span>(<span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">system.time</span>(<span class="fu">print</span>(<span class="fu">fast_function</span>(<span class="dv">1</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 7.451108</code></pre>
 </div>
@@ -363,7 +363,7 @@ knitr::include_graphics("images/11-maths_example.png")
 <p>How does <code>safely()</code> work?<br>
 The source code looks like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>safely</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>safely</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (.f, otherwise = NULL, quiet = TRUE) 
 #&gt; {
@@ -378,7 +378,7 @@ The source code looks like this:</p>
 </div>
 <p>The real work is done in <code>capture_error</code> which is defined in the package <strong>namespace</strong>. We can access it with the <code>:::</code> operator. (Could also grab it from the function’s environment.)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>purrr<span class="sc">:::</span>capture_error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>purrr<span class="sc">:::</span>capture_error</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (code, otherwise = NULL, quiet = TRUE) 
 #&gt; {
@@ -397,18 +397,18 @@ The source code looks like this:</p>
 <section id="case-study-make-your-own-function-operator" class="slide level2">
 <h2>Case study: make your own function operator</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>urls <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>urls <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb26-2"><a></a>  <span class="st">"adv-r"</span> <span class="ot">=</span> <span class="st">"https://adv-r.hadley.nz"</span>, </span>
 <span id="cb26-3"><a></a>  <span class="st">"r4ds"</span> <span class="ot">=</span> <span class="st">"http://r4ds.had.co.nz/"</span></span>
 <span id="cb26-4"><a></a>  <span class="co"># and many many more</span></span>
 <span id="cb26-5"><a></a>)</span>
 <span id="cb26-6"><a></a>path <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">tempdir</span>(), <span class="fu">names</span>(urls), <span class="st">".html"</span>)</span>
 <span id="cb26-7"><a></a></span>
-<span id="cb26-8"><a></a><span class="fu">walk2</span>(urls, path, download.file, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-8"><a></a><span class="fu">walk2</span>(urls, path, download.file, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Here we make a function operator that add a little delay in reading each page:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>delay_by <span class="ot">&lt;-</span> <span class="cf">function</span>(f, amount) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>delay_by <span class="ot">&lt;-</span> <span class="cf">function</span>(f, amount) {</span>
 <span id="cb27-2"><a></a>  <span class="fu">force</span>(f)</span>
 <span id="cb27-3"><a></a>  <span class="fu">force</span>(amount)</span>
 <span id="cb27-4"><a></a>  </span>
@@ -417,12 +417,12 @@ The source code looks like this:</p>
 <span id="cb27-7"><a></a>    <span class="fu">f</span>(...)</span>
 <span id="cb27-8"><a></a>  }</span>
 <span id="cb27-9"><a></a>}</span>
-<span id="cb27-10"><a></a><span class="fu">system.time</span>(<span class="fu">runif</span>(<span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-10"><a></a><span class="fu">system.time</span>(<span class="fu">runif</span>(<span class="dv">100</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
 #&gt;       0       0       0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="fu">system.time</span>(<span class="fu">delay_by</span>(runif, <span class="fl">0.1</span>)(<span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="fu">system.time</span>(<span class="fu">delay_by</span>(runif, <span class="fl">0.1</span>)(<span class="dv">100</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
 #&gt;    0.00    0.00    0.11</code></pre>
@@ -430,7 +430,7 @@ The source code looks like this:</p>
 </div>
 <p>And another to add a dot after nth invocation:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>dot_every <span class="ot">&lt;-</span> <span class="cf">function</span>(f, n) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>dot_every <span class="ot">&lt;-</span> <span class="cf">function</span>(f, n) {</span>
 <span id="cb31-2"><a></a>  <span class="fu">force</span>(f)</span>
 <span id="cb31-3"><a></a>  <span class="fu">force</span>(n)</span>
 <span id="cb31-4"><a></a>  </span>
@@ -442,18 +442,18 @@ The source code looks like this:</p>
 <span id="cb31-10"><a></a>  }</span>
 <span id="cb31-11"><a></a>}</span>
 <span id="cb31-12"><a></a></span>
-<span id="cb31-13"><a></a><span class="fu">walk</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, <span class="fu">dot_every</span>(runif, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-13"><a></a><span class="fu">walk</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, <span class="fu">dot_every</span>(runif, <span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; ..........</code></pre>
 </div>
 </div>
 <p>Can now use both of these function operators to express our desired result:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">walk2</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">walk2</span>(</span>
 <span id="cb33-2"><a></a>  urls, path, </span>
 <span id="cb33-3"><a></a>  download.file <span class="sc">%&gt;%</span> <span class="fu">dot_every</span>(<span class="dv">10</span>) <span class="sc">%&gt;%</span> <span class="fu">delay_by</span>(<span class="fl">0.1</span>), </span>
 <span id="cb33-4"><a></a>  <span class="at">quiet =</span> <span class="cn">TRUE</span></span>
-<span id="cb33-5"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb33-5"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="exercise-1" class="slide level2 unnumbered scrollable">
@@ -653,7 +653,7 @@ The source code looks like this:</p>
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -727,13 +727,14 @@ The source code looks like this:</p>
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy

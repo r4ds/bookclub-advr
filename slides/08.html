@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.34">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.24">
 
   <title>Advanced R Book Club – Conditions</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -94,7 +94,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5fa723a4ee799f64e44b6fe0747a0a63.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5079db4132f0eaf0a29ac93fceccb8c9.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -229,19 +229,19 @@
 <h3 id="errors">❌ Errors</h3>
 <p>How to throw errors</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="co"># with base R</span></span>
-<span id="cb1-2"><a></a><span class="fu">stop</span>(<span class="st">"... in the name of love..."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="co"># with base R</span></span>
+<span id="cb1-2"><a></a><span class="fu">stop</span>(<span class="st">"... in the name of love..."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error: ... in the name of love...</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># with rlang</span></span>
-<span id="cb3-2"><a></a>rlang<span class="sc">::</span><span class="fu">abort</span>(<span class="st">"...before you break my heart..."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># with rlang</span></span>
+<span id="cb3-2"><a></a>rlang<span class="sc">::</span><span class="fu">abort</span>(<span class="st">"...before you break my heart..."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error:
 #&gt; ! ...before you break my heart...</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># with base R; without call</span></span>
-<span id="cb5-2"><a></a><span class="fu">stop</span>(<span class="st">"... think it o-o-over..."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># with base R; without call</span></span>
+<span id="cb5-2"><a></a><span class="fu">stop</span>(<span class="st">"... think it o-o-over..."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error: ... think it o-o-over...</code></pre>
 </div>
@@ -254,8 +254,8 @@
 </ul></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>some_val <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb7-2"><a></a><span class="fu">stop</span>(<span class="st">"Your value is: "</span>, some_val, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>some_val <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb7-2"><a></a><span class="fu">stop</span>(<span class="st">"Your value is: "</span>, some_val, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error: Your value is: 1</code></pre>
 </div>
@@ -264,8 +264,8 @@
 <li><code>abort()</code> requires <code>{glue}</code></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>some_val <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb9-2"><a></a>rlang<span class="sc">::</span><span class="fu">abort</span>(glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"Your value is: {some_val}"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>some_val <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb9-2"><a></a>rlang<span class="sc">::</span><span class="fu">abort</span>(glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"Your value is: {some_val}"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error:
 #&gt; ! Your value is: 1</code></pre>
@@ -277,15 +277,15 @@
 <h3 id="warnings">⚠️ Warnings</h3>
 <p>May have multiple warnings per call</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>warn <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>warn <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
 <span id="cb11-2"><a></a>  <span class="fu">warning</span>(<span class="st">"This is your first warning"</span>)</span>
 <span id="cb11-3"><a></a>  <span class="fu">warning</span>(<span class="st">"This is your second warning"</span>)</span>
 <span id="cb11-4"><a></a>  <span class="fu">warning</span>(<span class="st">"This is your LAST warning"</span>)</span>
-<span id="cb11-5"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-5"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Print all warnings once call is complete.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">warn</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">warn</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; Warning in warn(): This is your first warning</code></pre>
 </div>
@@ -302,20 +302,20 @@
 <li>an <code>{rlang}</code> analog</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="co"># base R</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="co"># base R</span></span>
 <span id="cb16-2"><a></a><span class="co"># ... with call (implicitly .call = TRUE)</span></span>
-<span id="cb16-3"><a></a><span class="fu">warning</span>(<span class="st">"Warning"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-3"><a></a><span class="fu">warning</span>(<span class="st">"Warning"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; Warning: Warning</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># ... with call suppressed</span></span>
-<span id="cb18-2"><a></a><span class="fu">warning</span>(<span class="st">"Warning"</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># ... with call suppressed</span></span>
+<span id="cb18-2"><a></a><span class="fu">warning</span>(<span class="st">"Warning"</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; Warning: Warning</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># rlang</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># rlang</span></span>
 <span id="cb20-2"><a></a><span class="co"># note: call suppressed by default</span></span>
-<span id="cb20-3"><a></a>rlang<span class="sc">::</span><span class="fu">warn</span>(<span class="st">"Warning"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-3"><a></a>rlang<span class="sc">::</span><span class="fu">warn</span>(<span class="st">"Warning"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; Warning: Warning</code></pre>
 </div>
@@ -359,12 +359,12 @@
 <li>But continues execution after error</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>bad_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>bad_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb22-2"><a></a>  <span class="fu">try</span>(<span class="fu">log</span>(x))</span>
 <span id="cb22-3"><a></a>  <span class="dv">10</span></span>
 <span id="cb22-4"><a></a>}</span>
 <span id="cb22-5"><a></a></span>
-<span id="cb22-6"><a></a><span class="fu">bad_log</span>(<span class="st">"bad"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-6"><a></a><span class="fu">bad_log</span>(<span class="st">"bad"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Error in log(x) : non-numeric argument to mathematical function</code></pre>
 </div>
@@ -378,8 +378,8 @@
 <li>Set a default value inside the call. See below.</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>default <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb25-2"><a></a><span class="fu">try</span>(default <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"possibly-bad-input.csv"</span>), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>default <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb25-2"><a></a><span class="fu">try</span>(default <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"possibly-bad-input.csv"</span>), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; Warning in file(file, "rt"): cannot open file 'possibly-bad-input.csv': No such
 #&gt; file or directory</code></pre>
@@ -391,7 +391,7 @@
 <li>Supresses all warnings (messages)</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="co"># suppress warnings (from our `warn()` function above)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="co"># suppress warnings (from our `warn()` function above)</span></span>
 <span id="cb27-2"><a></a><span class="fu">suppressWarnings</span>(<span class="fu">warn</span>())</span>
 <span id="cb27-3"><a></a></span>
 <span id="cb27-4"><a></a><span class="co"># suppress messages</span></span>
@@ -401,7 +401,7 @@
 <span id="cb27-8"><a></a>  <span class="fu">message</span>(<span class="st">"Message 3"</span>)</span>
 <span id="cb27-9"><a></a>}</span>
 <span id="cb27-10"><a></a></span>
-<span id="cb27-11"><a></a><span class="fu">suppressMessages</span>(<span class="fu">many_messages</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-11"><a></a><span class="fu">suppressMessages</span>(<span class="fu">many_messages</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="handling-conditions" class="slide level2">
@@ -419,7 +419,7 @@
 <li><code>withCallingHandlers()</code></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="co"># try to run `code_to_try_to_run`</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="co"># try to run `code_to_try_to_run`</span></span>
 <span id="cb28-2"><a></a><span class="co"># if (error) condition is signalled, fun some other code</span></span>
 <span id="cb28-3"><a></a><span class="fu">tryCatch</span>(</span>
 <span id="cb28-4"><a></a>  <span class="at">error =</span> <span class="cf">function</span>(cnd) {</span>
@@ -438,14 +438,14 @@
 <span id="cb28-17"><a></a>    <span class="co"># code to run when message is signalled</span></span>
 <span id="cb28-18"><a></a>  },</span>
 <span id="cb28-19"><a></a>  code_to_try_to_run</span>
-<span id="cb28-20"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-20"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <h3 id="condition-objects">Condition objects</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># catch a condition</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># catch a condition</span></span>
 <span id="cb29-2"><a></a>cnd <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">catch_cnd</span>(<span class="fu">stop</span>(<span class="st">"An error"</span>))</span>
 <span id="cb29-3"><a></a><span class="co"># inspect it</span></span>
-<span id="cb29-4"><a></a><span class="fu">str</span>(cnd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-4"><a></a><span class="fu">str</span>(cnd)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; List of 2
 #&gt;  $ message: chr "An error"
@@ -462,7 +462,7 @@
 <h3 id="exiting-handlers">Exiting handlers</h3>
 <p>If a condition is signalled, this type of handler controls what code to run before exiting the function call.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>f3 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>f3 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb31-2"><a></a>  <span class="fu">tryCatch</span>(</span>
 <span id="cb31-3"><a></a>    <span class="co"># if error signalled, return NA</span></span>
 <span id="cb31-4"><a></a>    <span class="at">error =</span> <span class="cf">function</span>(cnd) <span class="cn">NA</span>,</span>
@@ -471,27 +471,27 @@
 <span id="cb31-7"><a></a>  )</span>
 <span id="cb31-8"><a></a>}</span>
 <span id="cb31-9"><a></a></span>
-<span id="cb31-10"><a></a><span class="fu">f3</span>(<span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-10"><a></a><span class="fu">f3</span>(<span class="st">"x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] NA</code></pre>
 </div>
 </div>
 <p>When a condition is signalled, control moves to the handler and never returns to the original code.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">tryCatch</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">tryCatch</span>(</span>
 <span id="cb33-2"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="st">"There"</span>,</span>
 <span id="cb33-3"><a></a>  {</span>
 <span id="cb33-4"><a></a>    <span class="fu">message</span>(<span class="st">"Here"</span>)</span>
 <span id="cb33-5"><a></a>    <span class="fu">stop</span>(<span class="st">"This code is never run!"</span>)</span>
 <span id="cb33-6"><a></a>  }</span>
-<span id="cb33-7"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb33-7"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "There"</code></pre>
 </div>
 </div>
 <p>The <code>tryCatch()</code> exit handler has one final argument: <code>finally</code>. This is run regardless of the condition of the original code. This is often used for clean-up.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="co"># try to write text to disk</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="co"># try to write text to disk</span></span>
 <span id="cb35-2"><a></a><span class="co"># if an error is signalled--for example, `path` does not exist</span></span>
 <span id="cb35-3"><a></a><span class="co"># or if no condition is signalled</span></span>
 <span id="cb35-4"><a></a><span class="co"># that is in both cases, the code block in `finally` is executed</span></span>
@@ -505,7 +505,7 @@
 <span id="cb35-12"><a></a>    <span class="co"># always run</span></span>
 <span id="cb35-13"><a></a>    <span class="fu">unlink</span>(path)</span>
 <span id="cb35-14"><a></a>  }</span>
-<span id="cb35-15"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-15"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <h3 id="calling-handlers">Calling handlers</h3>
 <p>Definition by verbal comparison:</p>
@@ -515,25 +515,25 @@
 </ul>
 <p>Definition by code comparison:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="co"># with an exit handler, control moves to the handler once condition signalled and does not move back</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="co"># with an exit handler, control moves to the handler once condition signalled and does not move back</span></span>
 <span id="cb36-2"><a></a><span class="fu">tryCatch</span>(</span>
 <span id="cb36-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Caught a message!</span><span class="sc">\n</span><span class="st">"</span>), </span>
 <span id="cb36-4"><a></a>  {</span>
 <span id="cb36-5"><a></a>    <span class="fu">message</span>(<span class="st">"Someone there?"</span>)</span>
 <span id="cb36-6"><a></a>    <span class="fu">message</span>(<span class="st">"Why, yes!"</span>)</span>
 <span id="cb36-7"><a></a>  }</span>
-<span id="cb36-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb36-8"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Caught a message!</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="co"># with a calling handler, control moves first to the handler and the moves back to the main code</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="co"># with a calling handler, control moves first to the handler and the moves back to the main code</span></span>
 <span id="cb38-2"><a></a><span class="fu">withCallingHandlers</span>(</span>
 <span id="cb38-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Caught a message!</span><span class="sc">\n</span><span class="st">"</span>), </span>
 <span id="cb38-4"><a></a>  {</span>
 <span id="cb38-5"><a></a>    <span class="fu">message</span>(<span class="st">"Someone there?"</span>)</span>
 <span id="cb38-6"><a></a>    <span class="fu">message</span>(<span class="st">"Why, yes!"</span>)</span>
 <span id="cb38-7"><a></a>  }</span>
-<span id="cb38-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb38-8"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Caught a message!</code></pre>
 </div>
@@ -550,14 +550,14 @@
 <h3 id="by-default-conditions-propagate">By default, conditions propagate</h3>
 <p>Let’s suppose that there are nested handlers. If a condition is signalled in the child, it propagates to its parent handler(s).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="co"># Bubbles all the way up to default handler which generates the message</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="co"># Bubbles all the way up to default handler which generates the message</span></span>
 <span id="cb43-2"><a></a><span class="fu">withCallingHandlers</span>(</span>
 <span id="cb43-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>),</span>
 <span id="cb43-4"><a></a>  <span class="fu">withCallingHandlers</span>(</span>
 <span id="cb43-5"><a></a>    <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 1</span><span class="sc">\n</span><span class="st">"</span>),</span>
 <span id="cb43-6"><a></a>    <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
 <span id="cb43-7"><a></a>  )</span>
-<span id="cb43-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb43-8"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Level 1
 #&gt; Level 2</code></pre>
@@ -565,14 +565,14 @@
 <div class="cell-output cell-output-stderr">
 <pre><code>#&gt; Hello</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="co"># Bubbles up to tryCatch</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="co"># Bubbles up to tryCatch</span></span>
 <span id="cb46-2"><a></a><span class="fu">tryCatch</span>(</span>
 <span id="cb46-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>),</span>
 <span id="cb46-4"><a></a>  <span class="fu">withCallingHandlers</span>(</span>
 <span id="cb46-5"><a></a>    <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 1</span><span class="sc">\n</span><span class="st">"</span>),</span>
 <span id="cb46-6"><a></a>    <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
 <span id="cb46-7"><a></a>  )</span>
-<span id="cb46-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb46-8"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Level 1
 #&gt; Level 2</code></pre>
@@ -581,7 +581,7 @@
 <h3 id="but-conditions-can-be-muffled">But conditions can be muffled</h3>
 <p>If one wants to “muffle” the siginal, one needs to use <code>rlang::cnd_muffle()</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a><span class="co"># Muffles the default handler which prints the messages</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a><span class="co"># Muffles the default handler which prints the messages</span></span>
 <span id="cb48-2"><a></a><span class="fu">withCallingHandlers</span>(</span>
 <span id="cb48-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) {</span>
 <span id="cb48-4"><a></a>    <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>)</span>
@@ -591,12 +591,12 @@
 <span id="cb48-8"><a></a>    <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 1</span><span class="sc">\n</span><span class="st">"</span>),</span>
 <span id="cb48-9"><a></a>    <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
 <span id="cb48-10"><a></a>  )</span>
-<span id="cb48-11"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb48-11"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Level 1
 #&gt; Level 2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="co"># Muffles level 2 handler and the default handler</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="co"># Muffles level 2 handler and the default handler</span></span>
 <span id="cb50-2"><a></a><span class="fu">withCallingHandlers</span>(</span>
 <span id="cb50-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>),</span>
 <span id="cb50-4"><a></a>  <span class="fu">withCallingHandlers</span>(</span>
@@ -606,7 +606,7 @@
 <span id="cb50-8"><a></a>    },</span>
 <span id="cb50-9"><a></a>    <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
 <span id="cb50-10"><a></a>  )</span>
-<span id="cb50-11"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb50-11"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Level 1</code></pre>
 </div>
@@ -619,7 +619,7 @@
 </blockquote>
 <p>To see this, consider how the call stacks differ for a toy example.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a><span class="co"># create a function</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a><span class="co"># create a function</span></span>
 <span id="cb52-2"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">g</span>()</span>
 <span id="cb52-3"><a></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">h</span>()</span>
 <span id="cb52-4"><a></a>h <span class="ot">&lt;-</span> <span class="cf">function</span>() message</span>
@@ -628,7 +628,7 @@
 <span id="cb52-7"><a></a><span class="fu">withCallingHandlers</span>(<span class="fu">f</span>(), <span class="at">message =</span> <span class="cf">function</span>(cnd) {</span>
 <span id="cb52-8"><a></a>  lobstr<span class="sc">::</span><span class="fu">cst</span>()</span>
 <span id="cb52-9"><a></a>  rlang<span class="sc">::</span><span class="fu">cnd_muffle</span>(cnd)</span>
-<span id="cb52-10"><a></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb52-10"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (..., domain = NULL, appendLF = TRUE) 
 #&gt; {
@@ -654,8 +654,8 @@
 #&gt; &lt;bytecode: 0x000002ba6a952b98&gt;
 #&gt; &lt;environment: namespace:base&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a><span class="co"># call stack of exit handlers</span></span>
-<span id="cb54-2"><a></a><span class="fu">tryCatch</span>(<span class="fu">f</span>(), <span class="at">message =</span> <span class="cf">function</span>(cnd) lobstr<span class="sc">::</span><span class="fu">cst</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a><span class="co"># call stack of exit handlers</span></span>
+<span id="cb54-2"><a></a><span class="fu">tryCatch</span>(<span class="fu">f</span>(), <span class="at">message =</span> <span class="cf">function</span>(cnd) lobstr<span class="sc">::</span><span class="fu">cst</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (..., domain = NULL, appendLF = TRUE) 
 #&gt; {
@@ -681,7 +681,7 @@
 #&gt; &lt;bytecode: 0x000002ba6a952b98&gt;
 #&gt; &lt;environment: namespace:base&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a><span class="fu">tryCatch</span>(<span class="fu">f</span>(), <span class="at">message =</span> <span class="cf">function</span>(cnd) lobstr<span class="sc">::</span><span class="fu">cst</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a><span class="fu">tryCatch</span>(<span class="fu">f</span>(), <span class="at">message =</span> <span class="cf">function</span>(cnd) lobstr<span class="sc">::</span><span class="fu">cst</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (..., domain = NULL, appendLF = TRUE) 
 #&gt; {
@@ -714,18 +714,18 @@
 <h3 id="motivation">Motivation</h3>
 <p>The <code>base::log()</code> function provides a minimal error message.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="fu">log</span>(letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="fu">log</span>(letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in log(letters): non-numeric argument to mathematical function</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a><span class="fu">log</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">base =</span> letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a><span class="fu">log</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">base =</span> letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in log(1:10, base = letters): non-numeric argument to mathematical function</code></pre>
 </div>
 </div>
 <p>One could make a more informative error message about which argument is problematic.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a>my_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">1</span>)) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a>my_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">1</span>)) {</span>
 <span id="cb62-2"><a></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(x)) {</span>
 <span id="cb62-3"><a></a>    rlang<span class="sc">::</span><span class="fu">abort</span>(<span class="fu">paste0</span>(</span>
 <span id="cb62-4"><a></a>      <span class="st">"`x` must be a numeric vector; not "</span>, <span class="fu">typeof</span>(x), <span class="st">"."</span></span>
@@ -738,16 +738,16 @@
 <span id="cb62-11"><a></a>  }</span>
 <span id="cb62-12"><a></a></span>
 <span id="cb62-13"><a></a>  base<span class="sc">::</span><span class="fu">log</span>(x, <span class="at">base =</span> base)</span>
-<span id="cb62-14"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb62-14"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Consider the difference:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a><span class="fu">my_log</span>(letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a><span class="fu">my_log</span>(letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in `my_log()`:
 #&gt; ! `x` must be a numeric vector; not character.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a></a><span class="fu">my_log</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">base =</span> letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a></a><span class="fu">my_log</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">base =</span> letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in `my_log()`:
 #&gt; ! `base` must be a numeric vector; not character.</code></pre>
@@ -756,7 +756,7 @@
 <h3 id="signalling">Signalling</h3>
 <p>Create a helper function to describe errors:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a></a>abort_bad_argument <span class="ot">&lt;-</span> <span class="cf">function</span>(arg, must, <span class="at">not =</span> <span class="cn">NULL</span>) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a></a>abort_bad_argument <span class="ot">&lt;-</span> <span class="cf">function</span>(arg, must, <span class="at">not =</span> <span class="cn">NULL</span>) {</span>
 <span id="cb67-2"><a></a>  msg <span class="ot">&lt;-</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"`{arg}` must {must}"</span>)</span>
 <span id="cb67-3"><a></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(not)) {</span>
 <span id="cb67-4"><a></a>    not <span class="ot">&lt;-</span> <span class="fu">typeof</span>(not)</span>
@@ -770,11 +770,11 @@
 <span id="cb67-12"><a></a>    <span class="at">must =</span> must, </span>
 <span id="cb67-13"><a></a>    <span class="at">not =</span> not</span>
 <span id="cb67-14"><a></a>  )</span>
-<span id="cb67-15"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb67-15"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Rewrite the log function to use this helper function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a>my_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">1</span>)) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a>my_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">1</span>)) {</span>
 <span id="cb68-2"><a></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(x)) {</span>
 <span id="cb68-3"><a></a>    <span class="fu">abort_bad_argument</span>(<span class="st">"x"</span>, <span class="at">must =</span> <span class="st">"be numeric"</span>, <span class="at">not =</span> x)</span>
 <span id="cb68-4"><a></a>  }</span>
@@ -783,16 +783,16 @@
 <span id="cb68-7"><a></a>  }</span>
 <span id="cb68-8"><a></a></span>
 <span id="cb68-9"><a></a>  base<span class="sc">::</span><span class="fu">log</span>(x, <span class="at">base =</span> base)</span>
-<span id="cb68-10"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb68-10"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>See the result for the end user:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a></a><span class="fu">my_log</span>(letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a></a><span class="fu">my_log</span>(letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in `abort_bad_argument()`:
 #&gt; ! `x` must be numeric; not character.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a><span class="fu">my_log</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">base =</span> letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a><span class="fu">my_log</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">base =</span> letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in `abort_bad_argument()`:
 #&gt; ! `base` must be numeric; not character.</code></pre>
@@ -801,11 +801,11 @@
 <h3 id="handling">Handling</h3>
 <p>Use class of condition object to allow for different handling of different types of errors</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a><span class="fu">tryCatch</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a><span class="fu">tryCatch</span>(</span>
 <span id="cb73-2"><a></a>  <span class="at">error_bad_argument =</span> <span class="cf">function</span>(cnd) <span class="st">"bad_argument"</span>,</span>
 <span id="cb73-3"><a></a>  <span class="at">error =</span> <span class="cf">function</span>(cnd) <span class="st">"other error"</span>,</span>
 <span id="cb73-4"><a></a>  <span class="fu">my_log</span>(<span class="st">"a"</span>)</span>
-<span id="cb73-5"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb73-5"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "bad_argument"</code></pre>
 </div>
@@ -1019,7 +1019,7 @@
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -1093,13 +1093,14 @@
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy

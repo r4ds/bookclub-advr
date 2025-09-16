@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.34">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.24">
 
   <title>Advanced R Book Club – S4</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -94,7 +94,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5fa723a4ee799f64e44b6fe0747a0a63.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5079db4132f0eaf0a29ac93fceccb8c9.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -218,27 +218,27 @@
 <h3 id="set-class">Set class</h3>
 <p>Define the class:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">setClass</span>(<span class="st">"Person"</span>, </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">setClass</span>(<span class="st">"Person"</span>, </span>
 <span id="cb1-2"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
 <span id="cb1-3"><a></a>    <span class="at">name =</span> <span class="st">"character"</span>, </span>
 <span id="cb1-4"><a></a>    <span class="at">age =</span> <span class="st">"numeric"</span></span>
 <span id="cb1-5"><a></a>  )</span>
-<span id="cb1-6"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Create an instance of the class</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>john <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> <span class="st">"John Smith"</span>, <span class="at">age =</span> <span class="cn">NA_real_</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>john <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> <span class="st">"John Smith"</span>, <span class="at">age =</span> <span class="cn">NA_real_</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <h3 id="set-generics">Set generics</h3>
 <p>Define generic functions for setting and getting the age slot</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># get the value</span></span>
-<span id="cb3-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"age"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"age"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># get the value</span></span>
+<span id="cb3-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"age"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"age"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "age"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># set the value</span></span>
-<span id="cb5-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"age&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"age&lt;-"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># set the value</span></span>
+<span id="cb5-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"age&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"age&lt;-"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "age&lt;-"</code></pre>
 </div>
@@ -246,7 +246,7 @@
 <h3 id="set-methods">Set methods</h3>
 <p>Define methods for the generics:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># get the value</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># get the value</span></span>
 <span id="cb7-2"><a></a><span class="fu">setMethod</span>(<span class="st">"age"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>age)</span>
 <span id="cb7-3"><a></a><span class="co"># set the value</span></span>
 <span id="cb7-4"><a></a><span class="fu">setMethod</span>(<span class="st">"age&lt;-"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, value) {</span>
@@ -257,7 +257,7 @@
 <span id="cb7-9"><a></a><span class="co"># set the value</span></span>
 <span id="cb7-10"><a></a><span class="fu">age</span>(john) <span class="ot">&lt;-</span> <span class="dv">50</span></span>
 <span id="cb7-11"><a></a><span class="co"># get the value</span></span>
-<span id="cb7-12"><a></a><span class="fu">age</span>(john)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-12"><a></a><span class="fu">age</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 50</code></pre>
 </div>
@@ -268,7 +268,7 @@
 <h2>Details on defining the class</h2>
 <h3 id="inheritance">Inheritance</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">setClass</span>(<span class="st">"Employee"</span>, </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">setClass</span>(<span class="st">"Employee"</span>, </span>
 <span id="cb9-2"><a></a>  <span class="at">contains =</span> <span class="st">"Person"</span>, </span>
 <span id="cb9-3"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
 <span id="cb9-4"><a></a>    <span class="at">boss =</span> <span class="st">"Person"</span></span>
@@ -276,7 +276,7 @@
 <span id="cb9-6"><a></a>  <span class="at">prototype =</span> <span class="fu">list</span>(</span>
 <span id="cb9-7"><a></a>    <span class="at">boss =</span> <span class="fu">new</span>(<span class="st">"Person"</span>)</span>
 <span id="cb9-8"><a></a>  )</span>
-<span id="cb9-9"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-9"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <h3 id="instantiation">Instantiation</h3>
 <p>Create an instance of the class at two levels:</p>
@@ -285,7 +285,7 @@
 <li>For user: constructor function</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="co"># how user constructs an instance</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="co"># how user constructs an instance</span></span>
 <span id="cb10-2"><a></a>Person <span class="ot">&lt;-</span> <span class="cf">function</span>(name, <span class="at">age =</span> <span class="cn">NA</span>) {</span>
 <span id="cb10-3"><a></a>  age <span class="ot">&lt;-</span> <span class="fu">as.double</span>(age)</span>
 <span id="cb10-4"><a></a>  </span>
@@ -293,7 +293,7 @@
 <span id="cb10-6"><a></a>  <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> name, <span class="at">age =</span> age)</span>
 <span id="cb10-7"><a></a>}</span>
 <span id="cb10-8"><a></a></span>
-<span id="cb10-9"><a></a><span class="fu">Person</span>(<span class="st">"Someone"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-9"><a></a><span class="fu">Person</span>(<span class="st">"Someone"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; An object of class "Person"
 #&gt; Slot "name":
@@ -309,7 +309,7 @@
 <li>Check class of slot at creation</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">Person</span>(mtcars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">Person</span>(mtcars)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in validObject(.Object): invalid class "Person" object: invalid object for slot "name" in class "Person": got class "data.frame", should be or extend class "character"</code></pre>
 </div>
@@ -318,7 +318,7 @@
 <li>Do <strong>not</strong> check other things</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>, <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">37</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>, <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">37</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; An object of class "Person"
 #&gt; Slot "name":
@@ -335,13 +335,13 @@
 </ol>
 <h4 id="at-creation">At creation</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">setValidity</span>(<span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">setValidity</span>(<span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
 <span id="cb16-2"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(object<span class="sc">@</span>name) <span class="sc">!=</span> <span class="fu">length</span>(object<span class="sc">@</span>age)) {</span>
 <span id="cb16-3"><a></a>    <span class="st">"@name and @age must be same length"</span></span>
 <span id="cb16-4"><a></a>  } <span class="cf">else</span> {</span>
 <span id="cb16-5"><a></a>    <span class="cn">TRUE</span></span>
 <span id="cb16-6"><a></a>  }</span>
-<span id="cb16-7"><a></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-7"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Class "Person" [in ".GlobalEnv"]
 #&gt; 
@@ -350,26 +350,26 @@
 #&gt; Name:       name       age
 #&gt; Class: character   numeric</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>, <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">37</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>, <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">37</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in validObject(.Object): invalid class "Person" object: @name and @age must be same length</code></pre>
 </div>
 </div>
 <h4 id="at-modification">At modification</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># get value</span></span>
-<span id="cb20-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"name"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"name"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># get value</span></span>
+<span id="cb20-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"name"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"name"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "name"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>name)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>name)</span>
 <span id="cb22-2"><a></a></span>
 <span id="cb22-3"><a></a><span class="co"># set value--and assess whether resulting object is valid</span></span>
-<span id="cb22-4"><a></a><span class="fu">setGeneric</span>(<span class="st">"name&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"name&lt;-"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-4"><a></a><span class="fu">setGeneric</span>(<span class="st">"name&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"name&lt;-"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "name&lt;-"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name&lt;-"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, value) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name&lt;-"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, value) {</span>
 <span id="cb24-2"><a></a>  x<span class="sc">@</span>name <span class="ot">&lt;-</span> value</span>
 <span id="cb24-3"><a></a>  <span class="fu">validObject</span>(x)</span>
 <span id="cb24-4"><a></a>  x</span>
@@ -377,12 +377,12 @@
 <span id="cb24-6"><a></a></span>
 <span id="cb24-7"><a></a><span class="co"># normal name; no problem</span></span>
 <span id="cb24-8"><a></a><span class="fu">name</span>(john) <span class="ot">&lt;-</span> <span class="st">"Jon Smythe"</span></span>
-<span id="cb24-9"><a></a><span class="fu">name</span>(john)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-9"><a></a><span class="fu">name</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "Jon Smythe"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="co"># invalid name; error thrown</span></span>
-<span id="cb26-2"><a></a><span class="fu">name</span>(john) <span class="ot">&lt;-</span> letters</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="co"># invalid name; error thrown</span></span>
+<span id="cb26-2"><a></a><span class="fu">name</span>(john) <span class="ot">&lt;-</span> letters</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in validObject(x): invalid class "Person" object: @name and @age must be same length</code></pre>
 </div>
@@ -393,10 +393,10 @@
 <h3 id="dictate-dispatch-via-signature">Dictate dispatch via signature</h3>
 <p>Specify function arguments to be used in determining method.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"myGeneric"</span>, </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"myGeneric"</span>, </span>
 <span id="cb28-2"><a></a>  <span class="cf">function</span>(x, ..., <span class="at">verbose =</span> <span class="cn">TRUE</span>) <span class="fu">standardGeneric</span>(<span class="st">"myGeneric"</span>),</span>
 <span id="cb28-3"><a></a>  <span class="at">signature =</span> <span class="st">"x"</span></span>
-<span id="cb28-4"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-4"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "myGeneric"</code></pre>
 </div>
@@ -404,20 +404,20 @@
 <h3 id="define-generics">Define generics</h3>
 <p>General form:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">setMethod</span>(<span class="st">"myGeneric"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">setMethod</span>(<span class="st">"myGeneric"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) {</span>
 <span id="cb30-2"><a></a>  <span class="co"># method implementation</span></span>
-<span id="cb30-3"><a></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-3"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Example to print object:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
 <span id="cb31-2"><a></a>  <span class="fu">cat</span>(<span class="fu">is</span>(object)[[<span class="dv">1</span>]], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
 <span id="cb31-3"><a></a>      <span class="st">"  Name: "</span>, object<span class="sc">@</span>name, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
 <span id="cb31-4"><a></a>      <span class="st">"  Age:  "</span>, object<span class="sc">@</span>age, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
 <span id="cb31-5"><a></a>      <span class="at">sep =</span> <span class="st">""</span></span>
 <span id="cb31-6"><a></a>  )</span>
 <span id="cb31-7"><a></a>})</span>
-<span id="cb31-8"><a></a>john</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-8"><a></a>john</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Person
 #&gt;   Name: Jon Smythe
@@ -426,13 +426,13 @@
 </div>
 <p>Example to access slot:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"name"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"name"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"name"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"name"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "name"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>name)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>name)</span>
 <span id="cb35-2"><a></a></span>
-<span id="cb35-3"><a></a><span class="fu">name</span>(john)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-3"><a></a><span class="fu">name</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "Jon Smythe"</code></pre>
 </div>
@@ -443,7 +443,7 @@
 <h2>Example: <code>lubridate::period()</code></h2>
 <h3 id="define-the-class">Define the class</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="fu">setClass</span>(<span class="st">"Period"</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="fu">setClass</span>(<span class="st">"Period"</span>,</span>
 <span id="cb37-2"><a></a>  <span class="co"># inherits from these classes</span></span>
 <span id="cb37-3"><a></a>  <span class="at">contains =</span> <span class="fu">c</span>(<span class="st">"Timespan"</span>, <span class="st">"numeric"</span>),</span>
 <span id="cb37-4"><a></a>  <span class="co"># has slots for time components</span></span>
@@ -458,13 +458,13 @@
 <span id="cb37-13"><a></a>  <span class="at">prototype =</span> <span class="fu">prototype</span>(<span class="at">year =</span> <span class="dv">0</span>, <span class="at">month =</span> <span class="dv">0</span>, <span class="at">day =</span> <span class="dv">0</span>, <span class="at">hour =</span> <span class="dv">0</span>, <span class="at">minute =</span> <span class="dv">0</span>),</span>
 <span id="cb37-14"><a></a>  <span class="co"># check validity with `check_period` function; see section below</span></span>
 <span id="cb37-15"><a></a>  <span class="at">validity =</span> check_period</span>
-<span id="cb37-16"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb37-16"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>See source code <a href="https://github.com/tidyverse/lubridate/blob/0bb49b21c88736240219dc67e7ed0eb3df15d9b1/R/periods.r#L90">here</a></p>
 <h3 id="validate-object">Validate object</h3>
 <p>Check whether object is valid–notably if all arugments have the same length and are integers.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>check_period <span class="ot">&lt;-</span> <span class="cf">function</span>(object) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>check_period <span class="ot">&lt;-</span> <span class="cf">function</span>(object) {</span>
 <span id="cb38-2"><a></a>  <span class="co"># start with an empty vector of error messages</span></span>
 <span id="cb38-3"><a></a>  errors <span class="ot">&lt;-</span> <span class="fu">character</span>()</span>
 <span id="cb38-4"><a></a></span>
@@ -505,13 +505,13 @@
 <span id="cb38-39"><a></a>  } <span class="cf">else</span> {</span>
 <span id="cb38-40"><a></a>    errors</span>
 <span id="cb38-41"><a></a>  }</span>
-<span id="cb38-42"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb38-42"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>See source code <a href="https://github.com/tidyverse/lubridate/blob/0bb49b21c88736240219dc67e7ed0eb3df15d9b1/R/periods.r#L6">here</a>.</p>
 <h3 id="set-methods-1">Set methods</h3>
 <p>Show period:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a><span class="co">#' @export</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a><span class="co">#' @export</span></span>
 <span id="cb39-2"><a></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="fu">signature</span>(<span class="at">object =</span> <span class="st">"Period"</span>), <span class="cf">function</span>(object) {</span>
 <span id="cb39-3"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(object<span class="sc">@</span>.Data) <span class="sc">==</span> <span class="dv">0</span>) {</span>
 <span id="cb39-4"><a></a>    <span class="fu">cat</span>(<span class="st">"&lt;Period[0]&gt;</span><span class="sc">\n</span><span class="st">"</span>)</span>
@@ -536,7 +536,7 @@
 <span id="cb39-23"><a></a></span>
 <span id="cb39-24"><a></a>  show[<span class="fu">is.na</span>(x)] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
 <span id="cb39-25"><a></a>  show</span>
-<span id="cb39-26"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb39-26"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>See source code <a href="https://github.com/tidyverse/lubridate/blob/0bb49b21c88736240219dc67e7ed0eb3df15d9b1/R/periods.r#L195">here</a></p>
 
@@ -731,7 +731,7 @@
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -805,13 +805,14 @@
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy

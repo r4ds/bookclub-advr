@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.34">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.24">
 
   <title>Advanced R Book Club – Trade-offs</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -94,7 +94,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5fa723a4ee799f64e44b6fe0747a0a63.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5079db4132f0eaf0a29ac93fceccb8c9.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -263,29 +263,29 @@
 <h2>Threading state</h2>
 <p>In S3 the challenge is to return a value and modify the object.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>new_stack <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">items =</span> <span class="fu">list</span>()) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>new_stack <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">items =</span> <span class="fu">list</span>()) {</span>
 <span id="cb1-2"><a></a>  <span class="fu">structure</span>(<span class="fu">list</span>(<span class="at">items =</span> items), <span class="at">class =</span> <span class="st">"stack"</span>)</span>
 <span id="cb1-3"><a></a>}</span>
 <span id="cb1-4"><a></a></span>
 <span id="cb1-5"><a></a>push <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
 <span id="cb1-6"><a></a>  x<span class="sc">$</span>items <span class="ot">&lt;-</span> <span class="fu">c</span>(x<span class="sc">$</span>items, <span class="fu">list</span>(y))</span>
 <span id="cb1-7"><a></a>  x</span>
-<span id="cb1-8"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>No problem with that, but what about when we want to pop a value? We need to return two things.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>pop <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>pop <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb2-2"><a></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x<span class="sc">$</span>items)</span>
 <span id="cb2-3"><a></a>  </span>
 <span id="cb2-4"><a></a>  item <span class="ot">&lt;-</span> x<span class="sc">$</span>items[[n]]</span>
 <span id="cb2-5"><a></a>  x<span class="sc">$</span>items <span class="ot">&lt;-</span> x<span class="sc">$</span>items[<span class="sc">-</span>n]</span>
 <span id="cb2-6"><a></a>  </span>
 <span id="cb2-7"><a></a>  <span class="fu">list</span>(<span class="at">item =</span> item, <span class="at">x =</span> x)</span>
-<span id="cb2-8"><a></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The usage is a bit awkward:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>s <span class="ot">&lt;-</span> <span class="fu">new_stack</span>()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>s <span class="ot">&lt;-</span> <span class="fu">new_stack</span>()</span>
 <span id="cb3-2"><a></a>s <span class="ot">&lt;-</span> <span class="fu">push</span>(s, <span class="dv">10</span>)</span>
 <span id="cb3-3"><a></a>s <span class="ot">&lt;-</span> <span class="fu">push</span>(s, <span class="dv">20</span>)</span>
 <span id="cb3-4"><a></a></span>
@@ -293,18 +293,18 @@
 <span id="cb3-6"><a></a><span class="co"># Update state:</span></span>
 <span id="cb3-7"><a></a>s <span class="ot">&lt;-</span> out<span class="sc">$</span>x</span>
 <span id="cb3-8"><a></a></span>
-<span id="cb3-9"><a></a><span class="fu">print</span>(out<span class="sc">$</span>item)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-9"><a></a><span class="fu">print</span>(out<span class="sc">$</span>item)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 20</code></pre>
 </div>
 </div>
 <p>In python and other languages we have structured binding to make this less awkward. R has the {zeallot} package. For more, see this vignette:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">vignette</span>(<span class="st">'unpacking-assignment'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">vignette</span>(<span class="st">'unpacking-assignment'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>However, this is all easier in R6 due to the reference semantics!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>Stack <span class="ot">&lt;-</span> R6<span class="sc">::</span><span class="fu">R6Class</span>(<span class="st">"Stack"</span>, <span class="fu">list</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>Stack <span class="ot">&lt;-</span> R6<span class="sc">::</span><span class="fu">R6Class</span>(<span class="st">"Stack"</span>, <span class="fu">list</span>(</span>
 <span id="cb6-2"><a></a>  <span class="at">items =</span> <span class="fu">list</span>(),</span>
 <span id="cb6-3"><a></a>  <span class="at">push =</span> <span class="cf">function</span>(x) {</span>
 <span id="cb6-4"><a></a>    self<span class="sc">$</span>items <span class="ot">&lt;-</span> <span class="fu">c</span>(self<span class="sc">$</span>items, x)</span>
@@ -323,7 +323,7 @@
 <span id="cb6-17"><a></a>s <span class="ot">&lt;-</span> Stack<span class="sc">$</span><span class="fu">new</span>()</span>
 <span id="cb6-18"><a></a>s<span class="sc">$</span><span class="fu">push</span>(<span class="dv">10</span>)</span>
 <span id="cb6-19"><a></a>s<span class="sc">$</span><span class="fu">push</span>(<span class="dv">20</span>)</span>
-<span id="cb6-20"><a></a>s<span class="sc">$</span><span class="fu">pop</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-20"><a></a>s<span class="sc">$</span><span class="fu">pop</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 20</code></pre>
 </div>
@@ -338,7 +338,7 @@
 <li><p>R6: <code>$</code></p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>s<span class="sc">$</span><span class="fu">push</span>(<span class="dv">44</span>)<span class="sc">$</span><span class="fu">push</span>(<span class="dv">32</span>)<span class="sc">$</span><span class="fu">pop</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>s<span class="sc">$</span><span class="fu">push</span>(<span class="dv">44</span>)<span class="sc">$</span><span class="fu">push</span>(<span class="dv">32</span>)<span class="sc">$</span><span class="fu">pop</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 32</code></pre>
 </div>
@@ -372,10 +372,10 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 <h2>Abbreviated introduction based on the vignette</h2>
 <p>To install (it’s now on CRAN):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">install.packages</span>(<span class="st">"S7"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">install.packages</span>(<span class="st">"S7"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">library</span>(S7)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">library</span>(S7)</span>
 <span id="cb12-2"><a></a>dog <span class="ot">&lt;-</span> <span class="fu">new_class</span>(<span class="st">"dog"</span>, <span class="at">properties =</span> <span class="fu">list</span>(</span>
 <span id="cb12-3"><a></a>  <span class="at">name =</span> class_character,</span>
 <span id="cb12-4"><a></a>  <span class="at">age =</span> class_numeric</span>
@@ -388,33 +388,33 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 <span id="cb12-11"><a></a><span class="co">#&gt; @ parent: &lt;S7_object&gt;</span></span>
 <span id="cb12-12"><a></a><span class="co">#&gt; @ properties:</span></span>
 <span id="cb12-13"><a></a><span class="co">#&gt;  $ name: &lt;character&gt;          </span></span>
-<span id="cb12-14"><a></a><span class="co">#&gt;  $ age : &lt;integer&gt; or &lt;double&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-14"><a></a><span class="co">#&gt;  $ age : &lt;integer&gt; or &lt;double&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Note the <code>class_character</code>, these are S7 classes corresponding to the base classes.</p>
 <p>Now to use it to create an object of class <em>dog</em>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>lola <span class="ot">&lt;-</span> <span class="fu">dog</span>(<span class="at">name =</span> <span class="st">"Lola"</span>, <span class="at">age =</span> <span class="dv">11</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>lola <span class="ot">&lt;-</span> <span class="fu">dog</span>(<span class="at">name =</span> <span class="st">"Lola"</span>, <span class="at">age =</span> <span class="dv">11</span>)</span>
 <span id="cb13-2"><a></a>lola</span>
 <span id="cb13-3"><a></a></span>
 <span id="cb13-4"><a></a><span class="co">#&gt; &lt;dog&gt;</span></span>
 <span id="cb13-5"><a></a><span class="co">#&gt;  @ name: chr "Lola"</span></span>
-<span id="cb13-6"><a></a><span class="co">#&gt;  @ age : num 11</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-6"><a></a><span class="co">#&gt;  @ age : num 11</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Properties can be set/read with <code>@</code>, with automatic validation (‘safety rails’) based on the type!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>lola<span class="sc">@</span>age <span class="ot">&lt;-</span> <span class="dv">12</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>lola<span class="sc">@</span>age <span class="ot">&lt;-</span> <span class="dv">12</span></span>
 <span id="cb14-2"><a></a>lola<span class="sc">@</span>age</span>
 <span id="cb14-3"><a></a></span>
 <span id="cb14-4"><a></a><span class="co">#&gt; 12</span></span>
 <span id="cb14-5"><a></a></span>
 <span id="cb14-6"><a></a>lola<span class="sc">@</span>age <span class="ot">&lt;-</span> <span class="st">"twelve"</span></span>
 <span id="cb14-7"><a></a></span>
-<span id="cb14-8"><a></a><span class="co">#&gt; Error: &lt;dog&gt;@age must be &lt;integer&gt; or &lt;double&gt;, not &lt;character&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-8"><a></a><span class="co">#&gt; Error: &lt;dog&gt;@age must be &lt;integer&gt; or &lt;double&gt;, not &lt;character&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Note the helpful error message!</p>
 <p>Like S3 (and S4) S7 has generics, implemented with <code>new_generic</code> and <code>method</code> for particular methods:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>speak <span class="ot">&lt;-</span> <span class="fu">new_generic</span>(<span class="st">"speak"</span>, <span class="st">"x"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>speak <span class="ot">&lt;-</span> <span class="fu">new_generic</span>(<span class="st">"speak"</span>, <span class="st">"x"</span>)</span>
 <span id="cb15-2"><a></a></span>
 <span id="cb15-3"><a></a><span class="fu">method</span>(speak, dog) <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb15-4"><a></a>  <span class="st">"Woof"</span></span>
@@ -422,11 +422,11 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 <span id="cb15-6"><a></a>  </span>
 <span id="cb15-7"><a></a><span class="fu">speak</span>(lola)</span>
 <span id="cb15-8"><a></a></span>
-<span id="cb15-9"><a></a><span class="co">#&gt; [1] "Woof"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-9"><a></a><span class="co">#&gt; [1] "Woof"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>If we have another class, we can implement the generic for that too:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>cat <span class="ot">&lt;-</span> <span class="fu">new_class</span>(<span class="st">"cat"</span>, <span class="at">properties =</span> <span class="fu">list</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>cat <span class="ot">&lt;-</span> <span class="fu">new_class</span>(<span class="st">"cat"</span>, <span class="at">properties =</span> <span class="fu">list</span>(</span>
 <span id="cb16-2"><a></a>  <span class="at">name =</span> class_character,</span>
 <span id="cb16-3"><a></a>  <span class="at">age =</span> class_double</span>
 <span id="cb16-4"><a></a>))</span>
@@ -437,24 +437,24 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 <span id="cb16-9"><a></a>fluffy <span class="ot">&lt;-</span> <span class="fu">cat</span>(<span class="at">name =</span> <span class="st">"Fluffy"</span>, <span class="at">age =</span> <span class="dv">5</span>)</span>
 <span id="cb16-10"><a></a><span class="fu">speak</span>(fluffy)</span>
 <span id="cb16-11"><a></a></span>
-<span id="cb16-12"><a></a><span class="co">#&gt; [1] "Meow"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-12"><a></a><span class="co">#&gt; [1] "Meow"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Helpful messages:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>speak</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>speak</span>
 <span id="cb17-2"><a></a></span>
 <span id="cb17-3"><a></a><span class="co">#&gt; &lt;S7_generic&gt; speak(x, ...) with 2 methods:</span></span>
 <span id="cb17-4"><a></a><span class="co">#&gt; 1: method(speak, cat)</span></span>
-<span id="cb17-5"><a></a><span class="co">#&gt; 2: method(speak, dog)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-5"><a></a><span class="co">#&gt; 2: method(speak, dog)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>“most usage of S7 with S3 will just work”</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">method</span>(print, cat) <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">method</span>(print, cat) <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
 <span id="cb18-2"><a></a>  <span class="fu">print</span>(<span class="st">"I am a cat."</span>)</span>
 <span id="cb18-3"><a></a>}</span>
 <span id="cb18-4"><a></a></span>
 <span id="cb18-5"><a></a><span class="fu">print</span>(fluffy)</span>
-<span id="cb18-6"><a></a><span class="co">#&gt; "I am a cat"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-6"><a></a><span class="co">#&gt; "I am a cat"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><em>For validators, inheritance, dynamic properties and more, see the <a href="https://rconsortium.github.io/S7/articles/S7.html">vignette!</a></em></p>
 </section>
@@ -794,7 +794,7 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -868,13 +868,14 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy

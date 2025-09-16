@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.34">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.24">
 
   <title>Advanced R Book Club – Improving performance</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -94,7 +94,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5fa723a4ee799f64e44b6fe0747a0a63.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5079db4132f0eaf0a29ac93fceccb8c9.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -215,24 +215,24 @@
 <li>Write a function for each approach</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>mean1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">mean</span>(x)</span>
-<span id="cb1-2"><a></a>mean2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sum</span>(x) <span class="sc">/</span> <span class="fu">length</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>mean1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">mean</span>(x)</span>
+<span id="cb1-2"><a></a>mean2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sum</span>(x) <span class="sc">/</span> <span class="fu">length</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>Keep old functions that you’ve tried, even the failures</li>
 <li>Generate a representative test case</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>Use <code>bench::mark</code> to compare the different versions (and include unit tests)</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
 <span id="cb3-2"><a></a>  <span class="fu">mean1</span>(x),</span>
 <span id="cb3-3"><a></a>  <span class="fu">mean2</span>(x)</span>
-<span id="cb3-4"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-4"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression      min   median `itr/sec`
@@ -282,11 +282,11 @@
 <section id="avoiding-method-dispatch" class="slide level2">
 <h2>Avoiding Method Dispatch</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e2</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e2</span>)</span>
 <span id="cb5-2"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
 <span id="cb5-3"><a></a>  <span class="fu">mean</span>(x),</span>
 <span id="cb5-4"><a></a>  <span class="fu">mean.default</span>(x)</span>
-<span id="cb5-5"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-5"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression           min   median `itr/sec`
@@ -296,12 +296,12 @@
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e2</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e2</span>)</span>
 <span id="cb7-2"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
 <span id="cb7-3"><a></a>  <span class="fu">mean</span>(x),</span>
 <span id="cb7-4"><a></a>  <span class="fu">mean.default</span>(x),</span>
 <span id="cb7-5"><a></a>  <span class="fu">.Internal</span>(<span class="fu">mean</span>(x))</span>
-<span id="cb7-6"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-6"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 3 × 4
 #&gt;   expression              min   median `itr/sec`
@@ -312,12 +312,12 @@
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e4</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e4</span>)</span>
 <span id="cb9-2"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
 <span id="cb9-3"><a></a>  <span class="fu">mean</span>(x),</span>
 <span id="cb9-4"><a></a>  <span class="fu">mean.default</span>(x),</span>
 <span id="cb9-5"><a></a>  <span class="fu">.Internal</span>(<span class="fu">mean</span>(x))</span>
-<span id="cb9-6"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-6"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 3 × 4
 #&gt;   expression              min   median `itr/sec`
@@ -335,7 +335,7 @@
 <li>instead, if you have a named list with vectors of equal length, you can directly transform it into a data frame</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>quickdf <span class="ot">&lt;-</span> <span class="cf">function</span>(l) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>quickdf <span class="ot">&lt;-</span> <span class="cf">function</span>(l) {</span>
 <span id="cb11-2"><a></a>  <span class="fu">class</span>(l) <span class="ot">&lt;-</span> <span class="st">"data.frame"</span></span>
 <span id="cb11-3"><a></a>  <span class="fu">attr</span>(l, <span class="st">"row.names"</span>) <span class="ot">&lt;-</span> <span class="fu">.set_row_names</span>(<span class="fu">length</span>(l[[<span class="dv">1</span>]]))</span>
 <span id="cb11-4"><a></a>  l</span>
@@ -345,7 +345,7 @@
 <span id="cb11-8"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
 <span id="cb11-9"><a></a>  <span class="at">as.data.frame =</span> <span class="fu">as.data.frame</span>(l),</span>
 <span id="cb11-10"><a></a>  <span class="at">quick_df      =</span> <span class="fu">quickdf</span>(l)</span>
-<span id="cb11-11"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-11"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression         min   median `itr/sec`
@@ -376,7 +376,7 @@
 <li>Whenever you use c(), append(), cbind(), rbind(), or paste() to create a bigger object, R must first allocate space for the new object and then copy the old object to its new home.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>random_string <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>random_string <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
 <span id="cb13-2"><a></a>  <span class="fu">paste</span>(<span class="fu">sample</span>(letters, <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>), <span class="at">collapse =</span> <span class="st">""</span>)</span>
 <span id="cb13-3"><a></a>}</span>
 <span id="cb13-4"><a></a>strings10 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">10</span>, <span class="fu">random_string</span>())</span>
@@ -394,7 +394,7 @@
 <span id="cb13-16"><a></a>  <span class="at">vec10   =</span> <span class="fu">paste</span>(strings10, <span class="at">collapse =</span> <span class="st">""</span>),</span>
 <span id="cb13-17"><a></a>  <span class="at">vec100  =</span> <span class="fu">paste</span>(strings100, <span class="at">collapse =</span> <span class="st">""</span>),</span>
 <span id="cb13-18"><a></a>  <span class="at">check =</span> <span class="cn">FALSE</span></span>
-<span id="cb13-19"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-19"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 4 × 4
 #&gt;   expression      min   median `itr/sec`
@@ -409,28 +409,28 @@
 <section id="case-study-t-test" class="slide level2">
 <h2>Case study: t-test</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>m <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>m <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
 <span id="cb15-2"><a></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
 <span id="cb15-3"><a></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(m <span class="sc">*</span> n, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="dv">3</span>), <span class="at">nrow =</span> m)</span>
-<span id="cb15-4"><a></a>grp <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">each =</span> n <span class="sc">/</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-4"><a></a>grp <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">each =</span> n <span class="sc">/</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="co"># formula interface</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="co"># formula interface</span></span>
 <span id="cb16-2"><a></a><span class="fu">system.time</span>(</span>
 <span id="cb16-3"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>m) {</span>
 <span id="cb16-4"><a></a>    <span class="fu">t.test</span>(X[i, ] <span class="sc">~</span> grp)<span class="sc">$</span>statistic</span>
 <span id="cb16-5"><a></a>  }</span>
-<span id="cb16-6"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
 #&gt;    0.28    0.00    0.33</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># provide two vectors</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># provide two vectors</span></span>
 <span id="cb18-2"><a></a><span class="fu">system.time</span>(</span>
 <span id="cb18-3"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>m) {</span>
 <span id="cb18-4"><a></a>    <span class="fu">t.test</span>(X[i, grp <span class="sc">==</span> <span class="dv">1</span>], X[i, grp <span class="sc">==</span> <span class="dv">2</span>])<span class="sc">$</span>statistic</span>
 <span id="cb18-5"><a></a>  }</span>
-<span id="cb18-6"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
 #&gt;    0.08    0.00    0.08</code></pre>
@@ -438,10 +438,10 @@
 </div>
 <p>Add functionality to save values</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>compT <span class="ot">&lt;-</span> <span class="cf">function</span>(i){</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>compT <span class="ot">&lt;-</span> <span class="cf">function</span>(i){</span>
 <span id="cb20-2"><a></a>  <span class="fu">t.test</span>(X[i, grp <span class="sc">==</span> <span class="dv">1</span>], X[i, grp <span class="sc">==</span> <span class="dv">2</span>])<span class="sc">$</span>statistic</span>
 <span id="cb20-3"><a></a>}</span>
-<span id="cb20-4"><a></a><span class="fu">system.time</span>(t1 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, compT))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-4"><a></a><span class="fu">system.time</span>(t1 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, compT))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
 #&gt;    0.09    0.00    0.09</code></pre>
@@ -449,7 +449,7 @@
 </div>
 <p>If you look at the source code of <code>stats:::t.test.default()</code>, you’ll see that it does a lot more than just compute the t-statistic.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="co"># Do less work</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="co"># Do less work</span></span>
 <span id="cb22-2"><a></a>my_t <span class="ot">&lt;-</span> <span class="cf">function</span>(x, grp) {</span>
 <span id="cb22-3"><a></a>  t_stat <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb22-4"><a></a>    m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
@@ -462,16 +462,16 @@
 <span id="cb22-11"><a></a>  se_total <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(g1<span class="sc">$</span>var <span class="sc">/</span> g1<span class="sc">$</span>n <span class="sc">+</span> g2<span class="sc">$</span>var <span class="sc">/</span> g2<span class="sc">$</span>n)</span>
 <span id="cb22-12"><a></a>  (g1<span class="sc">$</span>m <span class="sc">-</span> g2<span class="sc">$</span>m) <span class="sc">/</span> se_total</span>
 <span id="cb22-13"><a></a>}</span>
-<span id="cb22-14"><a></a><span class="fu">system.time</span>(t2 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, <span class="sc">~</span> <span class="fu">my_t</span>(X[.,], grp)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-14"><a></a><span class="fu">system.time</span>(t2 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, <span class="sc">~</span> <span class="fu">my_t</span>(X[.,], grp)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
 #&gt;    0.02    0.00    0.01</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t2))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>This gives us a six-fold speed improvement!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="co"># Vectorise it</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="co"># Vectorise it</span></span>
 <span id="cb25-2"><a></a>rowtstat <span class="ot">&lt;-</span> <span class="cf">function</span>(X, grp){</span>
 <span id="cb25-3"><a></a>  t_stat <span class="ot">&lt;-</span> <span class="cf">function</span>(X) {</span>
 <span id="cb25-4"><a></a>    m <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(X)</span>
@@ -484,12 +484,12 @@
 <span id="cb25-11"><a></a>  se_total <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(g1<span class="sc">$</span>var <span class="sc">/</span> g1<span class="sc">$</span>n <span class="sc">+</span> g2<span class="sc">$</span>var <span class="sc">/</span> g2<span class="sc">$</span>n)</span>
 <span id="cb25-12"><a></a>  (g1<span class="sc">$</span>m <span class="sc">-</span> g2<span class="sc">$</span>m) <span class="sc">/</span> se_total</span>
 <span id="cb25-13"><a></a>}</span>
-<span id="cb25-14"><a></a><span class="fu">system.time</span>(t3 <span class="ot">&lt;-</span> <span class="fu">rowtstat</span>(X, grp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-14"><a></a><span class="fu">system.time</span>(t3 <span class="ot">&lt;-</span> <span class="fu">rowtstat</span>(X, grp))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
 #&gt;    0.02    0.00    0.02</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t3))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t3))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>1000 times faster than when we started!</p>
 </section>
@@ -695,7 +695,7 @@
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -769,13 +769,14 @@
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy
