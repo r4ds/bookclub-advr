@@ -1209,14 +1209,203 @@
     "href": "slides/07.html#learning-objectives",
     "title": "Environments",
     "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nTHESE ARE NICE TO HAVE BUT NOT ABSOLUTELY NECESSARY"
+    "text": "Learning objectives:\n\nCreate, modify, and inspect environments\nRecognize special environments\nUnderstand how environments power lexical scoping and namespaces"
   },
   {
-    "objectID": "slides/07.html#slide-1",
-    "href": "slides/07.html#slide-1",
+    "objectID": "slides/07.html#environments-are-similar-to-lists",
+    "href": "slides/07.html#environments-are-similar-to-lists",
     "title": "Environments",
-    "section": "SLIDE 1",
-    "text": "SLIDE 1\n\nADD SLIDES AS SECTIONS (##).\nTRY TO KEEP THEM RELATIVELY SLIDE-LIKE; THESE ARE NOTES, NOT THE BOOK ITSELF."
+    "section": "Environments are similar to lists",
+    "text": "Environments are similar to lists\nGenerally, an environment is similar to a named list, with four important exceptions:\n\nEvery name must be unique.\nThe names in an environment are not ordered.\nAn environment has a parent.\nEnvironments are not copied when modified.\n\n\n\nLists can have duplicate names, e.g. x &lt;- base::list(a = 1, a = 1)\nLists have an inherent order, e.g. x[[1]] returns the first element of the list above\nEnvironments copy by reference, not by replacement, e.g.:\nModifying a list produces a different memory address base::identical(lobstr::obj_addr(x), lobstr::obj_addr({x[[1]] &lt;- 2; x}))\ny &lt;- rlang::env() y$‘a’ &lt;- 1\nbase::identical( lobstr::obj_addr(y), lobstr::obj_addr({y[[‘a’]] &lt;- 2; y}) )"
+  },
+  {
+    "objectID": "slides/07.html#create-a-new-environment-with-rlang",
+    "href": "slides/07.html#create-a-new-environment-with-rlang",
+    "title": "Environments",
+    "section": "Create a new environment with {rlang}",
+    "text": "Create a new environment with {rlang}\n\n\n\ne1 &lt;- rlang::env(\n  rlang::global_env(),\n  a = FALSE,\n  b = \"a\",\n  c = 2.3,\n  d = 1:3,\n)\n\n\n\ne2 &lt;- rlang::new_environment(\n  data = list(\n    a = FALSE,\n    b = \"a\",\n    c = 2.3,\n    d = 1:3\n  ),\n  parent = rlang::global_env()\n)\n\n\n\nrlang::env() creates a child of the current environment by default and takes a variable number of named objects to populate it.\nrlang::new_environment() creates a child of the empty environment by default and takes a named list of objects to populate it."
+  },
+  {
+    "objectID": "slides/07.html#an-environment-associates-or-binds-a-set-of-names-to-a-set-of-values",
+    "href": "slides/07.html#an-environment-associates-or-binds-a-set-of-names-to-a-set-of-values",
+    "title": "Environments",
+    "section": "An environment associates, or binds a set of names to a set of values",
+    "text": "An environment associates, or binds a set of names to a set of values\n\n\n\nA bag of names with no implied order\nBindings live within the environment\n\n\n\n\nEnvironments have reference semantics and thus can contain themselves\n\n\ne1$d &lt;- e1\n\n\n\n\nno implied order (unlike a list, so no index subsetting)\nthe grey box represents an environment\nthe blue dot represents the parent environment\nletters represent variable names bound within the environment\n\nreference semantics store a reference to the object’s memory address, not the actual value (as is done in value semantics)"
+  },
+  {
+    "objectID": "slides/07.html#inspect-environments-with-rlang",
+    "href": "slides/07.html#inspect-environments-with-rlang",
+    "title": "Environments",
+    "section": "Inspect environments with {rlang}",
+    "text": "Inspect environments with {rlang}\n\nrlang::env_print(e1)\n\n#&gt; &lt;environment: 0x559f9046e610&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • a: &lt;lgl&gt;\n#&gt; • b: &lt;chr&gt;\n#&gt; • c: &lt;dbl&gt;\n#&gt; • d: &lt;int&gt;\n\n\n\nrlang::env_names(e1)\n\n#&gt; [1] \"a\" \"b\" \"c\" \"d\"\n\n\n\nrlang::env_has(e1, \"a\")\n\n#&gt;    a \n#&gt; TRUE\n\n\n\nrlang::env_get(e1, \"a\")\n\n#&gt; [1] FALSE\n\n\n\nrlang::env_parent(e1)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n\nbase::print() displays the memory address and is not as helpful as rlang::env_print()"
+  },
+  {
+    "objectID": "slides/07.html#by-default-the-current-environment-is-your-global-environment",
+    "href": "slides/07.html#by-default-the-current-environment-is-your-global-environment",
+    "title": "Environments",
+    "section": "By default, the current environment is your global environment",
+    "text": "By default, the current environment is your global environment\n\nThe current environment is where code is currently executing\nThe global environment is your current environment when working interactively\n\n\nrlang::current_env()\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\nrlang::global_env()\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\nbase::identical(\n  rlang::current_env(),\n  rlang::global_env()\n)\n\n#&gt; [1] TRUE\n\n\n\nIf you open a new R session, you are in the global environment by default (unless otherwise modified by say the .rprofile file)\nThe current environment isn’t always your global environment. Your current environment changes as you move into and out of functions, for example."
+  },
+  {
+    "objectID": "slides/07.html#every-environment-has-a-parent-environment",
+    "href": "slides/07.html#every-environment-has-a-parent-environment",
+    "title": "Environments",
+    "section": "Every environment has a parent environment",
+    "text": "Every environment has a parent environment\n\nAllows for lexical scoping\n\n\ne2a &lt;- rlang::env(d = 4, e = 5)\n\ne2b &lt;- rlang::env(e2a, a = 1, b = 2, c = 3)\n\nrlang::env_parent(e2b)\n\n#&gt; &lt;environment: 0x559f943dd5d0&gt;\n\nrlang::env_parents(e2b)\n\n#&gt; [[1]]   &lt;env: 0x559f943dd5d0&gt;\n#&gt; [[2]] $ &lt;env: global&gt;\n\n\n\n\nLexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)\nLexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time"
+  },
+  {
+    "objectID": "slides/07.html#only-the-empty-environment-does-not-have-a-parent",
+    "href": "slides/07.html#only-the-empty-environment-does-not-have-a-parent",
+    "title": "Environments",
+    "section": "Only the empty environment does not have a parent",
+    "text": "Only the empty environment does not have a parent\n\ne2c &lt;- rlang::env(rlang::empty_env(), d = 4, e = 5)\n\ne2d &lt;- rlang::env(e2c, a = 1, b = 2, c = 3)\n\n\n\nTHe lack of a parent is shown by the hollow blue dot"
+  },
+  {
+    "objectID": "slides/07.html#all-environments-eventually-terminate-with-the-empty-environment",
+    "href": "slides/07.html#all-environments-eventually-terminate-with-the-empty-environment",
+    "title": "Environments",
+    "section": "All environments eventually terminate with the empty environment",
+    "text": "All environments eventually terminate with the empty environment\n\nrlang::env_parents(e2b, last = rlang::empty_env())\n\n#&gt;  [[1]]   &lt;env: 0x559f943dd5d0&gt;\n#&gt;  [[2]] $ &lt;env: global&gt;\n#&gt;  [[3]] $ &lt;env: package:stats&gt;\n#&gt;  [[4]] $ &lt;env: package:graphics&gt;\n#&gt;  [[5]] $ &lt;env: package:grDevices&gt;\n#&gt;  [[6]] $ &lt;env: package:utils&gt;\n#&gt;  [[7]] $ &lt;env: package:datasets&gt;\n#&gt;  [[8]] $ &lt;env: package:methods&gt;\n#&gt;  [[9]] $ &lt;env: Autoloads&gt;\n#&gt; [[10]] $ &lt;env: package:base&gt;\n#&gt; [[11]] $ &lt;env: empty&gt;\n\n\n\nThe empty enviornment typically isn’t shown but can be displayed by setting the last parameter of rlang::env_parents()"
+  },
+  {
+    "objectID": "slides/07.html#be-wary-of-using--",
+    "href": "slides/07.html#be-wary-of-using--",
+    "title": "Environments",
+    "section": "Be wary of using <<-",
+    "text": "Be wary of using &lt;&lt;-\n\nRegular assignment (&lt;-) always creates a variable in the current environment\nSuper assignment (&lt;&lt;-) does a few things:\n\nmodifies the variable if it exists in a parent environment\ncreates the variable in the global environment if it does not exist\n\n\n\n&lt;&lt;- searches through environments via the search path, using the first found instance of the variable\n&lt;&lt;-- does not search through package environments as they are above the global environment on the search path\ne1 &lt;- rlang::env() e2 &lt;- rlang::env(e1)\nrlang::env_poke(e1, “a”, 1)\nwithr::with_environment( e2, a &lt;&lt;- 2 )"
+  },
+  {
+    "objectID": "slides/07.html#retrieve-environment-variables-with-or-rlang-functions",
+    "href": "slides/07.html#retrieve-environment-variables-with-or-rlang-functions",
+    "title": "Environments",
+    "section": "Retrieve environment variables with $, [[, or {rlang} functions",
+    "text": "Retrieve environment variables with $, [[, or {rlang} functions\n\ne3 &lt;- rlang::env(x = 1, y = 2)\n\ne3$x\n\n#&gt; [1] 1\n\n\n\ne3[[\"x\"]]\n\n#&gt; [1] 1\n\n\n\nrlang::env_get(e3, \"x\")\n\n#&gt; [1] 1\n\n\n\ne3[[1]]\n\n#&gt; Error in e3[[1]]: wrong arguments for subsetting an environment\n\n\n\ne3[\"x\"]\n\n#&gt; Error in e3[\"x\"]: object of type 'environment' is not subsettable"
+  },
+  {
+    "objectID": "slides/07.html#add-bindings-to-an-environment-with-or-rlang-functions",
+    "href": "slides/07.html#add-bindings-to-an-environment-with-or-rlang-functions",
+    "title": "Environments",
+    "section": "Add bindings to an environment with `$, [[, or {rlang} functions`",
+    "text": "Add bindings to an environment with `$, [[, or {rlang} functions`\n\ne3$z &lt;- 3\n\ne3[[\"z\"]] &lt;- 3\n\nrlang::env_poke(e3, \"z\", 3)\n\nrlang::env_bind(e3, z = 3, b = 20)\n\nrlang::env_unbind(e3, \"z\")\n\n\nrlang::env_has() is used to check if a variable exists within the environment\nrlang::env_unbind() is used to unbind a variable from an environment"
+  },
+  {
+    "objectID": "slides/07.html#special-cases-for-binding-environment-variables",
+    "href": "slides/07.html#special-cases-for-binding-environment-variables",
+    "title": "Environments",
+    "section": "Special cases for binding environment variables",
+    "text": "Special cases for binding environment variables\n\nrlang::env_bind_lazy() creates delayed bindings\n\nevaluated the first time they are accessed\n\nrlang::env_bind_active() creates active bindings\n\nre-computed every time they’re accessed"
+  },
+  {
+    "objectID": "slides/07.html#explore-environments-recursively",
+    "href": "slides/07.html#explore-environments-recursively",
+    "title": "Environments",
+    "section": "Explore environments recursively",
+    "text": "Explore environments recursively\n\nwhere &lt;- function(name, env = caller_env()) {\n  if (identical(env, empty_env())) {\n    # Base case\n    stop(\"Can't find \", name, call. = FALSE)\n  } else if (env_has(env, name)) {\n    # Success case\n    env\n  } else {\n    # Recursive case\n    where(name, env_parent(env))\n  }\n}\n\n\nWhy is recursing over environments important?\nRecursion is not the same thing as iteration"
+  },
+  {
+    "objectID": "slides/07.html#attaching-packages-changes-the-search-path",
+    "href": "slides/07.html#attaching-packages-changes-the-search-path",
+    "title": "Environments",
+    "section": "Attaching packages changes the search path",
+    "text": "Attaching packages changes the search path\n\nThe search path is the order in which R will look through environments for objects\nAttached packages become a parent of the global environment\nThe immediate parent of the global environment is that last package attached\n\n\n\nAutoloads and base are always the last two environments on the search path\nAutoloads uses lazy loading to make large package objects (like datasets) available without taking up memory\nFunctions within base are used to load all other packages"
+  },
+  {
+    "objectID": "slides/07.html#attaching-packages-changes-the-search-path-1",
+    "href": "slides/07.html#attaching-packages-changes-the-search-path-1",
+    "title": "Environments",
+    "section": "Attaching packages changes the search path",
+    "text": "Attaching packages changes the search path\n\n\n\nrlang::search_envs()\n\n#&gt; [[1]] $ &lt;env: global&gt;\n#&gt; [[2]] $ &lt;env: package:stats&gt;\n#&gt; [[3]] $ &lt;env: package:graphics&gt;\n#&gt; [[4]] $ &lt;env: package:grDevices&gt;\n#&gt; [[5]] $ &lt;env: package:utils&gt;\n#&gt; [[6]] $ &lt;env: package:datasets&gt;\n#&gt; [[7]] $ &lt;env: package:methods&gt;\n#&gt; [[8]] $ &lt;env: Autoloads&gt;\n#&gt; [[9]] $ &lt;env: package:base&gt;\n\n\n\n\nlibrary(rlang)\n\nrlang::search_envs()\n\n#&gt;  [[1]] $ &lt;env: global&gt;\n#&gt;  [[2]] $ &lt;env: package:rlang&gt;\n#&gt;  [[3]] $ &lt;env: package:stats&gt;\n#&gt;  [[4]] $ &lt;env: package:graphics&gt;\n#&gt;  [[5]] $ &lt;env: package:grDevices&gt;\n#&gt;  [[6]] $ &lt;env: package:utils&gt;\n#&gt;  [[7]] $ &lt;env: package:datasets&gt;\n#&gt;  [[8]] $ &lt;env: package:methods&gt;\n#&gt;  [[9]] $ &lt;env: Autoloads&gt;\n#&gt; [[10]] $ &lt;env: package:base&gt;\n\n\n\n\nAttaching {rlang} modifies the search path"
+  },
+  {
+    "objectID": "slides/07.html#functions-enclose-their-current-environment",
+    "href": "slides/07.html#functions-enclose-their-current-environment",
+    "title": "Environments",
+    "section": "Functions enclose their current environment",
+    "text": "Functions enclose their current environment\n\nFunctions enclose current environment when it is created\n\n\ny &lt;- 1\n\nf &lt;- function(x) x + y\n\nrlang::fn_env(f)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n\n\nThe function environment is represented by the black dot\nThe function f() knows where to look for y thanks to the function environment"
+  },
+  {
+    "objectID": "slides/07.html#functions-enclose-their-current-environment-1",
+    "href": "slides/07.html#functions-enclose-their-current-environment-1",
+    "title": "Environments",
+    "section": "Functions enclose their current environment",
+    "text": "Functions enclose their current environment\n\ng() is being bound by the environment e but binds the global environment\nThe function environment is the global environment but the binding environment is e\n\n\ne &lt;- env()\n\ne$g &lt;- function() 1\n\nrlang::fn_env(e$g)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;"
+  },
+  {
+    "objectID": "slides/07.html#functions-enclose-their-current-environment-2",
+    "href": "slides/07.html#functions-enclose-their-current-environment-2",
+    "title": "Environments",
+    "section": "Functions enclose their current environment",
+    "text": "Functions enclose their current environment"
+  },
+  {
+    "objectID": "slides/07.html#namespaces-ensure-package-environment-independence",
+    "href": "slides/07.html#namespaces-ensure-package-environment-independence",
+    "title": "Environments",
+    "section": "Namespaces ensure package environment independence",
+    "text": "Namespaces ensure package environment independence\n\nEvery package has an underlying namespace\nEvery function is associated with a package environment and namespace environment\nPackage environments contain exported objects\nNamespace environments contain exported and internal objects\n\n\nContrast dplyr::across and dplyr:::across_glue_mask()\nsd() is bound to the {stats} namespace environment"
+  },
+  {
+    "objectID": "slides/07.html#namespaces-ensure-package-environment-independence-1",
+    "href": "slides/07.html#namespaces-ensure-package-environment-independence-1",
+    "title": "Environments",
+    "section": "Namespaces ensure package environment independence",
+    "text": "Namespaces ensure package environment independence"
+  },
+  {
+    "objectID": "slides/07.html#namespaces-ensure-package-environment-independence-2",
+    "href": "slides/07.html#namespaces-ensure-package-environment-independence-2",
+    "title": "Environments",
+    "section": "Namespaces ensure package environment independence",
+    "text": "Namespaces ensure package environment independence\n\n\nvar() is found in the stats namespace first, so that is the definition of var that is used by sd()\nIf an object called by sd() wasn’t found in the stats namespace, it would be searched for according to the search path"
+  },
+  {
+    "objectID": "slides/07.html#functions-use-ephemeral-execution-environments",
+    "href": "slides/07.html#functions-use-ephemeral-execution-environments",
+    "title": "Environments",
+    "section": "Functions use ephemeral execution environments",
+    "text": "Functions use ephemeral execution environments\n\nFunctions create a new environment to use whenever executed\nThe execution environment is a child of the function environment\nExecution environments are garbage collected on function exit"
+  },
+  {
+    "objectID": "slides/07.html#functions-use-ephemeral-execution-environments-1",
+    "href": "slides/07.html#functions-use-ephemeral-execution-environments-1",
+    "title": "Environments",
+    "section": "Functions use ephemeral execution environments",
+    "text": "Functions use ephemeral execution environments"
+  },
+  {
+    "objectID": "slides/07.html#the-caller-environment-informs-the-call-stack",
+    "href": "slides/07.html#the-caller-environment-informs-the-call-stack",
+    "title": "Environments",
+    "section": "The caller environment informs the call stack",
+    "text": "The caller environment informs the call stack\n\nThe caller environment is the environment from which the function was called\nAccessed with rlang::caller_env()\nThe call stack is created within the caller environment\n\n\n\n\nf &lt;- function(x) {\n  g(x = 2)\n}\ng &lt;- function(x) {\n  h(x = 3)\n}\nh &lt;- function(x) {\n  lobstr::cst()\n}\n\n\n\nf(x = 1)\n\n#&gt;     ▆\n#&gt;  1. └─global f(x = 1)\n#&gt;  2.   └─global g(x = 2)\n#&gt;  3.     └─global h(x = 3)\n#&gt;  4.       └─lobstr::cst()\n\n\n\n\ntraceback() is the base R approach\nlobstr::cst() prints the call stack in order of call, opposite of traceback()\nDoes lobstr::cst() now prints the caller environment?"
+  },
+  {
+    "objectID": "slides/07.html#the-caller-environment-informs-the-call-stack-1",
+    "href": "slides/07.html#the-caller-environment-informs-the-call-stack-1",
+    "title": "Environments",
+    "section": "The caller environment informs the call stack",
+    "text": "The caller environment informs the call stack\n\nCall stack is more complicated with lazy evaluation\n\n\na &lt;- function(x) b(x)\nb &lt;- function(x) d(x)\nd &lt;- function(x) x\n\na(f())\n\n#&gt;     ▆\n#&gt;  1. ├─global a(f())\n#&gt;  2. │ └─global b(x)\n#&gt;  3. │   └─global d(x)\n#&gt;  4. └─global f()\n#&gt;  5.   └─global g(x = 2)\n#&gt;  6.     └─global h(x = 3)\n#&gt;  7.       └─lobstr::cst()\n\n\n\nDo different branches represent different caller environments?\nNote that c() was replaced with d() as it could not be rendered with c()"
+  },
+  {
+    "objectID": "slides/07.html#the-caller-environment-informs-the-call-stack-2",
+    "href": "slides/07.html#the-caller-environment-informs-the-call-stack-2",
+    "title": "Environments",
+    "section": "The caller environment informs the call stack",
+    "text": "The caller environment informs the call stack\n\n\n\nEach frame contains:\n\nAn expression\nAn environment\nA parent"
+  },
+  {
+    "objectID": "slides/07.html#r-uses-lexical-scoping-not-dynamic-scoping",
+    "href": "slides/07.html#r-uses-lexical-scoping-not-dynamic-scoping",
+    "title": "Environments",
+    "section": "R uses lexical scoping, not dynamic scoping",
+    "text": "R uses lexical scoping, not dynamic scoping\n\nR uses lexical scoping: it looks up the values of names based on how a function is defined, not how it is called. “Lexical” here is not the English adjective that means relating to words or a vocabulary. It’s a technical CS term that tells us that the scoping rules use a parse-time, rather than a run-time structure. - Chapter 6 - functions\n\n\nDynamic scoping means functions use variables as they are defined in the calling environment"
+  },
+  {
+    "objectID": "slides/07.html#environments-are-useful-data-structures",
+    "href": "slides/07.html#environments-are-useful-data-structures",
+    "title": "Environments",
+    "section": "Environments are useful data structures",
+    "text": "Environments are useful data structures\n\nUsecase include:\n\nAvoiding copies of large data\nManaging state within a package\nAs a hashmap\n\n\n\nFinding a function in a package uses constant time"
   },
   {
     "objectID": "slides/05.html#learning-objectives",

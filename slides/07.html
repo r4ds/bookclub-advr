@@ -27,6 +27,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
   </style>
   <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5079db4132f0eaf0a29ac93fceccb8c9.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -136,18 +202,788 @@
 <section id="learning-objectives" class="slide level2">
 <h2>Learning objectives:</h2>
 <ul>
-<li>THESE ARE NICE TO HAVE BUT NOT ABSOLUTELY NECESSARY</li>
+<li><p>Create, modify, and inspect environments</p></li>
+<li><p>Recognize special environments</p></li>
+<li><p>Understand how environments power lexical scoping and namespaces</p></li>
 </ul>
 </section>
-<section id="slide-1" class="slide level2">
-<h2>SLIDE 1</h2>
+<section>
+<section id="environment-basics" class="title-slide slide level1 center">
+<h1>7.2 Environment Basics</h1>
+
+</section>
+<section id="environments-are-similar-to-lists" class="slide level2">
+<h2>Environments are similar to lists</h2>
+<p>Generally, an environment is similar to a named list, with four important exceptions:</p>
 <ul>
-<li>ADD SLIDES AS SECTIONS (<code>##</code>).</li>
-<li>TRY TO KEEP THEM RELATIVELY SLIDE-LIKE; THESE ARE NOTES, NOT THE BOOK ITSELF.</li>
+<li><p>Every name must be unique.</p></li>
+<li><p>The names in an environment are not ordered.</p></li>
+<li><p>An environment has a parent.</p></li>
+<li><p>Environments are not copied when modified.</p></li>
 </ul>
+<aside class="notes">
+<ul>
+<li><p>Lists can have duplicate names, e.g.&nbsp;x &lt;- base::list(a = 1, a = 1)</p></li>
+<li><p>Lists have an inherent order, e.g.&nbsp;x[[1]] returns the first element of the list above</p></li>
+<li><p>Environments copy by reference, not by replacement, e.g.:</p>
+<p>Modifying a list produces a different memory address base::identical(lobstr::obj_addr(x), lobstr::obj_addr({x[[1]] &lt;- 2; x}))</p>
+<p>y &lt;- rlang::env() y$‘a’ &lt;- 1</p>
+<p>base::identical( lobstr::obj_addr(y), lobstr::obj_addr({y[[‘a’]] &lt;- 2; y}) )</p></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="create-a-new-environment-with-rlang" class="slide level2">
+<h2>Create a new environment with <code>{rlang}</code></h2>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>e1 <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">env</span>(</span>
+<span id="cb1-2"><a></a>  rlang<span class="sc">::</span><span class="fu">global_env</span>(),</span>
+<span id="cb1-3"><a></a>  <span class="at">a =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-4"><a></a>  <span class="at">b =</span> <span class="st">"a"</span>,</span>
+<span id="cb1-5"><a></a>  <span class="at">c =</span> <span class="fl">2.3</span>,</span>
+<span id="cb1-6"><a></a>  <span class="at">d =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,</span>
+<span id="cb1-7"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>e2 <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">new_environment</span>(</span>
+<span id="cb2-2"><a></a>  <span class="at">data =</span> <span class="fu">list</span>(</span>
+<span id="cb2-3"><a></a>    <span class="at">a =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb2-4"><a></a>    <span class="at">b =</span> <span class="st">"a"</span>,</span>
+<span id="cb2-5"><a></a>    <span class="at">c =</span> <span class="fl">2.3</span>,</span>
+<span id="cb2-6"><a></a>    <span class="at">d =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span></span>
+<span id="cb2-7"><a></a>  ),</span>
+<span id="cb2-8"><a></a>  <span class="at">parent =</span> rlang<span class="sc">::</span><span class="fu">global_env</span>()</span>
+<span id="cb2-9"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div></div>
+<aside class="notes">
+<p>rlang::env() creates a child of the current environment by default and takes a variable number of named objects to populate it.</p>
+<p>rlang::new_environment() creates a child of the empty environment by default and takes a named list of objects to populate it.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="an-environment-associates-or-binds-a-set-of-names-to-a-set-of-values" class="slide level2">
+<h2>An environment associates, or <strong>binds</strong> a set of names to a set of values</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li><p>A bag of names with no implied order</p></li>
+<li><p>Bindings live within the environment</p></li>
+</ul>
+<p><img data-src="images/07-bindings.png"></p>
+</div><div class="column">
+<ul>
+<li>Environments have reference semantics and thus can contain themselves</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>e1<span class="sc">$</span>d <span class="ot">&lt;-</span> e1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><img data-src="images/07_loop.png"></p>
+</div></div>
+<aside class="notes">
+<p>no implied order (unlike a list, so no index subsetting)</p>
+<p>the grey box represents an environment</p>
+<p>the blue dot represents the parent environment</p>
+<p>letters represent variable names bound within the environment</p>
+<hr>
+<p>reference semantics store a reference to the object’s memory address, not the actual value (as is done in value semantics)</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="inspect-environments-with-rlang" class="slide level2">
+<h2>Inspect environments with <code>{rlang}</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_print</span>(e1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;environment: 0x559f9046e610&gt;
+#&gt; Parent: &lt;environment: global&gt;
+#&gt; Bindings:
+#&gt; • a: &lt;lgl&gt;
+#&gt; • b: &lt;chr&gt;
+#&gt; • c: &lt;dbl&gt;
+#&gt; • d: &lt;int&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_names</span>(e1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "a" "b" "c" "d"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_has</span>(e1, <span class="st">"a"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;    a 
+#&gt; TRUE</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_get</span>(e1, <span class="st">"a"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] FALSE</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_parent</span>(e1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
+</div>
+</div>
+<aside class="notes">
+<p>base::print() displays the memory address and is not as helpful as rlang::env_print()</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="by-default-the-current-environment-is-your-global-environment" class="slide level2">
+<h2>By default, the current environment is your global environment</h2>
+<ul>
+<li><p>The current environment is where code is currently executing</p></li>
+<li><p>The global environment <em>is</em> your current environment when working interactively</p></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>rlang<span class="sc">::</span><span class="fu">current_env</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>rlang<span class="sc">::</span><span class="fu">global_env</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>base<span class="sc">::</span><span class="fu">identical</span>(</span>
+<span id="cb18-2"><a></a>  rlang<span class="sc">::</span><span class="fu">current_env</span>(),</span>
+<span id="cb18-3"><a></a>  rlang<span class="sc">::</span><span class="fu">global_env</span>()</span>
+<span id="cb18-4"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<aside class="notes">
+<p>If you open a new R session, you are in the global environment by default (unless otherwise modified by say the .rprofile file)</p>
+<p>The current environment isn’t <em>always</em> your global environment. Your current environment changes as you move into and out of functions, for example.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="every-environment-has-a-parent-environment" class="slide level2">
+<h2>Every environment has a parent environment</h2>
+<ul>
+<li>Allows for lexical scoping</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>e2a <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">env</span>(<span class="at">d =</span> <span class="dv">4</span>, <span class="at">e =</span> <span class="dv">5</span>)</span>
+<span id="cb20-2"><a></a></span>
+<span id="cb20-3"><a></a>e2b <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">env</span>(e2a, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">3</span>)</span>
+<span id="cb20-4"><a></a></span>
+<span id="cb20-5"><a></a>rlang<span class="sc">::</span><span class="fu">env_parent</span>(e2b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;environment: 0x559f943dd5d0&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_parents</span>(e2b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [[1]]   &lt;env: 0x559f943dd5d0&gt;
+#&gt; [[2]] $ &lt;env: global&gt;</code></pre>
+</div>
+</div>
 
+<img data-src="images/07_parents.png" class="r-stretch"><aside class="notes">
+<p>Lexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)</p>
+<p>Lexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="only-the-empty-environment-does-not-have-a-parent" class="slide level2">
+<h2>Only the <strong>empty</strong> environment does not have a parent</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>e2c <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">env</span>(rlang<span class="sc">::</span><span class="fu">empty_env</span>(), <span class="at">d =</span> <span class="dv">4</span>, <span class="at">e =</span> <span class="dv">5</span>)</span>
+<span id="cb24-2"><a></a></span>
+<span id="cb24-3"><a></a>e2d <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">env</span>(e2c, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><img data-src="images/07_parents-empty.png" style="width:50.0%;height:50.0%"></p>
+<aside class="notes">
+<p>THe lack of a parent is shown by the hollow blue dot</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="all-environments-eventually-terminate-with-the-empty-environment" class="slide level2">
+<h2>All environments eventually terminate with the empty environment</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_parents</span>(e2b, <span class="at">last =</span> rlang<span class="sc">::</span><span class="fu">empty_env</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;  [[1]]   &lt;env: 0x559f943dd5d0&gt;
+#&gt;  [[2]] $ &lt;env: global&gt;
+#&gt;  [[3]] $ &lt;env: package:stats&gt;
+#&gt;  [[4]] $ &lt;env: package:graphics&gt;
+#&gt;  [[5]] $ &lt;env: package:grDevices&gt;
+#&gt;  [[6]] $ &lt;env: package:utils&gt;
+#&gt;  [[7]] $ &lt;env: package:datasets&gt;
+#&gt;  [[8]] $ &lt;env: package:methods&gt;
+#&gt;  [[9]] $ &lt;env: Autoloads&gt;
+#&gt; [[10]] $ &lt;env: package:base&gt;
+#&gt; [[11]] $ &lt;env: empty&gt;</code></pre>
+</div>
+</div>
+<aside class="notes">
+<p>The empty enviornment typically isn’t shown but can be displayed by setting the <code>last</code> parameter of <code>rlang::env_parents()</code></p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="be-wary-of-using--" class="slide level2 scrollable">
+<h2>Be wary of using <code>&lt;&lt;-</code></h2>
+<ul>
+<li><p>Regular assignment (<code>&lt;-</code>) always creates a variable in the current environment</p></li>
+<li><p>Super assignment (<code>&lt;&lt;-</code>) does a few things:</p>
+<ol type="1">
+<li><p>modifies the variable if it exists in a parent environment</p></li>
+<li><p>creates the variable in the global environment if it does not exist</p></li>
+</ol></li>
+</ul>
+<aside class="notes">
+<p><code>&lt;&lt;-</code> searches through environments via the search path, using the first found instance of the variable</p>
+<p><code>&lt;&lt;--</code> does not search through package environments as they are above the global environment on the search path</p>
+<p>e1 &lt;- rlang::env() e2 &lt;- rlang::env(e1)</p>
+<p>rlang::env_poke(e1, “a”, 1)</p>
+<p>withr::with_environment( e2, a &lt;&lt;- 2 )</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="retrieve-environment-variables-with-or-rlang-functions" class="slide level2">
+<h2>Retrieve environment variables with <code>$</code>, <code>[[</code>, or <code>{rlang}</code> functions</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>e3 <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">env</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>)</span>
+<span id="cb27-2"><a></a></span>
+<span id="cb27-3"><a></a>e3<span class="sc">$</span>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>e3[[<span class="st">"x"</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_get</span>(e3, <span class="st">"x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>e3[[<span class="dv">1</span>]]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in e3[[1]]: wrong arguments for subsetting an environment</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>e3[<span class="st">"x"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in e3["x"]: object of type 'environment' is not subsettable</code></pre>
+</div>
+</div>
+</section>
+<section id="add-bindings-to-an-environment-with-or-rlang-functions" class="slide level2">
+<h2>Add bindings to an environment with `<code>$</code>, <code>[[</code>, or <code>{rlang}</code> functions`</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>e3<span class="sc">$</span>z <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb37-2"><a></a></span>
+<span id="cb37-3"><a></a>e3[[<span class="st">"z"</span>]] <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb37-4"><a></a></span>
+<span id="cb37-5"><a></a>rlang<span class="sc">::</span><span class="fu">env_poke</span>(e3, <span class="st">"z"</span>, <span class="dv">3</span>)</span>
+<span id="cb37-6"><a></a></span>
+<span id="cb37-7"><a></a>rlang<span class="sc">::</span><span class="fu">env_bind</span>(e3, <span class="at">z =</span> <span class="dv">3</span>, <span class="at">b =</span> <span class="dv">20</span>)</span>
+<span id="cb37-8"><a></a></span>
+<span id="cb37-9"><a></a>rlang<span class="sc">::</span><span class="fu">env_unbind</span>(e3, <span class="st">"z"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<aside class="notes">
+<p>rlang::env_has() is used to check if a variable exists within the environment</p>
+<p>rlang::env_unbind() is used to unbind a variable from an environment</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="special-cases-for-binding-environment-variables" class="slide level2">
+<h2>Special cases for binding environment variables</h2>
+<ul>
+<li><p><code>rlang::env_bind_lazy()</code> creates delayed bindings</p>
+<ul>
+<li>evaluated the first time they are accessed</li>
+</ul></li>
+<li><p><code>rlang::env_bind_active()</code> creates active bindings</p>
+<ul>
+<li>re-computed every time they’re accessed</li>
+</ul></li>
+</ul>
+</section></section>
+<section>
+<section id="recursing-over-environments" class="title-slide slide level1 center">
+<h1>7.3 Recursing over environments</h1>
 
 </section>
+<section id="explore-environments-recursively" class="slide level2">
+<h2>Explore environments recursively</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>where <span class="ot">&lt;-</span> <span class="cf">function</span>(name, <span class="at">env =</span> <span class="fu">caller_env</span>()) {</span>
+<span id="cb38-2"><a></a>  <span class="cf">if</span> (<span class="fu">identical</span>(env, <span class="fu">empty_env</span>())) {</span>
+<span id="cb38-3"><a></a>    <span class="co"># Base case</span></span>
+<span id="cb38-4"><a></a>    <span class="fu">stop</span>(<span class="st">"Can't find "</span>, name, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb38-5"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">env_has</span>(env, name)) {</span>
+<span id="cb38-6"><a></a>    <span class="co"># Success case</span></span>
+<span id="cb38-7"><a></a>    env</span>
+<span id="cb38-8"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb38-9"><a></a>    <span class="co"># Recursive case</span></span>
+<span id="cb38-10"><a></a>    <span class="fu">where</span>(name, <span class="fu">env_parent</span>(env))</span>
+<span id="cb38-11"><a></a>  }</span>
+<span id="cb38-12"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<aside class="notes">
+<p>Why is recursing over environments important?</p>
+<p>Recursion is not the same thing as iteration</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="special-environments" class="title-slide slide level1 center">
+<h1>7.4 Special Environments</h1>
+
+</section>
+<section id="attaching-packages-changes-the-search-path" class="slide level2">
+<h2>Attaching packages changes the search path</h2>
+<ul>
+<li><p>The <strong>search path</strong> is the order in which R will look through environments for objects</p></li>
+<li><p>Attached packages become a parent of the global environment</p></li>
+<li><p>The immediate parent of the global environment is that last package attached</p></li>
+</ul>
+
+<img data-src="images/07_search-path.png" class="r-stretch"><aside class="notes">
+<p>Autoloads and base are always the last two environments on the search path</p>
+<p>Autoloads uses lazy loading to make large package objects (like datasets) available without taking up memory</p>
+<p>Functions within base are used to load all other packages</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="attaching-packages-changes-the-search-path-1" class="slide level2">
+<h2>Attaching packages changes the search path</h2>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a>rlang<span class="sc">::</span><span class="fu">search_envs</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [[1]] $ &lt;env: global&gt;
+#&gt; [[2]] $ &lt;env: package:stats&gt;
+#&gt; [[3]] $ &lt;env: package:graphics&gt;
+#&gt; [[4]] $ &lt;env: package:grDevices&gt;
+#&gt; [[5]] $ &lt;env: package:utils&gt;
+#&gt; [[6]] $ &lt;env: package:datasets&gt;
+#&gt; [[7]] $ &lt;env: package:methods&gt;
+#&gt; [[8]] $ &lt;env: Autoloads&gt;
+#&gt; [[9]] $ &lt;env: package:base&gt;</code></pre>
+</div>
+</div>
+</div><div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a><span class="fu">library</span>(rlang)</span>
+<span id="cb41-2"><a></a></span>
+<span id="cb41-3"><a></a>rlang<span class="sc">::</span><span class="fu">search_envs</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;  [[1]] $ &lt;env: global&gt;
+#&gt;  [[2]] $ &lt;env: package:rlang&gt;
+#&gt;  [[3]] $ &lt;env: package:stats&gt;
+#&gt;  [[4]] $ &lt;env: package:graphics&gt;
+#&gt;  [[5]] $ &lt;env: package:grDevices&gt;
+#&gt;  [[6]] $ &lt;env: package:utils&gt;
+#&gt;  [[7]] $ &lt;env: package:datasets&gt;
+#&gt;  [[8]] $ &lt;env: package:methods&gt;
+#&gt;  [[9]] $ &lt;env: Autoloads&gt;
+#&gt; [[10]] $ &lt;env: package:base&gt;</code></pre>
+</div>
+</div>
+</div></div>
+<aside class="notes">
+<p>Attaching <code>{rlang}</code> modifies the search path</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="functions-enclose-their-current-environment" class="slide level2">
+<h2>Functions enclose their current environment</h2>
+<ul>
+<li>Functions enclose current environment when it is created</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a>y <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb43-2"><a></a></span>
+<span id="cb43-3"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">+</span> y</span>
+<span id="cb43-4"><a></a></span>
+<span id="cb43-5"><a></a>rlang<span class="sc">::</span><span class="fu">fn_env</span>(f)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
+</div>
+</div>
+
+<img data-src="images/07_binding.png" class="r-stretch"><aside class="notes">
+<p>The function environment is represented by the black dot</p>
+<p>The function <code>f()</code> knows where to look for y thanks to the function environment</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="functions-enclose-their-current-environment-1" class="slide level2">
+<h2>Functions enclose their current environment</h2>
+<ul>
+<li><p><code>g()</code> is <em>being bound by</em> the environment <code>e</code> but <em>binds</em> the global environment</p></li>
+<li><p>The function environment is the global environment but the binding environment is <code>e</code></p></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>e <span class="ot">&lt;-</span> <span class="fu">env</span>()</span>
+<span id="cb45-2"><a></a></span>
+<span id="cb45-3"><a></a>e<span class="sc">$</span>g <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="dv">1</span></span>
+<span id="cb45-4"><a></a></span>
+<span id="cb45-5"><a></a>rlang<span class="sc">::</span><span class="fu">fn_env</span>(e<span class="sc">$</span>g)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="functions-enclose-their-current-environment-2" class="slide level2">
+<h2>Functions enclose their current environment</h2>
+
+<img data-src="images/07_binding-2.png" class="r-stretch"></section>
+<section id="namespaces-ensure-package-environment-independence" class="slide level2">
+<h2>Namespaces ensure package environment independence</h2>
+<ul>
+<li><p>Every package has an underlying namespace</p></li>
+<li><p>Every function is associated with a package environment and namespace environment</p></li>
+<li><p>Package environments contain exported objects</p></li>
+<li><p>Namespace environments contain exported and internal objects</p></li>
+</ul>
+<aside class="notes">
+<p>Contrast <code>dplyr::across</code> and <code>dplyr:::across_glue_mask()</code></p>
+<p><code>sd()</code> is bound to the <code>{stats}</code> namespace environment</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="namespaces-ensure-package-environment-independence-1" class="slide level2">
+<h2>Namespaces ensure package environment independence</h2>
+
+<img data-src="images/07_namespace-bind.png" class="r-stretch"></section>
+<section id="namespaces-ensure-package-environment-independence-2" class="slide level2">
+<h2>Namespaces ensure package environment independence</h2>
+
+<img data-src="images/07_namespace.png" class="r-stretch"><aside class="notes">
+<p><code>var()</code> is found in the stats namespace first, so that is the definition of var that is used by <code>sd()</code></p>
+<p>If an object called by <code>sd()</code> wasn’t found in the stats namespace, it would be searched for according to the search path</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="functions-use-ephemeral-execution-environments" class="slide level2">
+<h2>Functions use ephemeral execution environments</h2>
+<ul>
+<li><p>Functions create a new environment to use whenever executed</p></li>
+<li><p>The execution environment is a child of the function environment</p></li>
+<li><p>Execution environments are garbage collected on function exit</p></li>
+</ul>
+</section>
+<section id="functions-use-ephemeral-execution-environments-1" class="slide level2">
+<h2>Functions use ephemeral execution environments</h2>
+
+<img data-src="images/07_execution.png" class="r-stretch"></section></section>
+<section>
+<section id="call-stacks" class="title-slide slide level1 center">
+<h1>7.5 Call stacks</h1>
+
+</section>
+<section id="the-caller-environment-informs-the-call-stack" class="slide level2">
+<h2>The caller environment informs the call stack</h2>
+<ul>
+<li><p>The caller environment is the environment from which the function was called</p></li>
+<li><p>Accessed with <code>rlang::caller_env()</code></p></li>
+<li><p>The call stack is created within the caller environment</p></li>
+</ul>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb47-2"><a></a>  <span class="fu">g</span>(<span class="at">x =</span> <span class="dv">2</span>)</span>
+<span id="cb47-3"><a></a>}</span>
+<span id="cb47-4"><a></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb47-5"><a></a>  <span class="fu">h</span>(<span class="at">x =</span> <span class="dv">3</span>)</span>
+<span id="cb47-6"><a></a>}</span>
+<span id="cb47-7"><a></a>h <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb47-8"><a></a>  lobstr<span class="sc">::</span><span class="fu">cst</span>()</span>
+<span id="cb47-9"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a><span class="fu">f</span>(<span class="at">x =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;     ▆
+#&gt;  1. └─global f(x = 1)
+#&gt;  2.   └─global g(x = 2)
+#&gt;  3.     └─global h(x = 3)
+#&gt;  4.       └─lobstr::cst()</code></pre>
+</div>
+</div>
+</div></div>
+<aside class="notes">
+<p><code>traceback()</code> is the base R approach</p>
+<p><code>lobstr::cst()</code> prints the call stack in order of call, opposite of <code>traceback()</code></p>
+<p>Does <code>lobstr::cst()</code> now prints the caller environment?</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-caller-environment-informs-the-call-stack-1" class="slide level2">
+<h2>The caller environment informs the call stack</h2>
+<ul>
+<li>Call stack is more complicated with lazy evaluation</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a>a <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">b</span>(x)</span>
+<span id="cb50-2"><a></a>b <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">d</span>(x)</span>
+<span id="cb50-3"><a></a>d <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x</span>
+<span id="cb50-4"><a></a></span>
+<span id="cb50-5"><a></a><span class="fu">a</span>(<span class="fu">f</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;     ▆
+#&gt;  1. ├─global a(f())
+#&gt;  2. │ └─global b(x)
+#&gt;  3. │   └─global d(x)
+#&gt;  4. └─global f()
+#&gt;  5.   └─global g(x = 2)
+#&gt;  6.     └─global h(x = 3)
+#&gt;  7.       └─lobstr::cst()</code></pre>
+</div>
+</div>
+<aside class="notes">
+<p>Do different branches represent different caller environments?</p>
+<p>Note that <code>c()</code> was replaced with <code>d()</code> as it could not be rendered with <code>c()</code></p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-caller-environment-informs-the-call-stack-2" class="slide level2 scrollable">
+<h2>The caller environment informs the call stack</h2>
+
+<img data-src="images/07_calling.png" class="r-stretch"><aside class="notes">
+<ul>
+<li><p>Each frame contains:</p>
+<ol type="1">
+<li><p>An expression</p></li>
+<li><p>An environment</p></li>
+<li><p>A parent</p></li>
+</ol></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="r-uses-lexical-scoping-not-dynamic-scoping" class="slide level2">
+<h2>R uses lexical scoping, not dynamic scoping</h2>
+<blockquote>
+<p>R uses lexical scoping: it looks up the values of names based on how a function is defined, not how it is called. “Lexical” here is not the English adjective that means relating to words or a vocabulary. It’s a technical CS term that tells us that the scoping rules use a parse-time, rather than a run-time structure. - <a href="https://adv-r.hadley.nz/functions.html">Chapter 6 - functions</a></p>
+</blockquote>
+<ul>
+<li>Dynamic scoping means functions use variables as they are defined in the calling environment</li>
+</ul>
+</section></section>
+<section>
+<section id="data-structures" class="title-slide slide level1 center">
+<h1>7.6 Data structures</h1>
+
+</section>
+<section id="environments-are-useful-data-structures" class="slide level2 scrollable">
+<h2>Environments are useful data structures</h2>
+<ul>
+<li><p>Usecase include:</p>
+<ol type="1">
+<li><p>Avoiding copies of large data</p></li>
+<li><p>Managing state within a package</p></li>
+<li><p>As a hashmap</p></li>
+</ol></li>
+</ul>
+<aside class="notes">
+<p>Finding a function in a package uses constant time</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -363,6 +1199,44 @@
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
