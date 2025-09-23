@@ -1,0 +1,605 @@
+---
+engine: knitr
+title: Environments
+---
+
+## Learning objectives:
+
+- Create, modify, and inspect environments 
+
+- Recognize special environments 
+
+- Understand how environments power lexical scoping and namespaces
+
+# 7.2 Environment Basics
+
+## Environments are similar to lists
+
+Generally, an environment is similar to a named list, with four important exceptions:
+
+- Every name must be unique.
+
+- The names in an environment are not ordered.
+
+- An environment has a parent.
+
+- Environments are not copied when modified.
+
+::: {.notes}
+
+- Lists can have duplicate names, e.g. x <- base::list(a = 1, a = 1)
+
+- Lists have an inherent order, e.g. x[[1]] returns the first element of the list above
+
+- Environments copy by reference, not by replacement, e.g.: 
+
+  Modifying a list produces a different memory address
+  base::identical(lobstr::obj_addr(x), lobstr::obj_addr({x[[1]] <- 2; x}))
+
+  y <- rlang::env()
+  y$'a' <- 1
+
+  base::identical(
+    lobstr::obj_addr(y),
+    lobstr::obj_addr({y[['a']] <- 2; y})
+  )
+
+:::
+
+## Create a new environment with `{rlang}`
+
+:::: {.columns}
+
+::: {.column}
+
+```{r}
+e1 <- rlang::env(
+  rlang::global_env(),
+  a = FALSE,
+  b = "a",
+  c = 2.3,
+  d = 1:3,
+)
+```
+
+:::
+
+::: {.column}
+
+```{r}
+e2 <- rlang::new_environment(
+  data = list(
+    a = FALSE,
+    b = "a",
+    c = 2.3,
+    d = 1:3
+  ),
+  parent = rlang::global_env()
+)
+```
+
+:::
+
+::::
+
+::: {.notes}
+
+rlang::env() creates a child of the current environment by default and takes a variable number of named objects to populate it.
+
+rlang::new_environment() creates a child of the empty environment by default and takes a named list of objects to populate it.
+
+:::
+
+
+## An environment associates, or **binds** a set of names to a set of values
+
+:::: {.columns}
+
+::: {.column}
+
+- A bag of names with no implied order
+
+- Bindings live within the environment
+
+![](images/07-bindings.png)
+
+:::
+
+::: {.column}
+
+- Environments have reference semantics and thus can contain themselves
+
+```{r}
+#| eval: false
+e1$d <- e1
+```
+
+![](images/07_loop.png)
+
+:::
+
+::::
+
+::: {.notes}
+
+no implied order (unlike a list, so no index subsetting)
+
+the grey box represents an environment 
+
+the blue dot represents the parent environment 
+
+letters represent variable names bound within the environment
+
+--- 
+
+reference semantics store a reference to the object's memory address, not the actual value (as is done in value semantics)
+
+:::
+ 
+## Inspect environments with `{rlang}`
+
+```{r}
+rlang::env_print(e1)
+```
+
+```{r}
+rlang::env_names(e1)
+```
+
+```{r}
+rlang::env_has(e1, "a")
+```
+
+```{r}
+rlang::env_get(e1, "a")
+```
+
+```{r}
+rlang::env_parent(e1)
+```
+
+::: {.notes}
+
+base::print() displays the memory address and is not as helpful as rlang::env_print()
+
+:::
+
+## By default, the current environment is your global environment
+
+- The current environment is where code is currently executing
+
+- The global environment *is* your current environment when working interactively
+
+```{r}
+rlang::current_env()
+
+rlang::global_env()
+
+base::identical(
+  rlang::current_env(),
+  rlang::global_env()
+)
+```
+
+::: {.notes}
+
+If you open a new R session, you are in the global environment by default (unless otherwise modified by say the .rprofile file)
+
+The current environment isn't *always* your global environment. Your current environment changes as you move into and out of functions, for example.
+
+:::
+
+## Every environment has a parent environment 
+
+- Allows for lexical scoping
+
+```{r}
+e2a <- rlang::env(d = 4, e = 5)
+
+e2b <- rlang::env(e2a, a = 1, b = 2, c = 3)
+
+rlang::env_parent(e2b)
+
+rlang::env_parents(e2b)
+```
+
+![](images/07_parents.png)
+
+::: {.notes}
+
+Lexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)
+
+Lexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time 
+
+:::
+
+## Only the **empty** environment does not have a parent
+
+```{r}
+e2c <- rlang::env(rlang::empty_env(), d = 4, e = 5)
+
+e2d <- rlang::env(e2c, a = 1, b = 2, c = 3)
+```
+
+![](images/07_parents-empty.png){width=50% height=50%}
+
+::: {.notes}
+
+THe lack of a parent is shown by the hollow blue dot
+
+:::
+
+## All environments eventually terminate with the empty environment
+
+```{r}
+rlang::env_parents(e2b, last = rlang::empty_env())
+```
+
+::: {.notes}
+
+The empty enviornment typically isn't shown but can be displayed by setting the `last` parameter of `rlang::env_parents()`
+
+:::
+
+## Be wary of using `<<-`
+
+- Regular assignment (`<-`) always creates a variable in the current environment
+
+- Super assignment (`<<-`) does a few things:
+
+  1. modifies the variable if it exists in a parent environment
+
+  2. creates the variable in the global environment if it does not exist 
+
+::: {.notes}
+
+`<<-` searches through environments via the search path, using the first found instance of the variable 
+
+`<<--` does not search through package environments as they are above the global environment on the search path
+
+e1 <- rlang::env()
+e2 <- rlang::env(e1)
+
+rlang::env_poke(e1, "a", 1)
+
+withr::with_environment(
+  e2,
+  a <<- 2
+)
+:::
+
+
+## Retrieve environment variables with `$`, `[[`, or `{rlang}` functions
+
+```{r}
+e3 <- rlang::env(x = 1, y = 2)
+
+e3$x
+```
+
+```{r}
+e3[["x"]]
+```
+
+```{r}
+rlang::env_get(e3, "x")
+```
+
+```{r}
+#| error: true
+e3[[1]]
+```
+
+```{r}
+#| error: true
+e3["x"]
+```
+
+## Add bindings to an environment with ``$`, `[[`, or `{rlang}` functions`
+
+```{r}
+e3$z <- 3
+
+e3[["z"]] <- 3
+
+rlang::env_poke(e3, "z", 3)
+
+rlang::env_bind(e3, z = 3, b = 20)
+
+rlang::env_unbind(e3, "z")
+```
+
+::: {.notes}
+
+rlang::env_has() is used to check if a variable exists within the environment
+
+rlang::env_unbind() is used to unbind a variable from an environment
+
+:::
+
+## Special cases for binding environment variables
+
+- `rlang::env_bind_lazy()` creates delayed bindings
+
+  - evaluated the first time they are accessed
+
+- `rlang::env_bind_active()` creates active bindings
+
+  - re-computed every time they’re accessed
+
+# 7.3 Recursing over environments
+
+## Explore environments recursively 
+
+```{r}
+where <- function(name, env = caller_env()) {
+  if (identical(env, empty_env())) {
+    # Base case
+    stop("Can't find ", name, call. = FALSE)
+  } else if (env_has(env, name)) {
+    # Success case
+    env
+  } else {
+    # Recursive case
+    where(name, env_parent(env))
+  }
+}
+```
+
+::: {.notes}
+
+Why is recursing over environments important? 
+
+Recursion is not the same thing as iteration
+
+:::
+
+# 7.4 Special Environments
+
+## Attaching packages changes the search path 
+
+- The **search path** is the order in which R will look through environments for objects
+
+- Attached packages become a parent of the global environment
+
+- The immediate parent of the global environment is that last package attached
+
+![](images/07_search-path.png)
+
+
+::: {.notes}
+
+Autoloads and base are always the last two environments on the search path
+
+Autoloads uses lazy loading to make large package objects (like datasets) available without taking up memory
+
+Functions within base are used to load all other packages
+
+:::
+
+## Attaching packages changes the search path 
+
+:::: {.columns}
+
+::: {.column}
+
+```{r}
+rlang::search_envs()
+```
+
+:::
+
+::: {.column}
+
+```{r}
+library(rlang)
+
+rlang::search_envs()
+```
+
+:::
+
+::::
+
+::: {.notes}
+
+Attaching `{rlang}` modifies the search path
+
+:::
+
+## Functions enclose their current environment
+
+- Functions enclose current environment when it is created
+
+```{r}
+y <- 1
+
+f <- function(x) x + y
+
+rlang::fn_env(f)
+```
+
+![](images/07_binding.png)
+
+::: {.notes}
+
+The function environment is represented by the black dot
+
+The function `f()` knows where to look for y thanks to the function environment
+
+:::
+
+## Functions enclose their current environment
+
+- `g()` is *being bound by* the environment `e` but *binds* the global environment 
+
+- The function environment is the global environment but the binding environment is `e` 
+
+```{r}
+e <- env()
+
+e$g <- function() 1
+
+rlang::fn_env(e$g)
+```
+
+## Functions enclose their current environment
+
+![](images/07_binding-2.png)
+
+## Namespaces ensure package environment independence
+
+- Every package has an underlying namespace
+
+- Every function is associated with a package environment and namespace environment
+
+- Package environments contain exported objects
+
+- Namespace environments contain exported and internal objects
+
+::: {.notes}
+
+Contrast `dplyr::across` and `dplyr:::across_glue_mask()` 
+
+`sd()` is bound to the `{stats}` namespace environment
+
+:::
+
+## Namespaces ensure package environment independence
+
+![](images/07_namespace-bind.png)
+
+## Namespaces ensure package environment independence
+
+![](images/07_namespace.png)
+
+::: {.notes}
+
+`var()` is found in the stats namespace first, so that is the definition of var that is used by `sd()`
+
+If an object called by `sd()` wasn't found in the stats namespace, it would be searched for according to the search path 
+
+:::
+
+## Functions use ephemeral execution environments
+
+- Functions create a new environment to use whenever executed
+
+- The execution environment is a child of the function environment
+
+- Execution environments are garbage collected on function exit  
+
+## Functions use ephemeral execution environments
+
+![](images/07_execution.png)
+
+# 7.5 Call stacks
+
+## The caller environment informs the call stack
+
+- The caller environment is the environment from which the function was called
+
+- Accessed with `rlang::caller_env()` 
+
+- The call stack is created within the caller environment
+
+:::: {.columns}
+
+::: {.column}
+
+```{r}
+f <- function(x) {
+  g(x = 2)
+}
+g <- function(x) {
+  h(x = 3)
+}
+h <- function(x) {
+  lobstr::cst()
+}
+```
+
+:::
+
+::: {.column}
+
+```{r}
+f(x = 1)
+```
+
+:::
+
+::::
+
+::: {.notes}
+
+`traceback()` is the base R approach
+
+`lobstr::cst()` prints the call stack in order of call, opposite of `traceback()`
+
+Does `lobstr::cst()` now prints the caller environment?
+
+:::
+
+## The caller environment informs the call stack
+
+- Call stack is more complicated with lazy evaluation
+
+```{r}
+a <- function(x) b(x)
+b <- function(x) d(x)
+d <- function(x) x
+
+a(f())
+```
+
+::: {.notes}
+
+Do different branches represent different caller environments?
+
+Note that `c()` was replaced with `d()` as it could not be rendered with `c()`
+
+:::
+
+## The caller environment informs the call stack
+
+![](images/07_calling.png) 
+
+::: {.notes}
+
+- Each frame contains: 
+
+  1. An expression
+
+  2. An environment
+
+  3. A parent
+
+:::
+
+## R uses lexical scoping, not dynamic scoping
+
+> R uses lexical scoping: it looks up the values of names based on how a function is defined, not how it is called. “Lexical” here is not the English adjective that means relating to words or a vocabulary. It’s a technical CS term that tells us that the scoping rules use a parse-time, rather than a run-time structure. - [Chapter 6 - functions](https://adv-r.hadley.nz/functions.html)
+
+- Dynamic scoping means functions use variables as they are defined in the calling environment
+
+# 7.6 Data structures
+
+## Environments are useful data structures
+
+- Usecase include:
+
+  1. Avoiding copies of large data
+
+  2. Managing state within a package
+
+  3. As a hashmap
+
+::: {.notes} 
+
+Finding a function in a package uses constant time
+
+:::
+
+
+
