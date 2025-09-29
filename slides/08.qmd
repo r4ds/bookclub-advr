@@ -3,7 +3,7 @@ engine: knitr
 title: Conditions
 ---
 
-## Learning objectives
+## Chapter 8 learning objectives
 
 - What conditions are
 - How to generate ("signal") them
@@ -11,13 +11,13 @@ title: Conditions
 
 ## R's condition system allows us to handle things going wrong
 
-This helps us treat each function as a "black box."
-
 An error might occur due to events outside of your program---a missing file, a
 full disk, a crashed server, etc.
 
 "Errors aren't caused by bugs, but neglecting to handle an error is almost
 certainly a bug." ---Seibel (2003)
+
+Conditions help us maintain the illusion of "black box" functions.
 
 ## There are three types of conditions
 
@@ -34,20 +34,18 @@ Function users _handle_ conditions
 ## Errors indicate that a problem occurred and the function cannot continue
 
 ```{r}
+#| label: errors-halt-immediately
 #| error: true
 f <- function() {
+  cat("starting f()\n")
   g()
   cat("finishing f()\n")
 }
 
 g <- function() {
-  h()
-  cat("finishing g()\n")
-}
-
-h <- function() {
+  cat("starting g()\n")
   stop("This is an error!")
-  cat("finishing h()\n")
+  cat("finishing g()\n")
 }
 
 f()
@@ -55,15 +53,18 @@ f()
 
 ::: {.notes}
 Errors halt execution immediately
+
+By default the function that raised the error is prepended to the message
 :::
 
 ## Pass objects to `stop()` to print error messages
 
 - `stop(...)` can accept zero or more objects
   - If the first object is not a condition object[^objs], its arguments are
-    converted to character and pasted together with no separator
+    converted to `character` and pasted together with no separator
 
-- Pass `call. = FALSE` to prevent the call from being added to the error message
+- Pass `call. = FALSE` to prevent the function that raised the error from being
+  added to the message
 
 - `rlang::abort()` signals errors with a different interface
 
@@ -72,14 +73,14 @@ Errors halt execution immediately
 ## Tracebacks display the call stack at the time of the last error
 
 ```{r}
+#| label: traceback-example
 #| eval: false
 f()
 traceback()
 ```
 
     #> 4: stop("This is an error!") at #2
-    #> 3: h() at #2
-    #> 2: g() at #2
+    #> 2: g() at #3
     #> 1: f()
 
 This is one reason to prefer `stop(..., call. = FALSE)`
@@ -87,20 +88,20 @@ This is one reason to prefer `stop(..., call. = FALSE)`
 ## `rlang::last_trace()` has prettier printing
 
 ```{r}
+#| label: lasttrace-example
 #| eval: false
 f()
 rlang::last_trace()
 ```
 
     #> <error/rlang_error>
-    #> Error in `h()`:
+    #> Error in `g()`:
     #> ! This is an error!
     #> ---
     #> Backtrace:
     #>     ▆
     #>  1. └─global f()
     #>  2.   └─global g()
-    #>  3.     └─global h()
     #> Run rlang::last_trace(drop = FALSE) to see 1 hidden frame.
 
 ## Warnings indicate that a problem occurred but the function can continue
@@ -111,6 +112,7 @@ warnings immediately unlike the R console (with `options(warn = 0)`)
 -->
 
 ```{r}
+#| label: warning-example
 #| eval: false
 f <- function() {
   warning("F1")
@@ -136,7 +138,7 @@ f()
 
 ::: {.notes}
 By default warnings are cached and printed when control returns to the top
-level, as shown here (use `options(warn = 0)`)
+level, as shown here (use `options(warn = 0)` to get this behavior)
 
 Warnings can appear immediately with `options(warn = 1)`
 
@@ -152,8 +154,9 @@ debugging
   better off as errors"
 
 ::: aside
-`warning()` has similar arguments to `stop()`, `call. = TRUE` is generally more
-useful here
+`warning()` has similar arguments to `stop()`
+
+`call. = TRUE` is generally more useful with `warning()` than `stop()`
 
 `rlang::warn()` is an alternative (cf. `rlang::abort()`)
 :::
@@ -161,6 +164,7 @@ useful here
 ## Messages indicate that something noteworthy has happened
 
 ```{r}
+#| label: message-example
 #| message: true
 f <- function() {
   message("F1")
@@ -177,12 +181,13 @@ g <- function() {
 f()
 ```
 
-## Good uses for messages
+## Recommended uses for messages
 
 - Explaining default arguments
-- Status updates of for functions used primarily for side-effects (e.g.,
-  interaction with web API, file downloaded, etc.)
-- Progress of long-running process (in the absence of a status bar)
+- Status updates of functions used primarily for side-effects
+  - Interaction with web API, file downloaded, etc.
+- Progress of long-running process
+  - But see `utils::txtProgressBar()` and others
 - Package loading message (e.g., attaching package, objects masked)
 
 ::: aside
@@ -199,6 +204,7 @@ See `rlang::inform()` for an alternative interface
 :::
 
 ```{r}
+#| label: try-example
 #| error: true
 bad_log <- function(x) {
   try(log(x))
@@ -208,9 +214,10 @@ bad_log <- function(x) {
 bad_log("bad")
 ```
 
-## Use `try()` with assignment to define default values in case of failure
+## `try()` with assignment can support default values in case of failure
 
 ```{r}
+#| label: try-with-assignment
 file_contents <- NULL
 try(file_contents <- read.csv("possibly-bad-input.csv"), silent = TRUE)
 is.null(file_contents)
@@ -224,6 +231,7 @@ want to make the formatting match
 -->
 
 ```{r}
+#| label: suppresswarnings-example
 #| eval: false
 chatty_function <- function() {
   warning("warning 1")
@@ -241,6 +249,7 @@ suppressWarnings(chatty_function())
     #> [1] 42
 
 ```{r}
+#| label: suppressmessages-example
 #| eval: false
 suppressMessages(chatty_function())
 ```
@@ -250,24 +259,23 @@ suppressMessages(chatty_function())
     #> 1: In chatty_function() : warning 1
     #> 2: In chatty_function() : warning 2
 
-## Every condition has a default behavior:
+## Every condition has a default behavior
 
 - `r emoji::emoji("x")` Errors halt execution
 - `r emoji::emoji("warning")` Warnings are collected during execution and
   displayed in bulk after execution
 - `r emoji::emoji("speech_balloon")` Messages are displayed immediately
 
-These default behaviros can be changed through exiting and calling handlers
+These can be changed through _exiting_ and _calling_ handlers
 
-## Use `tryCatch()` to specify exiting handlers or change their behavior
+## `tryCatch()` specifies or modifies exiting handlers
 
 ```{r}
+#| label: trycatch-no-error
 #| error: true
 exp_log <- function(x) {
   tryCatch(
-    error = function(cnd) {
-      NA
-    },
+    error = function(cnd) NA,
     {
       y <- log(x)
       cat("Reconstituting 'x'\n")
@@ -280,13 +288,20 @@ exp_log(23)
 ```
 
 ```{r}
+#| label: trycatch-with-error
 #| error: true
 exp_log("x")
 ```
 
+::: {.notes}
+Notice that, unlike with `try()`, the function still stops  
+(the next slide has more detail)
+:::
+
 ## Exiting handlers never return control to the original code
 
 ```{r}
+#| label: trycatch-catching-messages
 tryCatch(
   message = function(cnd) {
     cat("Caught a message condition:", conditionMessage(cnd))
@@ -298,14 +313,22 @@ tryCatch(
     "The return value of the original expression"
   },
   finally = {
-    cat("This code is always run\n")
+    cat("The code in 'finally' is always run\n")
   }
 )
 ```
 
-## Use `withCallingHandlers()` to change default calling handler behavior
+::: {.notes}
+This snippet illustrates a few things about `tryCatch()`:
+- exiting handlers can be established for exceptions other than errors
+- The use of `finally`
+- And, like it says in the title, the original code exits and doesn't resume
+:::
+
+## `withCallingHandlers()` specifies or modifies calling handlers
 
 ```{r}
+#| label: withcallinghandlers-example
 withCallingHandlers(
   message = function(cnd) {
     cat("Caught a message condition:", conditionMessage(cnd))
@@ -321,10 +344,10 @@ withCallingHandlers(
 )
 ```
 
-## Conditions propagate by default
+## Conditions "bubble up" to other calling handlers by default
 
 ```{r}
-# Bubbles all the way up to default handler which generates the message
+#| label: withcallinghandlers-propagation
 withCallingHandlers(
   message = function(cnd) cat("Level 2\n"),
   withCallingHandlers(
@@ -340,6 +363,7 @@ withCallingHandlers(
 ## Conditions also bubble up to `tryCatch()`
 
 ```{r}
+#| label: withcallinghandlers-propagation-to-trycatch
 tryCatch(
   message = function(cnd) cat("Level 2\n"),
   withCallingHandlers(
@@ -352,10 +376,10 @@ tryCatch(
 )
 ```
 
-## Use `rlang::cnd_muffle()` to stop the propagation
+## `rlang::cnd_muffle()` will stop the propagation to calling handlers "higher up"
 
 ```{r}
-# Muffles level 2 handler and the default handler
+#| label: withcallinghandlers-muffled
 withCallingHandlers(
   message = function(cnd) cat("Level 2\n"),
   withCallingHandlers(
@@ -368,14 +392,13 @@ withCallingHandlers(
 )
 ```
 
-## Calling handlers are called in the context of the call that signaled the conditon
+## Calling handlers are called in the context of the call that signaled the condition
 
 ```{r}
-# create a function
+#| label: withcallinghandlers-call-stack
 f <- function() g()
 g <- function() message("hello")
 
-# call stack of calling handlers
 withCallingHandlers(f(), message = function(cnd) {
   lobstr::cst()
   rlang::cnd_muffle(cnd)
@@ -385,6 +408,7 @@ withCallingHandlers(f(), message = function(cnd) {
 ## Exiting handlers are called in the context of the call to `tryCatch()`
 
 ```{r}
+#| label: trycatch-call-stack
 tryCatch(f(), message = function(cnd) lobstr::cst())
 ```
 
@@ -393,26 +417,29 @@ tryCatch(f(), message = function(cnd) lobstr::cst())
 ## Built-in conditions are lists with two elements
 
 ```{r}
+#| label: cond-str
 cnd <- rlang::catch_cnd(stop("An error!"))
 str(cnd)
 ```
 
-- The `call` feels like one of those things that might be useful when we learn
-  metaprogramming (maybe)
+- `message` can be accessed with `conditionMessage(cnd)`
+- `call` is not generally useful
+- The `class` attribute will be explained alongside S3
 
-- The `message` is straightforward, and can be accessed with
-  `conditionMessage(cnd)`
-
-## Custom conditions can have other attributes
+## Custom conditions can introduce additional attributes
 
 ```{r}
+#| label: rlang-cond-str
 cnd <- rlang::catch_cnd(rlang::abort("An error!"))
 str(cnd)
 ```
 
-## Use `rlang::abort()` to compose and throw a custom condition
+## `rlang::abort()` can compose and throw custom conditions
+
+We create a function that will signal an error condition
 
 ```{r}
+#| label: rlang-abort-custom-condition
 #| error: true
 abort_missing_file <- function(file_path) {
   rlang::abort(
@@ -424,9 +451,16 @@ abort_missing_file <- function(file_path) {
 abort_missing_file("blah.csv")
 ```
 
-## Custom conditions can be dealt with by new handlers
+This makes it easy to format messages
+
+::: aside
+`rlang::abort()` doesn't format messages like `stop()` does
+:::
+
+## Deal with custom conditions by creating specific handlers
 
 ```{r}
+#| label: use-custom-condition
 my_csv_reader <- function(file) {
   if (!file.exists(file)) abort_missing_file(file)
   read.csv(file)
@@ -441,20 +475,25 @@ dat <- tryCatch(
 dat
 ```
 
-::: {.notes}
-Of course we could put this behavior in `my_csv_reader()` if we were writing
-the function and the handler.
+::: aside
+The first matching handler is chosen, not the "most specific"
+:::
 
-The strength of custom conditions is that it would let's the function author
-defer a decision about what to do about (e.g.) a missing file to the function
-user in a flexible way.
+::: {.notes}
+If we were writing all of the code ourselves, we'd probably put this behavior
+in `my_csv_reader()` ourselves.
+
+Custom conditions' strength relates to the principle of "separation of
+concerns": the decision about what constitutes an error belongs to the function
+author, and the decision of how to handle an error belongs to the function
+user. This is especially useful for authors and users of packages.
 :::
 
 ## Applications
 
 See [the sub-section in the
 book](https://adv-r.hadley.nz/conditions.html#condition-applications) for
-excellent examples.
+more excellent examples.
 
 ## Resources
 
@@ -469,3 +508,5 @@ excellent examples.
   resources](https://github.com/rstudio-conf-2022/pkg-dev-masterclass/blob/main/materials/5-error-resources.md)
 from error message segment of rstudio::conf(2022) workshop "Package Development
 Masterclass"
+  - [Error messages](https://style.tidyverse.org/errors.html) from the
+    Tidyverse style guide
