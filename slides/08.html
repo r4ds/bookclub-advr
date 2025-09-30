@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.8.24">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
 
   <title>Advanced R Book Club – Conditions</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -199,172 +199,249 @@
 </div>
 
 </section>
-<section id="learning-objectives" class="slide level2">
-<h2>Learning objectives:</h2>
+<section id="chapter-8-learning-objectives" class="slide level2">
+<h2>Chapter 8 learning objectives</h2>
 <ul>
 <li>What conditions are</li>
-<li>How to use them</li>
+<li>How to generate (“signal”) them</li>
+<li>How to consume (“handle”) them</li>
 </ul>
 </section>
-<section id="introduction" class="slide level2">
-<h2>Introduction</h2>
-<p>What are conditions? Problems that happen in functions:</p>
-<ul>
-<li>Error</li>
-<li>Warning</li>
-<li>Message</li>
-</ul>
-<p>As a function author, one can signal them–that is, say there’s a problem.</p>
-<p>As a function consumer, one can handle them–for example, react or ignore.</p>
+<section id="rs-condition-system-allows-us-to-handle-things-going-wrong" class="slide level2">
+<h2>R’s condition system allows us to handle things going wrong</h2>
+<p>An error might occur due to events outside of your program—a missing file, a full disk, a crashed server, etc.</p>
+<p>“Errors aren’t caused by bugs, but neglecting to handle an error is almost certainly a bug.” —Seibel (2003)</p>
+<p>Conditions help us maintain the illusion of “black box” functions.</p>
 </section>
-<section id="signalling-conditions" class="slide level2">
-<h2>Signalling conditions</h2>
-<h3 id="types-of-conditions">Types of conditions</h3>
-<p>Three types of conditions:</p>
-<ul>
-<li>❌ <strong>Errors.</strong> Problem arose, and the function cannot continue.</li>
-<li>⚠️ <strong>Warnings.</strong> Problem arose, but the function can continue, if only partially.</li>
-<li>💬 <strong>Messages.</strong> Something happened, and the user should know.</li>
-</ul>
-<h3 id="errors">❌ Errors</h3>
-<p>How to throw errors</p>
+<section id="there-are-three-types-of-conditions" class="slide level2 scrollable">
+<h2>There are three types of conditions</h2>
+<ol type="1">
+<li>❌ Errors</li>
+<li>⚠️ Warnings</li>
+<li>💬 Messages</li>
+</ol>
+<p>Function authors <em>signal</em> conditions</p>
+<p>Function users <em>handle</em> conditions</p>
+</section>
+<section>
+<section id="signaling-conditions" class="title-slide slide level1 center">
+<h1>Signaling conditions</h1>
+
+</section>
+<section id="errors-indicate-that-a-problem-occurred-and-the-function-cannot-continue" class="slide level2">
+<h2>Errors indicate that a problem occurred and the function cannot continue</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="co"># with base R</span></span>
-<span id="cb1-2"><a></a><span class="fu">stop</span>(<span class="st">"... in the name of love..."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb1-2"><a></a>  <span class="fu">cat</span>(<span class="st">"starting f()</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-3"><a></a>  <span class="fu">g</span>()</span>
+<span id="cb1-4"><a></a>  <span class="fu">cat</span>(<span class="st">"finishing f()</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-5"><a></a>}</span>
+<span id="cb1-6"><a></a></span>
+<span id="cb1-7"><a></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb1-8"><a></a>  <span class="fu">cat</span>(<span class="st">"starting g()</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-9"><a></a>  <span class="fu">stop</span>(<span class="st">"This is an error!"</span>)</span>
+<span id="cb1-10"><a></a>  <span class="fu">cat</span>(<span class="st">"finishing g()</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-11"><a></a>}</span>
+<span id="cb1-12"><a></a></span>
+<span id="cb1-13"><a></a><span class="fu">f</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; starting f()
+#&gt; starting g()</code></pre>
+</div>
 <div class="cell-output cell-output-error">
-<pre><code>#&gt; Error: ... in the name of love...</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># with rlang</span></span>
-<span id="cb3-2"><a></a>rlang<span class="sc">::</span><span class="fu">abort</span>(<span class="st">"...before you break my heart..."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error:
-#&gt; ! ...before you break my heart...</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># with base R; without call</span></span>
-<span id="cb5-2"><a></a><span class="fu">stop</span>(<span class="st">"... think it o-o-over..."</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error: ... think it o-o-over...</code></pre>
+<pre><code>#&gt; Error in g(): This is an error!</code></pre>
 </div>
 </div>
-<p>Composing error messages</p>
+<aside class="notes">
+<p>Errors halt execution immediately</p>
+<p>By default the function that raised the error is prepended to the message</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="pass-objects-to-stop-to-print-error-messages" class="slide level2 scrollable">
+<h2>Pass objects to <code>stop()</code> to print error messages</h2>
 <ul>
-<li>Mechanics.
+<li><p><code>stop(...)</code> can accept zero or more objects</p>
 <ul>
-<li><code>stop()</code> pastes together arguments</li>
+<li>If the first object is not a condition object<sup>1</sup>, its arguments are converted to <code>character</code> and pasted together with no separator</li>
 </ul></li>
+<li><p>Pass <code>call. = FALSE</code> to prevent the function that raised the error from being added to the message</p></li>
+<li><p><code>rlang::abort()</code> signals errors with a different interface</p></li>
 </ul>
+<aside><ol class="aside-footnotes"><li id="fn1"><p><em>Condition objects</em> will be described later</p></li></ol></aside></section>
+<section id="tracebacks-display-the-call-stack-at-the-time-of-the-last-error" class="slide level2">
+<h2>Tracebacks display the call stack at the time of the last error</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>some_val <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb7-2"><a></a><span class="fu">stop</span>(<span class="st">"Your value is: "</span>, some_val, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error: Your value is: 1</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">f</span>()</span>
+<span id="cb4-2"><a></a><span class="fu">traceback</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<pre><code>#&gt; 4: stop("This is an error!") at #2
+#&gt; 2: g() at #3
+#&gt; 1: f()</code></pre>
+<p>This is one reason to prefer <code>stop(..., call. = FALSE)</code></p>
+</section>
+<section id="rlanglast_trace-has-prettier-printing" class="slide level2">
+<h2><code>rlang::last_trace()</code> has prettier printing</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">f</span>()</span>
+<span id="cb6-2"><a></a>rlang<span class="sc">::</span><span class="fu">last_trace</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<pre><code>#&gt; &lt;error/rlang_error&gt;
+#&gt; Error in `g()`:
+#&gt; ! This is an error!
+#&gt; ---
+#&gt; Backtrace:
+#&gt;     ▆
+#&gt;  1. └─global f()
+#&gt;  2.   └─global g()
+#&gt; Run rlang::last_trace(drop = FALSE) to see 1 hidden frame.</code></pre>
+</section>
+<section id="warnings-indicate-that-a-problem-occurred-but-the-function-can-continue" class="slide level2">
+<h2>Warnings indicate that a problem occurred but the function can continue</h2>
+<!---
+I'm using eval = false and embedding the output myself because Quarto displays
+warnings immediately unlike the R console (with `options(warn = 0)`)
+-->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb8-2"><a></a>  <span class="fu">warning</span>(<span class="st">"F1"</span>)</span>
+<span id="cb8-3"><a></a>  <span class="fu">g</span>()</span>
+<span id="cb8-4"><a></a>  <span class="fu">warning</span>(<span class="st">"F2"</span>)</span>
+<span id="cb8-5"><a></a>  <span class="fu">cat</span>(<span class="st">"finishing f()</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb8-6"><a></a>}</span>
+<span id="cb8-7"><a></a></span>
+<span id="cb8-8"><a></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb8-9"><a></a>  <span class="fu">warning</span>(<span class="st">"G1"</span>)</span>
+<span id="cb8-10"><a></a>  <span class="fu">cat</span>(<span class="st">"finishing g()</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb8-11"><a></a>}</span>
+<span id="cb8-12"><a></a></span>
+<span id="cb8-13"><a></a><span class="fu">f</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<pre><code>#&gt; finishing g()
+#&gt; finishing f()
+#&gt; Warning messages:
+#&gt; 1: In f() : F1
+#&gt; 2: In g() : G1
+#&gt; 3: In f() : F2</code></pre>
+<aside class="notes">
+<p>By default warnings are cached and printed when control returns to the top level, as shown here (use <code>options(warn = 0)</code> to get this behavior)</p>
+<p>Warnings can appear immediately with <code>options(warn = 1)</code></p>
+<p>Warnings can turn into errors with <code>options(warn = 2)</code>, which is ideal for debugging</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="use-warnings-sparingly" class="slide level2">
+<h2>Use warnings sparingly</h2>
 <ul>
-<li><code>abort()</code> requires <code>{glue}</code></li>
+<li>Ideal for deprecating functions</li>
+<li>Good when “you are reasonably certain” that a problem is recoverable</li>
+<li>“Base R tends to overuse warnings, and many warnings in base R would be better off as errors”</li>
 </ul>
+
+<aside><div>
+<p><code>warning()</code> has similar arguments to <code>stop()</code></p>
+<p><code>call. = TRUE</code> is generally more useful with <code>warning()</code> than <code>stop()</code></p>
+<p><code>rlang::warn()</code> is an alternative (cf.&nbsp;<code>rlang::abort()</code>)</p>
+</div></aside></section>
+<section id="messages-indicate-that-something-noteworthy-has-happened" class="slide level2">
+<h2>Messages indicate that something noteworthy has happened</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>some_val <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb9-2"><a></a>rlang<span class="sc">::</span><span class="fu">abort</span>(glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"Your value is: {some_val}"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error:
-#&gt; ! Your value is: 1</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb10-2"><a></a>  <span class="fu">message</span>(<span class="st">"F1"</span>)</span>
+<span id="cb10-3"><a></a>  <span class="fu">g</span>()</span>
+<span id="cb10-4"><a></a>  <span class="fu">message</span>(<span class="st">"F2"</span>)</span>
+<span id="cb10-5"><a></a>  <span class="fu">cat</span>(<span class="st">"finishing f()</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb10-6"><a></a>}</span>
+<span id="cb10-7"><a></a></span>
+<span id="cb10-8"><a></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb10-9"><a></a>  <span class="fu">message</span>(<span class="st">"G1"</span>)</span>
+<span id="cb10-10"><a></a>  <span class="fu">cat</span>(<span class="st">"finishing g()</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb10-11"><a></a>}</span>
+<span id="cb10-12"><a></a></span>
+<span id="cb10-13"><a></a><span class="fu">f</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; F1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; G1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; finishing g()</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; F2</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; finishing f()</code></pre>
 </div>
 </div>
+</section>
+<section id="recommended-uses-for-messages" class="slide level2">
+<h2>Recommended uses for messages</h2>
 <ul>
-<li>Style. See <a href="http://style.tidyverse.org/error-messages.html">here</a>.</li>
-</ul>
-<h3 id="warnings">⚠️ Warnings</h3>
-<p>May have multiple warnings per call</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>warn <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
-<span id="cb11-2"><a></a>  <span class="fu">warning</span>(<span class="st">"This is your first warning"</span>)</span>
-<span id="cb11-3"><a></a>  <span class="fu">warning</span>(<span class="st">"This is your second warning"</span>)</span>
-<span id="cb11-4"><a></a>  <span class="fu">warning</span>(<span class="st">"This is your LAST warning"</span>)</span>
-<span id="cb11-5"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Print all warnings once call is complete.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">warn</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Warning in warn(): This is your first warning</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Warning in warn(): This is your second warning</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Warning in warn(): This is your LAST warning</code></pre>
-</div>
-</div>
-<p>Like errors, <code>warning()</code> has</p>
+<li>Explaining default arguments</li>
+<li>Status updates of functions used primarily for side-effects
 <ul>
-<li>a call argument</li>
-<li>an <code>{rlang}</code> analog</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="co"># base R</span></span>
-<span id="cb16-2"><a></a><span class="co"># ... with call (implicitly .call = TRUE)</span></span>
-<span id="cb16-3"><a></a><span class="fu">warning</span>(<span class="st">"Warning"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Warning: Warning</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># ... with call suppressed</span></span>
-<span id="cb18-2"><a></a><span class="fu">warning</span>(<span class="st">"Warning"</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Warning: Warning</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># rlang</span></span>
-<span id="cb20-2"><a></a><span class="co"># note: call suppressed by default</span></span>
-<span id="cb20-3"><a></a>rlang<span class="sc">::</span><span class="fu">warn</span>(<span class="st">"Warning"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Warning: Warning</code></pre>
-</div>
-</div>
-<p>(Hadley’s) advice on usage:</p>
-<ul>
-<li>Err on the side of errors. In other words, error rather than warn.</li>
-<li>But warnings make sense in a few cases:
-<ul>
-<li>Function is being deprecated. Warn that it is reaching end of life.</li>
-<li>Function is reasonably sure to recover from issue.</li>
+<li>Interaction with web API, file downloaded, etc.</li>
 </ul></li>
-</ul>
-<h3 id="messages">💬 Messages</h3>
-<p>Mechanics:</p>
+<li>Progress of long-running process
 <ul>
-<li>Issued immediately</li>
-<li>Do not have a call argument</li>
-</ul>
-<p>Style:</p>
-<p>Messages are best when they inform about:</p>
-<ul>
-<li>Default arguments</li>
-<li>Status updates of for functions used primarily for side-effects (e.g., interaction with web API, file downloaded, etc.)</li>
-<li>Progress of long-running process (in the absence of a status bar).</li>
+<li>But see <code>utils::txtProgressBar()</code> and others</li>
+</ul></li>
 <li>Package loading message (e.g., attaching package, objects masked)</li>
 </ul>
+
+<aside><div>
+<p>See <code>rlang::inform()</code> for an alternative interface</p>
+</div></aside></section></section>
+<section>
+<section id="handling-conditions" class="title-slide slide level1 center">
+<h1>Handling conditions</h1>
+
 </section>
-<section id="ignoring-conditions" class="slide level2 scrollable">
-<h2>Ignoring conditions</h2>
-<p>A few ways:</p>
-<ul>
-<li><code>try()</code></li>
-<li><code>suppressWarnings()</code></li>
-<li><code>suppressMessages()</code></li>
-</ul>
-<h3 id="try"><code>try()</code></h3>
-<p>What it does:</p>
+<section id="ignore-errors-with-try" class="slide level2">
+<h2>Ignore errors with <code>try()</code></h2>
+<aside class="notes">
 <ul>
 <li>Displays error</li>
 <li>But continues execution after error</li>
 </ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>bad_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb22-2"><a></a>  <span class="fu">try</span>(<span class="fu">log</span>(x))</span>
-<span id="cb22-3"><a></a>  <span class="dv">10</span></span>
-<span id="cb22-4"><a></a>}</span>
-<span id="cb22-5"><a></a></span>
-<span id="cb22-6"><a></a><span class="fu">bad_log</span>(<span class="st">"bad"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>bad_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb16-2"><a></a>  <span class="fu">try</span>(<span class="fu">log</span>(x))</span>
+<span id="cb16-3"><a></a>  <span class="dv">10</span></span>
+<span id="cb16-4"><a></a>}</span>
+<span id="cb16-5"><a></a></span>
+<span id="cb16-6"><a></a><span class="fu">bad_log</span>(<span class="st">"bad"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Error in log(x) : non-numeric argument to mathematical function</code></pre>
 </div>
@@ -372,449 +449,380 @@
 <pre><code>#&gt; [1] 10</code></pre>
 </div>
 </div>
-<p>Better ways to react to/recover from errors:</p>
-<ol type="1">
-<li>Use <code>tryCatch()</code> to “catch” the error and perform a different action in the event of an error.</li>
-<li>Set a default value inside the call. See below.</li>
-</ol>
+</section>
+<section id="try-with-assignment-can-support-default-values-in-case-of-failure" class="slide level2">
+<h2><code>try()</code> with assignment can support default values in case of failure</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>default <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb25-2"><a></a><span class="fu">try</span>(default <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"possibly-bad-input.csv"</span>), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Warning in file(file, "rt"): cannot open file 'possibly-bad-input.csv': No such
-#&gt; file or directory</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>file_contents <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb19-2"><a></a><span class="fu">try</span>(file_contents <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"possibly-bad-input.csv"</span>), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-3"><a></a><span class="fu">is.null</span>(file_contents)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
 </div>
-</div>
-<h3 id="suppresswarnings-suppressmessages"><code>suppressWarnings()</code>, <code>suppressMessages()</code></h3>
-<p>What it does:</p>
-<ul>
-<li>Supresses all warnings (messages)</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="co"># suppress warnings (from our `warn()` function above)</span></span>
-<span id="cb27-2"><a></a><span class="fu">suppressWarnings</span>(<span class="fu">warn</span>())</span>
-<span id="cb27-3"><a></a></span>
-<span id="cb27-4"><a></a><span class="co"># suppress messages</span></span>
-<span id="cb27-5"><a></a>many_messages <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
-<span id="cb27-6"><a></a>  <span class="fu">message</span>(<span class="st">"Message 1"</span>)</span>
-<span id="cb27-7"><a></a>  <span class="fu">message</span>(<span class="st">"Message 2"</span>)</span>
-<span id="cb27-8"><a></a>  <span class="fu">message</span>(<span class="st">"Message 3"</span>)</span>
-<span id="cb27-9"><a></a>}</span>
-<span id="cb27-10"><a></a></span>
-<span id="cb27-11"><a></a><span class="fu">suppressMessages</span>(<span class="fu">many_messages</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="handling-conditions" class="slide level2">
-<h2>Handling conditions</h2>
-<p>Every condition has a default behavior:</p>
+<section id="warnings-and-messages-can-be-independently-suppressed" class="slide level2">
+<h2>Warnings and messages can be independently suppressed</h2>
+<!---
+I'm turning off evaluation and manually pasting the results again because I
+want to make the formatting match
+-->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>chatty_function <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb21-2"><a></a>  <span class="fu">warning</span>(<span class="st">"warning 1"</span>)</span>
+<span id="cb21-3"><a></a>  <span class="fu">message</span>(<span class="st">"message 1"</span>)</span>
+<span id="cb21-4"><a></a>  <span class="fu">warning</span>(<span class="st">"warning 2"</span>)</span>
+<span id="cb21-5"><a></a>  <span class="fu">message</span>(<span class="st">"message 2"</span>)</span>
+<span id="cb21-6"><a></a>  <span class="dv">42</span></span>
+<span id="cb21-7"><a></a>}</span>
+<span id="cb21-8"><a></a></span>
+<span id="cb21-9"><a></a><span class="fu">suppressWarnings</span>(<span class="fu">chatty_function</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<pre><code>#&gt; message 1
+#&gt; message 2
+#&gt; [1] 42</code></pre>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="fu">suppressMessages</span>(<span class="fu">chatty_function</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<pre><code>#&gt; [1] 42
+#&gt; Warning messages:
+#&gt; 1: In chatty_function() : warning 1
+#&gt; 2: In chatty_function() : warning 2</code></pre>
+</section>
+<section id="every-condition-has-a-default-behavior" class="slide level2">
+<h2>Every condition has a default behavior</h2>
 <ul>
 <li>❌ Errors halt execution</li>
 <li>⚠️ Warnings are collected during execution and displayed in bulk after execution</li>
 <li>💬 Messages are displayed immediately</li>
 </ul>
-<p>Condition handlers allow one to change that behavior (within the scope of a function).</p>
-<p>Two handler functions:</p>
-<ul>
-<li><code>tryCatch()</code></li>
-<li><code>withCallingHandlers()</code></li>
-</ul>
+<p>These can be changed through <em>exiting</em> and <em>calling</em> handlers</p>
+</section>
+<section id="trycatch-specifies-or-modifies-exiting-handlers" class="slide level2">
+<h2><code>tryCatch()</code> specifies or modifies exiting handlers</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="co"># try to run `code_to_try_to_run`</span></span>
-<span id="cb28-2"><a></a><span class="co"># if (error) condition is signalled, fun some other code</span></span>
-<span id="cb28-3"><a></a><span class="fu">tryCatch</span>(</span>
-<span id="cb28-4"><a></a>  <span class="at">error =</span> <span class="cf">function</span>(cnd) {</span>
-<span id="cb28-5"><a></a>    <span class="co"># code to run when error is thrown</span></span>
-<span id="cb28-6"><a></a>  },</span>
-<span id="cb28-7"><a></a>  code_to_try_to_run</span>
-<span id="cb28-8"><a></a>)</span>
-<span id="cb28-9"><a></a></span>
-<span id="cb28-10"><a></a><span class="co"># try to `code_to_try_to_run`</span></span>
-<span id="cb28-11"><a></a><span class="co"># if condition is signalled, run code corresponding to condition type</span></span>
-<span id="cb28-12"><a></a><span class="fu">withCallingHandlers</span>(</span>
-<span id="cb28-13"><a></a>  <span class="at">warning =</span> <span class="cf">function</span>(cnd) {</span>
-<span id="cb28-14"><a></a>    <span class="co"># code to run when warning is signalled</span></span>
-<span id="cb28-15"><a></a>  },</span>
-<span id="cb28-16"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) {</span>
-<span id="cb28-17"><a></a>    <span class="co"># code to run when message is signalled</span></span>
-<span id="cb28-18"><a></a>  },</span>
-<span id="cb28-19"><a></a>  code_to_try_to_run</span>
-<span id="cb28-20"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<h3 id="condition-objects">Condition objects</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co"># catch a condition</span></span>
-<span id="cb29-2"><a></a>cnd <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">catch_cnd</span>(<span class="fu">stop</span>(<span class="st">"An error"</span>))</span>
-<span id="cb29-3"><a></a><span class="co"># inspect it</span></span>
-<span id="cb29-4"><a></a><span class="fu">str</span>(cnd)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>exp_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb25-2"><a></a>  <span class="fu">tryCatch</span>(</span>
+<span id="cb25-3"><a></a>    <span class="at">error =</span> <span class="cf">function</span>(cnd) <span class="cn">NA</span>,</span>
+<span id="cb25-4"><a></a>    {</span>
+<span id="cb25-5"><a></a>      y <span class="ot">&lt;-</span> <span class="fu">log</span>(x)</span>
+<span id="cb25-6"><a></a>      <span class="fu">cat</span>(<span class="st">"Reconstituting 'x'</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb25-7"><a></a>      <span class="fu">exp</span>(y)</span>
+<span id="cb25-8"><a></a>    }</span>
+<span id="cb25-9"><a></a>  )</span>
+<span id="cb25-10"><a></a>}</span>
+<span id="cb25-11"><a></a></span>
+<span id="cb25-12"><a></a><span class="fu">exp_log</span>(<span class="dv">23</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; List of 2
-#&gt;  $ message: chr "An error"
-#&gt;  $ call   : language force(expr)
-#&gt;  - attr(*, "class")= chr [1:3] "simpleError" "error" "condition"</code></pre>
+<pre><code>#&gt; Reconstituting 'x'</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 23</code></pre>
 </div>
 </div>
-<p>The standard components</p>
-<ul>
-<li><code>message</code>. The error message. To extract it, use <code>conditionMessage(cnd)</code>.</li>
-<li><code>call</code>. The function call that triggered the condition. To extract it, use <code>conditionCall(cnd)</code>.</li>
-</ul>
-<p>But custom conditions may contain other components.</p>
-<h3 id="exiting-handlers">Exiting handlers</h3>
-<p>If a condition is signalled, this type of handler controls what code to run before exiting the function call.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>f3 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb31-2"><a></a>  <span class="fu">tryCatch</span>(</span>
-<span id="cb31-3"><a></a>    <span class="co"># if error signalled, return NA</span></span>
-<span id="cb31-4"><a></a>    <span class="at">error =</span> <span class="cf">function</span>(cnd) <span class="cn">NA</span>,</span>
-<span id="cb31-5"><a></a>    <span class="co"># try to run log</span></span>
-<span id="cb31-6"><a></a>    <span class="fu">log</span>(x)</span>
-<span id="cb31-7"><a></a>  )</span>
-<span id="cb31-8"><a></a>}</span>
-<span id="cb31-9"><a></a></span>
-<span id="cb31-10"><a></a><span class="fu">f3</span>(<span class="st">"x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">exp_log</span>(<span class="st">"x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] NA</code></pre>
 </div>
 </div>
-<p>When a condition is signalled, control moves to the handler and never returns to the original code.</p>
+<aside class="notes">
+<p>Notice that, unlike with <code>try()</code>, the function still stops<br>
+(the next slide has more detail)</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="exiting-handlers-never-return-control-to-the-original-code" class="slide level2">
+<h2>Exiting handlers never return control to the original code</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">tryCatch</span>(</span>
-<span id="cb33-2"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="st">"There"</span>,</span>
-<span id="cb33-3"><a></a>  {</span>
-<span id="cb33-4"><a></a>    <span class="fu">message</span>(<span class="st">"Here"</span>)</span>
-<span id="cb33-5"><a></a>    <span class="fu">stop</span>(<span class="st">"This code is never run!"</span>)</span>
-<span id="cb33-6"><a></a>  }</span>
-<span id="cb33-7"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">tryCatch</span>(</span>
+<span id="cb30-2"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) {</span>
+<span id="cb30-3"><a></a>    <span class="fu">cat</span>(<span class="st">"Caught a message condition:"</span>, <span class="fu">conditionMessage</span>(cnd))</span>
+<span id="cb30-4"><a></a>    <span class="st">"The return value of the message handler"</span></span>
+<span id="cb30-5"><a></a>  },</span>
+<span id="cb30-6"><a></a>  {</span>
+<span id="cb30-7"><a></a>    <span class="fu">message</span>(<span class="st">"This is a message"</span>)</span>
+<span id="cb30-8"><a></a>    <span class="fu">cat</span>(<span class="st">"This code won't be run inside 'tryCatch()' if messages are caught</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb30-9"><a></a>    <span class="st">"The return value of the original expression"</span></span>
+<span id="cb30-10"><a></a>  },</span>
+<span id="cb30-11"><a></a>  <span class="at">finally =</span> {</span>
+<span id="cb30-12"><a></a>    <span class="fu">cat</span>(<span class="st">"The code in 'finally' is always run</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb30-13"><a></a>  }</span>
+<span id="cb30-14"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "There"</code></pre>
-</div>
-</div>
-<p>The <code>tryCatch()</code> exit handler has one final argument: <code>finally</code>. This is run regardless of the condition of the original code. This is often used for clean-up.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="co"># try to write text to disk</span></span>
-<span id="cb35-2"><a></a><span class="co"># if an error is signalled--for example, `path` does not exist</span></span>
-<span id="cb35-3"><a></a><span class="co"># or if no condition is signalled</span></span>
-<span id="cb35-4"><a></a><span class="co"># that is in both cases, the code block in `finally` is executed</span></span>
-<span id="cb35-5"><a></a>path <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
-<span id="cb35-6"><a></a><span class="fu">tryCatch</span>(</span>
-<span id="cb35-7"><a></a>  {</span>
-<span id="cb35-8"><a></a>    <span class="fu">writeLines</span>(<span class="st">"Hi!"</span>, path)</span>
-<span id="cb35-9"><a></a>    <span class="co"># ...</span></span>
-<span id="cb35-10"><a></a>  },</span>
-<span id="cb35-11"><a></a>  <span class="at">finally =</span> {</span>
-<span id="cb35-12"><a></a>    <span class="co"># always run</span></span>
-<span id="cb35-13"><a></a>    <span class="fu">unlink</span>(path)</span>
-<span id="cb35-14"><a></a>  }</span>
-<span id="cb35-15"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<h3 id="calling-handlers">Calling handlers</h3>
-<p>Definition by verbal comparison:</p>
-<ul>
-<li>With exit handlers, code exits the normal flow once a condition is signalled</li>
-<li>With calling handlers, code continues in the normal flow once control is returned by the handler.</li>
-</ul>
-<p>Definition by code comparison:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="co"># with an exit handler, control moves to the handler once condition signalled and does not move back</span></span>
-<span id="cb36-2"><a></a><span class="fu">tryCatch</span>(</span>
-<span id="cb36-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Caught a message!</span><span class="sc">\n</span><span class="st">"</span>), </span>
-<span id="cb36-4"><a></a>  {</span>
-<span id="cb36-5"><a></a>    <span class="fu">message</span>(<span class="st">"Someone there?"</span>)</span>
-<span id="cb36-6"><a></a>    <span class="fu">message</span>(<span class="st">"Why, yes!"</span>)</span>
-<span id="cb36-7"><a></a>  }</span>
-<span id="cb36-8"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; Caught a message!</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="co"># with a calling handler, control moves first to the handler and the moves back to the main code</span></span>
-<span id="cb38-2"><a></a><span class="fu">withCallingHandlers</span>(</span>
-<span id="cb38-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Caught a message!</span><span class="sc">\n</span><span class="st">"</span>), </span>
-<span id="cb38-4"><a></a>  {</span>
-<span id="cb38-5"><a></a>    <span class="fu">message</span>(<span class="st">"Someone there?"</span>)</span>
-<span id="cb38-6"><a></a>    <span class="fu">message</span>(<span class="st">"Why, yes!"</span>)</span>
-<span id="cb38-7"><a></a>  }</span>
-<span id="cb38-8"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; Caught a message!</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Someone there?</code></pre>
+<pre><code>#&gt; Caught a message condition: This is a message
+#&gt; The code in 'finally' is always run</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; Caught a message!</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Why, yes!</code></pre>
+<pre><code>#&gt; [1] "The return value of the message handler"</code></pre>
 </div>
 </div>
-<h3 id="by-default-conditions-propagate">By default, conditions propagate</h3>
-<p>Let’s suppose that there are nested handlers. If a condition is signalled in the child, it propagates to its parent handler(s).</p>
+<aside class="notes">
+<p>This snippet illustrates a few things about <code>tryCatch()</code>: - exiting handlers can be established for exceptions other than errors - The use of <code>finally</code> - And, like it says in the title, the original code exits and doesn’t resume</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="withcallinghandlers-specifies-or-modifies-calling-handlers" class="slide level2">
+<h2><code>withCallingHandlers()</code> specifies or modifies calling handlers</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="co"># Bubbles all the way up to default handler which generates the message</span></span>
-<span id="cb43-2"><a></a><span class="fu">withCallingHandlers</span>(</span>
-<span id="cb43-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>),</span>
-<span id="cb43-4"><a></a>  <span class="fu">withCallingHandlers</span>(</span>
-<span id="cb43-5"><a></a>    <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 1</span><span class="sc">\n</span><span class="st">"</span>),</span>
-<span id="cb43-6"><a></a>    <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
-<span id="cb43-7"><a></a>  )</span>
-<span id="cb43-8"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">withCallingHandlers</span>(</span>
+<span id="cb33-2"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) {</span>
+<span id="cb33-3"><a></a>    <span class="fu">cat</span>(<span class="st">"Caught a message condition:"</span>, <span class="fu">conditionMessage</span>(cnd))</span>
+<span id="cb33-4"><a></a>    <span class="st">"The return value of the message handler is ignored"</span></span>
+<span id="cb33-5"><a></a>  },</span>
+<span id="cb33-6"><a></a>  {</span>
+<span id="cb33-7"><a></a>    <span class="fu">message</span>(<span class="st">"This is a message"</span>)</span>
+<span id="cb33-8"><a></a>    <span class="fu">cat</span>(<span class="st">"This code should run</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb33-9"><a></a>    <span class="fu">message</span>(<span class="st">"This is another message"</span>)</span>
+<span id="cb33-10"><a></a>    <span class="st">"The return value of the original expression"</span></span>
+<span id="cb33-11"><a></a>  }</span>
+<span id="cb33-12"><a></a>  <span class="co"># No finally option</span></span>
+<span id="cb33-13"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Caught a message condition: This is a message</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; This code should run
+#&gt; Caught a message condition: This is another message</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "The return value of the original expression"</code></pre>
+</div>
+</div>
+</section>
+<section id="conditions-bubble-up-to-other-calling-handlers-by-default" class="slide level2">
+<h2>Conditions “bubble up” to other calling handlers by default</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="fu">withCallingHandlers</span>(</span>
+<span id="cb37-2"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>),</span>
+<span id="cb37-3"><a></a>  <span class="fu">withCallingHandlers</span>(</span>
+<span id="cb37-4"><a></a>    <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 1</span><span class="sc">\n</span><span class="st">"</span>),</span>
+<span id="cb37-5"><a></a>    {</span>
+<span id="cb37-6"><a></a>      <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
+<span id="cb37-7"><a></a>      <span class="fu">cat</span>(<span class="st">"Finishing code block</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb37-8"><a></a>    }</span>
+<span id="cb37-9"><a></a>  )</span>
+<span id="cb37-10"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Level 1
 #&gt; Level 2</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Hello</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="co"># Bubbles up to tryCatch</span></span>
-<span id="cb46-2"><a></a><span class="fu">tryCatch</span>(</span>
-<span id="cb46-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>),</span>
-<span id="cb46-4"><a></a>  <span class="fu">withCallingHandlers</span>(</span>
-<span id="cb46-5"><a></a>    <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 1</span><span class="sc">\n</span><span class="st">"</span>),</span>
-<span id="cb46-6"><a></a>    <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
-<span id="cb46-7"><a></a>  )</span>
-<span id="cb46-8"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; Level 1
-#&gt; Level 2</code></pre>
+<pre><code>#&gt; Finishing code block</code></pre>
 </div>
 </div>
-<h3 id="but-conditions-can-be-muffled">But conditions can be muffled</h3>
-<p>If one wants to “muffle” the siginal, one needs to use <code>rlang::cnd_muffle()</code></p>
+</section>
+<section id="conditions-also-bubble-up-to-trycatch" class="slide level2">
+<h2>Conditions also bubble up to <code>tryCatch()</code></h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a><span class="co"># Muffles the default handler which prints the messages</span></span>
-<span id="cb48-2"><a></a><span class="fu">withCallingHandlers</span>(</span>
-<span id="cb48-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) {</span>
-<span id="cb48-4"><a></a>    <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb48-5"><a></a>    rlang<span class="sc">::</span><span class="fu">cnd_muffle</span>(cnd)</span>
-<span id="cb48-6"><a></a>  },</span>
-<span id="cb48-7"><a></a>  <span class="fu">withCallingHandlers</span>(</span>
-<span id="cb48-8"><a></a>    <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 1</span><span class="sc">\n</span><span class="st">"</span>),</span>
-<span id="cb48-9"><a></a>    <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
-<span id="cb48-10"><a></a>  )</span>
-<span id="cb48-11"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a><span class="fu">tryCatch</span>(</span>
+<span id="cb40-2"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>),</span>
+<span id="cb40-3"><a></a>  <span class="fu">withCallingHandlers</span>(</span>
+<span id="cb40-4"><a></a>    <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 1</span><span class="sc">\n</span><span class="st">"</span>),</span>
+<span id="cb40-5"><a></a>    {</span>
+<span id="cb40-6"><a></a>      <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
+<span id="cb40-7"><a></a>      <span class="fu">cat</span>(<span class="st">"This exiting handler prevents this from running</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb40-8"><a></a>    }</span>
+<span id="cb40-9"><a></a>  )</span>
+<span id="cb40-10"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Level 1
 #&gt; Level 2</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="co"># Muffles level 2 handler and the default handler</span></span>
-<span id="cb50-2"><a></a><span class="fu">withCallingHandlers</span>(</span>
-<span id="cb50-3"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>),</span>
-<span id="cb50-4"><a></a>  <span class="fu">withCallingHandlers</span>(</span>
-<span id="cb50-5"><a></a>    <span class="at">message =</span> <span class="cf">function</span>(cnd) {</span>
-<span id="cb50-6"><a></a>      <span class="fu">cat</span>(<span class="st">"Level 1</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb50-7"><a></a>      rlang<span class="sc">::</span><span class="fu">cnd_muffle</span>(cnd)</span>
-<span id="cb50-8"><a></a>    },</span>
-<span id="cb50-9"><a></a>    <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
-<span id="cb50-10"><a></a>  )</span>
-<span id="cb50-11"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="rlangcnd_muffle-will-stop-the-propagation-to-calling-handlers-higher-up" class="slide level2">
+<h2><code>rlang::cnd_muffle()</code> will stop the propagation to calling handlers “higher up”</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">withCallingHandlers</span>(</span>
+<span id="cb42-2"><a></a>  <span class="at">message =</span> <span class="cf">function</span>(cnd) <span class="fu">cat</span>(<span class="st">"Level 2</span><span class="sc">\n</span><span class="st">"</span>),</span>
+<span id="cb42-3"><a></a>  <span class="fu">withCallingHandlers</span>(</span>
+<span id="cb42-4"><a></a>    <span class="at">message =</span> <span class="cf">function</span>(cnd) {</span>
+<span id="cb42-5"><a></a>      <span class="fu">cat</span>(<span class="st">"Level 1</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb42-6"><a></a>      rlang<span class="sc">::</span><span class="fu">cnd_muffle</span>(cnd)</span>
+<span id="cb42-7"><a></a>    },</span>
+<span id="cb42-8"><a></a>    <span class="fu">message</span>(<span class="st">"Hello"</span>)</span>
+<span id="cb42-9"><a></a>  )</span>
+<span id="cb42-10"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Level 1</code></pre>
 </div>
 </div>
-<h3 id="call-stacks">Call stacks</h3>
-<p>Call stacks of exiting and calling handlers differ.</p>
-<p>Why?</p>
-<blockquote>
-<p>Calling handlers are called in the context of the call that signalled the condition exiting handlers are called in the context of the call to tryCatch()</p>
-</blockquote>
-<p>To see this, consider how the call stacks differ for a toy example.</p>
+</section>
+<section id="calling-handlers-are-called-in-the-context-of-the-call-that-signaled-the-condition" class="slide level2">
+<h2>Calling handlers are called in the context of the call that signaled the condition</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a><span class="co"># create a function</span></span>
-<span id="cb52-2"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">g</span>()</span>
-<span id="cb52-3"><a></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">h</span>()</span>
-<span id="cb52-4"><a></a>h <span class="ot">&lt;-</span> <span class="cf">function</span>() message</span>
-<span id="cb52-5"><a></a></span>
-<span id="cb52-6"><a></a><span class="co"># call stack of calling handlers</span></span>
-<span id="cb52-7"><a></a><span class="fu">withCallingHandlers</span>(<span class="fu">f</span>(), <span class="at">message =</span> <span class="cf">function</span>(cnd) {</span>
-<span id="cb52-8"><a></a>  lobstr<span class="sc">::</span><span class="fu">cst</span>()</span>
-<span id="cb52-9"><a></a>  rlang<span class="sc">::</span><span class="fu">cnd_muffle</span>(cnd)</span>
-<span id="cb52-10"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">g</span>()</span>
+<span id="cb44-2"><a></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">message</span>(<span class="st">"hello"</span>)</span>
+<span id="cb44-3"><a></a></span>
+<span id="cb44-4"><a></a><span class="fu">withCallingHandlers</span>(<span class="fu">f</span>(), <span class="at">message =</span> <span class="cf">function</span>(cnd) {</span>
+<span id="cb44-5"><a></a>  lobstr<span class="sc">::</span><span class="fu">cst</span>()</span>
+<span id="cb44-6"><a></a>  rlang<span class="sc">::</span><span class="fu">cnd_muffle</span>(cnd)</span>
+<span id="cb44-7"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; function (..., domain = NULL, appendLF = TRUE) 
-#&gt; {
-#&gt;     cond &lt;- if (...length() == 1L &amp;&amp; inherits(..1, "condition")) {
-#&gt;         if (nargs() &gt; 1L) 
-#&gt;             warning("additional arguments ignored in message()")
-#&gt;         ..1
-#&gt;     }
-#&gt;     else {
-#&gt;         msg &lt;- .makeMessage(..., domain = domain, appendLF = appendLF)
-#&gt;         call &lt;- sys.call()
-#&gt;         simpleMessage(msg, call)
-#&gt;     }
-#&gt;     defaultHandler &lt;- function(c) {
-#&gt;         cat(conditionMessage(c), file = stderr(), sep = "")
-#&gt;     }
-#&gt;     withRestarts({
-#&gt;         signalCondition(cond)
-#&gt;         defaultHandler(cond)
-#&gt;     }, muffleMessage = function() NULL)
-#&gt;     invisible()
-#&gt; }
-#&gt; &lt;bytecode: 0x000002ba6a952b98&gt;
-#&gt; &lt;environment: namespace:base&gt;</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a><span class="co"># call stack of exit handlers</span></span>
-<span id="cb54-2"><a></a><span class="fu">tryCatch</span>(<span class="fu">f</span>(), <span class="at">message =</span> <span class="cf">function</span>(cnd) lobstr<span class="sc">::</span><span class="fu">cst</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; function (..., domain = NULL, appendLF = TRUE) 
-#&gt; {
-#&gt;     cond &lt;- if (...length() == 1L &amp;&amp; inherits(..1, "condition")) {
-#&gt;         if (nargs() &gt; 1L) 
-#&gt;             warning("additional arguments ignored in message()")
-#&gt;         ..1
-#&gt;     }
-#&gt;     else {
-#&gt;         msg &lt;- .makeMessage(..., domain = domain, appendLF = appendLF)
-#&gt;         call &lt;- sys.call()
-#&gt;         simpleMessage(msg, call)
-#&gt;     }
-#&gt;     defaultHandler &lt;- function(c) {
-#&gt;         cat(conditionMessage(c), file = stderr(), sep = "")
-#&gt;     }
-#&gt;     withRestarts({
-#&gt;         signalCondition(cond)
-#&gt;         defaultHandler(cond)
-#&gt;     }, muffleMessage = function() NULL)
-#&gt;     invisible()
-#&gt; }
-#&gt; &lt;bytecode: 0x000002ba6a952b98&gt;
-#&gt; &lt;environment: namespace:base&gt;</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a><span class="fu">tryCatch</span>(<span class="fu">f</span>(), <span class="at">message =</span> <span class="cf">function</span>(cnd) lobstr<span class="sc">::</span><span class="fu">cst</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; function (..., domain = NULL, appendLF = TRUE) 
-#&gt; {
-#&gt;     cond &lt;- if (...length() == 1L &amp;&amp; inherits(..1, "condition")) {
-#&gt;         if (nargs() &gt; 1L) 
-#&gt;             warning("additional arguments ignored in message()")
-#&gt;         ..1
-#&gt;     }
-#&gt;     else {
-#&gt;         msg &lt;- .makeMessage(..., domain = domain, appendLF = appendLF)
-#&gt;         call &lt;- sys.call()
-#&gt;         simpleMessage(msg, call)
-#&gt;     }
-#&gt;     defaultHandler &lt;- function(c) {
-#&gt;         cat(conditionMessage(c), file = stderr(), sep = "")
-#&gt;     }
-#&gt;     withRestarts({
-#&gt;         signalCondition(cond)
-#&gt;         defaultHandler(cond)
-#&gt;     }, muffleMessage = function() NULL)
-#&gt;     invisible()
-#&gt; }
-#&gt; &lt;bytecode: 0x000002ba6a952b98&gt;
-#&gt; &lt;environment: namespace:base&gt;</code></pre>
+<pre><code>#&gt;      ▆
+#&gt;   1. ├─base::withCallingHandlers(...)
+#&gt;   2. ├─global f()
+#&gt;   3. │ └─global g()
+#&gt;   4. │   └─base::message("hello")
+#&gt;   5. │     ├─base::withRestarts(...)
+#&gt;   6. │     │ └─base (local) withOneRestart(expr, restarts[[1L]])
+#&gt;   7. │     │   └─base (local) doWithOneRestart(return(expr), restart)
+#&gt;   8. │     └─base::signalCondition(cond)
+#&gt;   9. └─global `&lt;fn&gt;`(`&lt;smplMssg&gt;`)
+#&gt;  10.   └─lobstr::cst()</code></pre>
 </div>
 </div>
 </section>
-<section id="custom-conditions" class="slide level2">
-<h2>Custom conditions</h2>
-<h3 id="motivation">Motivation</h3>
-<p>The <code>base::log()</code> function provides a minimal error message.</p>
+<section id="exiting-handlers-are-called-in-the-context-of-the-call-to-trycatch" class="slide level2">
+<h2>Exiting handlers are called in the context of the call to <code>tryCatch()</code></h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="fu">log</span>(letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in log(letters): non-numeric argument to mathematical function</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a><span class="fu">log</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">base =</span> letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in log(1:10, base = letters): non-numeric argument to mathematical function</code></pre>
-</div>
-</div>
-<p>One could make a more informative error message about which argument is problematic.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a>my_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">1</span>)) {</span>
-<span id="cb62-2"><a></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(x)) {</span>
-<span id="cb62-3"><a></a>    rlang<span class="sc">::</span><span class="fu">abort</span>(<span class="fu">paste0</span>(</span>
-<span id="cb62-4"><a></a>      <span class="st">"`x` must be a numeric vector; not "</span>, <span class="fu">typeof</span>(x), <span class="st">"."</span></span>
-<span id="cb62-5"><a></a>    ))</span>
-<span id="cb62-6"><a></a>  }</span>
-<span id="cb62-7"><a></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(base)) {</span>
-<span id="cb62-8"><a></a>    rlang<span class="sc">::</span><span class="fu">abort</span>(<span class="fu">paste0</span>(</span>
-<span id="cb62-9"><a></a>      <span class="st">"`base` must be a numeric vector; not "</span>, <span class="fu">typeof</span>(base), <span class="st">"."</span></span>
-<span id="cb62-10"><a></a>    ))</span>
-<span id="cb62-11"><a></a>  }</span>
-<span id="cb62-12"><a></a></span>
-<span id="cb62-13"><a></a>  base<span class="sc">::</span><span class="fu">log</span>(x, <span class="at">base =</span> base)</span>
-<span id="cb62-14"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Consider the difference:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a><span class="fu">my_log</span>(letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in `my_log()`:
-#&gt; ! `x` must be a numeric vector; not character.</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a></a><span class="fu">my_log</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">base =</span> letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in `my_log()`:
-#&gt; ! `base` must be a numeric vector; not character.</code></pre>
-</div>
-</div>
-<h3 id="signalling">Signalling</h3>
-<p>Create a helper function to describe errors:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a></a>abort_bad_argument <span class="ot">&lt;-</span> <span class="cf">function</span>(arg, must, <span class="at">not =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb67-2"><a></a>  msg <span class="ot">&lt;-</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"`{arg}` must {must}"</span>)</span>
-<span id="cb67-3"><a></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(not)) {</span>
-<span id="cb67-4"><a></a>    not <span class="ot">&lt;-</span> <span class="fu">typeof</span>(not)</span>
-<span id="cb67-5"><a></a>    msg <span class="ot">&lt;-</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"{msg}; not {not}."</span>)</span>
-<span id="cb67-6"><a></a>  }</span>
-<span id="cb67-7"><a></a>  </span>
-<span id="cb67-8"><a></a>  rlang<span class="sc">::</span><span class="fu">abort</span>(</span>
-<span id="cb67-9"><a></a>    <span class="st">"error_bad_argument"</span>, <span class="co"># &lt;- this is the (error) class, I believe</span></span>
-<span id="cb67-10"><a></a>    <span class="at">message =</span> msg, </span>
-<span id="cb67-11"><a></a>    <span class="at">arg =</span> arg, </span>
-<span id="cb67-12"><a></a>    <span class="at">must =</span> must, </span>
-<span id="cb67-13"><a></a>    <span class="at">not =</span> not</span>
-<span id="cb67-14"><a></a>  )</span>
-<span id="cb67-15"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Rewrite the log function to use this helper function:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a>my_log <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">base =</span> <span class="fu">exp</span>(<span class="dv">1</span>)) {</span>
-<span id="cb68-2"><a></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(x)) {</span>
-<span id="cb68-3"><a></a>    <span class="fu">abort_bad_argument</span>(<span class="st">"x"</span>, <span class="at">must =</span> <span class="st">"be numeric"</span>, <span class="at">not =</span> x)</span>
-<span id="cb68-4"><a></a>  }</span>
-<span id="cb68-5"><a></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(base)) {</span>
-<span id="cb68-6"><a></a>    <span class="fu">abort_bad_argument</span>(<span class="st">"base"</span>, <span class="at">must =</span> <span class="st">"be numeric"</span>, <span class="at">not =</span> base)</span>
-<span id="cb68-7"><a></a>  }</span>
-<span id="cb68-8"><a></a></span>
-<span id="cb68-9"><a></a>  base<span class="sc">::</span><span class="fu">log</span>(x, <span class="at">base =</span> base)</span>
-<span id="cb68-10"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>See the result for the end user:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a></a><span class="fu">my_log</span>(letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in `abort_bad_argument()`:
-#&gt; ! `x` must be numeric; not character.</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a><span class="fu">my_log</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">base =</span> letters)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in `abort_bad_argument()`:
-#&gt; ! `base` must be numeric; not character.</code></pre>
-</div>
-</div>
-<h3 id="handling">Handling</h3>
-<p>Use class of condition object to allow for different handling of different types of errors</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a><span class="fu">tryCatch</span>(</span>
-<span id="cb73-2"><a></a>  <span class="at">error_bad_argument =</span> <span class="cf">function</span>(cnd) <span class="st">"bad_argument"</span>,</span>
-<span id="cb73-3"><a></a>  <span class="at">error =</span> <span class="cf">function</span>(cnd) <span class="st">"other error"</span>,</span>
-<span id="cb73-4"><a></a>  <span class="fu">my_log</span>(<span class="st">"a"</span>)</span>
-<span id="cb73-5"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="fu">tryCatch</span>(<span class="fu">f</span>(), <span class="at">message =</span> <span class="cf">function</span>(cnd) lobstr<span class="sc">::</span><span class="fu">cst</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "bad_argument"</code></pre>
+<pre><code>#&gt;     ▆
+#&gt;  1. └─base::tryCatch(f(), message = function(cnd) lobstr::cst())
+#&gt;  2.   └─base (local) tryCatchList(expr, classes, parentenv, handlers)
+#&gt;  3.     └─base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt;  4.       └─value[[3L]](cond)
+#&gt;  5.         └─lobstr::cst()</code></pre>
 </div>
 </div>
-<p>But note that the first handler that matches any of the signal’s class, potentially in a vector of signal classes, will get control. So put the most specific handlers first.</p>
+</section></section>
+<section>
+<section id="condition-objects" class="title-slide slide level1 center">
+<h1>Condition objects</h1>
+
 </section>
+<section id="built-in-conditions-are-lists-with-two-elements" class="slide level2">
+<h2>Built-in conditions are lists with two elements</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>cnd <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">catch_cnd</span>(<span class="fu">stop</span>(<span class="st">"An error!"</span>))</span>
+<span id="cb48-2"><a></a><span class="fu">str</span>(cnd)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; List of 2
+#&gt;  $ message: chr "An error!"
+#&gt;  $ call   : language force(expr)
+#&gt;  - attr(*, "class")= chr [1:3] "simpleError" "error" "condition"</code></pre>
+</div>
+</div>
+<ul>
+<li><code>message</code> can be accessed with <code>conditionMessage(cnd)</code></li>
+<li><code>call</code> is not generally useful</li>
+<li>The <code>class</code> attribute will be explained alongside S3</li>
+</ul>
+</section>
+<section id="custom-conditions-can-introduce-additional-attributes" class="slide level2">
+<h2>Custom conditions can introduce additional attributes</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a>cnd <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">catch_cnd</span>(rlang<span class="sc">::</span><span class="fu">abort</span>(<span class="st">"An error!"</span>))</span>
+<span id="cb50-2"><a></a><span class="fu">str</span>(cnd)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; List of 5
+#&gt;  $ message: chr "An error!"
+#&gt;  $ trace  :Classes 'rlang_trace', 'rlib_trace', 'tbl' and 'data.frame':  8 obs. of  6 variables:
+#&gt;   ..$ call       :List of 8
+#&gt;   .. ..$ : language rlang::catch_cnd(rlang::abort("An error!"))
+#&gt;   .. ..$ : language eval_bare(rlang::expr(tryCatch(!!!handlers, {     force(expr) ...
+#&gt;   .. ..$ : language tryCatch(condition = `&lt;fn&gt;`, {     force(expr) ...
+#&gt;   .. ..$ : language tryCatchList(expr, classes, parentenv, handlers)
+#&gt;   .. ..$ : language tryCatchOne(expr, names, parentenv, handlers[[1L]])
+#&gt;   .. ..$ : language doTryCatch(return(expr), name, parentenv, handler)
+#&gt;   .. ..$ : language force(expr)
+#&gt;   .. ..$ : language rlang::abort("An error!")
+#&gt;   ..$ parent     : int [1:8] 0 1 1 3 4 5 1 0
+#&gt;   ..$ visible    : logi [1:8] FALSE FALSE FALSE FALSE FALSE FALSE ...
+#&gt;   ..$ namespace  : chr [1:8] "rlang" "rlang" "base" "base" ...
+#&gt;   ..$ scope      : chr [1:8] "::" "::" "::" "local" ...
+#&gt;   ..$ error_frame: logi [1:8] FALSE FALSE FALSE FALSE FALSE FALSE ...
+#&gt;   ..- attr(*, "version")= int 2
+#&gt;  $ parent : NULL
+#&gt;  $ rlang  :List of 1
+#&gt;   ..$ inherit: logi TRUE
+#&gt;  $ call   : NULL
+#&gt;  - attr(*, "class")= chr [1:3] "rlang_error" "error" "condition"</code></pre>
+</div>
+</div>
+</section>
+<section id="rlangabort-can-compose-and-throw-custom-conditions" class="slide level2">
+<h2><code>rlang::abort()</code> can compose and throw custom conditions</h2>
+<p>We create a function that will signal an error condition</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>abort_missing_file <span class="ot">&lt;-</span> <span class="cf">function</span>(file_path) {</span>
+<span id="cb52-2"><a></a>  rlang<span class="sc">::</span><span class="fu">abort</span>(</span>
+<span id="cb52-3"><a></a>    <span class="st">"error_not_found"</span>,</span>
+<span id="cb52-4"><a></a>    <span class="at">message =</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">"Path `{file_path}` not found"</span>),</span>
+<span id="cb52-5"><a></a>    <span class="at">path =</span> file_path</span>
+<span id="cb52-6"><a></a>  )</span>
+<span id="cb52-7"><a></a>}</span>
+<span id="cb52-8"><a></a><span class="fu">abort_missing_file</span>(<span class="st">"blah.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in `abort_missing_file()`:
+#&gt; ! Path `blah.csv` not found</code></pre>
+</div>
+</div>
+<p>This makes it easy to format messages</p>
+
+<aside><div>
+<p><code>rlang::abort()</code> doesn’t format messages like <code>stop()</code> does</p>
+</div></aside></section>
+<section id="deal-with-custom-conditions-by-creating-specific-handlers" class="slide level2">
+<h2>Deal with custom conditions by creating specific handlers</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a>my_csv_reader <span class="ot">&lt;-</span> <span class="cf">function</span>(file) {</span>
+<span id="cb54-2"><a></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(file)) <span class="fu">abort_missing_file</span>(file)</span>
+<span id="cb54-3"><a></a>  <span class="fu">read.csv</span>(file)</span>
+<span id="cb54-4"><a></a>}</span>
+<span id="cb54-5"><a></a></span>
+<span id="cb54-6"><a></a>dat <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>(</span>
+<span id="cb54-7"><a></a>  <span class="at">error_not_found =</span> <span class="cf">function</span>(cnd) <span class="fu">data.frame</span>(),</span>
+<span id="cb54-8"><a></a>  <span class="at">error =</span> <span class="cf">function</span>(cnd) <span class="cn">NULL</span>,</span>
+<span id="cb54-9"><a></a>  <span class="fu">my_csv_reader</span>(<span class="st">"blah.csv"</span>)</span>
+<span id="cb54-10"><a></a>)</span>
+<span id="cb54-11"><a></a></span>
+<span id="cb54-12"><a></a>dat</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; data frame with 0 columns and 0 rows</code></pre>
+</div>
+</div>
+
+<aside class="notes">
+<p>If we were writing all of the code ourselves, we’d probably put this behavior in <code>my_csv_reader()</code> ourselves.</p>
+<p>Custom conditions’ strength relates to the principle of “separation of concerns”: the decision about what constitutes an error belongs to the function author, and the decision of how to handle an error belongs to the function user. This is especially useful for authors and users of packages.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<aside><div>
+<p>The first matching handler is chosen, not the “most specific”</p>
+</div></aside></section>
 <section id="applications" class="slide level2">
 <h2>Applications</h2>
-<p>See <a href="https://adv-r.hadley.nz/conditions.html#condition-applications">the sub-section in the book</a> for excellent examples.</p>
+<p>See <a href="https://adv-r.hadley.nz/conditions.html#condition-applications">the sub-section in the book</a> for more excellent examples.</p>
 </section>
 <section id="resources" class="slide level2">
 <h2>Resources</h2>
@@ -825,11 +833,15 @@
 <li><a href="https://rlang.r-lib.org/reference/topic-error-chaining.html">Including contextual information with error chains</a></li>
 <li><a href="https://rlang.r-lib.org/reference/topic-condition-formatting.html">Formatting messages with cli</a></li>
 </ul></li>
-<li><a href="https://github.com/rstudio-conf-2022/pkg-dev-masterclass/blob/main/materials/5-error-resources.md">Other resources</a> from error message segment of rstudio::conf(2022) workshop “Package Development Masterclass”</li>
+<li><a href="https://github.com/rstudio-conf-2022/pkg-dev-masterclass/blob/main/materials/5-error-resources.md">Other resources</a> from error message segment of rstudio::conf(2022) workshop “Package Development Masterclass”
+<ul>
+<li><a href="https://style.tidyverse.org/errors.html">Error messages</a> from the Tidyverse style guide</li>
+</ul></li>
 </ul>
 
 
-</section>
+</section></section>
+
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -1045,6 +1057,44 @@
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
