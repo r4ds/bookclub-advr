@@ -3,7 +3,7 @@ engine: knitr
 title: Subsetting
 ---
 
-## Learning objectives:
+## Learning objectives
 
 - Select multiple elements from a vector with `[`
 - Select single elements from a vector with `[[` and `$`

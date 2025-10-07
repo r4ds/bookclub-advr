@@ -3,7 +3,7 @@ engine: knitr
 title: Functions
 ---
 
-## Learning objectives:
+## Learning objectives
 
 - How to make functions in R
 - What are the parts of a function
