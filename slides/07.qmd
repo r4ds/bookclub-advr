@@ -3,7 +3,7 @@ engine: knitr
 title: Environments
 ---
 
-## Learning objectives:
+## Learning objectives
 
 - Create, modify, and inspect environments 
 

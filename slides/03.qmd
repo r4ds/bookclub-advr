@@ -3,7 +3,7 @@ engine: knitr
 title: Vectors
 ---
 
-## Learning objectives:
+## Learning objectives
 
 -   Learn about different types of vectors and their attributes
 -   Navigate through vector types and their value types

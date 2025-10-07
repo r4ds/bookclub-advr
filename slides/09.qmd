@@ -1,0 +1,314 @@
+---
+engine: knitr
+title: Functionals
+---
+
+## Learning objectives
+
+- Describe the "functional style" of programming in R.
+- Replace `for` loops with functionals.
+- Use the `purrr::map()` family of functions to apply a function to each element of a list or vector.
+- Combine multiple functionals to solve complex problems.
+- Use `purrr::reduce()` to combine elements of a vector into a single result.
+- Use predicate functionals to work with logical conditions.
+- Recognize and use base R functionals that lack `purrr` equivalents.
+
+## R is a functional language at heart
+
+- R lends itself to a style of problem solving centered on functions.
+- This "functional style" is a good fit for data analysis problems.
+- Functional techniques can produce efficient and elegant solutions.
+
+## Functional programming languages have first-class functions
+
+A key feature of functional languages is their use of **first-class functions**.
+
+In R, this means you can:
+
+- Assign functions to variables.
+- Store them in lists.
+- Pass them as arguments to other functions.
+- Create them inside functions.
+- Return them as the result of a function.
+
+## Pure functions depend only on their inputs
+
+Many functional languages require functions to be **pure**.
+
+- A pure function's output only depends on its inputs.
+    - `runif()`, `read.csv()`, and `Sys.time()` are **not** pure.
+- A pure function has no side-effects (e.g., changing global variables, writing to disk).
+    - `print()`, `write.csv()`, and `<-` are **not** pure.
+
+R is not a *strictly* functional language because it doesn't require pure functions.
+
+## The "functional style" decomposes a big problem into smaller pieces
+
+- Solve each piece with a function or combination of functions.
+- Strive to create isolated functions that operate independently.
+- Complexity is handled by composing functions in various ways.
+
+## Key functional techniques
+
+- **Chapter 9: Functionals**: Functions that take a function as an argument.
+- **Chapter 10: Function factories**: Functions that create functions.
+- **Chapter 11: Function operators**: Functions that take functions as input and produce functions as output.
+
+## A functional takes a function as input and returns a vector as output
+
+```{r}
+#| echo: true
+randomise <- function(f) f(runif(1e3))
+randomise(mean)
+randomise(sum)
+```
+
+Common examples:
+
+- `lapply()`, `apply()`, and `tapply()` in base R
+- `purrr::map()`
+- Mathematical functionals like `integrate()` or `optim()`
+
+## Functionals are better than for loops
+
+> To become significantly more reliable, code must become more transparent. In particular, nested conditions and loops must be viewed with great suspicion. Complicated control flows confuse programmers. Messy code often hides bugs.
+>
+> --- Bjarne Stroustrup
+
+- `for` loops are too flexible. You're iterating, but why?
+- Each **functional** is tailored for a **specific task**. Conveys **intent**.
+
+## `purrr::map()` applies a function to each element of a vector
+
+`map(1:3, f) == list(f(1), f(2), f(3))`
+
+```{r}
+library(purrr)
+triple <- function(x) x * 3
+map(1:3, triple)
+```
+
+## Use `map_<type>()` to return an atomic vector
+
+- `map()` returns a list.
+- `map_lgl()` returns a logical vector.
+- `map_int()` returns an integer vector.
+- `map_dbl()` returns a double vector.
+- `map_chr()` returns a character vector.
+
+## Use `map_<type>()` to return an atomic vector (cont.)
+
+```{r}
+# map_chr() always returns a character vector
+map_chr(mtcars, typeof)
+
+# map_dbl() always returns a double vector
+map_dbl(mtcars, mean)
+```
+
+## Use anonymous functions for concise operations
+
+```{r}
+#| echo: true
+map_dbl(mtcars, function(x) length(unique(x)))
+```
+
+`purrr` provides `~` shortcut:
+
+```{r}
+#| echo: true
+map_dbl(mtcars, ~ length(unique(.x)))
+```
+
+R 4.1.0 provides `\()` shortcut (`\ == function`):
+
+```{r}
+#| echo: true
+map_dbl(mtcars, \(x) length(unique(x)))
+```
+
+## Pass additional arguments to `map()` with `...` or via anonymous function
+
+```{r}
+x <- list(1:5, c(1:10, NA))
+map_dbl(x, mean, na.rm = TRUE)
+```
+
+```{r}
+map_dbl(x, ~ mean(.x, na.rm = TRUE))
+```
+
+```{r}
+map_dbl(x, \(x) mean(x, na.rm = TRUE))
+```
+
+## `purrr` style: pipe simple steps together
+
+- Pipe (`|>` / `%>%`) + `purrr` ➡️ readable code 
+- Each line is a single, understandable step.
+
+```{r}
+mtcars |>
+  split(mtcars$cyl) |>
+  map(~ lm(mpg ~ wt, data = .x)) |>
+  map(coef) |>
+  map_dbl(2)
+```
+
+## `purrr::modify()` returns the same type as the input
+
+`map()` always returns a list:
+```{r}
+df <- data.frame(x = 1:3, y = 6:4)
+map(df, ~ .x * 2)
+```
+
+`modify()` returns the same type as the input:
+```{r}
+modify(df, ~ .x * 2)
+```
+
+## `purrr::map2()` iterates over two vectors in parallel
+
+Find a weighted mean from 2 lists: observations (`xs`) & weights (`ws`).
+```{r}
+xs <- map(1:3, ~ runif(5))
+ws <- map(1:3, ~ rpois(5, 5) + 1)
+```
+
+`map()` passes the whole `ws` list to each call:
+```{r, error = TRUE}
+map_dbl(xs, weighted.mean, w = ws)
+```
+
+`map2()` iterates over `xs` and `ws` in parallel:
+```{r}
+map2_dbl(xs, ws, weighted.mean)
+```
+
+## `purrr::walk()` is for functions called for their side effects
+
+- E.g., `cat()`, `write.csv()`, `ggsave()`.
+- `walk()` returns its input invisibly.
+
+```{r}
+#| eval: false
+cyls <- split(mtcars, mtcars$cyl)
+paths <- file.path(tempdir(), paste0("cyl-", names(cyls), ".csv"))
+walk2(cyls, paths, write.csv)
+dir(tempdir(), pattern = "cyl-")
+#> [1] "cyl-4.csv" "cyl-6.csv" "cyl-8.csv"
+```
+
+## `purrr::imap()` iterates over values and indices
+
+Named input == `map2(.x, names(.x), .f)`
+```{r}
+imap_chr(iris[, 1:2], ~ paste0("The first value of '", .y, "' is ", .x[[1]]))
+```
+
+Unnamed input == `map2(.x, seq_along(.x), .f)`
+```{r}
+x <- map(1:2, ~ sample(100, 5))
+imap_chr(x, ~ paste0("The max of element ", .y, " is ", max(.x)))
+```
+
+## `purrr::pmap()` iterates over multiple arguments in a list
+
+`pmap()` applies function to list of arguments
+
+- `map2(x, y, f)` is equivalent to `pmap(list(x, y), f)`.
+- A data frame is a list, works great with `pmap()`.
+
+```{r}
+params <- tibble::tribble(
+  ~n, ~min, ~max,
+  1L, 0, 1,
+  2L, 10, 100,
+)
+
+pmap(params, runif)
+```
+
+## `purrr::reduce()` combines vector elements with a binary function
+
+- "Reduces" a vector to 1 value by repeatedly applying 2-arg function
+- `reduce(1:4, f)` is equivalent to `f(f(f(1, 2), 3), 4)`.
+
+Example: Find the numbers that appear in *every* vector in a list.
+```{r}
+set.seed(123)
+lst <- map(1:4, ~ sample(1:10, 15, replace = TRUE))
+reduce(lst, intersect)
+```
+
+## `purrr::accumulate()` shows intermediate results
+
+- Like `reduce()`, but returns all the intermediate results.
+- Great way to understand how `reduce()` works.
+
+```{r}
+accumulate(lst, intersect)
+```
+
+## `purrr::accumulate()` is useful for cumulative calculations
+
+```{r}
+accumulate(c(4, 3, 10), `+`)
+```
+
+## Predicate functionals apply a predicate to each element
+
+**Predicate:** function that returns single `TRUE` or `FALSE`.
+
+- `some()` / `every()` / `none()`: True for *any* / *all* / *no* elements?
+- `detect()` / `detect_index()`: Find *value* / *location* of 1st match.
+- `keep()` / `discard()`: *Keep* / *drop* all matching elements.
+
+```{r}
+df <- data.frame(x = 1:3, y = c("a", "b", "c"))
+str(keep(df, is.numeric))
+str(discard(df, is.numeric))
+```
+
+## `map_if()` and `modify_if()` transform elements where a predicate is true
+
+E.g, calculate mean of only numeric columns in a data frame.
+```{r}
+df <- data.frame(
+  num1 = c(0, 10, 20),
+  num2 = c(5, 6, 7),
+  chr1 = c("a", "b", "c")
+)
+
+str(map_if(df, is.numeric, mean))
+str(modify_if(df, is.numeric, mean))
+```
+
+## `base::apply()` summarizes matrices and arrays
+
+- Collapses 1 or more matrix/array dimensions by applying a summary function.
+
+`apply(X, MARGIN, FUN)`: `MARGIN`? `1` for rows, `2` for columns.
+
+```{r}
+a2d <- matrix(1:20, nrow = 5)
+# Row means
+apply(a2d, 1, mean)
+# Column means
+apply(a2d, 2, mean)
+```
+
+**Warning**: `apply()` will coerce df to a matrix!
+
+## Base R has mathematical functionals
+
+Base R includes several mathematical functionals.
+
+- `integrate()`: Find the area under a curve.
+- `uniroot()`: Find where a function equals zero.
+- `optimise()`: Find the minimum or maximum value of a function.
+
+```{r}
+integrate(sin, 0, pi)
+```

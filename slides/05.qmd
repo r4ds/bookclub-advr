@@ -3,7 +3,7 @@ engine: knitr
 title: Control flow
 ---
 
-## Learning objectives:
+## Learning objectives
 
 - Understand the two primary tools for control flow: **choices** and **loops**
 - Learn best practices to void common pitfalls

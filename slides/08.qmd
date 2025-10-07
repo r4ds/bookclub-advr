@@ -3,7 +3,7 @@ engine: knitr
 title: Conditions
 ---
 
-## Chapter 8 learning objectives
+## Learning objectives
 
 - What conditions are
 - How to generate ("signal") them
