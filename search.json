@@ -1096,169 +1096,190 @@
     "objectID": "slides/09.html#learning-objectives",
     "href": "slides/09.html#learning-objectives",
     "title": "Functionals",
-    "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nDefine functionals.\nUse the purrr::map() family of functionals.\nUse the purrr::walk() family of functionals.\nUse the purrr::reduce() and purrr::accumulate() family of functionals.\nUse purrr::safely() and purrr::possibly() to deal with failure.\n\n9.1. Introduction\n9.2. map()\n9.3. purrr style\n9.4. map_ variants\n9.5. reduce() and accumulate family of functions\n\nSome functions that weren’t covered"
+    "section": "Learning objectives",
+    "text": "Learning objectives\n\nDescribe the “functional style” of programming in R.\nReplace for loops with functionals.\nUse the purrr::map() family of functions to apply a function to each element of a list or vector.\nCombine multiple functionals to solve complex problems.\nUse purrr::reduce() to combine elements of a vector into a single result.\nUse predicate functionals to work with logical conditions.\nRecognize and use base R functionals that lack purrr equivalents."
   },
   {
-    "objectID": "slides/09.html#what-are-functionals",
-    "href": "slides/09.html#what-are-functionals",
+    "objectID": "slides/09.html#r-is-a-functional-language-at-heart",
+    "href": "slides/09.html#r-is-a-functional-language-at-heart",
     "title": "Functionals",
-    "section": "What are functionals",
-    "text": "What are functionals"
+    "section": "R is a functional language at heart",
+    "text": "R is a functional language at heart\n\nR lends itself to a style of problem solving centered on functions.\nThis “functional style” is a good fit for data analysis problems.\nFunctional techniques can produce efficient and elegant solutions."
   },
   {
-    "objectID": "slides/09.html#introduction",
-    "href": "slides/09.html#introduction",
+    "objectID": "slides/09.html#functional-programming-languages-have-first-class-functions",
+    "href": "slides/09.html#functional-programming-languages-have-first-class-functions",
     "title": "Functionals",
-    "section": "Introduction",
-    "text": "Introduction\nFunctionals are functions that take function as input and return a vector as output. Functionals that you probably have used before are: apply(), lapply() or tapply().\n\nalternatives to loops\na functional is better than a for loop is better than while is better than repeat\n\nBenefits\n\nencourages function logic to be separated from iteration logic\ncan collapse into vectors/data frames easily"
+    "section": "Functional programming languages have first-class functions",
+    "text": "Functional programming languages have first-class functions\nA key feature of functional languages is their use of first-class functions.\nIn R, this means you can:\n\nAssign functions to variables.\nStore them in lists.\nPass them as arguments to other functions.\nCreate them inside functions.\nReturn them as the result of a function."
   },
   {
-    "objectID": "slides/09.html#map",
-    "href": "slides/09.html#map",
+    "objectID": "slides/09.html#pure-functions-depend-only-on-their-inputs",
+    "href": "slides/09.html#pure-functions-depend-only-on-their-inputs",
     "title": "Functionals",
-    "section": "Map",
-    "text": "Map\nmap() has two arguments, a vector and a function. It performs the function on each element of the vector and returns a list. We can also pass in some additional argument into the function.\n\n\nsimple_map &lt;- function(x, f, ...) {\nout &lt;- vector(\"list\", length(x))\nfor (i in seq_along(x)) {\nout[[i]] &lt;- f(x[[i]], ...)\n}\nout\n}"
+    "section": "Pure functions depend only on their inputs",
+    "text": "Pure functions depend only on their inputs\nMany functional languages require functions to be pure.\n\nA pure function’s output only depends on its inputs.\n\nrunif(), read.csv(), and Sys.time() are not pure.\n\nA pure function has no side-effects (e.g., changing global variables, writing to disk).\n\nprint(), write.csv(), and &lt;- are not pure.\n\n\nR is not a strictly functional language because it doesn’t require pure functions."
   },
   {
-    "objectID": "slides/09.html#benefit-of-using-the-map-function-in-purrr",
-    "href": "slides/09.html#benefit-of-using-the-map-function-in-purrr",
+    "objectID": "slides/09.html#the-functional-style-decomposes-a-big-problem-into-smaller-pieces",
+    "href": "slides/09.html#the-functional-style-decomposes-a-big-problem-into-smaller-pieces",
     "title": "Functionals",
-    "section": "Benefit of using the map function in purrr",
-    "text": "Benefit of using the map function in purrr\n\npurrr::map() is equivalent to lapply()\nreturns a list and is the most general\nthe length of the input == the length of the output\nmap() is more flexible, with additional arguments allowed\nmap() has a host of extensions"
+    "section": "The “functional style” decomposes a big problem into smaller pieces",
+    "text": "The “functional style” decomposes a big problem into smaller pieces\n\nSolve each piece with a function or combination of functions.\nStrive to create isolated functions that operate independently.\nComplexity is handled by composing functions in various ways."
   },
   {
-    "objectID": "slides/09.html#atomic-vectors",
-    "href": "slides/09.html#atomic-vectors",
+    "objectID": "slides/09.html#key-functional-techniques",
+    "href": "slides/09.html#key-functional-techniques",
     "title": "Functionals",
-    "section": "Atomic vectors",
-    "text": "Atomic vectors\n\nhas 4 variants to return atomic vectors\n\nmap_chr()\nmap_dbl()\nmap_int()\nmap_lgl()\n\n\n\ntriple &lt;- function(x) x * 3\nmap(.x=1:3, .f=triple)\n\n#&gt; [[1]]\n#&gt; [1] 3\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 6\n#&gt; \n#&gt; [[3]]\n#&gt; [1] 9\n\nmap_dbl(.x=1:3, .f=triple)\n\n#&gt; [1] 3 6 9\n\nmap_lgl(.x=c(1, NA, 3), .f=is.na)\n\n#&gt; [1] FALSE  TRUE FALSE"
+    "section": "Key functional techniques",
+    "text": "Key functional techniques\n\nChapter 9: Functionals: Functions that take a function as an argument.\nChapter 10: Function factories: Functions that create functions.\nChapter 11: Function operators: Functions that take functions as input and produce functions as output."
   },
   {
-    "objectID": "slides/09.html#anonymous-functions-and-shortcuts",
-    "href": "slides/09.html#anonymous-functions-and-shortcuts",
+    "objectID": "slides/09.html#a-functional-takes-a-function-as-input-and-returns-a-vector-as-output",
+    "href": "slides/09.html#a-functional-takes-a-function-as-input-and-returns-a-vector-as-output",
     "title": "Functionals",
-    "section": "Anonymous functions and shortcuts",
-    "text": "Anonymous functions and shortcuts\nAnonymous functions\n\nmap_dbl(.x=mtcars, .f=function(x) mean(x, na.rm = TRUE)) |&gt; \n  head()\n\n#&gt;        mpg        cyl       disp         hp       drat         wt \n#&gt;  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250\n\n\n\nthe “twiddle” uses a twiddle ~ to set a formula\ncan use .x to reference the input map(.x = ..., .f = )\n\n\nmap_dbl(.x=mtcars,  .f=~mean(.x, na.rm = TRUE))\n\n\ncan be simplified further as\n\n\nmap_dbl(.x=mtcars, .f=mean, na.rm = TRUE)\n\n#&gt;        mpg        cyl       disp         hp       drat         wt       qsec \n#&gt;  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250  17.848750 \n#&gt;         vs         am       gear       carb \n#&gt;   0.437500   0.406250   3.687500   2.812500\n\n\n\nwhat happens when we try a handful of variants of the task at hand? (how many unique values are there for each variable?)\n\nNote that .x is the name of the first argument in map() (.f is the name of the second argument).\n\n# the task\nmap_dbl(mtcars, function(x) length(unique(x)))\n\n#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb \n#&gt;   25    3   27   22   22   29   30    2    2    3    6\n\nmap_dbl(mtcars, function(unicorn) length(unique(unicorn)))\n\n#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb \n#&gt;   25    3   27   22   22   29   30    2    2    3    6\n\nmap_dbl(mtcars, ~length(unique(.x)))\n\n#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb \n#&gt;   25    3   27   22   22   29   30    2    2    3    6\n\nmap_dbl(mtcars, ~length(unique(..1)))\n\n#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb \n#&gt;   25    3   27   22   22   29   30    2    2    3    6\n\nmap_dbl(mtcars, ~length(unique(.)))\n\n#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb \n#&gt;   25    3   27   22   22   29   30    2    2    3    6\n\n# not the task\nmap_dbl(mtcars, length)\n\n#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb \n#&gt;   32   32   32   32   32   32   32   32   32   32   32\n\nmap_dbl(mtcars, length(unique))\n\n#&gt;    mpg    cyl   disp     hp   drat     wt   qsec     vs     am   gear   carb \n#&gt;  21.00   6.00 160.00 110.00   3.90   2.62  16.46   0.00   1.00   4.00   4.00\n\nmap_dbl(mtcars, 1)\n\n#&gt;    mpg    cyl   disp     hp   drat     wt   qsec     vs     am   gear   carb \n#&gt;  21.00   6.00 160.00 110.00   3.90   2.62  16.46   0.00   1.00   4.00   4.00\n\n\n\n#error\nmap_dbl(mtcars, length(unique()))\n\n#&gt; Error in unique.default(): argument \"x\" is missing, with no default\n\nmap_dbl(mtcars, ~length(unique(x)))\n\n#&gt; Error in `map_dbl()`:\n#&gt; ℹ In index: 1.\n#&gt; ℹ With name: mpg.\n#&gt; Caused by error in `.f()`:\n#&gt; ! object 'x' not found"
+    "section": "A functional takes a function as input and returns a vector as output",
+    "text": "A functional takes a function as input and returns a vector as output\n\nrandomise &lt;- function(f) f(runif(1e3))\nrandomise(mean)\n\n#&gt; [1] 0.4916475\n\nrandomise(sum)\n\n#&gt; [1] 525.4261\n\n\nCommon examples:\n\nlapply(), apply(), and tapply() in base R\npurrr::map()\nMathematical functionals like integrate() or optim()"
   },
   {
-    "objectID": "slides/09.html#modify",
-    "href": "slides/09.html#modify",
+    "objectID": "slides/09.html#functionals-are-better-than-for-loops",
+    "href": "slides/09.html#functionals-are-better-than-for-loops",
     "title": "Functionals",
-    "section": "Modify",
-    "text": "Modify\nSometimes we might want the output to be the same as the input, then in that case we can use the modify function rather than map\n\ndf &lt;- data.frame(x=1:3,y=6:4)\n\nmap(df, .f=~.x*3)\n\n#&gt; $x\n#&gt; [1] 3 6 9\n#&gt; \n#&gt; $y\n#&gt; [1] 18 15 12\n\nmodify(.x=df,.f=~.x*3)\n\n#&gt;   x  y\n#&gt; 1 3 18\n#&gt; 2 6 15\n#&gt; 3 9 12\n\n\nNote that modify() always returns the same type of output (which is not necessarily true with map()). Additionally, modify() does not actually change the value of df.\n\ndf\n\n#&gt;   x y\n#&gt; 1 1 6\n#&gt; 2 2 5\n#&gt; 3 3 4"
+    "section": "Functionals are better than for loops",
+    "text": "Functionals are better than for loops\n\nTo become significantly more reliable, code must become more transparent. In particular, nested conditions and loops must be viewed with great suspicion. Complicated control flows confuse programmers. Messy code often hides bugs.\n— Bjarne Stroustrup\n\n\nfor loops are too flexible. You’re iterating, but why?\nEach functional is tailored for a specific task. Conveys intent."
   },
   {
-    "objectID": "slides/09.html#purrr-style",
-    "href": "slides/09.html#purrr-style",
+    "objectID": "slides/09.html#purrrmap-applies-a-function-to-each-element-of-a-vector",
+    "href": "slides/09.html#purrrmap-applies-a-function-to-each-element-of-a-vector",
     "title": "Functionals",
-    "section": "purrr style",
-    "text": "purrr style\n\nmtcars |&gt; \n  map(head, 20) |&gt; # pull first 20 of each column\n  map_dbl(mean) |&gt; # mean of each vector\n  head()\n\n#&gt;       mpg       cyl      disp        hp      drat        wt \n#&gt;  20.13000   6.20000 233.93000 136.20000   3.54500   3.39845\n\n\nAn example from tidytuesday\n\ntt &lt;- tidytuesdayR::tt_load(\"2020-06-30\")\n\n# filter data & exclude columns with lost of nulls\nlist_df &lt;- \n  map(\n    .x = tt[1:3], \n    .f = \n      ~ .x |&gt; \n      filter(issue &lt;= 152 | issue &gt; 200) |&gt; \n      mutate(timeframe = ifelse(issue &lt;= 152, \"first 5 years\", \"last 5 years\")) |&gt; \n      select_if(~mean(is.na(.x)) &lt; 0.2) \n  )\n\n\n# write to global environment\niwalk(\n  .x = list_df,\n  .f = ~ assign(x = .y, value = .x, envir = globalenv())\n)"
+    "section": "purrr::map() applies a function to each element of a vector",
+    "text": "purrr::map() applies a function to each element of a vector\nmap(1:3, f) == list(f(1), f(2), f(3))\n\nlibrary(purrr)\ntriple &lt;- function(x) x * 3\nmap(1:3, triple)\n\n#&gt; [[1]]\n#&gt; [1] 3\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 6\n#&gt; \n#&gt; [[3]]\n#&gt; [1] 9"
   },
   {
-    "objectID": "slides/09.html#map_-variants",
-    "href": "slides/09.html#map_-variants",
+    "objectID": "slides/09.html#use-map_type-to-return-an-atomic-vector",
+    "href": "slides/09.html#use-map_type-to-return-an-atomic-vector",
     "title": "Functionals",
-    "section": "map_*() variants",
-    "text": "map_*() variants\nThere are many variants"
+    "section": "Use map_<type>() to return an atomic vector",
+    "text": "Use map_&lt;type&gt;() to return an atomic vector\n\nmap() returns a list.\nmap_lgl() returns a logical vector.\nmap_int() returns an integer vector.\nmap_dbl() returns a double vector.\nmap_chr() returns a character vector."
   },
   {
-    "objectID": "slides/09.html#map2_",
-    "href": "slides/09.html#map2_",
+    "objectID": "slides/09.html#use-map_type-to-return-an-atomic-vector-cont.",
+    "href": "slides/09.html#use-map_type-to-return-an-atomic-vector-cont.",
     "title": "Functionals",
-    "section": "map2_*()",
-    "text": "map2_*()\n\nraise each value .x by 2\n\n\nmap_dbl(\n  .x = 1:5, \n  .f = function(x) x ^ 2\n)\n\n#&gt; [1]  1  4  9 16 25\n\n\n\nraise each value .x by another value .y\n\n\nmap2_dbl(\n  .x = 1:5, \n  .y = 2:6, \n  .f = ~ (.x ^ .y)\n)\n\n#&gt; [1]     1     8    81  1024 15625"
+    "section": "Use map_<type>() to return an atomic vector (cont.)",
+    "text": "Use map_&lt;type&gt;() to return an atomic vector (cont.)\n\n# map_chr() always returns a character vector\nmap_chr(mtcars, typeof)\n\n#&gt;      mpg      cyl     disp       hp     drat       wt     qsec       vs \n#&gt; \"double\" \"double\" \"double\" \"double\" \"double\" \"double\" \"double\" \"double\" \n#&gt;       am     gear     carb \n#&gt; \"double\" \"double\" \"double\"\n\n# map_dbl() always returns a double vector\nmap_dbl(mtcars, mean)\n\n#&gt;        mpg        cyl       disp         hp       drat         wt       qsec \n#&gt;  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250  17.848750 \n#&gt;         vs         am       gear       carb \n#&gt;   0.437500   0.406250   3.687500   2.812500"
   },
   {
-    "objectID": "slides/09.html#the-benefit-of-using-the-map-over-apply-family-of-function",
-    "href": "slides/09.html#the-benefit-of-using-the-map-over-apply-family-of-function",
+    "objectID": "slides/09.html#use-anonymous-functions-for-concise-operations",
+    "href": "slides/09.html#use-anonymous-functions-for-concise-operations",
     "title": "Functionals",
-    "section": "The benefit of using the map over apply family of function",
-    "text": "The benefit of using the map over apply family of function\n\nIt is written in C\nIt preserves names\nWe always know the return value type\nWe can apply the function for multiple input values\nWe can pass additional arguments into the function"
+    "section": "Use anonymous functions for concise operations",
+    "text": "Use anonymous functions for concise operations\n\nmap_dbl(mtcars, function(x) length(unique(x)))\n\n#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb \n#&gt;   25    3   27   22   22   29   30    2    2    3    6\n\n\npurrr provides ~ shortcut:\n\nmap_dbl(mtcars, ~ length(unique(.x)))\n\n#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb \n#&gt;   25    3   27   22   22   29   30    2    2    3    6\n\n\nR 4.1.0 provides \\() shortcut (\\ == function):\n\nmap_dbl(mtcars, \\(x) length(unique(x)))\n\n#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb \n#&gt;   25    3   27   22   22   29   30    2    2    3    6"
   },
   {
-    "objectID": "slides/09.html#walk",
-    "href": "slides/09.html#walk",
+    "objectID": "slides/09.html#pass-additional-arguments-to-map-with-...-or-via-anonymous-function",
+    "href": "slides/09.html#pass-additional-arguments-to-map-with-...-or-via-anonymous-function",
     "title": "Functionals",
-    "section": "walk()",
-    "text": "walk()\n\nWe use walk() when we want to call a function for it side effect(s) rather than its return value, like generating plots, write.csv(), or ggsave(). If you don’t want a return value, map() will print more info than you may want.\n\n\nmap(1:3, ~cat(.x, \"\\n\"))\n\n#&gt; 1 \n#&gt; 2 \n#&gt; 3\n\n\n#&gt; [[1]]\n#&gt; NULL\n#&gt; \n#&gt; [[2]]\n#&gt; NULL\n#&gt; \n#&gt; [[3]]\n#&gt; NULL\n\n\n\nfor these cases, use walk() instead\n\n\nwalk(1:3, ~cat(.x, \"\\n\"))\n\n#&gt; 1 \n#&gt; 2 \n#&gt; 3\n\n\ncat() does have a result, it’s just usually returned invisibly.\n\ncat(\"hello\")\n\n#&gt; hello\n\n(cat(\"hello\"))\n\n#&gt; hello\n\n\n#&gt; NULL\n\n\nWe can use pwalk() to save a list of plot to disk. Note that the “p” in pwalk() means that we have more than 1 (or 2) variables to pipe into the function. Also note that the name of the first argument in all of the “p” functions is now .l (instead of .x).\n\nplots &lt;- mtcars |&gt;  \n  split(mtcars$cyl) |&gt;  \n  map(~ggplot(.x, aes(mpg,wt)) +\n        geom_point())\n\npaths &lt;- stringr::str_c(names(plots), '.png')\n\npwalk(.l = list(paths,plots), .f = ggsave, path = tempdir())\n\n#&gt; Saving 7 x 5 in image\n#&gt; Saving 7 x 5 in image\n#&gt; Saving 7 x 5 in image\n\npmap(.l = list(paths,plots), .f = ggsave, path = tempdir())\n\n#&gt; Saving 7 x 5 in image\n#&gt; Saving 7 x 5 in image\n#&gt; Saving 7 x 5 in image\n\n\n#&gt; [[1]]\n#&gt; [1] \"C:\\\\Users\\\\jonth\\\\AppData\\\\Local\\\\Temp\\\\RtmpSMVSZz/4.png\"\n#&gt; \n#&gt; [[2]]\n#&gt; [1] \"C:\\\\Users\\\\jonth\\\\AppData\\\\Local\\\\Temp\\\\RtmpSMVSZz/6.png\"\n#&gt; \n#&gt; [[3]]\n#&gt; [1] \"C:\\\\Users\\\\jonth\\\\AppData\\\\Local\\\\Temp\\\\RtmpSMVSZz/8.png\"\n\n\n\nwalk, walk2 and pwalk all invisibly return .x the first argument. This makes them suitable for use in the middle of pipelines.\nnote: I don’t think that it is “.x” (or “.l”) that they are returning invisibly. But I’m not sure what it is. Hadley says:\n\n\npurrr provides the walk family of functions that ignore the return values of the .f and instead return .x invisibly.\n\nBut not in the first cat() example, it is the NULL values that get returned invisibly (those aren’t the same as .x)."
+    "section": "Pass additional arguments to map() with ... or via anonymous function",
+    "text": "Pass additional arguments to map() with ... or via anonymous function\n\nx &lt;- list(1:5, c(1:10, NA))\nmap_dbl(x, mean, na.rm = TRUE)\n\n#&gt; [1] 3.0 5.5\n\n\n\nmap_dbl(x, ~ mean(.x, na.rm = TRUE))\n\n#&gt; [1] 3.0 5.5\n\n\n\nmap_dbl(x, \\(x) mean(x, na.rm = TRUE))\n\n#&gt; [1] 3.0 5.5"
   },
   {
-    "objectID": "slides/09.html#imap",
-    "href": "slides/09.html#imap",
+    "objectID": "slides/09.html#purrr-style-pipe-simple-steps-together",
+    "href": "slides/09.html#purrr-style-pipe-simple-steps-together",
     "title": "Functionals",
-    "section": "imap()",
-    "text": "imap()\n\nimap() is like map2()except that .y is derived from names(.x) if named or seq_along(.x) if not.\nThese two produce the same result\n\n\nimap_chr(.x = mtcars, \n         .f = ~ paste(.y, \"has a mean of\", round(mean(.x), 1))) |&gt; \nhead()\n\n#&gt;                        mpg                        cyl \n#&gt;   \"mpg has a mean of 20.1\"    \"cyl has a mean of 6.2\" \n#&gt;                       disp                         hp \n#&gt; \"disp has a mean of 230.7\"   \"hp has a mean of 146.7\" \n#&gt;                       drat                         wt \n#&gt;   \"drat has a mean of 3.6\"     \"wt has a mean of 3.2\"\n\nmap2_chr(.x = mtcars, \n         .y = names(mtcars),\n         .f = ~ paste(.y, \"has a mean of\", round(mean(.x), 1))) |&gt; \nhead()\n\n#&gt;                        mpg                        cyl \n#&gt;   \"mpg has a mean of 20.1\"    \"cyl has a mean of 6.2\" \n#&gt;                       disp                         hp \n#&gt; \"disp has a mean of 230.7\"   \"hp has a mean of 146.7\" \n#&gt;                       drat                         wt \n#&gt;   \"drat has a mean of 3.6\"     \"wt has a mean of 3.2\""
+    "section": "purrr style: pipe simple steps together",
+    "text": "purrr style: pipe simple steps together\n\nPipe (|&gt; / %&gt;%) + purrr ➡️ readable code\nEach line is a single, understandable step.\n\n\nmtcars |&gt;\n  split(mtcars$cyl) |&gt;\n  map(~ lm(mpg ~ wt, data = .x)) |&gt;\n  map(coef) |&gt;\n  map_dbl(2)\n\n#&gt;         4         6         8 \n#&gt; -5.647025 -2.780106 -2.192438"
   },
   {
-    "objectID": "slides/09.html#pmap",
-    "href": "slides/09.html#pmap",
+    "objectID": "slides/09.html#purrrmodify-returns-the-same-type-as-the-input",
+    "href": "slides/09.html#purrrmodify-returns-the-same-type-as-the-input",
     "title": "Functionals",
-    "section": "pmap()",
-    "text": "pmap()\n\nyou can pass a named list or dataframe as arguments to a function\nfor example runif() has the parameters n, min and max\n\n\nparams &lt;- tibble::tribble(\n  ~ n, ~ min, ~ max,\n   1L,     1,    10,\n   2L,    10,   100,\n   3L,   100,  1000\n)\n\npmap(params, runif)\n\n#&gt; [[1]]\n#&gt; [1] 9.52234\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 49.53679 46.47017\n#&gt; \n#&gt; [[3]]\n#&gt; [1] 488.8100 796.6801 282.7772\n\n\n\ncould also be\n\n\nlist(\n  n = 1:3, \n  min = 10 ^ (0:2), \n  max = 10 ^ (1:3)\n) |&gt; \npmap(runif)\n\n#&gt; [[1]]\n#&gt; [1] 5.246834\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 73.39068 30.57879\n#&gt; \n#&gt; [[3]]\n#&gt; [1] 169.6667 950.1126 820.9357\n\n\n\nI like to use expand_grid() when I want all possible parameter combinations.\n\n\nexpand_grid(n = 1:3,\n            min = 10 ^ (0:1),\n            max = 10 ^ (1:2))\n\n#&gt; # A tibble: 12 × 3\n#&gt;        n   min   max\n#&gt;    &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;\n#&gt;  1     1     1    10\n#&gt;  2     1     1   100\n#&gt;  3     1    10    10\n#&gt;  4     1    10   100\n#&gt;  5     2     1    10\n#&gt;  6     2     1   100\n#&gt;  7     2    10    10\n#&gt;  8     2    10   100\n#&gt;  9     3     1    10\n#&gt; 10     3     1   100\n#&gt; 11     3    10    10\n#&gt; 12     3    10   100\n\nexpand_grid(n = 1:3,\n            min = 10 ^ (0:1),\n            max = 10 ^ (1:2)) |&gt; \npmap(runif)\n\n#&gt; [[1]]\n#&gt; [1] 9.474848\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 10.63548\n#&gt; \n#&gt; [[3]]\n#&gt; [1] 10\n#&gt; \n#&gt; [[4]]\n#&gt; [1] 92.44257\n#&gt; \n#&gt; [[5]]\n#&gt; [1] 7.165047 6.201947\n#&gt; \n#&gt; [[6]]\n#&gt; [1] 64.79074 16.54110\n#&gt; \n#&gt; [[7]]\n#&gt; [1] 10 10\n#&gt; \n#&gt; [[8]]\n#&gt; [1] 62.12314 52.31713\n#&gt; \n#&gt; [[9]]\n#&gt; [1] 6.806213 5.541865 8.580469\n#&gt; \n#&gt; [[10]]\n#&gt; [1]  7.10806 51.56879 85.70133\n#&gt; \n#&gt; [[11]]\n#&gt; [1] 10 10 10\n#&gt; \n#&gt; [[12]]\n#&gt; [1] 74.48871 11.65879 58.31278"
+    "section": "purrr::modify() returns the same type as the input",
+    "text": "purrr::modify() returns the same type as the input\nmap() always returns a list:\n\ndf &lt;- data.frame(x = 1:3, y = 6:4)\nmap(df, ~ .x * 2)\n\n#&gt; $x\n#&gt; [1] 2 4 6\n#&gt; \n#&gt; $y\n#&gt; [1] 12 10  8\n\n\nmodify() returns the same type as the input:\n\nmodify(df, ~ .x * 2)\n\n#&gt;   x  y\n#&gt; 1 2 12\n#&gt; 2 4 10\n#&gt; 3 6  8"
   },
   {
-    "objectID": "slides/09.html#reduce-family",
-    "href": "slides/09.html#reduce-family",
+    "objectID": "slides/09.html#purrrmap2-iterates-over-two-vectors-in-parallel",
+    "href": "slides/09.html#purrrmap2-iterates-over-two-vectors-in-parallel",
     "title": "Functionals",
-    "section": "reduce() family",
-    "text": "reduce() family\nThe reduce() function is a powerful functional that allows you to abstract away from a sequence of functions that are applied in a fixed direction.\nreduce() takes a vector as its first argument, a function as its second argument, and an optional .init argument last. It will then apply the function repeatedly to the vector until there is only a single element left.\n(Hint: start at the top of the image and read down.)\n\nLet me really quickly demonstrate reduce() in action.\nSay you wanted to add up the numbers 1 through 5 using only the plus operator +. You could do something like:\n\n1 + 2 + 3 + 4 + 5\n\n#&gt; [1] 15\n\n\nWhich is the same as:\n\nreduce(1:5, `+`)\n\n#&gt; [1] 15\n\n\nAnd if you want the start value to be something that is not the first argument of the vector, pass that value to the .init argument:\n\nidentical(\n  0.5 + 1 + 2 + 3 + 4 + 5,\n  reduce(1:5, `+`, .init = 0.5)\n)\n\n#&gt; [1] TRUE"
+    "section": "purrr::map2() iterates over two vectors in parallel",
+    "text": "purrr::map2() iterates over two vectors in parallel\nFind a weighted mean from 2 lists: observations (xs) & weights (ws).\n\nxs &lt;- map(1:3, ~ runif(5))\nws &lt;- map(1:3, ~ rpois(5, 5) + 1)\n\nmap() passes the whole ws list to each call:\n\nmap_dbl(xs, weighted.mean, w = ws)\n\n#&gt; Error in `map_dbl()`:\n#&gt; ℹ In index: 1.\n#&gt; Caused by error in `weighted.mean.default()`:\n#&gt; ! 'x' and 'w' must have the same length\n\n\nmap2() iterates over xs and ws in parallel:\n\nmap2_dbl(xs, ws, weighted.mean)\n\n#&gt; [1] 0.4522381 0.3132899 0.7235673"
   },
   {
-    "objectID": "slides/09.html#ggplot2-example-with-reduce",
-    "href": "slides/09.html#ggplot2-example-with-reduce",
+    "objectID": "slides/09.html#purrrwalk-is-for-functions-called-for-their-side-effects",
+    "href": "slides/09.html#purrrwalk-is-for-functions-called-for-their-side-effects",
     "title": "Functionals",
-    "section": "ggplot2 example with reduce",
-    "text": "ggplot2 example with reduce\n\nggplot(mtcars, aes(hp, mpg)) + \n  geom_point(size = 8, alpha = .5, color = \"yellow\") +\n  geom_point(size = 4, alpha = .5, color = \"red\") +\n  geom_point(size = 2, alpha = .5, color = \"blue\")\n\n\n\n\n\n\n\n\nLet us use the reduce() function. Note that reduce2() takes two arguments, but the first value (..1) is given by the .init value.\n\nreduce2(\n  c(8, 4, 2),\n  c(\"yellow\", \"red\", \"blue\"),\n  ~ ..1 + geom_point(size = ..2, alpha = .5, color = ..3),\n  .init = ggplot(mtcars, aes(hp, mpg))\n)\n\n\n\n\n\n\n\n\n\ndf &lt;- list(age=tibble(name='john',age=30),\n    sex=tibble(name=c('john','mary'),sex=c('M','F'),\n    trt=tibble(name='Mary',treatment='A')))\n\ndf\n\n#&gt; $age\n#&gt; # A tibble: 1 × 2\n#&gt;   name    age\n#&gt;   &lt;chr&gt; &lt;dbl&gt;\n#&gt; 1 john     30\n#&gt; \n#&gt; $sex\n#&gt; # A tibble: 2 × 3\n#&gt;   name  sex   trt$name $treatment\n#&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;     \n#&gt; 1 john  M     Mary     A         \n#&gt; 2 mary  F     Mary     A\n\ndf |&gt; reduce(.f = full_join)\n\n#&gt; Joining with `by = join_by(name)`\n\n\n#&gt; # A tibble: 2 × 4\n#&gt;   name    age sex   trt$name $treatment\n#&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;     \n#&gt; 1 john     30 M     Mary     A         \n#&gt; 2 mary     NA F     Mary     A\n\nreduce(.x = df,.f = full_join)\n\n#&gt; Joining with `by = join_by(name)`\n\n\n#&gt; # A tibble: 2 × 4\n#&gt;   name    age sex   trt$name $treatment\n#&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;     \n#&gt; 1 john     30 M     Mary     A         \n#&gt; 2 mary     NA F     Mary     A\n\n\n\nto see all intermediate steps, use accumulate()\n\n\nset.seed(1234)\naccumulate(1:5, `+`)\n\n#&gt; [1]  1  3  6 10 15\n\n\n\naccumulate2(\n  c(8, 4, 2),\n  c(\"yellow\", \"red\", \"blue\"),\n  ~ ..1 + geom_point(size = ..2, alpha = .5, color = ..3),\n  .init = ggplot(mtcars, aes(hp, mpg))\n)\n\n#&gt; [[1]]\n\n\n\n\n\n\n\n\n\n#&gt; \n#&gt; [[2]]\n\n\n\n\n\n\n\n\n\n#&gt; \n#&gt; [[3]]\n\n\n\n\n\n\n\n\n\n#&gt; \n#&gt; [[4]]"
+    "section": "purrr::walk() is for functions called for their side effects",
+    "text": "purrr::walk() is for functions called for their side effects\n\nE.g., cat(), write.csv(), ggsave().\nwalk() returns its input invisibly.\n\n\ncyls &lt;- split(mtcars, mtcars$cyl)\npaths &lt;- file.path(tempdir(), paste0(\"cyl-\", names(cyls), \".csv\"))\nwalk2(cyls, paths, write.csv)\ndir(tempdir(), pattern = \"cyl-\")\n#&gt; [1] \"cyl-4.csv\" \"cyl-6.csv\" \"cyl-8.csv\""
   },
   {
-    "objectID": "slides/09.html#map_df-variants",
-    "href": "slides/09.html#map_df-variants",
+    "objectID": "slides/09.html#purrrimap-iterates-over-values-and-indices",
+    "href": "slides/09.html#purrrimap-iterates-over-values-and-indices",
     "title": "Functionals",
-    "section": "map_df*() variants",
-    "text": "map_df*() variants\n\nmap_dfr() = row bind the results\nmap_dfc() = column bind the results\nNote that map_dfr() has been superseded by map() |&gt; list_rbind() and map_dfc() has been superseded by map() |&gt; list_cbind()\n\n\ncol_stats &lt;- function(n) {\n  head(mtcars, n) |&gt; \n    summarise_all(mean) |&gt; \n    mutate_all(floor) |&gt; \n    mutate(n = paste(\"N =\", n))\n}\n\nmap((1:2) * 10, col_stats)\n\n#&gt; [[1]]\n#&gt;   mpg cyl disp  hp drat wt qsec vs am gear carb      n\n#&gt; 1  20   5  208 122    3  3   18  0  0    3    2 N = 10\n#&gt; \n#&gt; [[2]]\n#&gt;   mpg cyl disp  hp drat wt qsec vs am gear carb      n\n#&gt; 1  20   6  233 136    3  3   18  0  0    3    2 N = 20\n\nmap_dfr((1:2) * 10, col_stats)\n\n#&gt;   mpg cyl disp  hp drat wt qsec vs am gear carb      n\n#&gt; 1  20   5  208 122    3  3   18  0  0    3    2 N = 10\n#&gt; 2  20   6  233 136    3  3   18  0  0    3    2 N = 20\n\nmap((1:2) * 10, col_stats) |&gt; list_rbind()\n\n#&gt;   mpg cyl disp  hp drat wt qsec vs am gear carb      n\n#&gt; 1  20   5  208 122    3  3   18  0  0    3    2 N = 10\n#&gt; 2  20   6  233 136    3  3   18  0  0    3    2 N = 20"
+    "section": "purrr::imap() iterates over values and indices",
+    "text": "purrr::imap() iterates over values and indices\nNamed input == map2(.x, names(.x), .f)\n\nimap_chr(iris[, 1:2], ~ paste0(\"The first value of '\", .y, \"' is \", .x[[1]]))\n\n#&gt;                               Sepal.Length \n#&gt; \"The first value of 'Sepal.Length' is 5.1\" \n#&gt;                                Sepal.Width \n#&gt;  \"The first value of 'Sepal.Width' is 3.5\"\n\n\nUnnamed input == map2(.x, seq_along(.x), .f)\n\nx &lt;- map(1:2, ~ sample(100, 5))\nimap_chr(x, ~ paste0(\"The max of element \", .y, \" is \", max(.x)))\n\n#&gt; [1] \"The max of element 1 is 61\" \"The max of element 2 is 88\""
   },
   {
-    "objectID": "slides/09.html#pluck",
-    "href": "slides/09.html#pluck",
+    "objectID": "slides/09.html#purrrpmap-iterates-over-multiple-arguments-in-a-list",
+    "href": "slides/09.html#purrrpmap-iterates-over-multiple-arguments-in-a-list",
     "title": "Functionals",
-    "section": "pluck()",
-    "text": "pluck()\n\npluck() will pull a single element from a list\n\nI like the example from the book because the starting object is not particularly easy to work with (as many JSON objects might not be).\n\nmy_list &lt;- list(\n  list(-1, x = 1, y = c(2), z = \"a\"),\n  list(-2, x = 4, y = c(5, 6), z = \"b\"),\n  list(-3, x = 8, y = c(9, 10, 11))\n)\nmy_list\n\n#&gt; [[1]]\n#&gt; [[1]][[1]]\n#&gt; [1] -1\n#&gt; \n#&gt; [[1]]$x\n#&gt; [1] 1\n#&gt; \n#&gt; [[1]]$y\n#&gt; [1] 2\n#&gt; \n#&gt; [[1]]$z\n#&gt; [1] \"a\"\n#&gt; \n#&gt; \n#&gt; [[2]]\n#&gt; [[2]][[1]]\n#&gt; [1] -2\n#&gt; \n#&gt; [[2]]$x\n#&gt; [1] 4\n#&gt; \n#&gt; [[2]]$y\n#&gt; [1] 5 6\n#&gt; \n#&gt; [[2]]$z\n#&gt; [1] \"b\"\n#&gt; \n#&gt; \n#&gt; [[3]]\n#&gt; [[3]][[1]]\n#&gt; [1] -3\n#&gt; \n#&gt; [[3]]$x\n#&gt; [1] 8\n#&gt; \n#&gt; [[3]]$y\n#&gt; [1]  9 10 11\n\n\nNotice that the “first element” means something different in standard pluck() versus mapped pluck().\n\npluck(my_list, 1)\n\n#&gt; [[1]]\n#&gt; [1] -1\n#&gt; \n#&gt; $x\n#&gt; [1] 1\n#&gt; \n#&gt; $y\n#&gt; [1] 2\n#&gt; \n#&gt; $z\n#&gt; [1] \"a\"\n\nmap(my_list, pluck, 1)\n\n#&gt; [[1]]\n#&gt; [1] -1\n#&gt; \n#&gt; [[2]]\n#&gt; [1] -2\n#&gt; \n#&gt; [[3]]\n#&gt; [1] -3\n\nmap_dbl(my_list, pluck, 1)\n\n#&gt; [1] -1 -2 -3\n\n\nThe map() functions also have shortcuts for extracting elements from vectors (powered by purrr::pluck()). Note that map(my_list, 3) is a shortcut for map(my_list, pluck, 3).\n\n# Select by name\nmap_dbl(my_list, \"x\")\n\n#&gt; [1] 1 4 8\n\n# Or by position\nmap_dbl(my_list, 1)\n\n#&gt; [1] -1 -2 -3\n\n# Or by both\nmap_dbl(my_list, list(\"y\", 1))\n\n#&gt; [1] 2 5 9\n\n# You'll get an error if you try to retrieve an inside item that doesn't have \n# a consistent format and you want a numeric output\nmap_dbl(my_list, list(\"y\"))\n\n#&gt; Error in `map_dbl()`:\n#&gt; ℹ In index: 2.\n#&gt; Caused by error:\n#&gt; ! Result must be length 1, not 2.\n\n# You'll get an error if a component doesn't exist:\nmap_chr(my_list, \"z\")\n\n#&gt; Error in `map_chr()`:\n#&gt; ℹ In index: 3.\n#&gt; Caused by error:\n#&gt; ! Result must be length 1, not 0.\n\n#&gt; Error: Result 3 must be a single string, not NULL of length 0\n\n# Unless you supply a .default value\nmap_chr(my_list, \"z\", .default = NA)\n\n#&gt; [1] \"a\" \"b\" NA\n\n#&gt; [1] \"a\" \"b\" NA"
+    "section": "purrr::pmap() iterates over multiple arguments in a list",
+    "text": "purrr::pmap() iterates over multiple arguments in a list\npmap() applies function to list of arguments\n\nmap2(x, y, f) is equivalent to pmap(list(x, y), f).\nA data frame is a list, works great with pmap().\n\n\nparams &lt;- tibble::tribble(\n  ~n, ~min, ~max,\n  1L, 0, 1,\n  2L, 10, 100,\n)\n\npmap(params, runif)\n\n#&gt; [[1]]\n#&gt; [1] 0.5482892\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 92.36585 81.73695"
   },
   {
-    "objectID": "slides/09.html#not-covered-flatten",
-    "href": "slides/09.html#not-covered-flatten",
+    "objectID": "slides/09.html#purrrreduce-combines-vector-elements-with-a-binary-function",
+    "href": "slides/09.html#purrrreduce-combines-vector-elements-with-a-binary-function",
     "title": "Functionals",
-    "section": "Not covered: flatten()",
-    "text": "Not covered: flatten()\n\nflatten() will turn a list of lists into a simpler vector.\n\n\nmy_list &lt;-\n  list(\n    a = 1:3,\n    b = list(1:3)\n  )\n\nmy_list\n\n#&gt; $a\n#&gt; [1] 1 2 3\n#&gt; \n#&gt; $b\n#&gt; $b[[1]]\n#&gt; [1] 1 2 3\n\nmap_if(my_list, is.list, pluck)\n\n#&gt; $a\n#&gt; [1] 1 2 3\n#&gt; \n#&gt; $b\n#&gt; $b[[1]]\n#&gt; [1] 1 2 3\n\nmap_if(my_list, is.list, flatten_int)\n\n#&gt; $a\n#&gt; [1] 1 2 3\n#&gt; \n#&gt; $b\n#&gt; [1] 1 2 3\n\nmap_if(my_list, is.list, flatten_int) |&gt; \n  flatten_int()\n\n#&gt; [1] 1 2 3 1 2 3"
+    "section": "purrr::reduce() combines vector elements with a binary function",
+    "text": "purrr::reduce() combines vector elements with a binary function\n\n“Reduces” a vector to 1 value by repeatedly applying 2-arg function\nreduce(1:4, f) is equivalent to f(f(f(1, 2), 3), 4).\n\nExample: Find the numbers that appear in every vector in a list.\n\nset.seed(123)\nlst &lt;- map(1:4, ~ sample(1:10, 15, replace = TRUE))\nreduce(lst, intersect)\n\n#&gt; [1] 10  5  9"
   },
   {
-    "objectID": "slides/09.html#dealing-with-failures",
-    "href": "slides/09.html#dealing-with-failures",
+    "objectID": "slides/09.html#purrraccumulate-shows-intermediate-results",
+    "href": "slides/09.html#purrraccumulate-shows-intermediate-results",
     "title": "Functionals",
-    "section": "Dealing with Failures",
-    "text": "Dealing with Failures"
+    "section": "purrr::accumulate() shows intermediate results",
+    "text": "purrr::accumulate() shows intermediate results\n\nLike reduce(), but returns all the intermediate results.\nGreat way to understand how reduce() works.\n\n\naccumulate(lst, intersect)\n\n#&gt; [[1]]\n#&gt;  [1]  3  3 10  2  6  5  4  6  9 10  5  3  9  9  9\n#&gt; \n#&gt; [[2]]\n#&gt; [1]  3 10  5  4  9\n#&gt; \n#&gt; [[3]]\n#&gt; [1] 10  5  9\n#&gt; \n#&gt; [[4]]\n#&gt; [1] 10  5  9"
   },
   {
-    "objectID": "slides/09.html#safely",
-    "href": "slides/09.html#safely",
+    "objectID": "slides/09.html#purrraccumulate-is-useful-for-cumulative-calculations",
+    "href": "slides/09.html#purrraccumulate-is-useful-for-cumulative-calculations",
     "title": "Functionals",
-    "section": "Safely",
-    "text": "Safely\nsafely() is an adverb. It takes a function (a verb) and returns a modified version. In this case, the modified function will never throw an error. Instead it always returns a list with two elements.\n\nresult is the original result. If there is an error this will be NULL\nerror is an error object. If the operation was successful the “error” will be NULL.\n\n\nA &lt;- list(1, 10, \"a\")\n\nmap(.x = A, .f = safely(log))\n\n#&gt; [[1]]\n#&gt; [[1]]$result\n#&gt; [1] 0\n#&gt; \n#&gt; [[1]]$error\n#&gt; NULL\n#&gt; \n#&gt; \n#&gt; [[2]]\n#&gt; [[2]]$result\n#&gt; [1] 2.302585\n#&gt; \n#&gt; [[2]]$error\n#&gt; NULL\n#&gt; \n#&gt; \n#&gt; [[3]]\n#&gt; [[3]]$result\n#&gt; NULL\n#&gt; \n#&gt; [[3]]$error\n#&gt; &lt;simpleError in .Primitive(\"log\")(x, base): non-numeric argument to mathematical function&gt;"
+    "section": "purrr::accumulate() is useful for cumulative calculations",
+    "text": "purrr::accumulate() is useful for cumulative calculations\n\naccumulate(c(4, 3, 10), `+`)\n\n#&gt; [1]  4  7 17"
   },
   {
-    "objectID": "slides/09.html#possibly",
-    "href": "slides/09.html#possibly",
+    "objectID": "slides/09.html#predicate-functionals-apply-a-predicate-to-each-element",
+    "href": "slides/09.html#predicate-functionals-apply-a-predicate-to-each-element",
     "title": "Functionals",
-    "section": "Possibly",
-    "text": "Possibly\npossibly() always succeeds. It is simpler than safely(), because you can give it a default value to return when there is an error.\n\nA &lt;- list(1,10,\"a\")\n\nmap_dbl(.x = A, .f = possibly(log, otherwise = NA_real_) )\n\n#&gt; [1] 0.000000 2.302585       NA"
+    "section": "Predicate functionals apply a predicate to each element",
+    "text": "Predicate functionals apply a predicate to each element\nPredicate: function that returns single TRUE or FALSE.\n\nsome() / every() / none(): True for any / all / no elements?\ndetect() / detect_index(): Find value / location of 1st match.\nkeep() / discard(): Keep / drop all matching elements.\n\n\ndf &lt;- data.frame(x = 1:3, y = c(\"a\", \"b\", \"c\"))\nstr(keep(df, is.numeric))\n\n#&gt; 'data.frame':    3 obs. of  1 variable:\n#&gt;  $ x: int  1 2 3\n\nstr(discard(df, is.numeric))\n\n#&gt; 'data.frame':    3 obs. of  1 variable:\n#&gt;  $ y: chr  \"a\" \"b\" \"c\""
+  },
+  {
+    "objectID": "slides/09.html#map_if-and-modify_if-transform-elements-where-a-predicate-is-true",
+    "href": "slides/09.html#map_if-and-modify_if-transform-elements-where-a-predicate-is-true",
+    "title": "Functionals",
+    "section": "map_if() and modify_if() transform elements where a predicate is true",
+    "text": "map_if() and modify_if() transform elements where a predicate is true\nE.g, calculate mean of only numeric columns in a data frame.\n\ndf &lt;- data.frame(\n  num1 = c(0, 10, 20),\n  num2 = c(5, 6, 7),\n  chr1 = c(\"a\", \"b\", \"c\")\n)\n\nstr(map_if(df, is.numeric, mean))\n\n#&gt; List of 3\n#&gt;  $ num1: num 10\n#&gt;  $ num2: num 6\n#&gt;  $ chr1: chr [1:3] \"a\" \"b\" \"c\"\n\nstr(modify_if(df, is.numeric, mean))\n\n#&gt; 'data.frame':    3 obs. of  3 variables:\n#&gt;  $ num1: num  10 10 10\n#&gt;  $ num2: num  6 6 6\n#&gt;  $ chr1: chr  \"a\" \"b\" \"c\""
+  },
+  {
+    "objectID": "slides/09.html#baseapply-summarizes-matrices-and-arrays",
+    "href": "slides/09.html#baseapply-summarizes-matrices-and-arrays",
+    "title": "Functionals",
+    "section": "base::apply() summarizes matrices and arrays",
+    "text": "base::apply() summarizes matrices and arrays\n\nCollapses 1 or more matrix/array dimensions by applying a summary function.\n\napply(X, MARGIN, FUN): MARGIN? 1 for rows, 2 for columns.\n\na2d &lt;- matrix(1:20, nrow = 5)\n# Row means\napply(a2d, 1, mean)\n\n#&gt; [1]  8.5  9.5 10.5 11.5 12.5\n\n# Column means\napply(a2d, 2, mean)\n\n#&gt; [1]  3  8 13 18\n\n\nWarning: apply() will coerce df to a matrix!"
+  },
+  {
+    "objectID": "slides/09.html#base-r-has-mathematical-functionals",
+    "href": "slides/09.html#base-r-has-mathematical-functionals",
+    "title": "Functionals",
+    "section": "Base R has mathematical functionals",
+    "text": "Base R has mathematical functionals\nBase R includes several mathematical functionals.\n\nintegrate(): Find the area under a curve.\nuniroot(): Find where a function equals zero.\noptimise(): Find the minimum or maximum value of a function.\n\n\nintegrate(sin, 0, pi)\n\n#&gt; 2 with absolute error &lt; 2.2e-14"
   },
   {
     "objectID": "slides/07.html#learning-objectives",
     "href": "slides/07.html#learning-objectives",
     "title": "Environments",
-    "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nCreate, modify, and inspect environments\nRecognize special environments\nUnderstand how environments power lexical scoping and namespaces"
+    "section": "Learning objectives",
+    "text": "Learning objectives\n\nCreate, modify, and inspect environments\nRecognize special environments\nUnderstand how environments power lexical scoping and namespaces"
   },
   {
     "objectID": "slides/07.html#environments-are-similar-to-lists",
@@ -1286,7 +1307,7 @@
     "href": "slides/07.html#inspect-environments-with-rlang",
     "title": "Environments",
     "section": "Inspect environments with {rlang}",
-    "text": "Inspect environments with {rlang}\n\nrlang::env_print(e1)\n\n#&gt; &lt;environment: 0x558536885df0&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • a: &lt;lgl&gt;\n#&gt; • b: &lt;chr&gt;\n#&gt; • c: &lt;dbl&gt;\n#&gt; • d: &lt;int&gt;\n\n\n\nrlang::env_names(e1)\n\n#&gt; [1] \"a\" \"b\" \"c\" \"d\"\n\n\n\nrlang::env_has(e1, \"a\")\n\n#&gt;    a \n#&gt; TRUE\n\n\n\nrlang::env_get(e1, \"a\")\n\n#&gt; [1] FALSE\n\n\n\nrlang::env_parent(e1)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n\nbase::print() displays the memory address and is not as helpful as rlang::env_print()"
+    "text": "Inspect environments with {rlang}\n\nrlang::env_print(e1)\n\n#&gt; &lt;environment: 0x55b5e9b35dd0&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • a: &lt;lgl&gt;\n#&gt; • b: &lt;chr&gt;\n#&gt; • c: &lt;dbl&gt;\n#&gt; • d: &lt;int&gt;\n\n\n\nrlang::env_names(e1)\n\n#&gt; [1] \"a\" \"b\" \"c\" \"d\"\n\n\n\nrlang::env_has(e1, \"a\")\n\n#&gt;    a \n#&gt; TRUE\n\n\n\nrlang::env_get(e1, \"a\")\n\n#&gt; [1] FALSE\n\n\n\nrlang::env_parent(e1)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n\nbase::print() displays the memory address and is not as helpful as rlang::env_print()"
   },
   {
     "objectID": "slides/07.html#by-default-the-current-environment-is-your-global-environment",
@@ -1300,7 +1321,7 @@
     "href": "slides/07.html#every-environment-has-a-parent-environment",
     "title": "Environments",
     "section": "Every environment has a parent environment",
-    "text": "Every environment has a parent environment\n\nAllows for lexical scoping\n\n\ne2a &lt;- rlang::env(d = 4, e = 5)\n\ne2b &lt;- rlang::env(e2a, a = 1, b = 2, c = 3)\n\nrlang::env_parent(e2b)\n\n#&gt; &lt;environment: 0x55853a7f7410&gt;\n\nrlang::env_parents(e2b)\n\n#&gt; [[1]]   &lt;env: 0x55853a7f7410&gt;\n#&gt; [[2]] $ &lt;env: global&gt;\n\n\n\n\nLexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)\nLexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time"
+    "text": "Every environment has a parent environment\n\nAllows for lexical scoping\n\n\ne2a &lt;- rlang::env(d = 4, e = 5)\n\ne2b &lt;- rlang::env(e2a, a = 1, b = 2, c = 3)\n\nrlang::env_parent(e2b)\n\n#&gt; &lt;environment: 0x55b5edaa4260&gt;\n\nrlang::env_parents(e2b)\n\n#&gt; [[1]]   &lt;env: 0x55b5edaa4260&gt;\n#&gt; [[2]] $ &lt;env: global&gt;\n\n\n\n\nLexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)\nLexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time"
   },
   {
     "objectID": "slides/07.html#only-the-empty-environment-does-not-have-a-parent",
@@ -1314,7 +1335,7 @@
     "href": "slides/07.html#all-environments-eventually-terminate-with-the-empty-environment",
     "title": "Environments",
     "section": "All environments eventually terminate with the empty environment",
-    "text": "All environments eventually terminate with the empty environment\n\nrlang::env_parents(e2b, last = rlang::empty_env())\n\n#&gt;  [[1]]   &lt;env: 0x55853a7f7410&gt;\n#&gt;  [[2]] $ &lt;env: global&gt;\n#&gt;  [[3]] $ &lt;env: package:stats&gt;\n#&gt;  [[4]] $ &lt;env: package:graphics&gt;\n#&gt;  [[5]] $ &lt;env: package:grDevices&gt;\n#&gt;  [[6]] $ &lt;env: package:utils&gt;\n#&gt;  [[7]] $ &lt;env: package:datasets&gt;\n#&gt;  [[8]] $ &lt;env: package:methods&gt;\n#&gt;  [[9]] $ &lt;env: Autoloads&gt;\n#&gt; [[10]] $ &lt;env: package:base&gt;\n#&gt; [[11]] $ &lt;env: empty&gt;\n\n\n\nThe empty enviornment typically isn’t shown but can be displayed by setting the last parameter of rlang::env_parents()"
+    "text": "All environments eventually terminate with the empty environment\n\nrlang::env_parents(e2b, last = rlang::empty_env())\n\n#&gt;  [[1]]   &lt;env: 0x55b5edaa4260&gt;\n#&gt;  [[2]] $ &lt;env: global&gt;\n#&gt;  [[3]] $ &lt;env: package:stats&gt;\n#&gt;  [[4]] $ &lt;env: package:graphics&gt;\n#&gt;  [[5]] $ &lt;env: package:grDevices&gt;\n#&gt;  [[6]] $ &lt;env: package:utils&gt;\n#&gt;  [[7]] $ &lt;env: package:datasets&gt;\n#&gt;  [[8]] $ &lt;env: package:methods&gt;\n#&gt;  [[9]] $ &lt;env: Autoloads&gt;\n#&gt; [[10]] $ &lt;env: package:base&gt;\n#&gt; [[11]] $ &lt;env: empty&gt;\n\n\n\nThe empty enviornment typically isn’t shown but can be displayed by setting the last parameter of rlang::env_parents()"
   },
   {
     "objectID": "slides/07.html#be-wary-of-using--",
@@ -1460,8 +1481,8 @@
     "objectID": "slides/05.html#learning-objectives",
     "href": "slides/05.html#learning-objectives",
     "title": "Control flow",
-    "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nUnderstand the two primary tools for control flow: choices and loops\nLearn best practices to void common pitfalls\nDistinguish when to use if, ifelse(), and switch() for choices\nDistinguish when to use for, while, and repeat for loops\n\n\n\n\n\n\n\nNote\n\n\nBasic familiarity with choices and loops is assumed."
+    "section": "Learning objectives",
+    "text": "Learning objectives\n\nUnderstand the two primary tools for control flow: choices and loops\nLearn best practices to void common pitfalls\nDistinguish when to use if, ifelse(), and switch() for choices\nDistinguish when to use for, while, and repeat for loops\n\n\n\n\n\n\n\nNote\n\n\nBasic familiarity with choices and loops is assumed."
   },
   {
     "objectID": "slides/05.html#if-is-the-basic-statement-for-a-choice",
@@ -1705,15 +1726,15 @@
     "objectID": "slides/03.html#learning-objectives",
     "href": "slides/03.html#learning-objectives",
     "title": "Vectors",
-    "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nLearn about different types of vectors and their attributes\nNavigate through vector types and their value types\nVenture into factors and date-time objects\nDiscuss the differences between data frames and tibbles\nDo not get absorbed by the NA and NULL black hole"
+    "section": "Learning objectives",
+    "text": "Learning objectives\n\nLearn about different types of vectors and their attributes\nNavigate through vector types and their value types\nVenture into factors and date-time objects\nDiscuss the differences between data frames and tibbles\nDo not get absorbed by the NA and NULL black hole"
   },
   {
     "objectID": "slides/03.html#session-info",
     "href": "slides/03.html#session-info",
     "title": "Vectors",
     "section": "Session Info",
-    "text": "Session Info\n\nlibrary(\"dplyr\")\nlibrary(\"gt\")\nlibrary(\"palmerpenguins\")\n\n\n\nSession Info\n\n\nutils::sessionInfo()\n\n#&gt; R version 4.5.1 (2025-06-13 ucrt)\n#&gt; Platform: x86_64-w64-mingw32/x64\n#&gt; Running under: Windows 11 x64 (build 26100)\n#&gt; \n#&gt; Matrix products: default\n#&gt;   LAPACK version 3.12.1\n#&gt; \n#&gt; locale:\n#&gt; [1] LC_COLLATE=English_United States.utf8 \n#&gt; [2] LC_CTYPE=English_United States.utf8   \n#&gt; [3] LC_MONETARY=English_United States.utf8\n#&gt; [4] LC_NUMERIC=C                          \n#&gt; [5] LC_TIME=English_United States.utf8    \n#&gt; \n#&gt; time zone: America/Chicago\n#&gt; tzcode source: internal\n#&gt; \n#&gt; attached base packages:\n#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     \n#&gt; \n#&gt; other attached packages:\n#&gt; [1] palmerpenguins_0.1.1 gt_1.0.0             dplyr_1.1.4         \n#&gt; \n#&gt; loaded via a namespace (and not attached):\n#&gt;  [1] digest_0.6.37     R6_2.6.1          fastmap_1.2.0     tidyselect_1.2.1 \n#&gt;  [5] xfun_0.53         magrittr_2.0.3    glue_1.8.0        tibble_3.3.0     \n#&gt;  [9] knitr_1.50        pkgconfig_2.0.3   htmltools_0.5.8.1 rmarkdown_2.29   \n#&gt; [13] generics_0.1.4    lifecycle_1.0.4   xml2_1.3.8        cli_3.6.5        \n#&gt; [17] vctrs_0.6.5       compiler_4.5.1    tools_4.5.1       pillar_1.11.0    \n#&gt; [21] evaluate_1.0.4    yaml_2.3.10       rlang_1.1.6       jsonlite_2.0.0   \n#&gt; [25] keyring_1.4.1"
+    "text": "Session Info\n\nlibrary(\"dplyr\")\nlibrary(\"gt\")\nlibrary(\"palmerpenguins\")\n\n\n\nSession Info\n\n\nutils::sessionInfo()\n\n#&gt; R version 4.5.1 (2025-06-13)\n#&gt; Platform: x86_64-pc-linux-gnu\n#&gt; Running under: Ubuntu 24.04.3 LTS\n#&gt; \n#&gt; Matrix products: default\n#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 \n#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0\n#&gt; \n#&gt; locale:\n#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       \n#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   \n#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          \n#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   \n#&gt; \n#&gt; time zone: UTC\n#&gt; tzcode source: system (glibc)\n#&gt; \n#&gt; attached base packages:\n#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     \n#&gt; \n#&gt; other attached packages:\n#&gt; [1] palmerpenguins_0.1.1 gt_1.1.0             dplyr_1.1.4         \n#&gt; \n#&gt; loaded via a namespace (and not attached):\n#&gt;  [1] digest_0.6.37     R6_2.6.1          fastmap_1.2.0     tidyselect_1.2.1 \n#&gt;  [5] xfun_0.53         magrittr_2.0.4    glue_1.8.0        tibble_3.3.0     \n#&gt;  [9] knitr_1.50        pkgconfig_2.0.3   htmltools_0.5.8.1 rmarkdown_2.30   \n#&gt; [13] generics_0.1.4    lifecycle_1.0.4   xml2_1.4.0        cli_3.6.5        \n#&gt; [17] vctrs_0.6.5       compiler_4.5.1    tools_4.5.1       pillar_1.11.1    \n#&gt; [21] evaluate_1.0.5    yaml_2.3.10       fs_1.6.6          rlang_1.1.6      \n#&gt; [25] jsonlite_2.0.0"
   },
   {
     "objectID": "slides/03.html#aperitif",
@@ -2133,14 +2154,14 @@
     "href": "slides/03.html#dates-times-posixct",
     "title": "Vectors",
     "section": "Dates-times: POSIXct",
-    "text": "Dates-times: POSIXct\nWe’ll focus on POSIXct because:\n\nSimplest\nBuilt on an atomic (double) vector\nMost appropriate for use in a data frame\n\nLet’s now build and deconstruct a Date-time\n\n# Build\nnote_date_time &lt;- as.POSIXct(\n  x = Sys.time(), # time\n  tz = \"America/New_York\" # time zone, used only for formatting\n)\n\n# Inspect\nnote_date_time\n\n#&gt; [1] \"2025-09-03 07:11:21 EDT\"\n\n# - type\ntypeof(note_date_time)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(note_date_time)\n\n#&gt; $class\n#&gt; [1] \"POSIXct\" \"POSIXt\" \n#&gt; \n#&gt; $tzone\n#&gt; [1] \"America/New_York\"\n\nstructure(note_date_time, tzone = \"Europe/Paris\")\n\n#&gt; [1] \"2025-09-03 13:11:21 CEST\"\n\n\n\ndate_time &lt;- as.POSIXct(\"2024-02-22 12:34:56\", tz = \"EST\")\nunclass(date_time)\n\n#&gt; [1] 1708623296\n#&gt; attr(,\"tzone\")\n#&gt; [1] \"EST\""
+    "text": "Dates-times: POSIXct\nWe’ll focus on POSIXct because:\n\nSimplest\nBuilt on an atomic (double) vector\nMost appropriate for use in a data frame\n\nLet’s now build and deconstruct a Date-time\n\n# Build\nnote_date_time &lt;- as.POSIXct(\n  x = Sys.time(), # time\n  tz = \"America/New_York\" # time zone, used only for formatting\n)\n\n# Inspect\nnote_date_time\n\n#&gt; [1] \"2025-10-07 11:31:15 EDT\"\n\n# - type\ntypeof(note_date_time)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(note_date_time)\n\n#&gt; $class\n#&gt; [1] \"POSIXct\" \"POSIXt\" \n#&gt; \n#&gt; $tzone\n#&gt; [1] \"America/New_York\"\n\nstructure(note_date_time, tzone = \"Europe/Paris\")\n\n#&gt; [1] \"2025-10-07 17:31:15 CEST\"\n\n\n\ndate_time &lt;- as.POSIXct(\"2024-02-22 12:34:56\", tz = \"EST\")\nunclass(date_time)\n\n#&gt; [1] 1708623296\n#&gt; attr(,\"tzone\")\n#&gt; [1] \"EST\""
   },
   {
     "objectID": "slides/03.html#durations",
     "href": "slides/03.html#durations",
     "title": "Vectors",
     "section": "Durations",
-    "text": "Durations\nDurations represent the amount of time between pairs of dates or date-times.\n\nDouble vectors\nClass: “difftime”\nAttributes: “units”, or the unit of duration (e.g., weeks, hours, minutes, seconds, etc.)\n\n\n# Construct\none_minute &lt;- as.difftime(1, units = \"mins\")\n# Inspect\none_minute\n\n#&gt; Time difference of 1 mins\n\n# Dissect\n# - type\ntypeof(one_minute)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(one_minute)\n\n#&gt; $class\n#&gt; [1] \"difftime\"\n#&gt; \n#&gt; $units\n#&gt; [1] \"mins\"\n\n\n\ntime_since_01_01_1970 &lt;- notes_date - date\ntime_since_01_01_1970\n\n#&gt; Time difference of 20303 days\n\n\nSee also:\n\nlubridate::make_difftime()\nclock::date_time_build()"
+    "text": "Durations\nDurations represent the amount of time between pairs of dates or date-times.\n\nDouble vectors\nClass: “difftime”\nAttributes: “units”, or the unit of duration (e.g., weeks, hours, minutes, seconds, etc.)\n\n\n# Construct\none_minute &lt;- as.difftime(1, units = \"mins\")\n# Inspect\none_minute\n\n#&gt; Time difference of 1 mins\n\n# Dissect\n# - type\ntypeof(one_minute)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(one_minute)\n\n#&gt; $class\n#&gt; [1] \"difftime\"\n#&gt; \n#&gt; $units\n#&gt; [1] \"mins\"\n\n\n\ntime_since_01_01_1970 &lt;- notes_date - date\ntime_since_01_01_1970\n\n#&gt; Time difference of 20337 days\n\n\nSee also:\n\nlubridate::make_difftime()\nclock::date_time_build()"
   },
   {
     "objectID": "slides/03.html#exercises-13",
@@ -2746,8 +2767,8 @@
     "objectID": "slides/04.html#learning-objectives",
     "href": "slides/04.html#learning-objectives",
     "title": "Subsetting",
-    "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nSelect multiple elements from a vector with [\nSelect single elements from a vector with [[ and $\nAssign to subsets of vectors\nUse subsetting to expand data"
+    "section": "Learning objectives",
+    "text": "Learning objectives\n\nSelect multiple elements from a vector with [\nSelect single elements from a vector with [[ and $\nAssign to subsets of vectors\nUse subsetting to expand data"
   },
   {
     "objectID": "slides/04.html#positive-integers-return-elements-at-specified-positions",
@@ -2998,8 +3019,8 @@
     "objectID": "slides/06.html#learning-objectives",
     "href": "slides/06.html#learning-objectives",
     "title": "Functions",
-    "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nHow to make functions in R\nWhat are the parts of a function\nNested functions"
+    "section": "Learning objectives",
+    "text": "Learning objectives\n\nHow to make functions in R\nWhat are the parts of a function\nNested functions"
   },
   {
     "objectID": "slides/06.html#how-to-make-a-simple-function-in-r",
@@ -3027,7 +3048,7 @@
     "href": "slides/06.html#function-composition",
     "title": "Functions",
     "section": "Function composition",
-    "text": "Function composition\n\nx &lt;- runif(100)\n# Nested function calls\nsquare &lt;- function(x) x^2\ndeviation &lt;- function(x) x - mean(x)\nsqrt(mean(square(deviation(x))))\n\n#&gt; [1] 0.2549537\n\n\n\n# intermediate result\nout &lt;- deviation(x)\nout &lt;- square(out)\nout &lt;- mean(out)\nout &lt;- sqrt(out)\nout\n\n#&gt; [1] 0.2549537\n\n\n\n# Pipe workflow\nx |&gt; \n  deviation() |&gt;\n  square() |&gt;\n  mean() |&gt;\n  sqrt()\n\n#&gt; [1] 0.2549537"
+    "text": "Function composition\n\nx &lt;- runif(100)\n# Nested function calls\nsquare &lt;- function(x) x^2\ndeviation &lt;- function(x) x - mean(x)\nsqrt(mean(square(deviation(x))))\n\n#&gt; [1] 0.2981467\n\n\n\n# intermediate result\nout &lt;- deviation(x)\nout &lt;- square(out)\nout &lt;- mean(out)\nout &lt;- sqrt(out)\nout\n\n#&gt; [1] 0.2981467\n\n\n\n# Pipe workflow\nx |&gt; \n  deviation() |&gt;\n  square() |&gt;\n  mean() |&gt;\n  sqrt()\n\n#&gt; [1] 0.2981467"
   },
   {
     "objectID": "slides/06.html#more-about-functions-insights",
@@ -3048,14 +3069,14 @@
     "href": "slides/06.html#case-study-sir-model-function",
     "title": "Functions",
     "section": "Case Study: SIR model function",
-    "text": "Case Study: SIR model function\nThis is an interesting example taken from a course on Coursera: Infectious disease modelling-ICL\nThe purpose of this example is to show how to make a model passing through making a function.\nFirst we need to load some useful libraries:\n\nlibrary(deSolve)\nlibrary(reshape2)\n\nThen set the model inputs:\n\npopulation size (N)\nnumber of susceptable (S)\ninfected (I)\nrecovered (R)\n\nAnd add the model parameters:\n\ninfection rate (\\(\\beta\\))\nrecovery rate (\\(\\gamma\\))\n\n\nN&lt;- 100000                  # population\n\nstate_values&lt;- c(S = N -1,   # susceptible\n                 I = 1,      # infected\n                 R = 0)      # recovered\n\nparameters&lt;- c(beta = 1/2,  # infection rate days^-1\n               gamma = 1/4) # recovery rate days^-1\n\nThen we set the time as an important factor, which defines the length of time we are looking at this model run. It is intended as the time range in which the infections spread out, let’s say that we are aiming to investigate an infection period of 100 days.\n\ntimes&lt;- seq(0, 100, by = 1)\n\nFinally, we set up the SIR model, the susceptable, infected and recovered model. How do we do that is passing the paramenters through a function of the time, and state.\nWithin the model function we calculate one more paramenter, the force of infection: \\(\\lambda\\)\n\nsir_model&lt;- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    N&lt;- S + I + R\n    lambda = beta * I/N    # force of infection\n    dS&lt;- - lambda * S \n    dI&lt;- lambda * S - gamma * I\n    dR&lt;- gamma * I\n    return(list(c(dS,dI,dR)))\n  })\n}\n\nOnce we have our SIR model function ready, we can calculate the output of the model, with the help of the function ode() from {deSolve} package.\n\noutput&lt;- as.data.frame(ode(y = state_values,\n                           times = times,\n                           func = sir_model,\n                           parms = parameters))\noutput %&gt;% head\n\n#&gt;   time        S        I         R\n#&gt; 1    0 99999.00 1.000000 0.0000000\n#&gt; 2    1 99998.43 1.284018 0.2840252\n#&gt; 3    2 99997.70 1.648696 0.6487171\n#&gt; 4    3 99996.77 2.116939 1.1169863\n#&gt; 5    4 99995.56 2.718152 1.7182450\n#&gt; 6    5 99994.02 3.490086 2.4902600\n\n\nIn addition to our builtin SIR model function we can have a look at:\n\n?deSolve::ode()\n\nIt solves Ordinary Differential Equations.\n\ndeSolve:::ode\n\n#&gt; function (y, times, func, parms, method = c(\"lsoda\", \"lsode\", \n#&gt;     \"lsodes\", \"lsodar\", \"vode\", \"daspk\", \"euler\", \"rk4\", \"ode23\", \n#&gt;     \"ode45\", \"radau\", \"bdf\", \"bdf_d\", \"adams\", \"impAdams\", \"impAdams_d\", \n#&gt;     \"iteration\"), ...) \n#&gt; {\n#&gt;     if (is.null(method)) \n#&gt;         method &lt;- \"lsoda\"\n#&gt;     if (is.list(method)) {\n#&gt;         if (!inherits(method, \"rkMethod\")) \n#&gt;             stop(\"'method' should be given as string or as a list of class 'rkMethod'\")\n#&gt;         out &lt;- rk(y, times, func, parms, method = method, ...)\n#&gt;     }\n#&gt;     else if (is.function(method)) \n#&gt;         out &lt;- method(y, times, func, parms, ...)\n#&gt;     else if (is.complex(y)) \n#&gt;         out &lt;- switch(match.arg(method), vode = zvode(y, times, \n#&gt;             func, parms, ...), bdf = zvode(y, times, func, parms, \n#&gt;             mf = 22, ...), bdf_d = zvode(y, times, func, parms, \n#&gt;             mf = 23, ...), adams = zvode(y, times, func, parms, \n#&gt;             mf = 10, ...), impAdams = zvode(y, times, func, parms, \n#&gt;             mf = 12, ...), impAdams_d = zvode(y, times, func, \n#&gt;             parms, mf = 13, ...))\n#&gt;     else out &lt;- switch(match.arg(method), lsoda = lsoda(y, times, \n#&gt;         func, parms, ...), vode = vode(y, times, func, parms, \n#&gt;         ...), lsode = lsode(y, times, func, parms, ...), lsodes = lsodes(y, \n#&gt;         times, func, parms, ...), lsodar = lsodar(y, times, func, \n#&gt;         parms, ...), daspk = daspk(y, times, func, parms, ...), \n#&gt;         euler = rk(y, times, func, parms, method = \"euler\", ...), \n#&gt;         rk4 = rk(y, times, func, parms, method = \"rk4\", ...), \n#&gt;         ode23 = rk(y, times, func, parms, method = \"ode23\", ...), \n#&gt;         ode45 = rk(y, times, func, parms, method = \"ode45\", ...), \n#&gt;         radau = radau(y, times, func, parms, ...), bdf = lsode(y, \n#&gt;             times, func, parms, mf = 22, ...), bdf_d = lsode(y, \n#&gt;             times, func, parms, mf = 23, ...), adams = lsode(y, \n#&gt;             times, func, parms, mf = 10, ...), impAdams = lsode(y, \n#&gt;             times, func, parms, mf = 12, ...), impAdams_d = lsode(y, \n#&gt;             times, func, parms, mf = 13, ...), iteration = iteration(y, \n#&gt;             times, func, parms, ...))\n#&gt;     return(out)\n#&gt; }\n#&gt; &lt;bytecode: 0x5e4ff4997c50&gt;\n#&gt; &lt;environment: namespace:deSolve&gt;\n\n\n\nmethods(\"ode\")\n\n#&gt; [1] ode.1D   ode.2D   ode.3D   ode.band\n#&gt; see '?methods' for accessing help and source code"
+    "text": "Case Study: SIR model function\nThis is an interesting example taken from a course on Coursera: Infectious disease modelling-ICL\nThe purpose of this example is to show how to make a model passing through making a function.\nFirst we need to load some useful libraries:\n\nlibrary(deSolve)\nlibrary(reshape2)\n\nThen set the model inputs:\n\npopulation size (N)\nnumber of susceptable (S)\ninfected (I)\nrecovered (R)\n\nAnd add the model parameters:\n\ninfection rate (\\(\\beta\\))\nrecovery rate (\\(\\gamma\\))\n\n\nN&lt;- 100000                  # population\n\nstate_values&lt;- c(S = N -1,   # susceptible\n                 I = 1,      # infected\n                 R = 0)      # recovered\n\nparameters&lt;- c(beta = 1/2,  # infection rate days^-1\n               gamma = 1/4) # recovery rate days^-1\n\nThen we set the time as an important factor, which defines the length of time we are looking at this model run. It is intended as the time range in which the infections spread out, let’s say that we are aiming to investigate an infection period of 100 days.\n\ntimes&lt;- seq(0, 100, by = 1)\n\nFinally, we set up the SIR model, the susceptable, infected and recovered model. How do we do that is passing the paramenters through a function of the time, and state.\nWithin the model function we calculate one more paramenter, the force of infection: \\(\\lambda\\)\n\nsir_model&lt;- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    N&lt;- S + I + R\n    lambda = beta * I/N    # force of infection\n    dS&lt;- - lambda * S \n    dI&lt;- lambda * S - gamma * I\n    dR&lt;- gamma * I\n    return(list(c(dS,dI,dR)))\n  })\n}\n\nOnce we have our SIR model function ready, we can calculate the output of the model, with the help of the function ode() from {deSolve} package.\n\noutput&lt;- as.data.frame(ode(y = state_values,\n                           times = times,\n                           func = sir_model,\n                           parms = parameters))\noutput %&gt;% head\n\n#&gt;   time        S        I         R\n#&gt; 1    0 99999.00 1.000000 0.0000000\n#&gt; 2    1 99998.43 1.284018 0.2840252\n#&gt; 3    2 99997.70 1.648696 0.6487171\n#&gt; 4    3 99996.77 2.116939 1.1169863\n#&gt; 5    4 99995.56 2.718152 1.7182450\n#&gt; 6    5 99994.02 3.490086 2.4902600\n\n\nIn addition to our builtin SIR model function we can have a look at:\n\n?deSolve::ode()\n\nIt solves Ordinary Differential Equations.\n\ndeSolve:::ode\n\n#&gt; function (y, times, func, parms, method = c(\"lsoda\", \"lsode\", \n#&gt;     \"lsodes\", \"lsodar\", \"vode\", \"daspk\", \"euler\", \"rk4\", \"ode23\", \n#&gt;     \"ode45\", \"radau\", \"bdf\", \"bdf_d\", \"adams\", \"impAdams\", \"impAdams_d\", \n#&gt;     \"iteration\"), ...) \n#&gt; {\n#&gt;     if (is.null(method)) \n#&gt;         method &lt;- \"lsoda\"\n#&gt;     if (is.list(method)) {\n#&gt;         if (!inherits(method, \"rkMethod\")) \n#&gt;             stop(\"'method' should be given as string or as a list of class 'rkMethod'\")\n#&gt;         out &lt;- rk(y, times, func, parms, method = method, ...)\n#&gt;     }\n#&gt;     else if (is.function(method)) \n#&gt;         out &lt;- method(y, times, func, parms, ...)\n#&gt;     else if (is.complex(y)) \n#&gt;         out &lt;- switch(match.arg(method), vode = zvode(y, times, \n#&gt;             func, parms, ...), bdf = zvode(y, times, func, parms, \n#&gt;             mf = 22, ...), bdf_d = zvode(y, times, func, parms, \n#&gt;             mf = 23, ...), adams = zvode(y, times, func, parms, \n#&gt;             mf = 10, ...), impAdams = zvode(y, times, func, parms, \n#&gt;             mf = 12, ...), impAdams_d = zvode(y, times, func, \n#&gt;             parms, mf = 13, ...))\n#&gt;     else out &lt;- switch(match.arg(method), lsoda = lsoda(y, times, \n#&gt;         func, parms, ...), vode = vode(y, times, func, parms, \n#&gt;         ...), lsode = lsode(y, times, func, parms, ...), lsodes = lsodes(y, \n#&gt;         times, func, parms, ...), lsodar = lsodar(y, times, func, \n#&gt;         parms, ...), daspk = daspk(y, times, func, parms, ...), \n#&gt;         euler = rk(y, times, func, parms, method = \"euler\", ...), \n#&gt;         rk4 = rk(y, times, func, parms, method = \"rk4\", ...), \n#&gt;         ode23 = rk(y, times, func, parms, method = \"ode23\", ...), \n#&gt;         ode45 = rk(y, times, func, parms, method = \"ode45\", ...), \n#&gt;         radau = radau(y, times, func, parms, ...), bdf = lsode(y, \n#&gt;             times, func, parms, mf = 22, ...), bdf_d = lsode(y, \n#&gt;             times, func, parms, mf = 23, ...), adams = lsode(y, \n#&gt;             times, func, parms, mf = 10, ...), impAdams = lsode(y, \n#&gt;             times, func, parms, mf = 12, ...), impAdams_d = lsode(y, \n#&gt;             times, func, parms, mf = 13, ...), iteration = iteration(y, \n#&gt;             times, func, parms, ...))\n#&gt;     return(out)\n#&gt; }\n#&gt; &lt;bytecode: 0x55d249356e38&gt;\n#&gt; &lt;environment: namespace:deSolve&gt;\n\n\n\nmethods(\"ode\")\n\n#&gt; [1] ode.1D   ode.2D   ode.3D   ode.band\n#&gt; see '?methods' for accessing help and source code"
   },
   {
-    "objectID": "slides/08.html#chapter-8-learning-objectives",
-    "href": "slides/08.html#chapter-8-learning-objectives",
+    "objectID": "slides/08.html#learning-objectives",
+    "href": "slides/08.html#learning-objectives",
     "title": "Conditions",
-    "section": "Chapter 8 learning objectives",
-    "text": "Chapter 8 learning objectives\n\nWhat conditions are\nHow to generate (“signal”) them\nHow to consume (“handle”) them"
+    "section": "Learning objectives",
+    "text": "Learning objectives\n\nWhat conditions are\nHow to generate (“signal”) them\nHow to consume (“handle”) them"
   },
   {
     "objectID": "slides/08.html#rs-condition-system-allows-us-to-handle-things-going-wrong",

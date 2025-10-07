@@ -200,77 +200,106 @@
 
 </section>
 <section id="learning-objectives" class="slide level2">
-<h2>Learning objectives:</h2>
+<h2>Learning objectives</h2>
 <ul>
-<li>Define functionals.</li>
-<li>Use the <code>purrr::map()</code> family of functionals.</li>
-<li>Use the <code>purrr::walk()</code> family of functionals.</li>
-<li>Use the <code>purrr::reduce()</code> and <code>purrr::accumulate()</code> family of functionals.</li>
-<li>Use <code>purrr::safely()</code> and <code>purrr::possibly()</code> to deal with failure.</li>
-</ul>
-<p>9.1. <strong>Introduction</strong></p>
-<p>9.2. <strong>map()</strong></p>
-<p>9.3. <strong>purrr</strong> style</p>
-<p>9.4. <strong>map_</strong> variants</p>
-<p>9.5. <strong>reduce()</strong> and <strong>accumulate</strong> family of functions</p>
-<ul>
-<li>Some functions that weren’t covered</li>
+<li>Describe the “functional style” of programming in R.</li>
+<li>Replace <code>for</code> loops with functionals.</li>
+<li>Use the <code>purrr::map()</code> family of functions to apply a function to each element of a list or vector.</li>
+<li>Combine multiple functionals to solve complex problems.</li>
+<li>Use <code>purrr::reduce()</code> to combine elements of a vector into a single result.</li>
+<li>Use predicate functionals to work with logical conditions.</li>
+<li>Recognize and use base R functionals that lack <code>purrr</code> equivalents.</li>
 </ul>
 </section>
-<section id="what-are-functionals" class="slide level2 unnumbered">
-<h2>What are functionals</h2>
-</section>
-<section id="introduction" class="slide level2">
-<h2>Introduction</h2>
-<p><strong>Functionals</strong> are functions that take function as input and return a vector as output. Functionals that you probably have used before are: <code>apply()</code>, <code>lapply()</code> or <code>tapply()</code>.</p>
+<section id="r-is-a-functional-language-at-heart" class="slide level2">
+<h2>R is a functional language at heart</h2>
 <ul>
-<li><p>alternatives to loops</p></li>
-<li><p>a functional is better than a <code>for</code> loop is better than <code>while</code> is better than <code>repeat</code></p></li>
-</ul>
-<h3 class="unnumbered" id="benefits">Benefits</h3>
-<ul>
-<li><p>encourages function logic to be separated from iteration logic</p></li>
-<li><p>can collapse into vectors/data frames easily</p></li>
+<li>R lends itself to a style of problem solving centered on functions.</li>
+<li>This “functional style” is a good fit for data analysis problems.</li>
+<li>Functional techniques can produce efficient and elegant solutions.</li>
 </ul>
 </section>
-<section id="map" class="slide level2">
-<h2>Map</h2>
-<p><code>map()</code> has two arguments, a vector and a function. It performs the function on each element of the vector and returns a list. We can also pass in some additional argument into the function.</p>
-
-<img data-src="images/9_2_3_map-arg.png" width="448" class="r-stretch"><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>simple_map <span class="ot">&lt;-</span> <span class="cf">function</span>(x, f, ...) {</span>
-<span id="cb1-2"><a></a>out <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="fu">length</span>(x))</span>
-<span id="cb1-3"><a></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(x)) {</span>
-<span id="cb1-4"><a></a>out[[i]] <span class="ot">&lt;-</span> <span class="fu">f</span>(x[[i]], ...)</span>
-<span id="cb1-5"><a></a>}</span>
-<span id="cb1-6"><a></a>out</span>
-<span id="cb1-7"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="benefit-of-using-the-map-function-in-purrr" class="slide level2 unnumbered">
-<h2>Benefit of using the map function in purrr</h2>
+<section id="functional-programming-languages-have-first-class-functions" class="slide level2">
+<h2>Functional programming languages have first-class functions</h2>
+<p>A key feature of functional languages is their use of <strong>first-class functions</strong>.</p>
+<p>In R, this means you can:</p>
 <ul>
-<li><p><code>purrr::map()</code> is equivalent to <code>lapply()</code></p></li>
-<li><p>returns a list and is the most general</p></li>
-<li><p>the length of the input == the length of the output</p></li>
-<li><p><code>map()</code> is more flexible, with additional arguments allowed</p></li>
-<li><p><code>map()</code> has a host of extensions</p></li>
+<li>Assign functions to variables.</li>
+<li>Store them in lists.</li>
+<li>Pass them as arguments to other functions.</li>
+<li>Create them inside functions.</li>
+<li>Return them as the result of a function.</li>
 </ul>
 </section>
-<section id="atomic-vectors" class="slide level2 unnumbered">
-<h2>Atomic vectors</h2>
+<section id="pure-functions-depend-only-on-their-inputs" class="slide level2">
+<h2>Pure functions depend only on their inputs</h2>
+<p>Many functional languages require functions to be <strong>pure</strong>.</p>
 <ul>
-<li>has 4 variants to return atomic vectors
+<li>A pure function’s output only depends on its inputs.
 <ul>
-<li><code>map_chr()</code></li>
-<li><code>map_dbl()</code></li>
-<li><code>map_int()</code></li>
-<li><code>map_lgl()</code></li>
+<li><code>runif()</code>, <code>read.csv()</code>, and <code>Sys.time()</code> are <strong>not</strong> pure.</li>
+</ul></li>
+<li>A pure function has no side-effects (e.g., changing global variables, writing to disk).
+<ul>
+<li><code>print()</code>, <code>write.csv()</code>, and <code>&lt;-</code> are <strong>not</strong> pure.</li>
 </ul></li>
 </ul>
+<p>R is not a <em>strictly</em> functional language because it doesn’t require pure functions.</p>
+</section>
+<section id="the-functional-style-decomposes-a-big-problem-into-smaller-pieces" class="slide level2">
+<h2>The “functional style” decomposes a big problem into smaller pieces</h2>
+<ul>
+<li>Solve each piece with a function or combination of functions.</li>
+<li>Strive to create isolated functions that operate independently.</li>
+<li>Complexity is handled by composing functions in various ways.</li>
+</ul>
+</section>
+<section id="key-functional-techniques" class="slide level2">
+<h2>Key functional techniques</h2>
+<ul>
+<li><strong>Chapter 9: Functionals</strong>: Functions that take a function as an argument.</li>
+<li><strong>Chapter 10: Function factories</strong>: Functions that create functions.</li>
+<li><strong>Chapter 11: Function operators</strong>: Functions that take functions as input and produce functions as output.</li>
+</ul>
+</section>
+<section id="a-functional-takes-a-function-as-input-and-returns-a-vector-as-output" class="slide level2">
+<h2>A functional takes a function as input and returns a vector as output</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>triple <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">*</span> <span class="dv">3</span></span>
-<span id="cb2-2"><a></a><span class="fu">map</span>(<span class="at">.x=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">.f=</span>triple)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>randomise <span class="ot">&lt;-</span> <span class="cf">function</span>(f) <span class="fu">f</span>(<span class="fu">runif</span>(<span class="fl">1e3</span>))</span>
+<span id="cb1-2"><a></a><span class="fu">randomise</span>(mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 0.4916475</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">randomise</span>(sum)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 525.4261</code></pre>
+</div>
+</div>
+<p>Common examples:</p>
+<ul>
+<li><code>lapply()</code>, <code>apply()</code>, and <code>tapply()</code> in base R</li>
+<li><code>purrr::map()</code></li>
+<li>Mathematical functionals like <code>integrate()</code> or <code>optim()</code></li>
+</ul>
+</section>
+<section id="functionals-are-better-than-for-loops" class="slide level2">
+<h2>Functionals are better than for loops</h2>
+<blockquote>
+<p>To become significantly more reliable, code must become more transparent. In particular, nested conditions and loops must be viewed with great suspicion. Complicated control flows confuse programmers. Messy code often hides bugs.</p>
+<p>— Bjarne Stroustrup</p>
+</blockquote>
+<ul>
+<li><code>for</code> loops are too flexible. You’re iterating, but why?</li>
+<li>Each <strong>functional</strong> is tailored for a <strong>specific task</strong>. Conveys <strong>intent</strong>.</li>
+</ul>
+</section>
+<section id="purrrmap-applies-a-function-to-each-element-of-a-vector" class="slide level2">
+<h2><code>purrr::map()</code> applies a function to each element of a vector</h2>
+<p><code>map(1:3, f) == list(f(1), f(2), f(3))</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">library</span>(purrr)</span>
+<span id="cb5-2"><a></a>triple <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">*</span> <span class="dv">3</span></span>
+<span id="cb5-3"><a></a><span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, triple)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [[1]]
 #&gt; [1] 3
@@ -281,39 +310,31 @@
 #&gt; [[3]]
 #&gt; [1] 9</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">map_dbl</span>(<span class="at">.x=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">.f=</span>triple)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 3 6 9</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">map_lgl</span>(<span class="at">.x=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="cn">NA</span>, <span class="dv">3</span>), <span class="at">.f=</span>is.na)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] FALSE  TRUE FALSE</code></pre>
-</div>
 </div>
 </section>
-<section id="anonymous-functions-and-shortcuts" class="slide level2 unnumbered">
-<h2>Anonymous functions and shortcuts</h2>
-<p><strong>Anonymous functions</strong></p>
+<section id="use-map_type-to-return-an-atomic-vector" class="slide level2">
+<h2>Use <code>map_&lt;type&gt;()</code> to return an atomic vector</h2>
+<ul>
+<li><code>map()</code> returns a list.</li>
+<li><code>map_lgl()</code> returns a logical vector.</li>
+<li><code>map_int()</code> returns an integer vector.</li>
+<li><code>map_dbl()</code> returns a double vector.</li>
+<li><code>map_chr()</code> returns a character vector.</li>
+</ul>
+</section>
+<section id="use-map_type-to-return-an-atomic-vector-cont." class="slide level2">
+<h2>Use <code>map_&lt;type&gt;()</code> to return an atomic vector (cont.)</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">map_dbl</span>(<span class="at">.x=</span>mtcars, <span class="at">.f=</span><span class="cf">function</span>(x) <span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb8-2"><a></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># map_chr() always returns a character vector</span></span>
+<span id="cb7-2"><a></a><span class="fu">map_chr</span>(mtcars, typeof)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;        mpg        cyl       disp         hp       drat         wt 
-#&gt;  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250</code></pre>
+<pre><code>#&gt;      mpg      cyl     disp       hp     drat       wt     qsec       vs 
+#&gt; "double" "double" "double" "double" "double" "double" "double" "double" 
+#&gt;       am     gear     carb 
+#&gt; "double" "double" "double"</code></pre>
 </div>
-</div>
-<ul>
-<li>the “twiddle” uses a twiddle <code>~</code> to set a formula</li>
-<li>can use <code>.x</code> to reference the input <code>map(.x = ..., .f = )</code></li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">map_dbl</span>(<span class="at">.x=</span>mtcars,  <span class="at">.f=</span><span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<ul>
-<li>can be simplified further as</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">map_dbl</span>(<span class="at">.x=</span>mtcars, <span class="at">.f=</span>mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="co"># map_dbl() always returns a double vector</span></span>
+<span id="cb9-2"><a></a><span class="fu">map_dbl</span>(mtcars, mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;        mpg        cyl       disp         hp       drat         wt       qsec 
 #&gt;  20.090625   6.187500 230.721875 146.687500   3.596563   3.217250  17.848750 
@@ -321,846 +342,311 @@
 #&gt;   0.437500   0.406250   3.687500   2.812500</code></pre>
 </div>
 </div>
+</section>
+<section id="use-anonymous-functions-for-concise-operations" class="slide level2">
+<h2>Use anonymous functions for concise operations</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="cf">function</span>(x) <span class="fu">length</span>(<span class="fu">unique</span>(x)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
+#&gt;   25    3   27   22   22   29   30    2    2    3    6</code></pre>
+</div>
+</div>
+<p><code>purrr</code> provides <code>~</code> shortcut:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="sc">~</span> <span class="fu">length</span>(<span class="fu">unique</span>(.x)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
+#&gt;   25    3   27   22   22   29   30    2    2    3    6</code></pre>
+</div>
+</div>
+<p>R 4.1.0 provides <code>\()</code> shortcut (<code>\ == function</code>):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">map_dbl</span>(mtcars, \(x) <span class="fu">length</span>(<span class="fu">unique</span>(x)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
+#&gt;   25    3   27   22   22   29   30    2    2    3    6</code></pre>
+</div>
+</div>
+</section>
+<section id="pass-additional-arguments-to-map-with-...-or-via-anonymous-function" class="slide level2">
+<h2>Pass additional arguments to <code>map()</code> with <code>...</code> or via anonymous function</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="cn">NA</span>))</span>
+<span id="cb17-2"><a></a><span class="fu">map_dbl</span>(x, mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 3.0 5.5</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">map_dbl</span>(x, <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 3.0 5.5</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">map_dbl</span>(x, \(x) <span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 3.0 5.5</code></pre>
+</div>
+</div>
+</section>
+<section id="purrr-style-pipe-simple-steps-together" class="slide level2">
+<h2><code>purrr</code> style: pipe simple steps together</h2>
 <ul>
-<li>what happens when we try a handful of variants of the task at hand? (how many unique values are there for each variable?)</li>
+<li>Pipe (<code>|&gt;</code> / <code>%&gt;%</code>) + <code>purrr</code> ➡️ readable code</li>
+<li>Each line is a single, understandable step.</li>
 </ul>
-<p>Note that <code>.x</code> is the <strong>name</strong> of the first argument in <code>map()</code> (<code>.f</code> is the name of the second argument).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="co"># the task</span></span>
-<span id="cb13-2"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="cf">function</span>(x) <span class="fu">length</span>(<span class="fu">unique</span>(x)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>mtcars <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a></a>  <span class="fu">split</span>(mtcars<span class="sc">$</span>cyl) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a></a>  <span class="fu">map</span>(<span class="sc">~</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> wt, <span class="at">data =</span> .x)) <span class="sc">|&gt;</span></span>
+<span id="cb23-4"><a></a>  <span class="fu">map</span>(coef) <span class="sc">|&gt;</span></span>
+<span id="cb23-5"><a></a>  <span class="fu">map_dbl</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
-#&gt;   25    3   27   22   22   29   30    2    2    3    6</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="cf">function</span>(unicorn) <span class="fu">length</span>(<span class="fu">unique</span>(unicorn)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
-#&gt;   25    3   27   22   22   29   30    2    2    3    6</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="sc">~</span><span class="fu">length</span>(<span class="fu">unique</span>(.x)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
-#&gt;   25    3   27   22   22   29   30    2    2    3    6</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="sc">~</span><span class="fu">length</span>(<span class="fu">unique</span>(..<span class="dv">1</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
-#&gt;   25    3   27   22   22   29   30    2    2    3    6</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="sc">~</span><span class="fu">length</span>(<span class="fu">unique</span>(.)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
-#&gt;   25    3   27   22   22   29   30    2    2    3    6</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="co"># not the task</span></span>
-<span id="cb23-2"><a></a><span class="fu">map_dbl</span>(mtcars, length)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  mpg  cyl disp   hp drat   wt qsec   vs   am gear carb 
-#&gt;   32   32   32   32   32   32   32   32   32   32   32</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="fu">length</span>(unique))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;    mpg    cyl   disp     hp   drat     wt   qsec     vs     am   gear   carb 
-#&gt;  21.00   6.00 160.00 110.00   3.90   2.62  16.46   0.00   1.00   4.00   4.00</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;    mpg    cyl   disp     hp   drat     wt   qsec     vs     am   gear   carb 
-#&gt;  21.00   6.00 160.00 110.00   3.90   2.62  16.46   0.00   1.00   4.00   4.00</code></pre>
+<pre><code>#&gt;         4         6         8 
+#&gt; -5.647025 -2.780106 -2.192438</code></pre>
 </div>
 </div>
+</section>
+<section id="purrrmodify-returns-the-same-type-as-the-input" class="slide level2">
+<h2><code>purrr::modify()</code> returns the same type as the input</h2>
+<p><code>map()</code> always returns a list:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="co">#error</span></span>
-<span id="cb29-2"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="fu">length</span>(<span class="fu">unique</span>()))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in unique.default(): argument "x" is missing, with no default</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> <span class="dv">6</span><span class="sc">:</span><span class="dv">4</span>)</span>
+<span id="cb25-2"><a></a><span class="fu">map</span>(df, <span class="sc">~</span> .x <span class="sc">*</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; $x
+#&gt; [1] 2 4 6
+#&gt; 
+#&gt; $y
+#&gt; [1] 12 10  8</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="fu">map_dbl</span>(mtcars, <span class="sc">~</span><span class="fu">length</span>(<span class="fu">unique</span>(x)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>modify()</code> returns the same type as the input:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">modify</span>(df, <span class="sc">~</span> .x <span class="sc">*</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   x  y
+#&gt; 1 2 12
+#&gt; 2 4 10
+#&gt; 3 6  8</code></pre>
+</div>
+</div>
+</section>
+<section id="purrrmap2-iterates-over-two-vectors-in-parallel" class="slide level2">
+<h2><code>purrr::map2()</code> iterates over two vectors in parallel</h2>
+<p>Find a weighted mean from 2 lists: observations (<code>xs</code>) &amp; weights (<code>ws</code>).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>xs <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span> <span class="fu">runif</span>(<span class="dv">5</span>))</span>
+<span id="cb29-2"><a></a>ws <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span> <span class="fu">rpois</span>(<span class="dv">5</span>, <span class="dv">5</span>) <span class="sc">+</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>map()</code> passes the whole <code>ws</code> list to each call:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">map_dbl</span>(xs, weighted.mean, <span class="at">w =</span> ws)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in `map_dbl()`:
 #&gt; ℹ In index: 1.
-#&gt; ℹ With name: mpg.
-#&gt; Caused by error in `.f()`:
-#&gt; ! object 'x' not found</code></pre>
+#&gt; Caused by error in `weighted.mean.default()`:
+#&gt; ! 'x' and 'w' must have the same length</code></pre>
+</div>
+</div>
+<p><code>map2()</code> iterates over <code>xs</code> and <code>ws</code> in parallel:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">map2_dbl</span>(xs, ws, weighted.mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 0.4522381 0.3132899 0.7235673</code></pre>
 </div>
 </div>
 </section>
-<section id="modify" class="slide level2 unnumbered">
-<h2>Modify</h2>
-<p>Sometimes we might want the output to be the same as the input, then in that case we can use the modify function rather than map</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="at">y=</span><span class="dv">6</span><span class="sc">:</span><span class="dv">4</span>)</span>
-<span id="cb33-2"><a></a></span>
-<span id="cb33-3"><a></a><span class="fu">map</span>(df, <span class="at">.f=</span><span class="sc">~</span>.x<span class="sc">*</span><span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; $x
-#&gt; [1] 3 6 9
-#&gt; 
-#&gt; $y
-#&gt; [1] 18 15 12</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">modify</span>(<span class="at">.x=</span>df,<span class="at">.f=</span><span class="sc">~</span>.x<span class="sc">*</span><span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;   x  y
-#&gt; 1 3 18
-#&gt; 2 6 15
-#&gt; 3 9 12</code></pre>
-</div>
-</div>
-<p>Note that <code>modify()</code> always returns the same type of output (which is not necessarily true with <code>map()</code>). Additionally, <code>modify()</code> does not actually change the value of <code>df</code>.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;   x y
-#&gt; 1 1 6
-#&gt; 2 2 5
-#&gt; 3 3 4</code></pre>
-</div>
-</div>
-</section>
-<section id="purrr-style" class="slide level2">
-<h2><code>purrr</code> style</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a>mtcars <span class="sc">|&gt;</span> </span>
-<span id="cb39-2"><a></a>  <span class="fu">map</span>(head, <span class="dv">20</span>) <span class="sc">|&gt;</span> <span class="co"># pull first 20 of each column</span></span>
-<span id="cb39-3"><a></a>  <span class="fu">map_dbl</span>(mean) <span class="sc">|&gt;</span> <span class="co"># mean of each vector</span></span>
-<span id="cb39-4"><a></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;       mpg       cyl      disp        hp      drat        wt 
-#&gt;  20.13000   6.20000 233.93000 136.20000   3.54500   3.39845</code></pre>
-</div>
-</div>
-<p>An example from <code>tidytuesday</code></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>tt <span class="ot">&lt;-</span> tidytuesdayR<span class="sc">::</span><span class="fu">tt_load</span>(<span class="st">"2020-06-30"</span>)</span>
-<span id="cb41-2"><a></a></span>
-<span id="cb41-3"><a></a><span class="co"># filter data &amp; exclude columns with lost of nulls</span></span>
-<span id="cb41-4"><a></a>list_df <span class="ot">&lt;-</span> </span>
-<span id="cb41-5"><a></a>  <span class="fu">map</span>(</span>
-<span id="cb41-6"><a></a>    <span class="at">.x =</span> tt[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], </span>
-<span id="cb41-7"><a></a>    <span class="at">.f =</span> </span>
-<span id="cb41-8"><a></a>      <span class="sc">~</span> .x <span class="sc">|&gt;</span> </span>
-<span id="cb41-9"><a></a>      <span class="fu">filter</span>(issue <span class="sc">&lt;=</span> <span class="dv">152</span> <span class="sc">|</span> issue <span class="sc">&gt;</span> <span class="dv">200</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb41-10"><a></a>      <span class="fu">mutate</span>(<span class="at">timeframe =</span> <span class="fu">ifelse</span>(issue <span class="sc">&lt;=</span> <span class="dv">152</span>, <span class="st">"first 5 years"</span>, <span class="st">"last 5 years"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb41-11"><a></a>      <span class="fu">select_if</span>(<span class="sc">~</span><span class="fu">mean</span>(<span class="fu">is.na</span>(.x)) <span class="sc">&lt;</span> <span class="fl">0.2</span>) </span>
-<span id="cb41-12"><a></a>  )</span>
-<span id="cb41-13"><a></a></span>
-<span id="cb41-14"><a></a></span>
-<span id="cb41-15"><a></a><span class="co"># write to global environment</span></span>
-<span id="cb41-16"><a></a><span class="fu">iwalk</span>(</span>
-<span id="cb41-17"><a></a>  <span class="at">.x =</span> list_df,</span>
-<span id="cb41-18"><a></a>  <span class="at">.f =</span> <span class="sc">~</span> <span class="fu">assign</span>(<span class="at">x =</span> .y, <span class="at">value =</span> .x, <span class="at">envir =</span> <span class="fu">globalenv</span>())</span>
-<span id="cb41-19"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="map_-variants" class="slide level2">
-<h2><code>map_*()</code> variants</h2>
-<p>There are many variants</p>
-
-<img data-src="images/map_variants.png" class="r-stretch"></section>
-<section id="map2_" class="slide level2 unnumbered">
-<h2><code>map2_*()</code></h2>
+<section id="purrrwalk-is-for-functions-called-for-their-side-effects" class="slide level2">
+<h2><code>purrr::walk()</code> is for functions called for their side effects</h2>
 <ul>
-<li>raise each value <code>.x</code> by 2</li>
+<li>E.g., <code>cat()</code>, <code>write.csv()</code>, <code>ggsave()</code>.</li>
+<li><code>walk()</code> returns its input invisibly.</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">map_dbl</span>(</span>
-<span id="cb42-2"><a></a>  <span class="at">.x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, </span>
-<span id="cb42-3"><a></a>  <span class="at">.f =</span> <span class="cf">function</span>(x) x <span class="sc">^</span> <span class="dv">2</span></span>
-<span id="cb42-4"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1]  1  4  9 16 25</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>cyls <span class="ot">&lt;-</span> <span class="fu">split</span>(mtcars, mtcars<span class="sc">$</span>cyl)</span>
+<span id="cb34-2"><a></a>paths <span class="ot">&lt;-</span> <span class="fu">file.path</span>(<span class="fu">tempdir</span>(), <span class="fu">paste0</span>(<span class="st">"cyl-"</span>, <span class="fu">names</span>(cyls), <span class="st">".csv"</span>))</span>
+<span id="cb34-3"><a></a><span class="fu">walk2</span>(cyls, paths, write.csv)</span>
+<span id="cb34-4"><a></a><span class="fu">dir</span>(<span class="fu">tempdir</span>(), <span class="at">pattern =</span> <span class="st">"cyl-"</span>)</span>
+<span id="cb34-5"><a></a><span class="co">#&gt; [1] "cyl-4.csv" "cyl-6.csv" "cyl-8.csv"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
-<ul>
-<li>raise each value <code>.x</code> by another value <code>.y</code></li>
-</ul>
+</section>
+<section id="purrrimap-iterates-over-values-and-indices" class="slide level2">
+<h2><code>purrr::imap()</code> iterates over values and indices</h2>
+<p>Named input == <code>map2(.x, names(.x), .f)</code></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">map2_dbl</span>(</span>
-<span id="cb44-2"><a></a>  <span class="at">.x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, </span>
-<span id="cb44-3"><a></a>  <span class="at">.y =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>, </span>
-<span id="cb44-4"><a></a>  <span class="at">.f =</span> <span class="sc">~</span> (.x <span class="sc">^</span> .y)</span>
-<span id="cb44-5"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">imap_chr</span>(iris[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="sc">~</span> <span class="fu">paste0</span>(<span class="st">"The first value of '"</span>, .y, <span class="st">"' is "</span>, .x[[<span class="dv">1</span>]]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1]     1     8    81  1024 15625</code></pre>
+<pre><code>#&gt;                               Sepal.Length 
+#&gt; "The first value of 'Sepal.Length' is 5.1" 
+#&gt;                                Sepal.Width 
+#&gt;  "The first value of 'Sepal.Width' is 3.5"</code></pre>
+</div>
+</div>
+<p>Unnamed input == <code>map2(.x, seq_along(.x), .f)</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="sc">~</span> <span class="fu">sample</span>(<span class="dv">100</span>, <span class="dv">5</span>))</span>
+<span id="cb37-2"><a></a><span class="fu">imap_chr</span>(x, <span class="sc">~</span> <span class="fu">paste0</span>(<span class="st">"The max of element "</span>, .y, <span class="st">" is "</span>, <span class="fu">max</span>(.x)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "The max of element 1 is 61" "The max of element 2 is 88"</code></pre>
 </div>
 </div>
 </section>
-<section id="the-benefit-of-using-the-map-over-apply-family-of-function" class="slide level2 unnumbered">
-<h2>The benefit of using the map over apply family of function</h2>
+<section id="purrrpmap-iterates-over-multiple-arguments-in-a-list" class="slide level2">
+<h2><code>purrr::pmap()</code> iterates over multiple arguments in a list</h2>
+<p><code>pmap()</code> applies function to list of arguments</p>
 <ul>
-<li>It is written in C</li>
-<li>It preserves names</li>
-<li>We always know the return value type</li>
-<li>We can apply the function for multiple input values</li>
-<li>We can pass additional arguments into the function</li>
-</ul>
-</section>
-<section id="walk" class="slide level2 unnumbered">
-<h2><code>walk()</code></h2>
-<ul>
-<li>We use <code>walk()</code> when we want to call a function for it side effect(s) rather than its return value, like generating plots, <code>write.csv()</code>, or <code>ggsave()</code>. If you don’t want a return value, <code>map()</code> will print more info than you may want.</li>
+<li><code>map2(x, y, f)</code> is equivalent to <code>pmap(list(x, y), f)</code>.</li>
+<li>A data frame is a list, works great with <code>pmap()</code>.</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">cat</span>(.x, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 1 
-#&gt; 2 
-#&gt; 3</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a>params <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb39-2"><a></a>  <span class="sc">~</span>n, <span class="sc">~</span>min, <span class="sc">~</span>max,</span>
+<span id="cb39-3"><a></a>  <span class="dv">1</span>L, <span class="dv">0</span>, <span class="dv">1</span>,</span>
+<span id="cb39-4"><a></a>  <span class="dv">2</span>L, <span class="dv">10</span>, <span class="dv">100</span>,</span>
+<span id="cb39-5"><a></a>)</span>
+<span id="cb39-6"><a></a></span>
+<span id="cb39-7"><a></a><span class="fu">pmap</span>(params, runif)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [[1]]
-#&gt; NULL
+#&gt; [1] 0.5482892
 #&gt; 
 #&gt; [[2]]
-#&gt; NULL
-#&gt; 
-#&gt; [[3]]
-#&gt; NULL</code></pre>
-</div>
-</div>
-<ul>
-<li>for these cases, use <code>walk()</code> instead</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a><span class="fu">walk</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">cat</span>(.x, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 1 
-#&gt; 2 
-#&gt; 3</code></pre>
-</div>
-</div>
-<p><code>cat()</code> does have a result, it’s just usually returned invisibly.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a></a><span class="fu">cat</span>(<span class="st">"hello"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; hello</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a></a>(<span class="fu">cat</span>(<span class="st">"hello"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; hello</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; NULL</code></pre>
-</div>
-</div>
-<p>We can use <code>pwalk()</code> to save a list of plot to disk. Note that the “p” in <code>pwalk()</code> means that we have more than 1 (or 2) variables to pipe into the function. Also note that the name of the first argument in all of the “p” functions is now <code>.l</code> (instead of <code>.x</code>).</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a>plots <span class="ot">&lt;-</span> mtcars <span class="sc">|&gt;</span>  </span>
-<span id="cb56-2"><a></a>  <span class="fu">split</span>(mtcars<span class="sc">$</span>cyl) <span class="sc">|&gt;</span>  </span>
-<span id="cb56-3"><a></a>  <span class="fu">map</span>(<span class="sc">~</span><span class="fu">ggplot</span>(.x, <span class="fu">aes</span>(mpg,wt)) <span class="sc">+</span></span>
-<span id="cb56-4"><a></a>        <span class="fu">geom_point</span>())</span>
-<span id="cb56-5"><a></a></span>
-<span id="cb56-6"><a></a>paths <span class="ot">&lt;-</span> stringr<span class="sc">::</span><span class="fu">str_c</span>(<span class="fu">names</span>(plots), <span class="st">'.png'</span>)</span>
-<span id="cb56-7"><a></a></span>
-<span id="cb56-8"><a></a><span class="fu">pwalk</span>(<span class="at">.l =</span> <span class="fu">list</span>(paths,plots), <span class="at">.f =</span> ggsave, <span class="at">path =</span> <span class="fu">tempdir</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Saving 7 x 5 in image
-#&gt; Saving 7 x 5 in image
-#&gt; Saving 7 x 5 in image</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="fu">pmap</span>(<span class="at">.l =</span> <span class="fu">list</span>(paths,plots), <span class="at">.f =</span> ggsave, <span class="at">path =</span> <span class="fu">tempdir</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Saving 7 x 5 in image
-#&gt; Saving 7 x 5 in image
-#&gt; Saving 7 x 5 in image</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [[1]]
-#&gt; [1] "C:\\Users\\jonth\\AppData\\Local\\Temp\\RtmpSMVSZz/4.png"
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] "C:\\Users\\jonth\\AppData\\Local\\Temp\\RtmpSMVSZz/6.png"
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] "C:\\Users\\jonth\\AppData\\Local\\Temp\\RtmpSMVSZz/8.png"</code></pre>
-</div>
-</div>
-<ul>
-<li><p>walk, walk2 and pwalk all invisibly return .x the first argument. This makes them suitable for use in the middle of pipelines.</p></li>
-<li><p>note: I don’t think that it is “<code>.x</code>” (or “<code>.l</code>”) that they are returning invisibly. But I’m not sure what it is. Hadley says:</p></li>
-</ul>
-<blockquote>
-<p>purrr provides the walk family of functions that ignore the return values of the <code>.f</code> and instead return <code>.x</code> invisibly.</p>
-</blockquote>
-<p>But not in the first <code>cat()</code> example, it is the <code>NULL</code> values that get returned invisibly (those aren’t the same as <code>.x</code>).</p>
-</section>
-<section id="imap" class="slide level2 unnumbered">
-<h2><code>imap()</code></h2>
-<ul>
-<li><p><code>imap()</code> is like <code>map2()</code>except that <code>.y</code> is derived from <code>names(.x)</code> if named or <code>seq_along(.x)</code> if not.</p></li>
-<li><p>These two produce the same result</p></li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a><span class="fu">imap_chr</span>(<span class="at">.x =</span> mtcars, </span>
-<span id="cb61-2"><a></a>         <span class="at">.f =</span> <span class="sc">~</span> <span class="fu">paste</span>(.y, <span class="st">"has a mean of"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(.x), <span class="dv">1</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb61-3"><a></a><span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;                        mpg                        cyl 
-#&gt;   "mpg has a mean of 20.1"    "cyl has a mean of 6.2" 
-#&gt;                       disp                         hp 
-#&gt; "disp has a mean of 230.7"   "hp has a mean of 146.7" 
-#&gt;                       drat                         wt 
-#&gt;   "drat has a mean of 3.6"     "wt has a mean of 3.2"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a><span class="fu">map2_chr</span>(<span class="at">.x =</span> mtcars, </span>
-<span id="cb63-2"><a></a>         <span class="at">.y =</span> <span class="fu">names</span>(mtcars),</span>
-<span id="cb63-3"><a></a>         <span class="at">.f =</span> <span class="sc">~</span> <span class="fu">paste</span>(.y, <span class="st">"has a mean of"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(.x), <span class="dv">1</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb63-4"><a></a><span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;                        mpg                        cyl 
-#&gt;   "mpg has a mean of 20.1"    "cyl has a mean of 6.2" 
-#&gt;                       disp                         hp 
-#&gt; "disp has a mean of 230.7"   "hp has a mean of 146.7" 
-#&gt;                       drat                         wt 
-#&gt;   "drat has a mean of 3.6"     "wt has a mean of 3.2"</code></pre>
+#&gt; [1] 92.36585 81.73695</code></pre>
 </div>
 </div>
 </section>
-<section id="pmap" class="slide level2 unnumbered">
-<h2><code>pmap()</code></h2>
+<section id="purrrreduce-combines-vector-elements-with-a-binary-function" class="slide level2">
+<h2><code>purrr::reduce()</code> combines vector elements with a binary function</h2>
 <ul>
-<li><p>you can pass a named list or dataframe as arguments to a function</p></li>
-<li><p>for example <code>runif()</code> has the parameters <code>n</code>, <code>min</code> and <code>max</code></p></li>
+<li>“Reduces” a vector to 1 value by repeatedly applying 2-arg function</li>
+<li><code>reduce(1:4, f)</code> is equivalent to <code>f(f(f(1, 2), 3), 4)</code>.</li>
+</ul>
+<p>Example: Find the numbers that appear in <em>every</em> vector in a list.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb41-2"><a></a>lst <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="sc">~</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">15</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb41-3"><a></a><span class="fu">reduce</span>(lst, intersect)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 10  5  9</code></pre>
+</div>
+</div>
+</section>
+<section id="purrraccumulate-shows-intermediate-results" class="slide level2">
+<h2><code>purrr::accumulate()</code> shows intermediate results</h2>
+<ul>
+<li>Like <code>reduce()</code>, but returns all the intermediate results.</li>
+<li>Great way to understand how <code>reduce()</code> works.</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a></a>params <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
-<span id="cb65-2"><a></a>  <span class="sc">~</span> n, <span class="sc">~</span> min, <span class="sc">~</span> max,</span>
-<span id="cb65-3"><a></a>   <span class="dv">1</span>L,     <span class="dv">1</span>,    <span class="dv">10</span>,</span>
-<span id="cb65-4"><a></a>   <span class="dv">2</span>L,    <span class="dv">10</span>,   <span class="dv">100</span>,</span>
-<span id="cb65-5"><a></a>   <span class="dv">3</span>L,   <span class="dv">100</span>,  <span class="dv">1000</span></span>
-<span id="cb65-6"><a></a>)</span>
-<span id="cb65-7"><a></a></span>
-<span id="cb65-8"><a></a><span class="fu">pmap</span>(params, runif)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="fu">accumulate</span>(lst, intersect)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [[1]]
-#&gt; [1] 9.52234
+#&gt;  [1]  3  3 10  2  6  5  4  6  9 10  5  3  9  9  9
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 49.53679 46.47017
+#&gt; [1]  3 10  5  4  9
 #&gt; 
 #&gt; [[3]]
-#&gt; [1] 488.8100 796.6801 282.7772</code></pre>
-</div>
-</div>
-<ul>
-<li>could also be</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a></a><span class="fu">list</span>(</span>
-<span id="cb67-2"><a></a>  <span class="at">n =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, </span>
-<span id="cb67-3"><a></a>  <span class="at">min =</span> <span class="dv">10</span> <span class="sc">^</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>), </span>
-<span id="cb67-4"><a></a>  <span class="at">max =</span> <span class="dv">10</span> <span class="sc">^</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
-<span id="cb67-5"><a></a>) <span class="sc">|&gt;</span> </span>
-<span id="cb67-6"><a></a><span class="fu">pmap</span>(runif)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [[1]]
-#&gt; [1] 5.246834
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 73.39068 30.57879
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] 169.6667 950.1126 820.9357</code></pre>
-</div>
-</div>
-<ul>
-<li>I like to use <code>expand_grid()</code> when I want all possible parameter combinations.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a></a><span class="fu">expand_grid</span>(<span class="at">n =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,</span>
-<span id="cb69-2"><a></a>            <span class="at">min =</span> <span class="dv">10</span> <span class="sc">^</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>),</span>
-<span id="cb69-3"><a></a>            <span class="at">max =</span> <span class="dv">10</span> <span class="sc">^</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 12 × 3
-#&gt;        n   min   max
-#&gt;    &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-#&gt;  1     1     1    10
-#&gt;  2     1     1   100
-#&gt;  3     1    10    10
-#&gt;  4     1    10   100
-#&gt;  5     2     1    10
-#&gt;  6     2     1   100
-#&gt;  7     2    10    10
-#&gt;  8     2    10   100
-#&gt;  9     3     1    10
-#&gt; 10     3     1   100
-#&gt; 11     3    10    10
-#&gt; 12     3    10   100</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a><span class="fu">expand_grid</span>(<span class="at">n =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,</span>
-<span id="cb71-2"><a></a>            <span class="at">min =</span> <span class="dv">10</span> <span class="sc">^</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>),</span>
-<span id="cb71-3"><a></a>            <span class="at">max =</span> <span class="dv">10</span> <span class="sc">^</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb71-4"><a></a><span class="fu">pmap</span>(runif)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [[1]]
-#&gt; [1] 9.474848
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 10.63548
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] 10
+#&gt; [1] 10  5  9
 #&gt; 
 #&gt; [[4]]
-#&gt; [1] 92.44257
-#&gt; 
-#&gt; [[5]]
-#&gt; [1] 7.165047 6.201947
-#&gt; 
-#&gt; [[6]]
-#&gt; [1] 64.79074 16.54110
-#&gt; 
-#&gt; [[7]]
-#&gt; [1] 10 10
-#&gt; 
-#&gt; [[8]]
-#&gt; [1] 62.12314 52.31713
-#&gt; 
-#&gt; [[9]]
-#&gt; [1] 6.806213 5.541865 8.580469
-#&gt; 
-#&gt; [[10]]
-#&gt; [1]  7.10806 51.56879 85.70133
-#&gt; 
-#&gt; [[11]]
-#&gt; [1] 10 10 10
-#&gt; 
-#&gt; [[12]]
-#&gt; [1] 74.48871 11.65879 58.31278</code></pre>
+#&gt; [1] 10  5  9</code></pre>
 </div>
 </div>
 </section>
-<section id="reduce-family" class="slide level2">
-<h2><code>reduce()</code> family</h2>
-<p>The <code>reduce()</code> function is a powerful functional that allows you to abstract away from a sequence of functions that are applied in a fixed direction.</p>
-<p><code>reduce()</code> takes a vector as its first argument, a function as its second argument, and an optional <code>.init</code> argument last. It will then apply the function repeatedly to the vector until there is only a single element left.</p>
-<p>(Hint: start at the top of the image and read down.)</p>
-
-<img data-src="images/reduce-init.png" width="508" class="r-stretch"><p>Let me really quickly demonstrate <code>reduce()</code> in action.</p>
-<p>Say you wanted to add up the numbers 1 through 5 using only the plus operator <code>+</code>. You could do something like:</p>
+<section id="purrraccumulate-is-useful-for-cumulative-calculations" class="slide level2">
+<h2><code>purrr::accumulate()</code> is useful for cumulative calculations</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">+</span> <span class="dv">3</span> <span class="sc">+</span> <span class="dv">4</span> <span class="sc">+</span> <span class="dv">5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a><span class="fu">accumulate</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">10</span>), <span class="st">`</span><span class="at">+</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 15</code></pre>
-</div>
-</div>
-<p>Which is the same as:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a><span class="fu">reduce</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">`</span><span class="at">+</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 15</code></pre>
-</div>
-</div>
-<p>And if you want the start value to be something that is not the first argument of the vector, pass that value to the .init argument:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a><span class="fu">identical</span>(</span>
-<span id="cb77-2"><a></a>  <span class="fl">0.5</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">+</span> <span class="dv">3</span> <span class="sc">+</span> <span class="dv">4</span> <span class="sc">+</span> <span class="dv">5</span>,</span>
-<span id="cb77-3"><a></a>  <span class="fu">reduce</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">`</span><span class="at">+</span><span class="st">`</span>, <span class="at">.init =</span> <span class="fl">0.5</span>)</span>
-<span id="cb77-4"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] TRUE</code></pre>
+<pre><code>#&gt; [1]  4  7 17</code></pre>
 </div>
 </div>
 </section>
-<section id="ggplot2-example-with-reduce" class="slide level2 unnumbered">
-<h2>ggplot2 example with reduce</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a><span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(hp, mpg)) <span class="sc">+</span> </span>
-<span id="cb79-2"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">8</span>, <span class="at">alpha =</span> .<span class="dv">5</span>, <span class="at">color =</span> <span class="st">"yellow"</span>) <span class="sc">+</span></span>
-<span id="cb79-3"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> .<span class="dv">5</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb79-4"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> .<span class="dv">5</span>, <span class="at">color =</span> <span class="st">"blue"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="09_files/figure-html/unnamed-chunk-28-1.png" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Let us use the <code>reduce()</code> function. Note that <code>reduce2()</code> takes two arguments, but the first value (<code>..1</code>) is given by the <code>.init</code> value.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a></a><span class="fu">reduce2</span>(</span>
-<span id="cb80-2"><a></a>  <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">4</span>, <span class="dv">2</span>),</span>
-<span id="cb80-3"><a></a>  <span class="fu">c</span>(<span class="st">"yellow"</span>, <span class="st">"red"</span>, <span class="st">"blue"</span>),</span>
-<span id="cb80-4"><a></a>  <span class="sc">~</span> ..<span class="dv">1</span> <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> ..<span class="dv">2</span>, <span class="at">alpha =</span> .<span class="dv">5</span>, <span class="at">color =</span> ..<span class="dv">3</span>),</span>
-<span id="cb80-5"><a></a>  <span class="at">.init =</span> <span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(hp, mpg))</span>
-<span id="cb80-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="09_files/figure-html/unnamed-chunk-29-1.png" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">age=</span><span class="fu">tibble</span>(<span class="at">name=</span><span class="st">'john'</span>,<span class="at">age=</span><span class="dv">30</span>),</span>
-<span id="cb81-2"><a></a>    <span class="at">sex=</span><span class="fu">tibble</span>(<span class="at">name=</span><span class="fu">c</span>(<span class="st">'john'</span>,<span class="st">'mary'</span>),<span class="at">sex=</span><span class="fu">c</span>(<span class="st">'M'</span>,<span class="st">'F'</span>),</span>
-<span id="cb81-3"><a></a>    <span class="at">trt=</span><span class="fu">tibble</span>(<span class="at">name=</span><span class="st">'Mary'</span>,<span class="at">treatment=</span><span class="st">'A'</span>)))</span>
-<span id="cb81-4"><a></a></span>
-<span id="cb81-5"><a></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; $age
-#&gt; # A tibble: 1 × 2
-#&gt;   name    age
-#&gt;   &lt;chr&gt; &lt;dbl&gt;
-#&gt; 1 john     30
-#&gt; 
-#&gt; $sex
-#&gt; # A tibble: 2 × 3
-#&gt;   name  sex   trt$name $treatment
-#&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;     
-#&gt; 1 john  M     Mary     A         
-#&gt; 2 mary  F     Mary     A</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a>df <span class="sc">|&gt;</span> <span class="fu">reduce</span>(<span class="at">.f =</span> full_join)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Joining with `by = join_by(name)`</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 2 × 4
-#&gt;   name    age sex   trt$name $treatment
-#&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;     
-#&gt; 1 john     30 M     Mary     A         
-#&gt; 2 mary     NA F     Mary     A</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a></a><span class="fu">reduce</span>(<span class="at">.x =</span> df,<span class="at">.f =</span> full_join)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Joining with `by = join_by(name)`</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 2 × 4
-#&gt;   name    age sex   trt$name $treatment
-#&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;     
-#&gt; 1 john     30 M     Mary     A         
-#&gt; 2 mary     NA F     Mary     A</code></pre>
-</div>
-</div>
+<section id="predicate-functionals-apply-a-predicate-to-each-element" class="slide level2">
+<h2>Predicate functionals apply a predicate to each element</h2>
+<p><strong>Predicate:</strong> function that returns single <code>TRUE</code> or <code>FALSE</code>.</p>
 <ul>
-<li>to see all intermediate steps, use <strong>accumulate()</strong></li>
+<li><code>some()</code> / <code>every()</code> / <code>none()</code>: True for <em>any</em> / <em>all</em> / <em>no</em> elements?</li>
+<li><code>detect()</code> / <code>detect_index()</code>: Find <em>value</em> / <em>location</em> of 1st match.</li>
+<li><code>keep()</code> / <code>discard()</code>: <em>Keep</em> / <em>drop</em> all matching elements.</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
-<span id="cb89-2"><a></a><span class="fu">accumulate</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="st">`</span><span class="at">+</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">y =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>))</span>
+<span id="cb47-2"><a></a><span class="fu">str</span>(<span class="fu">keep</span>(df, is.numeric))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1]  1  3  6 10 15</code></pre>
+<pre><code>#&gt; 'data.frame':    3 obs. of  1 variable:
+#&gt;  $ x: int  1 2 3</code></pre>
 </div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a></a><span class="fu">accumulate2</span>(</span>
-<span id="cb91-2"><a></a>  <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">4</span>, <span class="dv">2</span>),</span>
-<span id="cb91-3"><a></a>  <span class="fu">c</span>(<span class="st">"yellow"</span>, <span class="st">"red"</span>, <span class="st">"blue"</span>),</span>
-<span id="cb91-4"><a></a>  <span class="sc">~</span> ..<span class="dv">1</span> <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> ..<span class="dv">2</span>, <span class="at">alpha =</span> .<span class="dv">5</span>, <span class="at">color =</span> ..<span class="dv">3</span>),</span>
-<span id="cb91-5"><a></a>  <span class="at">.init =</span> <span class="fu">ggplot</span>(mtcars, <span class="fu">aes</span>(hp, mpg))</span>
-<span id="cb91-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a><span class="fu">str</span>(<span class="fu">discard</span>(df, is.numeric))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [[1]]</code></pre>
-</div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="09_files/figure-html/unnamed-chunk-32-1.png" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 
-#&gt; [[2]]</code></pre>
-</div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="09_files/figure-html/unnamed-chunk-32-2.png" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 
-#&gt; [[3]]</code></pre>
-</div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="09_files/figure-html/unnamed-chunk-32-3.png" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 
-#&gt; [[4]]</code></pre>
-</div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="09_files/figure-html/unnamed-chunk-32-4.png" width="672"></p>
-</figure>
-</div>
+<pre><code>#&gt; 'data.frame':    3 obs. of  1 variable:
+#&gt;  $ y: chr  "a" "b" "c"</code></pre>
 </div>
 </div>
 </section>
-<section id="map_df-variants" class="slide level2 unnumbered">
-<h2><code>map_df*()</code> variants</h2>
+<section id="map_if-and-modify_if-transform-elements-where-a-predicate-is-true" class="slide level2">
+<h2><code>map_if()</code> and <code>modify_if()</code> transform elements where a predicate is true</h2>
+<p>E.g, calculate mean of only numeric columns in a data frame.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb51-2"><a></a>  <span class="at">num1 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">20</span>),</span>
+<span id="cb51-3"><a></a>  <span class="at">num2 =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>),</span>
+<span id="cb51-4"><a></a>  <span class="at">chr1 =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>)</span>
+<span id="cb51-5"><a></a>)</span>
+<span id="cb51-6"><a></a></span>
+<span id="cb51-7"><a></a><span class="fu">str</span>(<span class="fu">map_if</span>(df, is.numeric, mean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; List of 3
+#&gt;  $ num1: num 10
+#&gt;  $ num2: num 6
+#&gt;  $ chr1: chr [1:3] "a" "b" "c"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a></a><span class="fu">str</span>(<span class="fu">modify_if</span>(df, is.numeric, mean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 'data.frame':    3 obs. of  3 variables:
+#&gt;  $ num1: num  10 10 10
+#&gt;  $ num2: num  6 6 6
+#&gt;  $ chr1: chr  "a" "b" "c"</code></pre>
+</div>
+</div>
+</section>
+<section id="baseapply-summarizes-matrices-and-arrays" class="slide level2">
+<h2><code>base::apply()</code> summarizes matrices and arrays</h2>
 <ul>
-<li><p><code>map_dfr()</code> = row bind the results</p></li>
-<li><p><code>map_dfc()</code> = column bind the results</p></li>
-<li><p>Note that <code>map_dfr()</code> has been superseded by <code>map() |&gt; list_rbind()</code> and <code>map_dfc()</code> has been superseded by <code>map() |&gt; list_cbind()</code></p></li>
+<li>Collapses 1 or more matrix/array dimensions by applying a summary function.</li>
+</ul>
+<p><code>apply(X, MARGIN, FUN)</code>: <code>MARGIN</code>? <code>1</code> for rows, <code>2</code> for columns.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a>a2d <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, <span class="at">nrow =</span> <span class="dv">5</span>)</span>
+<span id="cb55-2"><a></a><span class="co"># Row means</span></span>
+<span id="cb55-3"><a></a><span class="fu">apply</span>(a2d, <span class="dv">1</span>, mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1]  8.5  9.5 10.5 11.5 12.5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a></a><span class="co"># Column means</span></span>
+<span id="cb57-2"><a></a><span class="fu">apply</span>(a2d, <span class="dv">2</span>, mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1]  3  8 13 18</code></pre>
+</div>
+</div>
+<p><strong>Warning</strong>: <code>apply()</code> will coerce df to a matrix!</p>
+</section>
+<section id="base-r-has-mathematical-functionals" class="slide level2">
+<h2>Base R has mathematical functionals</h2>
+<p>Base R includes several mathematical functionals.</p>
+<ul>
+<li><code>integrate()</code>: Find the area under a curve.</li>
+<li><code>uniroot()</code>: Find where a function equals zero.</li>
+<li><code>optimise()</code>: Find the minimum or maximum value of a function.</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a></a>col_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
-<span id="cb96-2"><a></a>  <span class="fu">head</span>(mtcars, n) <span class="sc">|&gt;</span> </span>
-<span id="cb96-3"><a></a>    <span class="fu">summarise_all</span>(mean) <span class="sc">|&gt;</span> </span>
-<span id="cb96-4"><a></a>    <span class="fu">mutate_all</span>(floor) <span class="sc">|&gt;</span> </span>
-<span id="cb96-5"><a></a>    <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">paste</span>(<span class="st">"N ="</span>, n))</span>
-<span id="cb96-6"><a></a>}</span>
-<span id="cb96-7"><a></a></span>
-<span id="cb96-8"><a></a><span class="fu">map</span>((<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>) <span class="sc">*</span> <span class="dv">10</span>, col_stats)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a></a><span class="fu">integrate</span>(sin, <span class="dv">0</span>, pi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [[1]]
-#&gt;   mpg cyl disp  hp drat wt qsec vs am gear carb      n
-#&gt; 1  20   5  208 122    3  3   18  0  0    3    2 N = 10
-#&gt; 
-#&gt; [[2]]
-#&gt;   mpg cyl disp  hp drat wt qsec vs am gear carb      n
-#&gt; 1  20   6  233 136    3  3   18  0  0    3    2 N = 20</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a></a><span class="fu">map_dfr</span>((<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>) <span class="sc">*</span> <span class="dv">10</span>, col_stats)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;   mpg cyl disp  hp drat wt qsec vs am gear carb      n
-#&gt; 1  20   5  208 122    3  3   18  0  0    3    2 N = 10
-#&gt; 2  20   6  233 136    3  3   18  0  0    3    2 N = 20</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb100"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a></a><span class="fu">map</span>((<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>) <span class="sc">*</span> <span class="dv">10</span>, col_stats) <span class="sc">|&gt;</span> <span class="fu">list_rbind</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;   mpg cyl disp  hp drat wt qsec vs am gear carb      n
-#&gt; 1  20   5  208 122    3  3   18  0  0    3    2 N = 10
-#&gt; 2  20   6  233 136    3  3   18  0  0    3    2 N = 20</code></pre>
-</div>
-</div>
-</section>
-<section id="pluck" class="slide level2 unnumbered">
-<h2><code>pluck()</code></h2>
-<ul>
-<li><code>pluck()</code> will pull a single element from a list</li>
-</ul>
-<p>I like the example from the book because the starting object is not particularly easy to work with (as many JSON objects might not be).</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a></a>my_list <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb102-2"><a></a>  <span class="fu">list</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">2</span>), <span class="at">z =</span> <span class="st">"a"</span>),</span>
-<span id="cb102-3"><a></a>  <span class="fu">list</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="at">x =</span> <span class="dv">4</span>, <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">6</span>), <span class="at">z =</span> <span class="st">"b"</span>),</span>
-<span id="cb102-4"><a></a>  <span class="fu">list</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="at">x =</span> <span class="dv">8</span>, <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>))</span>
-<span id="cb102-5"><a></a>)</span>
-<span id="cb102-6"><a></a>my_list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [[1]]
-#&gt; [[1]][[1]]
-#&gt; [1] -1
-#&gt; 
-#&gt; [[1]]$x
-#&gt; [1] 1
-#&gt; 
-#&gt; [[1]]$y
-#&gt; [1] 2
-#&gt; 
-#&gt; [[1]]$z
-#&gt; [1] "a"
-#&gt; 
-#&gt; 
-#&gt; [[2]]
-#&gt; [[2]][[1]]
-#&gt; [1] -2
-#&gt; 
-#&gt; [[2]]$x
-#&gt; [1] 4
-#&gt; 
-#&gt; [[2]]$y
-#&gt; [1] 5 6
-#&gt; 
-#&gt; [[2]]$z
-#&gt; [1] "b"
-#&gt; 
-#&gt; 
-#&gt; [[3]]
-#&gt; [[3]][[1]]
-#&gt; [1] -3
-#&gt; 
-#&gt; [[3]]$x
-#&gt; [1] 8
-#&gt; 
-#&gt; [[3]]$y
-#&gt; [1]  9 10 11</code></pre>
-</div>
-</div>
-<p>Notice that the “first element” means something different in standard <code>pluck()</code> versus <code>map</code>ped <code>pluck()</code>.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb104"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a></a><span class="fu">pluck</span>(my_list, <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [[1]]
-#&gt; [1] -1
-#&gt; 
-#&gt; $x
-#&gt; [1] 1
-#&gt; 
-#&gt; $y
-#&gt; [1] 2
-#&gt; 
-#&gt; $z
-#&gt; [1] "a"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb106"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a></a><span class="fu">map</span>(my_list, pluck, <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [[1]]
-#&gt; [1] -1
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] -2
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] -3</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb108"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a></a><span class="fu">map_dbl</span>(my_list, pluck, <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] -1 -2 -3</code></pre>
-</div>
-</div>
-<p>The <code>map()</code> functions also have shortcuts for extracting elements from vectors (powered by <code>purrr::pluck()</code>). Note that <code>map(my_list, 3)</code> is a shortcut for <code>map(my_list, pluck, 3)</code>.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb110"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a></a><span class="co"># Select by name</span></span>
-<span id="cb110-2"><a></a><span class="fu">map_dbl</span>(my_list, <span class="st">"x"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 1 4 8</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb112"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a></a><span class="co"># Or by position</span></span>
-<span id="cb112-2"><a></a><span class="fu">map_dbl</span>(my_list, <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] -1 -2 -3</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb114"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a></a><span class="co"># Or by both</span></span>
-<span id="cb114-2"><a></a><span class="fu">map_dbl</span>(my_list, <span class="fu">list</span>(<span class="st">"y"</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 2 5 9</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a></a><span class="co"># You'll get an error if you try to retrieve an inside item that doesn't have </span></span>
-<span id="cb116-2"><a></a><span class="co"># a consistent format and you want a numeric output</span></span>
-<span id="cb116-3"><a></a><span class="fu">map_dbl</span>(my_list, <span class="fu">list</span>(<span class="st">"y"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in `map_dbl()`:
-#&gt; ℹ In index: 2.
-#&gt; Caused by error:
-#&gt; ! Result must be length 1, not 2.</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a></a><span class="co"># You'll get an error if a component doesn't exist:</span></span>
-<span id="cb118-2"><a></a><span class="fu">map_chr</span>(my_list, <span class="st">"z"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in `map_chr()`:
-#&gt; ℹ In index: 3.
-#&gt; Caused by error:
-#&gt; ! Result must be length 1, not 0.</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb120"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb120-1"><a></a><span class="co">#&gt; Error: Result 3 must be a single string, not NULL of length 0</span></span>
-<span id="cb120-2"><a></a></span>
-<span id="cb120-3"><a></a><span class="co"># Unless you supply a .default value</span></span>
-<span id="cb120-4"><a></a><span class="fu">map_chr</span>(my_list, <span class="st">"z"</span>, <span class="at">.default =</span> <span class="cn">NA</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "a" "b" NA</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a></a><span class="co">#&gt; [1] "a" "b" NA</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="not-covered-flatten" class="slide level2 unnumbered">
-<h2>Not covered: <code>flatten()</code></h2>
-<ul>
-<li><code>flatten()</code> will turn a list of lists into a simpler vector.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb123"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a></a>my_list <span class="ot">&lt;-</span></span>
-<span id="cb123-2"><a></a>  <span class="fu">list</span>(</span>
-<span id="cb123-3"><a></a>    <span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,</span>
-<span id="cb123-4"><a></a>    <span class="at">b =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
-<span id="cb123-5"><a></a>  )</span>
-<span id="cb123-6"><a></a></span>
-<span id="cb123-7"><a></a>my_list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; $a
-#&gt; [1] 1 2 3
-#&gt; 
-#&gt; $b
-#&gt; $b[[1]]
-#&gt; [1] 1 2 3</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb125"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a></a><span class="fu">map_if</span>(my_list, is.list, pluck)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; $a
-#&gt; [1] 1 2 3
-#&gt; 
-#&gt; $b
-#&gt; $b[[1]]
-#&gt; [1] 1 2 3</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb127"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a></a><span class="fu">map_if</span>(my_list, is.list, flatten_int)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; $a
-#&gt; [1] 1 2 3
-#&gt; 
-#&gt; $b
-#&gt; [1] 1 2 3</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb129"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a></a><span class="fu">map_if</span>(my_list, is.list, flatten_int) <span class="sc">|&gt;</span> </span>
-<span id="cb129-2"><a></a>  <span class="fu">flatten_int</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 1 2 3 1 2 3</code></pre>
-</div>
-</div>
-</section>
-<section id="dealing-with-failures" class="slide level2 unnumbered">
-<h2>Dealing with Failures</h2>
-</section>
-<section id="safely" class="slide level2 unnumbered">
-<h2>Safely</h2>
-<p><code>safely()</code> is an adverb. It takes a function (a verb) and returns a modified version. In this case, the modified function will never throw an error. Instead it always returns a list with two elements.</p>
-<ul>
-<li><p><code>result</code> is the original result. If there is an error this will be NULL</p></li>
-<li><p><code>error</code> is an error object. If the operation was successful the “<code>error</code>” will be NULL.</p></li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb131"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a></a>A <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">10</span>, <span class="st">"a"</span>)</span>
-<span id="cb131-2"><a></a></span>
-<span id="cb131-3"><a></a><span class="fu">map</span>(<span class="at">.x =</span> A, <span class="at">.f =</span> <span class="fu">safely</span>(log))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [[1]]
-#&gt; [[1]]$result
-#&gt; [1] 0
-#&gt; 
-#&gt; [[1]]$error
-#&gt; NULL
-#&gt; 
-#&gt; 
-#&gt; [[2]]
-#&gt; [[2]]$result
-#&gt; [1] 2.302585
-#&gt; 
-#&gt; [[2]]$error
-#&gt; NULL
-#&gt; 
-#&gt; 
-#&gt; [[3]]
-#&gt; [[3]]$result
-#&gt; NULL
-#&gt; 
-#&gt; [[3]]$error
-#&gt; &lt;simpleError in .Primitive("log")(x, base): non-numeric argument to mathematical function&gt;</code></pre>
-</div>
-</div>
-</section>
-<section id="possibly" class="slide level2 unnumbered">
-<h2>Possibly</h2>
-<p><code>possibly()</code> always succeeds. It is simpler than <code>safely()</code>, because you can give it a default value to return when there is an error.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb133"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a></a>A <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="dv">1</span>,<span class="dv">10</span>,<span class="st">"a"</span>)</span>
-<span id="cb133-2"><a></a></span>
-<span id="cb133-3"><a></a><span class="fu">map_dbl</span>(<span class="at">.x =</span> A, <span class="at">.f =</span> <span class="fu">possibly</span>(log, <span class="at">otherwise =</span> <span class="cn">NA_real_</span>) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.000000 2.302585       NA</code></pre>
+<pre><code>#&gt; 2 with absolute error &lt; 2.2e-14</code></pre>
 </div>
 </div>
 
@@ -1381,6 +867,44 @@
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")

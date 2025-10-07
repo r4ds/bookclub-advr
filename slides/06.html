@@ -208,7 +208,7 @@
 
 </section>
 <section id="learning-objectives" class="slide level2">
-<h2>Learning objectives:</h2>
+<h2>Learning objectives</h2>
 <ul>
 <li>How to make functions in R</li>
 <li>What are the parts of a function</li>
@@ -221,8 +221,8 @@
 <p>Functions have three parts, <code>formals()</code>, <code>body()</code>, and <code>environment()</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="htmlwidget-b0f018098d1077574e94" style="width:100%;height:100%;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b0f018098d1077574e94">{"x":{"diagram":"\n   graph LR\n     A{formals}-->B(body)\n     B-->C(environment)\nstyle A fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-bbd7765b234c4d6d52da" style="width:100%;height:100%;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-bbd7765b234c4d6d52da">{"x":{"diagram":"\n   graph LR\n     A{formals}-->B(body)\n     B-->C(environment)\nstyle A fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -365,7 +365,7 @@
 <span id="cb23-4"><a></a>deviation <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">-</span> <span class="fu">mean</span>(x)</span>
 <span id="cb23-5"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>(<span class="fu">square</span>(<span class="fu">deviation</span>(x))))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.2549537</code></pre>
+<pre><code>#&gt; [1] 0.2981467</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -376,7 +376,7 @@
 <span id="cb25-5"><a></a>out <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(out)</span>
 <span id="cb25-6"><a></a>out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.2549537</code></pre>
+<pre><code>#&gt; [1] 0.2981467</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -387,7 +387,7 @@
 <span id="cb27-5"><a></a>  <span class="fu">mean</span>() <span class="sc">|&gt;</span></span>
 <span id="cb27-6"><a></a>  <span class="fu">sqrt</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.2549537</code></pre>
+<pre><code>#&gt; [1] 0.2981467</code></pre>
 </div>
 </div>
 </section>
@@ -617,7 +617,7 @@
 <p>Everything that exists is an object. Everything that happens is a function call. — John Chambers</p>
 </blockquote>
 
-<img data-src="images/06_forms.png" width="584" class="r-stretch"></section>
+<img data-src="images/06_forms.png" class="r-stretch"></section>
 <section id="case-study-sir-model-function" class="slide level2">
 <h2>Case Study: SIR model function</h2>
 <p>This is an interesting example taken from a course on Coursera: <a href="https://www.coursera.org/specializations/infectious-disease-modelling">Infectious disease modelling-ICL</a></p>
@@ -732,7 +732,7 @@
 #&gt;             times, func, parms, ...))
 #&gt;     return(out)
 #&gt; }
-#&gt; &lt;bytecode: 0x5e4ff4997c50&gt;
+#&gt; &lt;bytecode: 0x55d249356e38&gt;
 #&gt; &lt;environment: namespace:deSolve&gt;</code></pre>
 </div>
 </div>
@@ -793,7 +793,7 @@
 #&gt; {
 #&gt;     UseMethod("melt", data)
 #&gt; }
-#&gt; &lt;bytecode: 0x5e4ff455aee8&gt;
+#&gt; &lt;bytecode: 0x55d24d8553b0&gt;
 #&gt; &lt;environment: namespace:reshape2&gt;</code></pre>
 </div>
 </div>
@@ -897,7 +897,7 @@
 #&gt;         return(df)
 #&gt;     }
 #&gt; }
-#&gt; &lt;bytecode: 0x5e4feee017f0&gt;
+#&gt; &lt;bytecode: 0x55d24a797c30&gt;
 #&gt; &lt;environment: namespace:reshape2&gt;</code></pre>
 </div>
 </div>
@@ -909,7 +909,7 @@
 </section>
 <section class="slide level2">
 
-<p>Going back to out model output visualization.</p>
+<p>Going back to our model output visualization.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a></a>output_full<span class="ot">&lt;-</span> <span class="fu">melt</span>(output,<span class="at">id=</span><span class="st">"time"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -921,7 +921,7 @@
 <span id="cb84-2"><a></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
 <span id="cb84-3"><a></a>  <span class="fu">xlab</span>(<span class="st">"Time(days)"</span>) <span class="sc">+</span></span>
 <span id="cb84-4"><a></a>  <span class="fu">ylab</span>(<span class="st">"Number of Infected"</span>) <span class="sc">+</span> </span>
-<span id="cb84-5"><a></a>  <span class="fu">labs</span>(<span class="st">"SIR Model: prevalence of infection"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb84-5"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"SIR Model: prevalence of infection"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
