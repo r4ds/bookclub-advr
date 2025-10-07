@@ -525,7 +525,7 @@ References:
 
 ---
 
-Going back to out model output visualization.
+Going back to our model output visualization.
 
 ```{r}
 output_full<- melt(output,id="time")
@@ -540,7 +540,7 @@ ggplot(data = output, aes(x = time, y = I)) +
   geom_line() + 
   xlab("Time(days)") +
   ylab("Number of Infected") + 
-  labs("SIR Model: prevalence of infection")
+  labs(title = "SIR Model: prevalence of infection")
 ```
 
 ```{r}
