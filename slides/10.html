@@ -201,1066 +201,291 @@
 </section>
 <section id="learning-objectives" class="slide level2">
 <h2>Learning objectives:</h2>
+<p>By the end of today’s session, you will be able to:</p>
 <ul>
-<li>Understand what a function factory is</li>
-<li>Recognise how function factories work</li>
+<li>Identify function factories</li>
+<li>Understand how function factories work</li>
 <li>Learn about non-obvious combination of function features</li>
 <li>Generate a family of functions from data</li>
 </ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(rlang)</span>
-<span id="cb1-2"><a></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-3"><a></a><span class="fu">library</span>(scales)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 </section>
 <section id="what-is-a-function-factory" class="slide level2">
 <h2>What is a function factory?</h2>
-<p>A <strong>function factory</strong> is a function that makes (returns) functions</p>
-<p>Factory made function are <strong>manufactured functions</strong>.</p>
-
-<img data-src="images/10-1-factories.png" alt="https://epsis.com/no/operations-centers-focus-on-ways-of-working/" width="512" class="r-stretch quarto-figure-center"><p class="caption">Function factory | Credits: epsis.com</p></section>
-<section id="how-does-a-function-factory-work" class="slide level2">
-<h2>How does a function factory work?</h2>
-
-<img data-src="images/10-2-how.jpg" width="130" class="r-stretch quarto-figure-center"><p class="caption">How does it work? | Credits: kakaakigas.com/how-it-works/</p><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>power1 <span class="ot">&lt;-</span> <span class="cf">function</span>(exp) {</span>
-<span id="cb2-2"><a></a>  <span class="cf">function</span>(x) {</span>
-<span id="cb2-3"><a></a>    x <span class="sc">^</span> exp</span>
-<span id="cb2-4"><a></a>  }</span>
-<span id="cb2-5"><a></a>}</span>
-<span id="cb2-6"><a></a></span>
-<span id="cb2-7"><a></a>square <span class="ot">&lt;-</span> <span class="fu">power1</span>(<span class="dv">2</span>)</span>
-<span id="cb2-8"><a></a>cube <span class="ot">&lt;-</span> <span class="fu">power1</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p><code>power1()</code> is the function factory and <code>square()</code> and <code>cube()</code> are manufactured functions.</p>
-</section>
-<section id="important-to-remember" class="slide level2 scrollable">
-<h2>Important to remember</h2>
-<ol type="1">
-<li>R has First-class functions (can be created with <code>function()</code> and <code>&lt;-</code>)</li>
-</ol>
-<blockquote>
-<p>R functions are objects in their own right, a language property often called “first-class functions”<br>
-– <a href="https://adv-r.hadley.nz/functions.html?q=first%20class#first-class-functions">Section 6.2.3</a></p>
-</blockquote>
-<ol start="2" type="1">
-<li>Functions capture (enclose) environment in which they are created</li>
-</ol>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="cf">function</span>(y) x <span class="sc">+</span> y</span>
-<span id="cb3-2"><a></a><span class="fu">fn_env</span>(f)    <span class="co"># The function f()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">fn_env</span>(<span class="fu">f</span>())  <span class="co"># The function created by f()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x0000029fbf09a6d0&gt;</code></pre>
-</div>
-</div>
-<ol start="3" type="1">
-<li>Functions create a new environment on each run</li>
-</ol>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb7-2"><a></a>  <span class="cf">function</span>() x <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb7-3"><a></a>}</span>
-<span id="cb7-4"><a></a>ff <span class="ot">&lt;-</span> <span class="fu">f</span>(<span class="dv">1</span>)</span>
-<span id="cb7-5"><a></a><span class="fu">ff</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 2</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">ff</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 2</code></pre>
-</div>
-</div>
-</section>
-<section id="fundamentals---environment" class="slide level2">
-<h2>Fundamentals - Environment</h2>
+<div class="columns">
+<div class="column">
 <ul>
-<li>Environment when function is created defines arguments in the function</li>
-<li>Use <code>env_print(fun)</code> and <code>fn_env()</code> to explore</li>
+<li><p>A <strong>function factory</strong> is a function that makes (returns) functions</p></li>
+<li><p>Factory made function are <strong>manufactured functions</strong></p></li>
 </ul>
+</div><div class="column">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">env_print</span>(square)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="co"># create a function factory</span></span>
+<span id="cb1-2"><a></a>power1 <span class="ot">&lt;-</span> <span class="cf">function</span>(exp) {</span>
+<span id="cb1-3"><a></a>  <span class="cf">function</span>(x) {</span>
+<span id="cb1-4"><a></a>    x<span class="sc">^</span>exp</span>
+<span id="cb1-5"><a></a>  }</span>
+<span id="cb1-6"><a></a>}</span>
+<span id="cb1-7"><a></a></span>
+<span id="cb1-8"><a></a><span class="co"># create manufactured functions</span></span>
+<span id="cb1-9"><a></a>square <span class="ot">&lt;-</span> <span class="fu">power1</span>(<span class="dv">2</span>)</span>
+<span id="cb1-10"><a></a></span>
+<span id="cb1-11"><a></a>cube <span class="ot">&lt;-</span> <span class="fu">power1</span>(<span class="dv">3</span>)</span>
+<span id="cb1-12"><a></a></span>
+<span id="cb1-13"><a></a><span class="co"># execute manufactured functions</span></span>
+<span id="cb1-14"><a></a><span class="fu">square</span>(<span class="dv">2</span>)</span>
+<span id="cb1-15"><a></a><span class="co">#&gt; 4</span></span>
+<span id="cb1-16"><a></a></span>
+<span id="cb1-17"><a></a><span class="fu">cube</span>(<span class="dv">2</span>)</span>
+<span id="cb1-18"><a></a><span class="co">#&gt; 8</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div></div>
+<aside class="notes">
+<ul>
+<li><p>A function that, in its body, returns a function is by definition a function factory</p></li>
+<li><p>Of the three main functional programming tools (functionals, function factories, and function operators), function factories are the least used</p></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="why-function-factories-work" class="slide level2 scrollable">
+<h2>Why function factories work</h2>
+<p>Function factories are powered by three features of the R language:</p>
+<ol type="1">
+<li><p>R has first-class functions</p></li>
+<li><p>R functions capture the environment in which they are created</p></li>
+<li><p>R functions create a new execution environment</p></li>
+</ol>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">env_print</span>(square)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x0000029fc0169900&gt;
+<pre><code>#&gt; &lt;environment: 0x55f244f22d60&gt;
 #&gt; Parent: &lt;environment: global&gt;
 #&gt; Bindings:
-#&gt; • exp: &lt;lazy&gt;</code></pre>
+#&gt; • exp: &lt;dbl&gt;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">fn_env</span>(square)<span class="sc">$</span>exp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">env_print</span>(cube)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 2</code></pre>
+<pre><code>#&gt; &lt;environment: 0x55f244f75798&gt;
+#&gt; Parent: &lt;environment: global&gt;
+#&gt; Bindings:
+#&gt; • exp: &lt;dbl&gt;</code></pre>
 </div>
 </div>
+</div></div>
+<aside class="notes">
+<ul>
+<li><p>A language with first-class functions means the functions are objects that can be copied, bound, etc.</p></li>
+<li><p>When they are created, manufactured functions capture the environment of the function factory</p></li>
+<li><p>Manufactured functions have separate environments</p></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="diagramming-function-factories" class="slide level2">
+<h2>Diagramming function factories</h2>
 
-<img data-src="images/10-3-procedure.png" style="width:50.0%" class="r-stretch quarto-figure-center"><p class="caption">Blue indicates environment, arrows bindings</p></section>
-<section id="fundamentals---forcing" class="slide level2">
-<h2>Fundamentals - Forcing</h2>
+<img data-src="images/10_power-full.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="diagramming-function-factories-1" class="slide level2">
+<h2>Diagramming function factories</h2>
+
+<img data-src="images/10_power-exec.png" class="quarto-figure quarto-figure-center r-stretch"></section>
+<section id="forcing-evaluation" class="slide level2">
+<h2>Forcing evaluation</h2>
 <ul>
-<li>Lazy evaluation means arguments only evaluated when used</li>
-<li>“[can] lead to a real head-scratcher of a bug”</li>
+<li>Beware of changing bindings between creation and execution of manufactured functions</li>
 </ul>
+<div class="columns">
+<div class="column">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb15-2"><a></a>square <span class="ot">&lt;-</span> <span class="fu">power1</span>(x)</span>
-<span id="cb15-3"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb15-4"><a></a><span class="fu">square</span>(<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 64</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb6-2"><a></a>square <span class="ot">&lt;-</span> <span class="fu">power1</span>(x)</span>
+<span id="cb6-3"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb6-4"><a></a><span class="fu">square</span>(<span class="dv">2</span>)</span>
+<span id="cb6-5"><a></a><span class="co">#&gt; [1] 8</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</div><div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>power2 <span class="ot">&lt;-</span> <span class="cf">function</span>(exp) {</span>
+<span id="cb7-2"><a></a>  <span class="fu">force</span>(exp)</span>
+<span id="cb7-3"><a></a>  <span class="cf">function</span>(x) {</span>
+<span id="cb7-4"><a></a>    x<span class="sc">^</span>exp</span>
+<span id="cb7-5"><a></a>  }</span>
+<span id="cb7-6"><a></a>}</span>
+<span id="cb7-7"><a></a></span>
+<span id="cb7-8"><a></a>x <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb7-9"><a></a>square <span class="ot">&lt;-</span> <span class="fu">power2</span>(x)</span>
+<span id="cb7-10"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb7-11"><a></a><span class="fu">square</span>(<span class="dv">2</span>)</span>
+<span id="cb7-12"><a></a><span class="co">#&gt; [1] 4</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</div></div>
+<aside class="notes">
 <ul>
-<li><em>Only applies if passing object as argument</em></li>
-<li>Here argument <code>2</code> evaluated when function called</li>
+<li><p>As per lazy evaluation, <code>x</code> is evaluated for the first time when <code>square(2)</code> is called and at the time of evaluation, <code>x</code>, the exponent, is equal to 3</p></li>
+<li><p>Use <code>force()</code> to force eager evaluation and avoid this type of bug introduced by lazy evaluation</p></li>
+<li><p>Alternatively, use any other function to force the evaluation of the variable <code>x</code> during the creation of the manufactured function</p></li>
+<li><p>This issue of lazy evaluation only applies for variables (e.g.&nbsp;running <code>power2(2)</code> is eagerly evaluated)</p></li>
 </ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>square <span class="ot">&lt;-</span> <span class="fu">power1</span>(<span class="dv">2</span>)</span>
-<span id="cb17-2"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb17-3"><a></a><span class="fu">square</span>(<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 16</code></pre>
-</div>
-</div>
-<p>So use <code>force()</code>! (Unless you want it to change with the <code>x</code> in the parent environment)</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
-<section id="forcing---reiterated" class="slide level2">
-<h2>Forcing - Reiterated</h2>
-<p>Only required if the argument is <strong>not</strong> evaluated before the new function is created:</p>
+<section id="stateful-functions" class="slide level2">
+<h2>Stateful functions</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>power1 <span class="ot">&lt;-</span> <span class="cf">function</span>(exp) {</span>
-<span id="cb19-2"><a></a>  <span class="fu">stopifnot</span>(<span class="fu">is.numeric</span>(exp))</span>
-<span id="cb19-3"><a></a>  <span class="cf">function</span>(x) x <span class="sc">^</span> exp</span>
-<span id="cb19-4"><a></a>}</span>
-<span id="cb19-5"><a></a></span>
-<span id="cb19-6"><a></a>x <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb19-7"><a></a>square <span class="ot">&lt;-</span> <span class="fu">power1</span>(x)</span>
-<span id="cb19-8"><a></a>x <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb19-9"><a></a><span class="fu">square</span>(<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 16</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>new_counter <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb8-2"><a></a>  i <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb8-3"><a></a>  <span class="cf">function</span>() {</span>
+<span id="cb8-4"><a></a>    i <span class="ot">&lt;&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb8-5"><a></a>    i</span>
+<span id="cb8-6"><a></a>  }</span>
+<span id="cb8-7"><a></a>}</span>
+<span id="cb8-8"><a></a></span>
+<span id="cb8-9"><a></a>counter_one <span class="ot">&lt;-</span> <span class="fu">new_counter</span>()</span>
+<span id="cb8-10"><a></a>counter_two <span class="ot">&lt;-</span> <span class="fu">new_counter</span>()</span>
+<span id="cb8-11"><a></a></span>
+<span id="cb8-12"><a></a><span class="fu">counter_one</span>()</span>
+<span id="cb8-13"><a></a><span class="co">#&gt; [1] 1</span></span>
+<span id="cb8-14"><a></a><span class="fu">counter_one</span>()</span>
+<span id="cb8-15"><a></a><span class="co">#&gt; [1] 2</span></span>
+<span id="cb8-16"><a></a><span class="fu">counter_two</span>()</span>
+<span id="cb8-17"><a></a><span class="co">#&gt; [1] 1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
+<aside class="notes">
+<ul>
+<li><p>The manufactured functions create distinct enclosures of the function factory environment</p></li>
+<li><p>As soon as your function starts managing the state of multiple variables, it’s better to switch to an object-oriented system like R6</p></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
-<section id="fundamentals---stateful-functions" class="slide level2">
-<h2>Fundamentals - Stateful functions</h2>
-<p>Because</p>
+<section id="garbage-collection" class="slide level2">
+<h2>Garbage collection</h2>
 <ul>
-<li>The enclosing environment is unique and constant, and</li>
-<li>We have <code>&lt;&lt;-</code> (super assignment)</li>
+<li>Manufactured functions hold on to variables in the enclosed function factory’s environment</li>
 </ul>
-<p>We can <em>change</em> that enclosing environment and keep track of that state across iterations (!)</p>
-<ul>
-<li><code>&lt;-</code> Assignment in <em>current</em> environment</li>
-<li><code>&lt;&lt;-</code> Assignment in <em>parent</em> environment</li>
-</ul>
+<div class="columns">
+<div class="column">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>new_counter <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
-<span id="cb21-2"><a></a>  i <span class="ot">&lt;-</span> <span class="dv">0</span>        </span>
-<span id="cb21-3"><a></a>  <span class="cf">function</span>() {</span>
-<span id="cb21-4"><a></a>    i <span class="ot">&lt;&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span> <span class="co"># second assignment (super assignment)</span></span>
-<span id="cb21-5"><a></a>    i</span>
-<span id="cb21-6"><a></a>  }</span>
-<span id="cb21-7"><a></a>}</span>
-<span id="cb21-8"><a></a></span>
-<span id="cb21-9"><a></a>counter_one <span class="ot">&lt;-</span> <span class="fu">new_counter</span>()</span>
-<span id="cb21-10"><a></a>counter_two <span class="ot">&lt;-</span> <span class="fu">new_counter</span>()</span>
-<span id="cb21-11"><a></a><span class="fu">c</span>(<span class="fu">counter_one</span>(), <span class="fu">counter_one</span>(), <span class="fu">counter_one</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 1 2 3</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>f1 <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb9-2"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
+<span id="cb9-3"><a></a>  m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb9-4"><a></a>  <span class="cf">function</span>() m</span>
+<span id="cb9-5"><a></a>}</span>
+<span id="cb9-6"><a></a></span>
+<span id="cb9-7"><a></a>g1 <span class="ot">&lt;-</span> <span class="fu">f1</span>(<span class="fl">1e6</span>)</span>
+<span id="cb9-8"><a></a>lobstr<span class="sc">::</span><span class="fu">obj_size</span>(g1)</span>
+<span id="cb9-9"><a></a><span class="co">#&gt; 8.00 MB</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="fu">c</span>(<span class="fu">counter_two</span>(), <span class="fu">counter_two</span>(), <span class="fu">counter_two</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 1 2 3</code></pre>
-</div>
-</div>
-<blockquote>
-<p>“As soon as your function starts managing the state of multiple variables, it’s better to switch to R6”</p>
-</blockquote>
-</section>
-<section id="fundamentals---garbage-collection" class="slide level2">
-<h2>Fundamentals - Garbage collection</h2>
-<ul>
-<li>Because environment is attached to (enclosed by) function, temporary objects don’t go away.</li>
-</ul>
-<p><strong>Cleaning up</strong> using <code>rm()</code> inside a function:</p>
+</div><div class="column">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>f_dirty <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
-<span id="cb25-2"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
-<span id="cb25-3"><a></a>  m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
-<span id="cb25-4"><a></a>  <span class="cf">function</span>() m</span>
-<span id="cb25-5"><a></a>}</span>
-<span id="cb25-6"><a></a></span>
-<span id="cb25-7"><a></a>f_clean <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
-<span id="cb25-8"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
-<span id="cb25-9"><a></a>  m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
-<span id="cb25-10"><a></a>  <span class="fu">rm</span>(x)            <span class="co"># &lt;---- Important part!</span></span>
-<span id="cb25-11"><a></a>  <span class="cf">function</span>() m</span>
-<span id="cb25-12"><a></a>}</span>
-<span id="cb25-13"><a></a></span>
-<span id="cb25-14"><a></a>lobstr<span class="sc">::</span><span class="fu">obj_size</span>(<span class="fu">f_dirty</span>(<span class="fl">1e6</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 8.00 MB</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>f2 <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
+<span id="cb10-2"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">runif</span>(n)</span>
+<span id="cb10-3"><a></a>  m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb10-4"><a></a>  <span class="fu">rm</span>(x)</span>
+<span id="cb10-5"><a></a>  <span class="cf">function</span>() m</span>
+<span id="cb10-6"><a></a>}</span>
+<span id="cb10-7"><a></a></span>
+<span id="cb10-8"><a></a>g2 <span class="ot">&lt;-</span> <span class="fu">f2</span>(<span class="fl">1e6</span>)</span>
+<span id="cb10-9"><a></a>lobstr<span class="sc">::</span><span class="fu">obj_size</span>(g2)</span>
+<span id="cb10-10"><a></a><span class="co">#&gt; 504 B</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>lobstr<span class="sc">::</span><span class="fu">obj_size</span>(<span class="fu">f_clean</span>(<span class="fl">1e6</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; 504 B</code></pre>
-</div>
-</div>
-</section>
-<section id="useful-examples---histograms-and-binwidth" class="slide level2">
-<h2>Useful Examples - Histograms and binwidth</h2>
-<p><strong>Useful when…</strong></p>
-<ul>
-<li>You need to pass a function<br>
-</li>
-<li>You don’t want to have to re-write the function every time (the <em>default</em> behaviour of the function should be flexible)</li>
-</ul>
-<p>For example, these bins are not appropriate</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>sd <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">15</span>)</span>
-<span id="cb29-2"><a></a>n <span class="ot">&lt;-</span> <span class="dv">100</span></span>
-<span id="cb29-3"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">rnorm</span>(<span class="dv">3</span> <span class="sc">*</span> n, <span class="at">sd =</span> sd), <span class="at">sd =</span> <span class="fu">rep</span>(sd, n))</span>
-<span id="cb29-4"><a></a></span>
-<span id="cb29-5"><a></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(x)) <span class="sc">+</span> </span>
-<span id="cb29-6"><a></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb29-7"><a></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> sd, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span> </span>
-<span id="cb29-8"><a></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="10_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>We could just make a function…</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>binwidth_bins <span class="ot">&lt;-</span> <span class="cf">function</span>(x) (<span class="fu">max</span>(x) <span class="sc">-</span> <span class="fu">min</span>(x)) <span class="sc">/</span> <span class="dv">20</span></span>
-<span id="cb30-2"><a></a></span>
-<span id="cb30-3"><a></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> x)) <span class="sc">+</span> </span>
-<span id="cb30-4"><a></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> binwidth_bins) <span class="sc">+</span> </span>
-<span id="cb30-5"><a></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> sd, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span> </span>
-<span id="cb30-6"><a></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="10_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>But if we want to change the number of bins (20) we’d have to re-write the function each time.</p>
-<p>If we use a factory, we don’t have to do that.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>binwidth_bins <span class="ot">&lt;-</span> <span class="cf">function</span>(n) {</span>
-<span id="cb31-2"><a></a>  <span class="fu">force</span>(n)</span>
-<span id="cb31-3"><a></a>  <span class="cf">function</span>(x) (<span class="fu">max</span>(x) <span class="sc">-</span> <span class="fu">min</span>(x)) <span class="sc">/</span> n</span>
-<span id="cb31-4"><a></a>}</span>
-<span id="cb31-5"><a></a></span>
-<span id="cb31-6"><a></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> x)) <span class="sc">+</span> </span>
-<span id="cb31-7"><a></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fu">binwidth_bins</span>(<span class="dv">20</span>)) <span class="sc">+</span> </span>
-<span id="cb31-8"><a></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> sd, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span> </span>
-<span id="cb31-9"><a></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">title =</span> <span class="st">"20 bins"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="10_files/figure-html/unnamed-chunk-8-1.png" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> x)) <span class="sc">+</span> </span>
-<span id="cb32-2"><a></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="fu">binwidth_bins</span>(<span class="dv">5</span>)) <span class="sc">+</span> </span>
-<span id="cb32-3"><a></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> sd, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span> </span>
-<span id="cb32-4"><a></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">title =</span> <span class="st">"5 bins"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="10_files/figure-html/unnamed-chunk-8-2.png" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<blockquote>
-<p>Similar benefit in Box-cox example</p>
-</blockquote>
-</section>
-<section id="useful-examples---wrapper" class="slide level2">
-<h2>Useful Examples - Wrapper</h2>
-<p><strong>Useful when…</strong></p>
-<ul>
-<li>You want to create a function that wraps a bunch of other functions</li>
-</ul>
-<p>For example, <code>ggsave()</code> wraps a bunch of different graphics device functions:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="co"># (Even more simplified)</span></span>
-<span id="cb33-2"><a></a>plot_dev <span class="ot">&lt;-</span> <span class="cf">function</span>(ext, <span class="at">dpi =</span> <span class="dv">96</span>) {</span>
-<span id="cb33-3"><a></a>  <span class="fu">force</span>(dpi)</span>
-<span id="cb33-4"><a></a>  </span>
-<span id="cb33-5"><a></a>  <span class="cf">switch</span>(</span>
-<span id="cb33-6"><a></a>    ext,</span>
-<span id="cb33-7"><a></a>    <span class="at">svg =</span> <span class="cf">function</span>(filename, ...) svglite<span class="sc">::</span><span class="fu">svglite</span>(<span class="at">file =</span> filename, ...),</span>
-<span id="cb33-8"><a></a>    <span class="at">png =</span> <span class="cf">function</span>(...) grDevices<span class="sc">::</span><span class="fu">png</span>(..., <span class="at">res =</span> dpi, <span class="at">units =</span> <span class="st">"in"</span>),</span>
-<span id="cb33-9"><a></a>    <span class="at">jpg =</span> ,</span>
-<span id="cb33-10"><a></a>    <span class="at">jpeg =</span> <span class="cf">function</span>(...) grDevices<span class="sc">::</span><span class="fu">jpeg</span>(..., <span class="at">res =</span> dpi, <span class="at">units =</span> <span class="st">"in"</span>),</span>
-<span id="cb33-11"><a></a>    <span class="fu">stop</span>(<span class="st">"Unknown graphics extension: "</span>, ext, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb33-12"><a></a>  )</span>
-<span id="cb33-13"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Then <code>ggsave()</code> uses</p>
-<pre><code>ggsave &lt;- function(...) {
-  dev &lt;- plot_dev(device, filename, dpi = dpi)
-  ...
-  dev(filename = filename, width = dim[1], height = dim[2], bg = bg, ...)
-  ...
-}</code></pre>
-<p>Otherwise, would have to do something like like a bunch of if/else statements.</p>
-</section>
-<section id="useful-examples---optimizing" class="slide level2">
-<h2>Useful Examples - Optimizing</h2>
-<p><strong>Useful when…</strong></p>
-<ul>
-<li>Want to pass function on to <code>optimise()</code>/<code>optimize()</code></li>
-<li>Want to perform pre-computations to speed things up</li>
-<li>Want to re-use this for other datasets</li>
-</ul>
-<p>(<em>Skipping to final results from section</em>)</p>
-<p>Here, using MLE want to to find the most likely value of lambda for a Poisson distribution and this data.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>x1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">41</span>, <span class="dv">30</span>, <span class="dv">31</span>, <span class="dv">38</span>, <span class="dv">29</span>, <span class="dv">24</span>, <span class="dv">30</span>, <span class="dv">29</span>, <span class="dv">31</span>, <span class="dv">38</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>We’ll create a function that creates a lambda assessment function for a given data set.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>ll_poisson <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb36-2"><a></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
-<span id="cb36-3"><a></a>  sum_x <span class="ot">&lt;-</span> <span class="fu">sum</span>(x)</span>
-<span id="cb36-4"><a></a>  c <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">lfactorial</span>(x))</span>
-<span id="cb36-5"><a></a></span>
-<span id="cb36-6"><a></a>  <span class="cf">function</span>(lambda) {</span>
-<span id="cb36-7"><a></a>    <span class="fu">log</span>(lambda) <span class="sc">*</span> sum_x <span class="sc">-</span> n <span class="sc">*</span> lambda <span class="sc">-</span> c</span>
-<span id="cb36-8"><a></a>  }</span>
-<span id="cb36-9"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>We can use this on different data sets, but here use ours <code>x1</code></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>ll <span class="ot">&lt;-</span> <span class="fu">ll_poisson</span>(x1)</span>
-<span id="cb37-2"><a></a><span class="fu">ll</span>(<span class="dv">10</span>)  <span class="co"># Log-probility of a lambda = 10</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] -183.6405</code></pre>
-</div>
-</div>
-<p>Use <code>optimise()</code> rather than trial and error</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a><span class="fu">optimise</span>(ll, <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>), <span class="at">maximum =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; $maximum
-#&gt; [1] 32.09999
-#&gt; 
-#&gt; $objective
-#&gt; [1] -30.26755</code></pre>
-</div>
-</div>
-<p>Result: Highest log-probability is -30.3, best lambda is 32.1</p>
+</div></div>
 </section>
 <section id="function-factories-functionals" class="slide level2">
 <h2>Function factories + functionals</h2>
-<p>Combine functionals and function factories to turn data into many functions.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>names <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb41-2"><a></a>  <span class="at">square =</span> <span class="dv">2</span>, </span>
-<span id="cb41-3"><a></a>  <span class="at">cube =</span> <span class="dv">3</span>, </span>
-<span id="cb41-4"><a></a>  <span class="at">root =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, </span>
-<span id="cb41-5"><a></a>  <span class="at">cuberoot =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span>, </span>
-<span id="cb41-6"><a></a>  <span class="at">reciprocal =</span> <span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb41-7"><a></a>)</span>
-<span id="cb41-8"><a></a>funs <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(names, power1)</span>
-<span id="cb41-9"><a></a><span class="fu">names</span>(funs)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "square"     "cube"       "root"       "cuberoot"   "reciprocal"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a>funs<span class="sc">$</span><span class="fu">root</span>(<span class="dv">64</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 8</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>funs<span class="sc">$</span><span class="fu">square</span>(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 9</code></pre>
-</div>
-</div>
-<p>Avoid the prefix with</p>
+<div class="columns">
+<div class="column">
 <ul>
-<li><code>with()</code> - <code>with(funs, root(100))</code>
-<ul>
-<li>Temporary, clear, short-term</li>
-</ul></li>
-<li><code>attach()</code> - <code>attach(funs)</code> / <code>detach(funs)</code>
-<ul>
-<li>Added to search path (like package function), cannot be overwritten, but can be attached multiple times!</li>
-</ul></li>
-<li><code>rlang::env_bind</code> - <code>env_bind(globalenv(), !!!funs)</code> / <code>env_unbind(gloablenv(), names(funs))</code>
-<ul>
-<li>Added to global env (like created function), can be overwritten</li>
-</ul></li>
+<li>Combine functionals and function factories to turn data into many functions.</li>
 </ul>
-<!--
-## EXTRA - Previous set of slides
-
-Graphical factories **useful function factories**, such as:
-
-1.  Labelling with:
-
-    * formatter functions
-    
-
-::: {.cell}
-
-```{.r .cell-code}
-y <- c(12345, 123456, 1234567)
-comma_format()(y)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] "12,345"    "123,456"   "1,234,567"
-```
-
-
-:::
-:::
-
-
-::: {.cell}
-
-```{.r .cell-code}
-number_format(scale = 1e-3, suffix = " K")(y)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] "12 K"    "123 K"   "1 235 K"
-```
-
-
-:::
-:::
-
-They are more commonly used inside a ggplot:
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-a_ggplot_object + 
-  scale_y_continuous(
-  labels = comma_format()
-)
-```
-
-::: {.cell-output-display}
-![](10_files/figure-html/10-22-1.png){width=672}
-:::
-:::
-
-
-2.  Using binwidth in facet histograms
-
-      * binwidth_bins
-      
-
-::: {.cell}
-
-```{.r .cell-code}
-binwidth_bins <- function(n) {
-  force(n)
-  
-  function(x) {
-    (max(x) - min(x)) / n
-  }
-}
-```
-:::
-
-   
-Or use a concatenation of this typr of detecting number of bins functions:
-
-      - nclass.Sturges()
-      - nclass.scott()
-      - nclass.FD()
-      
-
-::: {.cell}
-
-```{.r .cell-code}
-base_bins <- function(type) {
-  fun <- switch(type,
-    Sturges = nclass.Sturges,
-    scott = nclass.scott,
-    FD = nclass.FD,
-    stop("Unknown type", call. = FALSE)
-  )
-  
-  function(x) {
-    (max(x) - min(x)) / fun(x)
-  }
-}
-```
-:::
-
-      
-
-3.  Internals:
-
-      * ggplot2:::plot_dev()
-
-
-## Non-obvious combinations
-
-
-- The **Box-Cox** transformation.
-- **Bootstrap** resampling.
-- **Maximum likelihood** estimation.
-
-
-### Statistical factories
-
-The **Box-Cox** transformation towards normality:
-
-::: {.cell}
-
-```{.r .cell-code}
-boxcox1 <- function(x, lambda) {
-  stopifnot(length(lambda) == 1)
-  
-  if (lambda == 0) {
-    log(x)
-  } else {
-    (x ^ lambda - 1) / lambda
-  }
-}
-```
-:::
-
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-boxcox2 <- function(lambda) {
-  if (lambda == 0) {
-    function(x) log(x)
-  } else {
-    function(x) (x ^ lambda - 1) / lambda
-  }
-}
-
-stat_boxcox <- function(lambda) {
-  stat_function(aes(colour = lambda), fun = boxcox2(lambda), size = 1)
-}
-
-plot1 <- ggplot(data.frame(x = c(0, 5)), aes(x)) + 
-  lapply(c(0.5, 1, 1.5), stat_boxcox) + 
-  scale_colour_viridis_c(limits = c(0, 1.5))
-```
-
-::: {.cell-output .cell-output-stderr}
-
-```
-#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-#> ℹ Please use `linewidth` instead.
-```
-
-
-:::
-
-```{.r .cell-code}
-# visually, log() does seem to make sense as the transformation
-# for lambda = 0; as values get smaller and smaller, the function
-# gets close and closer to a log transformation
-plot2 <- ggplot(data.frame(x = c(0.01, 1)), aes(x)) + 
-  lapply(c(0.5, 0.25, 0.1, 0), stat_boxcox) + 
-  scale_colour_viridis_c(limits = c(0, 1.5))
-library(patchwork)
-plot1+plot2
-```
-
-::: {.cell-output-display}
-![](10_files/figure-html/unnamed-chunk-18-1.png){width=672}
-:::
-:::
-
-
-**Bootstrap generators**
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-boot_permute <- function(df, var) {
-  n <- nrow(df)
-  force(var)
-  
-  function() {
-    col <- df[[var]]
-    col[sample(n, replace = TRUE)]
-  }
-}
-
-boot_mtcars1 <- boot_permute(mtcars, "mpg")
-head(boot_mtcars1())
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] 21.5 19.2 16.4 10.4 22.8 24.4
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] 16.4 22.8 22.8 22.8 16.4 19.2
-head(boot_mtcars1())
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] 32.4 22.8 19.2 10.4 22.8 18.1
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] 17.8 18.7 30.4 30.4 16.4 21.0
-```
-:::
-
-
-::: {.cell}
-
-```{.r .cell-code}
-boot_model <- function(df, formula) {
-  mod <- lm(formula, data = df)
-  fitted <- unname(fitted(mod))
-  resid <- unname(resid(mod))
-  rm(mod)
-
-  function() {
-    fitted + sample(resid)
-  }
-} 
-
-boot_mtcars2 <- boot_model(mtcars, mpg ~ wt)
-head(boot_mtcars2())
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] 24.48367 22.27620 26.63215 20.96952 25.77286 16.51064
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] 25.0 24.0 21.7 19.2 24.9 16.0
-head(boot_mtcars2())
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] 29.70459 23.66597 25.75283 26.08372 25.77286 14.88789
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] 27.4 21.0 20.3 19.4 16.3 21.3
-```
-:::
-
-
-**Maximum likelihood estimation**
-
-$$P(\lambda,x)=\prod_{i=1}^{n}\frac{\lambda^{x_i}e^{-\lambda}}{x_i!}$$
-
-::: {.cell}
-
-```{.r .cell-code}
-lprob_poisson <- function(lambda, x) {
-  n <- length(x)
-  (log(lambda) * sum(x)) - (n * lambda) - sum(lfactorial(x))
-}
-```
-:::
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-x1 <- c(41, 30, 31, 38, 29, 24, 30, 29, 31, 38)
-```
-:::
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-lprob_poisson(10, x1)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] -183.6405
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] -184
-lprob_poisson(20, x1)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] -61.14028
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] -61.1
-lprob_poisson(30, x1)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] -30.98598
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] -31
-```
-:::
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-ll_poisson1 <- function(x) {
-  n <- length(x)
-
-  function(lambda) {
-    log(lambda) * sum(x) - n * lambda - sum(lfactorial(x))
-  }
-}
-```
-:::
-
-
-::: {.cell}
-
-```{.r .cell-code}
-ll_poisson2 <- function(x) {
-  n <- length(x)
-  sum_x <- sum(x)
-  c <- sum(lfactorial(x))
-
-  function(lambda) {
-    log(lambda) * sum_x - n * lambda - c
-  }
-}
-```
-:::
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-ll1 <- ll_poisson2(x1)
-
-ll1(10)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] -183.6405
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] -184
-ll1(20)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] -61.14028
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] -61.1
-ll1(30)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] -30.98598
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] -31
-```
-:::
-
-
-::: {.cell}
-
-```{.r .cell-code}
-optimise(ll1, c(0, 100), maximum = TRUE)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> $maximum
-#> [1] 32.09999
-#> 
-#> $objective
-#> [1] -30.26755
-```
-
-
-:::
-
-```{.r .cell-code}
-#> $maximum
-#> [1] 32.1
-#> 
-#> $objective
-#> [1] -30.3
-```
-:::
-
-
-::: {.cell}
-
-```{.r .cell-code}
-optimise(lprob_poisson, c(0, 100), x = x1, maximum = TRUE)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> $maximum
-#> [1] 32.09999
-#> 
-#> $objective
-#> [1] -30.26755
-```
-
-
-:::
-
-```{.r .cell-code}
-#> $maximum
-#> [1] 32.1
-#> 
-#> $objective
-#> [1] -30.3
-```
-:::
-
-
-## Function factory applications
-
-
-Combine functionals and function factories to turn data into many functions.
-
-### Function factories + functionals
-
-::: {.cell}
-
-```{.r .cell-code}
-names <- list(
-  square = 2, 
-  cube = 3, 
-  root = 1/2, 
-  cuberoot = 1/3, 
-  reciprocal = -1
-)
-funs <- purrr::map(names, power1)
-
-funs$root(64)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] 8
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] 8
-funs$root
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> function (x) 
-#> x^exp
-#> <bytecode: 0x0000029fbed27b60>
-#> <environment: 0x0000029fbf4bb9a0>
-```
-
-
-:::
-
-```{.r .cell-code}
-#> function(x) {
-#>     x ^ exp
-#>   }
-#> <bytecode: 0x7fe85512a410>
-#> <environment: 0x7fe85b21f190>
-```
-:::
-
-
-::: {.cell}
-
-```{.r .cell-code}
-with(funs, root(100))
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] 10
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] 10
-```
-:::
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-attach(funs)
-```
-
-::: {.cell-output .cell-output-stderr}
-
-```
-#> The following objects are masked _by_ .GlobalEnv:
-#> 
-#>     cube, square
-```
-
-
-:::
-
-```{.r .cell-code}
-#> The following objects are masked _by_ .GlobalEnv:
-#> 
-#>     cube, square
-root(100)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] 10
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] 10
-detach(funs)
-```
-:::
-
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-rlang::env_bind(globalenv(), !!!funs)
-root(100)
-```
-
-::: {.cell-output .cell-output-stdout}
-
-```
-#> [1] 10
-```
-
-
-:::
-
-```{.r .cell-code}
-#> [1] 10
-```
-:::
-
-
-
-::: {.cell}
-
-```{.r .cell-code}
-rlang::env_unbind(globalenv(), names(funs))
-```
-:::
-
-
-
--->
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>names <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb11-2"><a></a>  <span class="at">square =</span> <span class="dv">2</span>,</span>
+<span id="cb11-3"><a></a>  <span class="at">cube =</span> <span class="dv">3</span>,</span>
+<span id="cb11-4"><a></a>  <span class="at">root =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb11-5"><a></a>  <span class="at">cuberoot =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">3</span>,</span>
+<span id="cb11-6"><a></a>  <span class="at">reciprocal =</span> <span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb11-7"><a></a>)</span>
+<span id="cb11-8"><a></a>funs <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(names, power1)</span>
+<span id="cb11-9"><a></a></span>
+<span id="cb11-10"><a></a>funs<span class="sc">$</span><span class="fu">root</span>(<span class="dv">64</span>)</span>
+<span id="cb11-11"><a></a><span class="co">#&gt; [1] 8</span></span>
+<span id="cb11-12"><a></a>funs<span class="sc">$</span>root</span>
+<span id="cb11-13"><a></a><span class="co">#&gt; function (x)</span></span>
+<span id="cb11-14"><a></a><span class="co">#&gt; {</span></span>
+<span id="cb11-15"><a></a><span class="co">#&gt;     x^exp</span></span>
+<span id="cb11-16"><a></a><span class="co">#&gt; }</span></span>
+<span id="cb11-17"><a></a><span class="co">#&gt; &lt;bytecode: 0x55ce583c7828&gt;</span></span>
+<span id="cb11-18"><a></a><span class="co">#&gt; &lt;environment: 0x55ce5a61cd60&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column">
+<p>Avoid the <code>funs$</code> prefix with</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">with</span>(funs, <span class="fu">root</span>(<span class="dv">100</span>))</span>
+<span id="cb12-2"><a></a><span class="co">#&gt; [1] 10</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><br></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">attach</span>(funs)</span>
+<span id="cb13-2"><a></a><span class="co">#&gt; The following objects are</span></span>
+<span id="cb13-3"><a></a><span class="co">#&gt; masked _by_ .GlobalEnv:</span></span>
+<span id="cb13-4"><a></a><span class="co">#&gt;</span></span>
+<span id="cb13-5"><a></a><span class="co">#&gt;     cube, square</span></span>
+<span id="cb13-6"><a></a><span class="fu">root</span>(<span class="dv">100</span>)</span>
+<span id="cb13-7"><a></a><span class="co">#&gt; [1] 10</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><br></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_bind</span>(</span>
+<span id="cb14-2"><a></a>  <span class="fu">globalenv</span>(),</span>
+<span id="cb14-3"><a></a>  <span class="sc">!!!</span>funs</span>
+<span id="cb14-4"><a></a>)</span>
+<span id="cb14-5"><a></a></span>
+<span id="cb14-6"><a></a><span class="fu">root</span>(<span class="dv">100</span>)</span>
+<span id="cb14-7"><a></a><span class="co">#&gt; [1] 10</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div></div>
 
 
 </section>
@@ -1479,6 +704,44 @@ rlang::env_unbind(globalenv(), names(funs))
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
