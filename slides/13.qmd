@@ -52,6 +52,107 @@ body(print.factor)
 
 :::
 
+## Create a new object ~ create an S3 class
+
+```{r}
+x <- structure(list(), class = "my_class")
+
+x <- list()
+class(x) <- "my_class"
+attributes(x)
+```
+
+But currently, this is pretty useless...
+
+## It is recommended S3 classes be provided with 3 functions
+
+1. A **low-level constructor**, new_myclass(), that efficiently creates new objects with the correct structure.
+
+2. A **validator**, validate_myclass(), that performs more computationally expensive checks to ensure that the object has correct values.
+
+3. A **user-friendly helper**, myclass(), that provides a convenient way for others to create objects of your class.
+
+## 1. The constructor creates your class appropriately
+
+This superc simple `factor` class inherits all the existing methods for this class.
+
+```{r}
+#| error: true
+new_factor <- function(x = integer(), levels = character()) {
+  stopifnot(is.integer(x))
+  stopifnot(is.character(levels))
+
+  structure(
+    x,
+    levels = levels,
+    class = "factor"
+  )
+}
+
+new_factor(1:5, "a")
+new_factor(0:1, "a") #This errors
+```
+
+## 2. The validator provides the checks  to ensure re-usability
+
+```{r}
+#| error: true
+validate_factor <- function(x) {
+  values <- unclass(x)
+  levels <- attr(x, "levels")
+
+  if (!all(!is.na(values) & values > 0)) {
+    stop(
+      "All `x` values must be non-missing and greater than zero",
+      call. = FALSE
+    )
+  }
+
+  if (length(levels) < max(values)) {
+    stop(
+      "There must be at least as many `levels` as possible values in `x`",
+      call. = FALSE
+    )
+  }
+
+  x
+}
+
+validate_factor(new_factor(1:5, "a"))
+validate_factor(new_factor(0:1, "a"))
+```
+
+## 3. The helper provides a safer approach to create the object
+
+```{r}
+factor <- function(x = character(), levels = unique(x)) {
+  ind <- match(x, levels)
+  new_factor(ind, levels) |> 
+    validate_factor()
+}
+
+factor(c("a", "a", "b"))
+```
+
+## The custom `summarizer` S3 class has the 3 recommended functions
+
+::: {.panel.tabset}
+
+### new_summarizer
+
+```{r}
+new_summarizer <- function(x) {
+  stopifnot(is.numeric(x) || is.character(x))
+  structure(x, class = "summarizer")
+}
+```
+
+### validate_summarizer
+
+### summarizer
+
+:::
+
 ## Classes
 
 **Theory:**
