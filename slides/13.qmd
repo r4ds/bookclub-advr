@@ -3,14 +3,54 @@ engine: knitr
 title: S3
 ---
 
-# Introduction
+# The S3 class is R's first and simplest OOP system in R
 
-## Basics
+## Learning Objectives
 
-- Has class
-- Uses a generic function to decide on method
-  - method = implementation for a specific class
-  - dispatch = process of searching for right method
+1. What is an S3 object and class?
+2. How to create an S3 class?
+3. How to use a custom S3 class?
+
+## We identify S3 objects by their attributes
+
+An S3 object has atleast one attribute called 'class'.
+
+```{r}
+f <- factor(c("a", "b", "c"))
+attributes(f)
+```
+
+## S3 classes provide an interface to a particular behavior
+
+The `print` function is an S3 class that displays objects depending on the class attribute.
+
+::: {.panel-tabset}
+
+### The `print` function is an S3 class
+
+```{r}
+sloop::ftype(print)
+body(print)
+sloop::s3_dispatch(print(f))
+```
+
+### The `print` S3 class dispatches based on 'class'
+
+```{r}
+class(f)
+print(f)
+f_uc <- unclass(f)
+class(f_uc)
+print(f_uc)
+```
+
+### `body(print.factor)` shows the behavior for factors
+
+```{r}
+body(print.factor)
+```
+
+:::
 
 ## Classes
 
