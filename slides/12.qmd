@@ -164,16 +164,21 @@ encapsulated_OOP --> RC
 
 ## Functional OOP in base R
 
-- **S3**
+::: {.panel-tabset}
+
+## **S3**
   - Paradigm: functional OOP
   - Noteworthy: R's first OOP system
   - Use case: low-cost solution for common problems
   - Downsides: no guarantees
-- **S4**
+
+## **S4**
   - Paradigm: functional OOP
   - Noteworthy: rewrite of S3, used by `Bioconductor`
   - Use case: "more guarantees and greater encapsulation" than S3
   - Downsides: higher setup cost than S3
+
+:::
 
 ## Encapsulated OOP in base R
 
@@ -259,6 +264,7 @@ attr(M, "class")
 ```{r}
 # OO object has one or more classes
 attr(mtcars, "class")
+attr(palmerpenguins::penguins, "class")
 ```
 
 
