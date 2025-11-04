@@ -1,6 +1,6 @@
 ---
 engine: knitr
-title: Base types
+title: Intro to OOP and base types
 ---
 
 ## Learning objectives:
@@ -31,6 +31,7 @@ utils::sessionInfo()
 
 [![XKCD 927](images/base_types/standards.png)](https://xkcd.com/927/)
 
+# Object Oriented Programming (OOP)
 
 ## OOP: Big Idea - Polymorphism
 
@@ -52,8 +53,20 @@ some_function <- function(x) {
 
 ```{r polymorphism_example}
 # data frame, with columns of different types
-summary(attenu[, 1:4])
+summary(palmerpenguins::penguins[, 1:4])
 ```
+
+<details>
+<summary>Improving `summary` for character vectors</summary>
+`summary` on character vectors is current pretty useless. 
+
+```{r}
+summary(c("Adelie", "Adelie", "Chinstrap"))
+```
+
+Improvements are in the works ([GitHub](https://github.com/r-devel/r-dev-day/issues/117), [bugzilla](https://bugs.r-project.org/show_bug.cgi?id=16750)).
+
+</details>
 
 ## OOP: Big Idea - Polymorphism example
 
@@ -90,6 +103,8 @@ Think of a REST API: a client interacts with with an API only through a set of d
   - If a method is defined for an object's class, use that method
   - If an object doesn't have a method, use the method of the parent class
   - The process of finding a method, is called dispatch
+
+# OOP in R
 
 ## OOP in R: Two Paradigms
 
@@ -168,28 +183,33 @@ encapsulated_OOP --> RC
   - Use cases: problems that are hard to tackle with functional OOP (in S3 and S4)
   - Downsides: harder to reason about (because of modify-in-place logic)
 
-## OOP in packages
+## OOP in packages (various paradigms)
 
-- **R6**
+::: {.panel-tabset}
+
+## **R6**
   - Paradigm: encapsulated OOP
   - Noteworthy: resolves issues with RC
-- **S7**
+
+## **S7**
   - Paradigm: functional OOP
   - Noteworthy: 
     - best parts of S3 and S4 - ease of S3 with power of S4
     - Recently adopted in `ggplot2 >= v4.0.0`
     - See more in [rstudio::conf(2022) talk](https://www.rstudio.com/conference/2022/talks/introduction-to-r7/) and the [S7 website](https://rconsortium.github.io/S7/)
+  - Longer-term plan to incorporate into base R
 
-
-## OOP in packages (less well-known)
-
-- **R.oo**
-  - Paradigm: hybrid functional and encapsulated (?)
-- **proto**
+## **proto**
   - Paradigm: prototype OOP
   - Noteworthy: OOP style used in `ggplot2 < v4.0.0`.
 
-## sloop R package
+## **R.oo**
+  - Paradigm: hybrid functional and encapsulated (?)
+::: 
+
+# sloop R package
+
+## "Sail the seas of OOP"
 
 * **S** **L**anguage **O**bject-**O**riented **P**rogramming
 
@@ -204,6 +224,8 @@ otype(mtcars)
 mle_obj <- stats4::mle(function(x = 1) (x - 2) ^ 2)
 otype(mle_obj)
 ```
+
+# Base types
 
 ## Everything *is* an object, but not everything is object oriented
 
