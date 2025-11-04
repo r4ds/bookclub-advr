@@ -1139,7 +1139,7 @@
     "href": "slides/09.html#a-functional-takes-a-function-as-input-and-returns-a-vector-as-output",
     "title": "Functionals",
     "section": "A functional takes a function as input and returns a vector as output",
-    "text": "A functional takes a function as input and returns a vector as output\n\nrandomise &lt;- function(f) f(runif(1e3))\nrandomise(mean)\n\n#&gt; [1] 0.503158\n\nrandomise(sum)\n\n#&gt; [1] 488.8966\n\n\nCommon examples:\n\nlapply(), apply(), and tapply() in base R\npurrr::map()\nMathematical functionals like integrate() or optim()"
+    "text": "A functional takes a function as input and returns a vector as output\n\nrandomise &lt;- function(f) f(runif(1e3))\nrandomise(mean)\n\n#&gt; [1] 0.5121223\n\nrandomise(sum)\n\n#&gt; [1] 513.4846\n\n\nCommon examples:\n\nlapply(), apply(), and tapply() in base R\npurrr::map()\nMathematical functionals like integrate() or optim()"
   },
   {
     "objectID": "slides/09.html#functionals-are-better-than-for-loops",
@@ -1202,7 +1202,7 @@
     "href": "slides/09.html#purrrmap2-iterates-over-two-vectors-in-parallel",
     "title": "Functionals",
     "section": "purrr::map2() iterates over two vectors in parallel",
-    "text": "purrr::map2() iterates over two vectors in parallel\nFind a weighted mean from 2 lists: observations (xs) & weights (ws).\n\nxs &lt;- map(1:3, ~ runif(5))\nws &lt;- map(1:3, ~ rpois(5, 5) + 1)\n\nmap() passes the whole ws list to each call:\n\nmap_dbl(xs, weighted.mean, w = ws)\n\n#&gt; Error in `map_dbl()`:\n#&gt; ℹ In index: 1.\n#&gt; Caused by error in `weighted.mean.default()`:\n#&gt; ! 'x' and 'w' must have the same length\n\n\nmap2() iterates over xs and ws in parallel:\n\nmap2_dbl(xs, ws, weighted.mean)\n\n#&gt; [1] 0.4177741 0.3291613 0.5979996"
+    "text": "purrr::map2() iterates over two vectors in parallel\nFind a weighted mean from 2 lists: observations (xs) & weights (ws).\n\nxs &lt;- map(1:3, ~ runif(5))\nws &lt;- map(1:3, ~ rpois(5, 5) + 1)\n\nmap() passes the whole ws list to each call:\n\nmap_dbl(xs, weighted.mean, w = ws)\n\n#&gt; Error in `map_dbl()`:\n#&gt; ℹ In index: 1.\n#&gt; Caused by error in `weighted.mean.default()`:\n#&gt; ! 'x' and 'w' must have the same length\n\n\nmap2() iterates over xs and ws in parallel:\n\nmap2_dbl(xs, ws, weighted.mean)\n\n#&gt; [1] 0.6440215 0.6924380 0.3267970"
   },
   {
     "objectID": "slides/09.html#purrrwalk-is-for-functions-called-for-their-side-effects",
@@ -1216,14 +1216,14 @@
     "href": "slides/09.html#purrrimap-iterates-over-values-and-indices",
     "title": "Functionals",
     "section": "purrr::imap() iterates over values and indices",
-    "text": "purrr::imap() iterates over values and indices\nNamed input == map2(.x, names(.x), .f)\n\nimap_chr(iris[, 1:2], ~ paste0(\"The first value of '\", .y, \"' is \", .x[[1]]))\n\n#&gt;                               Sepal.Length \n#&gt; \"The first value of 'Sepal.Length' is 5.1\" \n#&gt;                                Sepal.Width \n#&gt;  \"The first value of 'Sepal.Width' is 3.5\"\n\n\nUnnamed input == map2(.x, seq_along(.x), .f)\n\nx &lt;- map(1:2, ~ sample(100, 5))\nimap_chr(x, ~ paste0(\"The max of element \", .y, \" is \", max(.x)))\n\n#&gt; [1] \"The max of element 1 is 91\" \"The max of element 2 is 79\""
+    "text": "purrr::imap() iterates over values and indices\nNamed input == map2(.x, names(.x), .f)\n\nimap_chr(iris[, 1:2], ~ paste0(\"The first value of '\", .y, \"' is \", .x[[1]]))\n\n#&gt;                               Sepal.Length \n#&gt; \"The first value of 'Sepal.Length' is 5.1\" \n#&gt;                                Sepal.Width \n#&gt;  \"The first value of 'Sepal.Width' is 3.5\"\n\n\nUnnamed input == map2(.x, seq_along(.x), .f)\n\nx &lt;- map(1:2, ~ sample(100, 5))\nimap_chr(x, ~ paste0(\"The max of element \", .y, \" is \", max(.x)))\n\n#&gt; [1] \"The max of element 1 is 81\" \"The max of element 2 is 99\""
   },
   {
     "objectID": "slides/09.html#purrrpmap-iterates-over-multiple-arguments-in-a-list",
     "href": "slides/09.html#purrrpmap-iterates-over-multiple-arguments-in-a-list",
     "title": "Functionals",
     "section": "purrr::pmap() iterates over multiple arguments in a list",
-    "text": "purrr::pmap() iterates over multiple arguments in a list\npmap() applies function to list of arguments\n\nmap2(x, y, f) is equivalent to pmap(list(x, y), f).\nA data frame is a list, works great with pmap().\n\n\nparams &lt;- tibble::tribble(\n  ~n, ~min, ~max,\n  1L, 0, 1,\n  2L, 10, 100,\n)\n\npmap(params, runif)\n\n#&gt; [[1]]\n#&gt; [1] 0.3748636\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 16.69814 71.90847"
+    "text": "purrr::pmap() iterates over multiple arguments in a list\npmap() applies function to list of arguments\n\nmap2(x, y, f) is equivalent to pmap(list(x, y), f).\nA data frame is a list, works great with pmap().\n\n\nparams &lt;- tibble::tribble(\n  ~n, ~min, ~max,\n  1L, 0, 1,\n  2L, 10, 100,\n)\n\npmap(params, runif)\n\n#&gt; [[1]]\n#&gt; [1] 0.459406\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 92.79760 35.52806"
   },
   {
     "objectID": "slides/09.html#purrrreduce-combines-vector-elements-with-a-binary-function",
@@ -1307,7 +1307,7 @@
     "href": "slides/07.html#inspect-environments-with-rlang",
     "title": "Environments",
     "section": "Inspect environments with {rlang}",
-    "text": "Inspect environments with {rlang}\n\nrlang::env_print(e1)\n\n#&gt; &lt;environment: 0x56082a154dd0&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • a: &lt;lgl&gt;\n#&gt; • b: &lt;chr&gt;\n#&gt; • c: &lt;dbl&gt;\n#&gt; • d: &lt;int&gt;\n\n\n\nrlang::env_names(e1)\n\n#&gt; [1] \"a\" \"b\" \"c\" \"d\"\n\n\n\nrlang::env_has(e1, \"a\")\n\n#&gt;    a \n#&gt; TRUE\n\n\n\nrlang::env_get(e1, \"a\")\n\n#&gt; [1] FALSE\n\n\n\nrlang::env_parent(e1)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n\nbase::print() displays the memory address and is not as helpful as rlang::env_print()"
+    "text": "Inspect environments with {rlang}\n\nrlang::env_print(e1)\n\n#&gt; &lt;environment: 0x55e71594cdd0&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • a: &lt;lgl&gt;\n#&gt; • b: &lt;chr&gt;\n#&gt; • c: &lt;dbl&gt;\n#&gt; • d: &lt;int&gt;\n\n\n\nrlang::env_names(e1)\n\n#&gt; [1] \"a\" \"b\" \"c\" \"d\"\n\n\n\nrlang::env_has(e1, \"a\")\n\n#&gt;    a \n#&gt; TRUE\n\n\n\nrlang::env_get(e1, \"a\")\n\n#&gt; [1] FALSE\n\n\n\nrlang::env_parent(e1)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n\nbase::print() displays the memory address and is not as helpful as rlang::env_print()"
   },
   {
     "objectID": "slides/07.html#by-default-the-current-environment-is-your-global-environment",
@@ -1321,7 +1321,7 @@
     "href": "slides/07.html#every-environment-has-a-parent-environment",
     "title": "Environments",
     "section": "Every environment has a parent environment",
-    "text": "Every environment has a parent environment\n\nAllows for lexical scoping\n\n\ne2a &lt;- rlang::env(d = 4, e = 5)\n\ne2b &lt;- rlang::env(e2a, a = 1, b = 2, c = 3)\n\nrlang::env_parent(e2b)\n\n#&gt; &lt;environment: 0x56082e0c1340&gt;\n\nrlang::env_parents(e2b)\n\n#&gt; [[1]]   &lt;env: 0x56082e0c1340&gt;\n#&gt; [[2]] $ &lt;env: global&gt;\n\n\n\n\nLexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)\nLexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time"
+    "text": "Every environment has a parent environment\n\nAllows for lexical scoping\n\n\ne2a &lt;- rlang::env(d = 4, e = 5)\n\ne2b &lt;- rlang::env(e2a, a = 1, b = 2, c = 3)\n\nrlang::env_parent(e2b)\n\n#&gt; &lt;environment: 0x55e71992c5f0&gt;\n\nrlang::env_parents(e2b)\n\n#&gt; [[1]]   &lt;env: 0x55e71992c5f0&gt;\n#&gt; [[2]] $ &lt;env: global&gt;\n\n\n\n\nLexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)\nLexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time"
   },
   {
     "objectID": "slides/07.html#only-the-empty-environment-does-not-have-a-parent",
@@ -1335,7 +1335,7 @@
     "href": "slides/07.html#all-environments-eventually-terminate-with-the-empty-environment",
     "title": "Environments",
     "section": "All environments eventually terminate with the empty environment",
-    "text": "All environments eventually terminate with the empty environment\n\nrlang::env_parents(e2b, last = rlang::empty_env())\n\n#&gt;  [[1]]   &lt;env: 0x56082e0c1340&gt;\n#&gt;  [[2]] $ &lt;env: global&gt;\n#&gt;  [[3]] $ &lt;env: package:stats&gt;\n#&gt;  [[4]] $ &lt;env: package:graphics&gt;\n#&gt;  [[5]] $ &lt;env: package:grDevices&gt;\n#&gt;  [[6]] $ &lt;env: package:utils&gt;\n#&gt;  [[7]] $ &lt;env: package:datasets&gt;\n#&gt;  [[8]] $ &lt;env: package:methods&gt;\n#&gt;  [[9]] $ &lt;env: Autoloads&gt;\n#&gt; [[10]] $ &lt;env: package:base&gt;\n#&gt; [[11]] $ &lt;env: empty&gt;\n\n\n\nThe empty enviornment typically isn’t shown but can be displayed by setting the last parameter of rlang::env_parents()"
+    "text": "All environments eventually terminate with the empty environment\n\nrlang::env_parents(e2b, last = rlang::empty_env())\n\n#&gt;  [[1]]   &lt;env: 0x55e71992c5f0&gt;\n#&gt;  [[2]] $ &lt;env: global&gt;\n#&gt;  [[3]] $ &lt;env: package:stats&gt;\n#&gt;  [[4]] $ &lt;env: package:graphics&gt;\n#&gt;  [[5]] $ &lt;env: package:grDevices&gt;\n#&gt;  [[6]] $ &lt;env: package:utils&gt;\n#&gt;  [[7]] $ &lt;env: package:datasets&gt;\n#&gt;  [[8]] $ &lt;env: package:methods&gt;\n#&gt;  [[9]] $ &lt;env: Autoloads&gt;\n#&gt; [[10]] $ &lt;env: package:base&gt;\n#&gt; [[11]] $ &lt;env: empty&gt;\n\n\n\nThe empty enviornment typically isn’t shown but can be displayed by setting the last parameter of rlang::env_parents()"
   },
   {
     "objectID": "slides/07.html#be-wary-of-using--",
@@ -1734,7 +1734,7 @@
     "href": "slides/03.html#session-info",
     "title": "Vectors",
     "section": "Session Info",
-    "text": "Session Info\n\nlibrary(\"dplyr\")\nlibrary(\"gt\")\nlibrary(\"palmerpenguins\")\n\n\n\nSession Info\n\n\nutils::sessionInfo()\n\n#&gt; R version 4.5.1 (2025-06-13)\n#&gt; Platform: x86_64-pc-linux-gnu\n#&gt; Running under: Ubuntu 24.04.3 LTS\n#&gt; \n#&gt; Matrix products: default\n#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 \n#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0\n#&gt; \n#&gt; locale:\n#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       \n#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   \n#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          \n#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   \n#&gt; \n#&gt; time zone: UTC\n#&gt; tzcode source: system (glibc)\n#&gt; \n#&gt; attached base packages:\n#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     \n#&gt; \n#&gt; other attached packages:\n#&gt; [1] palmerpenguins_0.1.1 gt_1.1.0             dplyr_1.1.4         \n#&gt; \n#&gt; loaded via a namespace (and not attached):\n#&gt;  [1] digest_0.6.37     R6_2.6.1          fastmap_1.2.0     tidyselect_1.2.1 \n#&gt;  [5] xfun_0.53         magrittr_2.0.4    glue_1.8.0        tibble_3.3.0     \n#&gt;  [9] knitr_1.50        pkgconfig_2.0.3   htmltools_0.5.8.1 rmarkdown_2.30   \n#&gt; [13] generics_0.1.4    lifecycle_1.0.4   xml2_1.4.1        cli_3.6.5        \n#&gt; [17] vctrs_0.6.5       compiler_4.5.1    tools_4.5.1       pillar_1.11.1    \n#&gt; [21] evaluate_1.0.5    yaml_2.3.10       fs_1.6.6          rlang_1.1.6      \n#&gt; [25] jsonlite_2.0.0"
+    "text": "Session Info\n\nlibrary(\"dplyr\")\nlibrary(\"gt\")\nlibrary(\"palmerpenguins\")\n\n\n\nSession Info\n\n\nutils::sessionInfo()\n\n#&gt; R version 4.5.2 (2025-10-31)\n#&gt; Platform: x86_64-pc-linux-gnu\n#&gt; Running under: Ubuntu 24.04.3 LTS\n#&gt; \n#&gt; Matrix products: default\n#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 \n#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0\n#&gt; \n#&gt; locale:\n#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       \n#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   \n#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          \n#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   \n#&gt; \n#&gt; time zone: UTC\n#&gt; tzcode source: system (glibc)\n#&gt; \n#&gt; attached base packages:\n#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     \n#&gt; \n#&gt; other attached packages:\n#&gt; [1] palmerpenguins_0.1.1 gt_1.1.0             dplyr_1.1.4         \n#&gt; \n#&gt; loaded via a namespace (and not attached):\n#&gt;  [1] digest_0.6.37     R6_2.6.1          fastmap_1.2.0     tidyselect_1.2.1 \n#&gt;  [5] xfun_0.54         magrittr_2.0.4    glue_1.8.0        tibble_3.3.0     \n#&gt;  [9] knitr_1.50        pkgconfig_2.0.3   htmltools_0.5.8.1 rmarkdown_2.30   \n#&gt; [13] generics_0.1.4    lifecycle_1.0.4   xml2_1.4.1        cli_3.6.5        \n#&gt; [17] vctrs_0.6.5       compiler_4.5.2    tools_4.5.2       pillar_1.11.1    \n#&gt; [21] evaluate_1.0.5    yaml_2.3.10       fs_1.6.6          rlang_1.1.6      \n#&gt; [25] jsonlite_2.0.0"
   },
   {
     "objectID": "slides/03.html#aperitif",
@@ -2154,14 +2154,14 @@
     "href": "slides/03.html#dates-times-posixct",
     "title": "Vectors",
     "section": "Dates-times: POSIXct",
-    "text": "Dates-times: POSIXct\nWe’ll focus on POSIXct because:\n\nSimplest\nBuilt on an atomic (double) vector\nMost appropriate for use in a data frame\n\nLet’s now build and deconstruct a Date-time\n\n# Build\nnote_date_time &lt;- as.POSIXct(\n  x = Sys.time(), # time\n  tz = \"America/New_York\" # time zone, used only for formatting\n)\n\n# Inspect\nnote_date_time\n\n#&gt; [1] \"2025-10-29 09:59:25 EDT\"\n\n# - type\ntypeof(note_date_time)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(note_date_time)\n\n#&gt; $class\n#&gt; [1] \"POSIXct\" \"POSIXt\" \n#&gt; \n#&gt; $tzone\n#&gt; [1] \"America/New_York\"\n\nstructure(note_date_time, tzone = \"Europe/Paris\")\n\n#&gt; [1] \"2025-10-29 14:59:25 CET\"\n\n\n\ndate_time &lt;- as.POSIXct(\"2024-02-22 12:34:56\", tz = \"EST\")\nunclass(date_time)\n\n#&gt; [1] 1708623296\n#&gt; attr(,\"tzone\")\n#&gt; [1] \"EST\""
+    "text": "Dates-times: POSIXct\nWe’ll focus on POSIXct because:\n\nSimplest\nBuilt on an atomic (double) vector\nMost appropriate for use in a data frame\n\nLet’s now build and deconstruct a Date-time\n\n# Build\nnote_date_time &lt;- as.POSIXct(\n  x = Sys.time(), # time\n  tz = \"America/New_York\" # time zone, used only for formatting\n)\n\n# Inspect\nnote_date_time\n\n#&gt; [1] \"2025-11-04 10:39:12 EST\"\n\n# - type\ntypeof(note_date_time)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(note_date_time)\n\n#&gt; $class\n#&gt; [1] \"POSIXct\" \"POSIXt\" \n#&gt; \n#&gt; $tzone\n#&gt; [1] \"America/New_York\"\n\nstructure(note_date_time, tzone = \"Europe/Paris\")\n\n#&gt; [1] \"2025-11-04 16:39:12 CET\"\n\n\n\ndate_time &lt;- as.POSIXct(\"2024-02-22 12:34:56\", tz = \"EST\")\nunclass(date_time)\n\n#&gt; [1] 1708623296\n#&gt; attr(,\"tzone\")\n#&gt; [1] \"EST\""
   },
   {
     "objectID": "slides/03.html#durations",
     "href": "slides/03.html#durations",
     "title": "Vectors",
     "section": "Durations",
-    "text": "Durations\nDurations represent the amount of time between pairs of dates or date-times.\n\nDouble vectors\nClass: “difftime”\nAttributes: “units”, or the unit of duration (e.g., weeks, hours, minutes, seconds, etc.)\n\n\n# Construct\none_minute &lt;- as.difftime(1, units = \"mins\")\n# Inspect\none_minute\n\n#&gt; Time difference of 1 mins\n\n# Dissect\n# - type\ntypeof(one_minute)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(one_minute)\n\n#&gt; $class\n#&gt; [1] \"difftime\"\n#&gt; \n#&gt; $units\n#&gt; [1] \"mins\"\n\n\n\ntime_since_01_01_1970 &lt;- notes_date - date\ntime_since_01_01_1970\n\n#&gt; Time difference of 20359 days\n\n\nSee also:\n\nlubridate::make_difftime()\nclock::date_time_build()"
+    "text": "Durations\nDurations represent the amount of time between pairs of dates or date-times.\n\nDouble vectors\nClass: “difftime”\nAttributes: “units”, or the unit of duration (e.g., weeks, hours, minutes, seconds, etc.)\n\n\n# Construct\none_minute &lt;- as.difftime(1, units = \"mins\")\n# Inspect\none_minute\n\n#&gt; Time difference of 1 mins\n\n# Dissect\n# - type\ntypeof(one_minute)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(one_minute)\n\n#&gt; $class\n#&gt; [1] \"difftime\"\n#&gt; \n#&gt; $units\n#&gt; [1] \"mins\"\n\n\n\ntime_since_01_01_1970 &lt;- notes_date - date\ntime_since_01_01_1970\n\n#&gt; Time difference of 20365 days\n\n\nSee also:\n\nlubridate::make_difftime()\nclock::date_time_build()"
   },
   {
     "objectID": "slides/03.html#exercises-13",
@@ -3048,7 +3048,7 @@
     "href": "slides/06.html#function-composition",
     "title": "Functions",
     "section": "Function composition",
-    "text": "Function composition\n\nx &lt;- runif(100)\n# Nested function calls\nsquare &lt;- function(x) x^2\ndeviation &lt;- function(x) x - mean(x)\nsqrt(mean(square(deviation(x))))\n\n#&gt; [1] 0.2887898\n\n\n\n# intermediate result\nout &lt;- deviation(x)\nout &lt;- square(out)\nout &lt;- mean(out)\nout &lt;- sqrt(out)\nout\n\n#&gt; [1] 0.2887898\n\n\n\n# Pipe workflow\nx |&gt; \n  deviation() |&gt;\n  square() |&gt;\n  mean() |&gt;\n  sqrt()\n\n#&gt; [1] 0.2887898"
+    "text": "Function composition\n\nx &lt;- runif(100)\n# Nested function calls\nsquare &lt;- function(x) x^2\ndeviation &lt;- function(x) x - mean(x)\nsqrt(mean(square(deviation(x))))\n\n#&gt; [1] 0.2715825\n\n\n\n# intermediate result\nout &lt;- deviation(x)\nout &lt;- square(out)\nout &lt;- mean(out)\nout &lt;- sqrt(out)\nout\n\n#&gt; [1] 0.2715825\n\n\n\n# Pipe workflow\nx |&gt; \n  deviation() |&gt;\n  square() |&gt;\n  mean() |&gt;\n  sqrt()\n\n#&gt; [1] 0.2715825"
   },
   {
     "objectID": "slides/06.html#more-about-functions-insights",
@@ -3069,7 +3069,7 @@
     "href": "slides/06.html#case-study-sir-model-function",
     "title": "Functions",
     "section": "Case Study: SIR model function",
-    "text": "Case Study: SIR model function\nThis is an interesting example taken from a course on Coursera: Infectious disease modelling-ICL\nThe purpose of this example is to show how to make a model passing through making a function.\nFirst we need to load some useful libraries:\n\nlibrary(deSolve)\nlibrary(reshape2)\n\nThen set the model inputs:\n\npopulation size (N)\nnumber of susceptable (S)\ninfected (I)\nrecovered (R)\n\nAnd add the model parameters:\n\ninfection rate (\\(\\beta\\))\nrecovery rate (\\(\\gamma\\))\n\n\nN&lt;- 100000                  # population\n\nstate_values&lt;- c(S = N -1,   # susceptible\n                 I = 1,      # infected\n                 R = 0)      # recovered\n\nparameters&lt;- c(beta = 1/2,  # infection rate days^-1\n               gamma = 1/4) # recovery rate days^-1\n\nThen we set the time as an important factor, which defines the length of time we are looking at this model run. It is intended as the time range in which the infections spread out, let’s say that we are aiming to investigate an infection period of 100 days.\n\ntimes&lt;- seq(0, 100, by = 1)\n\nFinally, we set up the SIR model, the susceptable, infected and recovered model. How do we do that is passing the paramenters through a function of the time, and state.\nWithin the model function we calculate one more paramenter, the force of infection: \\(\\lambda\\)\n\nsir_model&lt;- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    N&lt;- S + I + R\n    lambda = beta * I/N    # force of infection\n    dS&lt;- - lambda * S \n    dI&lt;- lambda * S - gamma * I\n    dR&lt;- gamma * I\n    return(list(c(dS,dI,dR)))\n  })\n}\n\nOnce we have our SIR model function ready, we can calculate the output of the model, with the help of the function ode() from {deSolve} package.\n\noutput&lt;- as.data.frame(ode(y = state_values,\n                           times = times,\n                           func = sir_model,\n                           parms = parameters))\noutput %&gt;% head\n\n#&gt;   time        S        I         R\n#&gt; 1    0 99999.00 1.000000 0.0000000\n#&gt; 2    1 99998.43 1.284018 0.2840252\n#&gt; 3    2 99997.70 1.648696 0.6487171\n#&gt; 4    3 99996.77 2.116939 1.1169863\n#&gt; 5    4 99995.56 2.718152 1.7182450\n#&gt; 6    5 99994.02 3.490086 2.4902600\n\n\nIn addition to our builtin SIR model function we can have a look at:\n\n?deSolve::ode()\n\nIt solves Ordinary Differential Equations.\n\ndeSolve:::ode\n\n#&gt; function (y, times, func, parms, method = c(\"lsoda\", \"lsode\", \n#&gt;     \"lsodes\", \"lsodar\", \"vode\", \"daspk\", \"euler\", \"rk4\", \"ode23\", \n#&gt;     \"ode45\", \"radau\", \"bdf\", \"bdf_d\", \"adams\", \"impAdams\", \"impAdams_d\", \n#&gt;     \"iteration\"), ...) \n#&gt; {\n#&gt;     if (is.null(method)) \n#&gt;         method &lt;- \"lsoda\"\n#&gt;     if (is.list(method)) {\n#&gt;         if (!inherits(method, \"rkMethod\")) \n#&gt;             stop(\"'method' should be given as string or as a list of class 'rkMethod'\")\n#&gt;         out &lt;- rk(y, times, func, parms, method = method, ...)\n#&gt;     }\n#&gt;     else if (is.function(method)) \n#&gt;         out &lt;- method(y, times, func, parms, ...)\n#&gt;     else if (is.complex(y)) \n#&gt;         out &lt;- switch(match.arg(method), vode = zvode(y, times, \n#&gt;             func, parms, ...), bdf = zvode(y, times, func, parms, \n#&gt;             mf = 22, ...), bdf_d = zvode(y, times, func, parms, \n#&gt;             mf = 23, ...), adams = zvode(y, times, func, parms, \n#&gt;             mf = 10, ...), impAdams = zvode(y, times, func, parms, \n#&gt;             mf = 12, ...), impAdams_d = zvode(y, times, func, \n#&gt;             parms, mf = 13, ...))\n#&gt;     else out &lt;- switch(match.arg(method), lsoda = lsoda(y, times, \n#&gt;         func, parms, ...), vode = vode(y, times, func, parms, \n#&gt;         ...), lsode = lsode(y, times, func, parms, ...), lsodes = lsodes(y, \n#&gt;         times, func, parms, ...), lsodar = lsodar(y, times, func, \n#&gt;         parms, ...), daspk = daspk(y, times, func, parms, ...), \n#&gt;         euler = rk(y, times, func, parms, method = \"euler\", ...), \n#&gt;         rk4 = rk(y, times, func, parms, method = \"rk4\", ...), \n#&gt;         ode23 = rk(y, times, func, parms, method = \"ode23\", ...), \n#&gt;         ode45 = rk(y, times, func, parms, method = \"ode45\", ...), \n#&gt;         radau = radau(y, times, func, parms, ...), bdf = lsode(y, \n#&gt;             times, func, parms, mf = 22, ...), bdf_d = lsode(y, \n#&gt;             times, func, parms, mf = 23, ...), adams = lsode(y, \n#&gt;             times, func, parms, mf = 10, ...), impAdams = lsode(y, \n#&gt;             times, func, parms, mf = 12, ...), impAdams_d = lsode(y, \n#&gt;             times, func, parms, mf = 13, ...), iteration = iteration(y, \n#&gt;             times, func, parms, ...))\n#&gt;     return(out)\n#&gt; }\n#&gt; &lt;bytecode: 0x5589abb3a9c0&gt;\n#&gt; &lt;environment: namespace:deSolve&gt;\n\n\n\nmethods(\"ode\")\n\n#&gt; [1] ode.1D   ode.2D   ode.3D   ode.band\n#&gt; see '?methods' for accessing help and source code"
+    "text": "Case Study: SIR model function\nThis is an interesting example taken from a course on Coursera: Infectious disease modelling-ICL\nThe purpose of this example is to show how to make a model passing through making a function.\nFirst we need to load some useful libraries:\n\nlibrary(deSolve)\nlibrary(reshape2)\n\nThen set the model inputs:\n\npopulation size (N)\nnumber of susceptable (S)\ninfected (I)\nrecovered (R)\n\nAnd add the model parameters:\n\ninfection rate (\\(\\beta\\))\nrecovery rate (\\(\\gamma\\))\n\n\nN&lt;- 100000                  # population\n\nstate_values&lt;- c(S = N -1,   # susceptible\n                 I = 1,      # infected\n                 R = 0)      # recovered\n\nparameters&lt;- c(beta = 1/2,  # infection rate days^-1\n               gamma = 1/4) # recovery rate days^-1\n\nThen we set the time as an important factor, which defines the length of time we are looking at this model run. It is intended as the time range in which the infections spread out, let’s say that we are aiming to investigate an infection period of 100 days.\n\ntimes&lt;- seq(0, 100, by = 1)\n\nFinally, we set up the SIR model, the susceptable, infected and recovered model. How do we do that is passing the paramenters through a function of the time, and state.\nWithin the model function we calculate one more paramenter, the force of infection: \\(\\lambda\\)\n\nsir_model&lt;- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    N&lt;- S + I + R\n    lambda = beta * I/N    # force of infection\n    dS&lt;- - lambda * S \n    dI&lt;- lambda * S - gamma * I\n    dR&lt;- gamma * I\n    return(list(c(dS,dI,dR)))\n  })\n}\n\nOnce we have our SIR model function ready, we can calculate the output of the model, with the help of the function ode() from {deSolve} package.\n\noutput&lt;- as.data.frame(ode(y = state_values,\n                           times = times,\n                           func = sir_model,\n                           parms = parameters))\noutput %&gt;% head\n\n#&gt;   time        S        I         R\n#&gt; 1    0 99999.00 1.000000 0.0000000\n#&gt; 2    1 99998.43 1.284018 0.2840252\n#&gt; 3    2 99997.70 1.648696 0.6487171\n#&gt; 4    3 99996.77 2.116939 1.1169863\n#&gt; 5    4 99995.56 2.718152 1.7182450\n#&gt; 6    5 99994.02 3.490086 2.4902600\n\n\nIn addition to our builtin SIR model function we can have a look at:\n\n?deSolve::ode()\n\nIt solves Ordinary Differential Equations.\n\ndeSolve:::ode\n\n#&gt; function (y, times, func, parms, method = c(\"lsoda\", \"lsode\", \n#&gt;     \"lsodes\", \"lsodar\", \"vode\", \"daspk\", \"euler\", \"rk4\", \"ode23\", \n#&gt;     \"ode45\", \"radau\", \"bdf\", \"bdf_d\", \"adams\", \"impAdams\", \"impAdams_d\", \n#&gt;     \"iteration\"), ...) \n#&gt; {\n#&gt;     if (is.null(method)) \n#&gt;         method &lt;- \"lsoda\"\n#&gt;     if (is.list(method)) {\n#&gt;         if (!inherits(method, \"rkMethod\")) \n#&gt;             stop(\"'method' should be given as string or as a list of class 'rkMethod'\")\n#&gt;         out &lt;- rk(y, times, func, parms, method = method, ...)\n#&gt;     }\n#&gt;     else if (is.function(method)) \n#&gt;         out &lt;- method(y, times, func, parms, ...)\n#&gt;     else if (is.complex(y)) \n#&gt;         out &lt;- switch(match.arg(method), vode = zvode(y, times, \n#&gt;             func, parms, ...), bdf = zvode(y, times, func, parms, \n#&gt;             mf = 22, ...), bdf_d = zvode(y, times, func, parms, \n#&gt;             mf = 23, ...), adams = zvode(y, times, func, parms, \n#&gt;             mf = 10, ...), impAdams = zvode(y, times, func, parms, \n#&gt;             mf = 12, ...), impAdams_d = zvode(y, times, func, \n#&gt;             parms, mf = 13, ...))\n#&gt;     else out &lt;- switch(match.arg(method), lsoda = lsoda(y, times, \n#&gt;         func, parms, ...), vode = vode(y, times, func, parms, \n#&gt;         ...), lsode = lsode(y, times, func, parms, ...), lsodes = lsodes(y, \n#&gt;         times, func, parms, ...), lsodar = lsodar(y, times, func, \n#&gt;         parms, ...), daspk = daspk(y, times, func, parms, ...), \n#&gt;         euler = rk(y, times, func, parms, method = \"euler\", ...), \n#&gt;         rk4 = rk(y, times, func, parms, method = \"rk4\", ...), \n#&gt;         ode23 = rk(y, times, func, parms, method = \"ode23\", ...), \n#&gt;         ode45 = rk(y, times, func, parms, method = \"ode45\", ...), \n#&gt;         radau = radau(y, times, func, parms, ...), bdf = lsode(y, \n#&gt;             times, func, parms, mf = 22, ...), bdf_d = lsode(y, \n#&gt;             times, func, parms, mf = 23, ...), adams = lsode(y, \n#&gt;             times, func, parms, mf = 10, ...), impAdams = lsode(y, \n#&gt;             times, func, parms, mf = 12, ...), impAdams_d = lsode(y, \n#&gt;             times, func, parms, mf = 13, ...), iteration = iteration(y, \n#&gt;             times, func, parms, ...))\n#&gt;     return(out)\n#&gt; }\n#&gt; &lt;bytecode: 0x562303ef9100&gt;\n#&gt; &lt;environment: namespace:deSolve&gt;\n\n\n\nmethods(\"ode\")\n\n#&gt; [1] ode.1D   ode.2D   ode.3D   ode.band\n#&gt; see '?methods' for accessing help and source code"
   },
   {
     "objectID": "slides/08.html#learning-objectives",
@@ -3293,7 +3293,7 @@
     "href": "slides/10.html#why-function-factories-work",
     "title": "Function factories",
     "section": "Why function factories work",
-    "text": "Why function factories work\nFunction factories are powered by three features of the R language:\n\nR has first-class functions\nR functions capture the environment in which they are created\nR functions create a new execution environment\n\n\n\n\nenv_print(square)\n\n#&gt; &lt;environment: 0x55de99167d60&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\nenv_print(cube)\n\n#&gt; &lt;environment: 0x55de991ba798&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\n\nA language with first-class functions means the functions are objects that can be copied, bound, etc.\nWhen they are created, manufactured functions capture the environment of the function factory\nManufactured functions have separate environments"
+    "text": "Why function factories work\nFunction factories are powered by three features of the R language:\n\nR has first-class functions\nR functions capture the environment in which they are created\nR functions create a new execution environment\n\n\n\n\nenv_print(square)\n\n#&gt; &lt;environment: 0x55855d84aa38&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\nenv_print(cube)\n\n#&gt; &lt;environment: 0x55855d8a0c68&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\n\nA language with first-class functions means the functions are objects that can be copied, bound, etc.\nWhen they are created, manufactured functions capture the environment of the function factory\nManufactured functions have separate environments"
   },
   {
     "objectID": "slides/10.html#diagramming-function-factories",
@@ -3340,72 +3340,191 @@
   {
     "objectID": "slides/12.html#learning-objectives",
     "href": "slides/12.html#learning-objectives",
-    "title": "Base types",
+    "title": "Intro to OOP and base types",
     "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nUnderstand what OOP means–at the very least for R\nKnow how to discern an object’s nature–base or OO–and type\n\n\nJohn Chambers, creator of S programming language\n\nSession Info\n\n\nlibrary(\"DiagrammeR\")\n\n\nutils::sessionInfo()\n\n#&gt; R version 4.5.1 (2025-06-13 ucrt)\n#&gt; Platform: x86_64-w64-mingw32/x64\n#&gt; Running under: Windows 11 x64 (build 26100)\n#&gt; \n#&gt; Matrix products: default\n#&gt;   LAPACK version 3.12.1\n#&gt; \n#&gt; locale:\n#&gt; [1] LC_COLLATE=English_United States.utf8 \n#&gt; [2] LC_CTYPE=English_United States.utf8   \n#&gt; [3] LC_MONETARY=English_United States.utf8\n#&gt; [4] LC_NUMERIC=C                          \n#&gt; [5] LC_TIME=English_United States.utf8    \n#&gt; \n#&gt; time zone: America/Chicago\n#&gt; tzcode source: internal\n#&gt; \n#&gt; attached base packages:\n#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     \n#&gt; \n#&gt; other attached packages:\n#&gt; [1] DiagrammeR_1.0.11\n#&gt; \n#&gt; loaded via a namespace (and not attached):\n#&gt;  [1] digest_0.6.37      RColorBrewer_1.1-3 R6_2.6.1           fastmap_1.2.0     \n#&gt;  [5] xfun_0.52          magrittr_2.0.3     glue_1.8.0         knitr_1.50        \n#&gt;  [9] htmltools_0.5.8.1  rmarkdown_2.29     cli_3.6.5          visNetwork_2.1.2  \n#&gt; [13] compiler_4.5.1     tools_4.5.1        evaluate_1.0.4     yaml_2.3.10       \n#&gt; [17] rlang_1.1.6        jsonlite_2.0.0     htmlwidgets_1.6.4  keyring_1.4.1"
+    "text": "Learning objectives:\n\nUnderstand what OOP means–at the very least for R\nKnow how to discern an object’s nature–base or OO–and type\n\n\nJohn Chambers, creator of S programming language\n\nSession Info\n\n\nlibrary(\"DiagrammeR\")\n\n\nutils::sessionInfo()\n\n#&gt; R version 4.5.1 (2025-06-13)\n#&gt; Platform: aarch64-apple-darwin20\n#&gt; Running under: macOS Sequoia 15.7.1\n#&gt; \n#&gt; Matrix products: default\n#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib \n#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1\n#&gt; \n#&gt; locale:\n#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8\n#&gt; \n#&gt; time zone: Europe/London\n#&gt; tzcode source: internal\n#&gt; \n#&gt; attached base packages:\n#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     \n#&gt; \n#&gt; other attached packages:\n#&gt; [1] DiagrammeR_1.0.11\n#&gt; \n#&gt; loaded via a namespace (and not attached):\n#&gt;  [1] digest_0.6.37      RColorBrewer_1.1-3 fastmap_1.2.0      xfun_0.53         \n#&gt;  [5] magrittr_2.0.4     glue_1.8.0         knitr_1.50         htmltools_0.5.8.1 \n#&gt;  [9] rmarkdown_2.30     cli_3.6.5          visNetwork_2.1.4   compiler_4.5.1    \n#&gt; [13] tools_4.5.1        evaluate_1.0.5     yaml_2.3.10        rlang_1.1.6       \n#&gt; [17] jsonlite_2.0.0     htmlwidgets_1.6.4"
   },
   {
     "objectID": "slides/12.html#why-oop-is-hard-in-r",
     "href": "slides/12.html#why-oop-is-hard-in-r",
-    "title": "Base types",
+    "title": "Intro to OOP and base types",
     "section": "Why OOP is hard in R",
     "text": "Why OOP is hard in R\n\nMultiple OOP systems exist: S3, R6, S4, and (now/soon) S7.\nMultiple preferences: some users prefer one system; others, another.\nR’s OOP systems are different enough that prior OOP experience may not transfer well.\n\n\n\n\nXKCD 927"
   },
   {
-    "objectID": "slides/12.html#oop-big-ideas",
-    "href": "slides/12.html#oop-big-ideas",
-    "title": "Base types",
-    "section": "OOP: Big Ideas",
-    "text": "OOP: Big Ideas\n\nPolymorphism. Function has a single interface (outside), but contains (inside) several class-specific implementations.\n\n\n# imagine a function with object x as an argument\n# from the outside, users interact with the same function\n# but inside the function, there are provisions to deal with objects of different classes\nsome_function &lt;- function(x) {\n  if is.numeric(x) {\n    # implementation for numeric x\n  } else if is.character(x) {\n    # implementation for character x\n  } ...\n}\n\n\n\nExample of polymorphism\n\n\n# data frame\nsummary(mtcars[,1:4])\n\n#&gt;       mpg             cyl             disp             hp       \n#&gt;  Min.   :10.40   Min.   :4.000   Min.   : 71.1   Min.   : 52.0  \n#&gt;  1st Qu.:15.43   1st Qu.:4.000   1st Qu.:120.8   1st Qu.: 96.5  \n#&gt;  Median :19.20   Median :6.000   Median :196.3   Median :123.0  \n#&gt;  Mean   :20.09   Mean   :6.188   Mean   :230.7   Mean   :146.7  \n#&gt;  3rd Qu.:22.80   3rd Qu.:8.000   3rd Qu.:326.0   3rd Qu.:180.0  \n#&gt;  Max.   :33.90   Max.   :8.000   Max.   :472.0   Max.   :335.0\n\n# statistical model\nlin_fit &lt;- lm(mpg ~ hp, data = mtcars)\nsummary(lin_fit)\n\n#&gt; \n#&gt; Call:\n#&gt; lm(formula = mpg ~ hp, data = mtcars)\n#&gt; \n#&gt; Residuals:\n#&gt;     Min      1Q  Median      3Q     Max \n#&gt; -5.7121 -2.1122 -0.8854  1.5819  8.2360 \n#&gt; \n#&gt; Coefficients:\n#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    \n#&gt; (Intercept) 30.09886    1.63392  18.421  &lt; 2e-16 ***\n#&gt; hp          -0.06823    0.01012  -6.742 1.79e-07 ***\n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n#&gt; \n#&gt; Residual standard error: 3.863 on 30 degrees of freedom\n#&gt; Multiple R-squared:  0.6024, Adjusted R-squared:  0.5892 \n#&gt; F-statistic: 45.46 on 1 and 30 DF,  p-value: 1.788e-07\n\n\n\n\nEncapsulation. Function “encapsulates”–that is, encloses in an inviolate capsule–both data and how it acts on data. Think of a REST API: a client interacts with with an API only through a set of discrete endpoints (i.e., things to get or set), but the server does not otherwise give access to its internal workings or state. Like with an API, this creates a separation of concerns: OOP functions take inputs and yield results; users only consume those results."
+    "objectID": "slides/12.html#oop-big-idea---polymorphism",
+    "href": "slides/12.html#oop-big-idea---polymorphism",
+    "title": "Intro to OOP and base types",
+    "section": "OOP: Big Idea - Polymorphism",
+    "text": "OOP: Big Idea - Polymorphism\nFunction has a single interface (outside), but contains (inside) several class-specific implementations.\n\n# imagine a function with object x as an argument\n# from the outside, users interact with the same function\n# but inside the function, there are provisions to deal with objects of different classes\nsome_function &lt;- function(x) {\n  if is.numeric(x) {\n    # implementation for numeric x\n  } else if is.character(x) {\n    # implementation for character x\n  } ...\n}"
   },
   {
-    "objectID": "slides/12.html#oop-properties",
-    "href": "slides/12.html#oop-properties",
-    "title": "Base types",
-    "section": "OOP: Properties",
-    "text": "OOP: Properties\nObjects have class\n\nClass defines:\n\nMethod (i.e., what can be done with object)\nFields (i.e., data that defines an instance of the class)\n\nObjects are an instance of a class\n\nClass is inherited\n\nClass is defined:\n\nBy an object’s class (e.g., ordered factor)\nBy the parent of the object’s class (e.g., factor)\n\nInheritance matters for method dispatch\n\nIf a method is defined for an object’s class, use that method\nIf an object doesn’t have a method, use the method of the parent class\nThe process of finding a method, is called dispatch"
+    "objectID": "slides/12.html#oop-big-idea---polymorphism-example",
+    "href": "slides/12.html#oop-big-idea---polymorphism-example",
+    "title": "Intro to OOP and base types",
+    "section": "OOP: Big Idea - Polymorphism example",
+    "text": "OOP: Big Idea - Polymorphism example\n\n# data frame, with columns of different types\nsummary(palmerpenguins::penguins[, 1:4])\n\n#&gt;       species          island    bill_length_mm  bill_depth_mm  \n#&gt;  Adelie   :152   Biscoe   :168   Min.   :32.10   Min.   :13.10  \n#&gt;  Chinstrap: 68   Dream    :124   1st Qu.:39.23   1st Qu.:15.60  \n#&gt;  Gentoo   :124   Torgersen: 52   Median :44.45   Median :17.30  \n#&gt;                                  Mean   :43.92   Mean   :17.15  \n#&gt;                                  3rd Qu.:48.50   3rd Qu.:18.70  \n#&gt;                                  Max.   :59.60   Max.   :21.50  \n#&gt;                                  NA's   :2       NA's   :2\n\n\n\n\nImproving summary for character vectors\n\nsummary on character vectors is current pretty useless.\n\nsummary(c(\"Adelie\", \"Adelie\", \"Chinstrap\"))\n\n#&gt;    Length     Class      Mode \n#&gt;         3 character character\n\n\nImprovements are in the works (GitHub, bugzilla)."
+  },
+  {
+    "objectID": "slides/12.html#oop-big-idea---polymorphism-example-1",
+    "href": "slides/12.html#oop-big-idea---polymorphism-example-1",
+    "title": "Intro to OOP and base types",
+    "section": "OOP: Big Idea - Polymorphism example",
+    "text": "OOP: Big Idea - Polymorphism example\n\n# statistical model\nlin_fit &lt;- lm(mpg ~ hp, data = mtcars)\nsummary(lin_fit)\n\n#&gt; \n#&gt; Call:\n#&gt; lm(formula = mpg ~ hp, data = mtcars)\n#&gt; \n#&gt; Residuals:\n#&gt;     Min      1Q  Median      3Q     Max \n#&gt; -5.7121 -2.1122 -0.8854  1.5819  8.2360 \n#&gt; \n#&gt; Coefficients:\n#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    \n#&gt; (Intercept) 30.09886    1.63392  18.421  &lt; 2e-16 ***\n#&gt; hp          -0.06823    0.01012  -6.742 1.79e-07 ***\n#&gt; ---\n#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n#&gt; \n#&gt; Residual standard error: 3.863 on 30 degrees of freedom\n#&gt; Multiple R-squared:  0.6024, Adjusted R-squared:  0.5892 \n#&gt; F-statistic: 45.46 on 1 and 30 DF,  p-value: 1.788e-07"
+  },
+  {
+    "objectID": "slides/12.html#oop-big-idea---encapsulation",
+    "href": "slides/12.html#oop-big-idea---encapsulation",
+    "title": "Intro to OOP and base types",
+    "section": "OOP: Big Idea - Encapsulation",
+    "text": "OOP: Big Idea - Encapsulation\n\nEncapsulation. Function “encapsulates”–that is, encloses in an inviolate capsule–both data and how it acts on data. The user doesn’t need to worry about details of an object because they are encapsulated behind a standard interface.\n\n\n\nREST API comparison\n\nThink of a REST API: a client interacts with with an API only through a set of discrete endpoints (i.e., things to get or set), but the server does not otherwise give access to its internal workings or state. Like with an API, this creates a separation of concerns: OOP functions take inputs and yield results; users only consume those results."
+  },
+  {
+    "objectID": "slides/12.html#objects-have-class",
+    "href": "slides/12.html#objects-have-class",
+    "title": "Intro to OOP and base types",
+    "section": "Objects have class",
+    "text": "Objects have class\n\nClass defines:\n\nMethod (i.e., what can be done with object)\nFields (i.e., data that defines an instance of the class)\n\nObjects are an instance of a class\n\n\nA class defines what an object is and methods describe what that object can do."
+  },
+  {
+    "objectID": "slides/12.html#class-is-inherited",
+    "href": "slides/12.html#class-is-inherited",
+    "title": "Intro to OOP and base types",
+    "section": "Class is inherited",
+    "text": "Class is inherited\n\nClass is defined:\n\nBy an object’s class (e.g., ordered factor)\nBy the parent of the object’s class (e.g., factor)\n\nInheritance matters for method dispatch\n\nIf a method is defined for an object’s class, use that method\nIf an object doesn’t have a method, use the method of the parent class\nThe process of finding a method, is called dispatch"
   },
   {
     "objectID": "slides/12.html#oop-in-r-two-paradigms",
     "href": "slides/12.html#oop-in-r-two-paradigms",
-    "title": "Base types",
+    "title": "Intro to OOP and base types",
     "section": "OOP in R: Two Paradigms",
-    "text": "OOP in R: Two Paradigms\n1. Encapsulated OOP\n\nObjects “encapsulate”\n\nMethods (i.e., what can be done)\nFields (i.e., data on which things are done)\n\nCalls communicate this encapsulation, since form follows function\n\nForm: object.method(arg1, arg2)\nFunction: for object, apply method for object’s class with arguments arg1 and arg2\n\n\n2. Functional OOP\n\nMethods belong to “generic” functions\nFrom the outside, look like regular functions: generic(object, arg2, arg3)\nFrom the inside, components are also functions\n\nConcept Map\n\n\n\n\n\n\n\n\nMermaid code\n\n\nDiagrammeR::mermaid(\"\ngraph LR\n\nOOP --&gt; encapsulated_OOP\nOOP --&gt; functional_OOP\n\nfunctional_OOP --&gt; S3\nfunctional_OOP --&gt; S4\n\nencapsulated_OOP --&gt; R6\nencapsulated_OOP --&gt; RC\n\")"
+    "text": "OOP in R: Two Paradigms\n1. Encapsulated OOP\n\nMethods belong to objects or classes\nMethod calls typically look like object.method(arg1, arg2)\n\n\n\nCalls communicate encapsulation, since form follows function\n\nForm: object.method(arg1, arg2)\nFunction: for object, apply method for object’s class with arguments arg1 and arg2"
   },
   {
-    "objectID": "slides/12.html#oop-in-base-r",
-    "href": "slides/12.html#oop-in-base-r",
-    "title": "Base types",
-    "section": "OOP in base R",
-    "text": "OOP in base R\n\nS3\n\nParadigm: functional OOP\nNoteworthy: R’s first OOP system\nUse case: low-cost solution for common problems\nDownsides: no guarantees\n\nS4\n\nParadigm: functional OOP\nNoteworthy: rewrite of S3, used by Bioconductor\nUse case: “more guarantees and greater encapsulation” than S3\nDownsides: higher setup cost than S3\n\nRC\n\nParadigm: encapsulated OOP\nNoteworthy: special type of S4 object is mutable–in other words, that can be modified in place (instead of R’s usual copy-on-modify behavior)\nUse cases: problems that are hard to tackle with functional OOP (in S3 and S4)\nDownsides: harder to reason about (because of modify-in-place logic)"
+    "objectID": "slides/12.html#oop-in-r-two-paradigms-1",
+    "href": "slides/12.html#oop-in-r-two-paradigms-1",
+    "title": "Intro to OOP and base types",
+    "section": "OOP in R: Two Paradigms",
+    "text": "OOP in R: Two Paradigms\n2. Functional OOP\n\nMethods belong to “generic” functions\nFrom the outside, look like regular functions: generic(object, arg2, arg3)\nFrom the inside, components are also functions"
   },
   {
-    "objectID": "slides/12.html#oop-in-packages",
-    "href": "slides/12.html#oop-in-packages",
-    "title": "Base types",
-    "section": "OOP in packages",
-    "text": "OOP in packages\n\nR6\n\nParadigm: encapsulated OOP\nNoteworthy: resolves issues with RC\n\nR7\n\nParadigm: functional OOP\nNoteworthy:\n\nbest parts of S3 and S4\nease of S3\npower of S4\nSee more in rstudio::conf(2022) talk\n\n\nR.oo\n\nParadigm: hybrid functional and encapsulated (?)\n\nproto\n\nParadigm: prototype OOP\nNoteworthy: OOP style used in ggplot2"
+    "objectID": "slides/12.html#concept-map",
+    "href": "slides/12.html#concept-map",
+    "title": "Intro to OOP and base types",
+    "section": "Concept Map",
+    "text": "Concept Map\n\n\n\n\n\n\n\n\nMermaid code\n\n\nDiagrammeR::mermaid(\"\ngraph TB\n\nOOP --&gt; encapsulated_OOP\nOOP --&gt; functional_OOP\n\nfunctional_OOP --&gt; S3\nfunctional_OOP --&gt; S4\n\nencapsulated_OOP --&gt; R6\nencapsulated_OOP --&gt; RC\n\")"
   },
   {
-    "objectID": "slides/12.html#how-can-you-tell-if-an-object-is-base-or-oop",
-    "href": "slides/12.html#how-can-you-tell-if-an-object-is-base-or-oop",
-    "title": "Base types",
-    "section": "How can you tell if an object is base or OOP?",
-    "text": "How can you tell if an object is base or OOP?\nFunctions\nTwo functions:\n\nbase::is.object(), which yields TRUE/FALSE about whether is OOP object\nsloop::otype(), which says what type of object type: \"base\", \"S3\", etc.\n\nAn few examples:\n\n# Example 1: a base object\nis.object(1:10)\n\n#&gt; [1] FALSE\n\nsloop::otype(1:10)\n\n#&gt; [1] \"base\"\n\n# Example 2: an OO object\nis.object(mtcars)\n\n#&gt; [1] TRUE\n\nsloop::otype(mtcars)\n\n#&gt; [1] \"S3\"\n\n\nsloop\n\nS Language Object-Oriented Programming\n\n\n\n\nXKCD 927\n\n\nClass\nOO objects have a “class” attribute:\n\n# base object has no class\nattr(1:10, \"class\")\n\n#&gt; NULL\n\n# OO object has one or more classes\nattr(mtcars, \"class\")\n\n#&gt; [1] \"data.frame\""
+    "objectID": "slides/12.html#functional-oop-in-base-r",
+    "href": "slides/12.html#functional-oop-in-base-r",
+    "title": "Intro to OOP and base types",
+    "section": "Functional OOP in base R",
+    "text": "Functional OOP in base R\n\nS3S4\n\n\n\nParadigm: functional OOP\nNoteworthy: R’s first OOP system\nUse case: low-cost solution for common problems\nDownsides: no guarantees\n\n\n\n\nParadigm: functional OOP\nNoteworthy: rewrite of S3, used by Bioconductor\nUse case: “more guarantees and greater encapsulation” than S3\nDownsides: higher setup cost than S3"
+  },
+  {
+    "objectID": "slides/12.html#encapsulated-oop-in-base-r",
+    "href": "slides/12.html#encapsulated-oop-in-base-r",
+    "title": "Intro to OOP and base types",
+    "section": "Encapsulated OOP in base R",
+    "text": "Encapsulated OOP in base R\n\nRC\n\nParadigm: encapsulated OOP\nNoteworthy: special type of S4 object is mutable–in other words, that can be modified in place (instead of R’s usual copy-on-modify behavior)\nUse cases: problems that are hard to tackle with functional OOP (in S3 and S4)\nDownsides: harder to reason about (because of modify-in-place logic)"
+  },
+  {
+    "objectID": "slides/12.html#oop-in-packages-various-paradigms",
+    "href": "slides/12.html#oop-in-packages-various-paradigms",
+    "title": "Intro to OOP and base types",
+    "section": "OOP in packages (various paradigms)",
+    "text": "OOP in packages (various paradigms)\n\nR6S7protoR.oo\n\n\n\nParadigm: encapsulated OOP\nNoteworthy: resolves issues with RC\n\n\n\n\nParadigm: functional OOP\nNoteworthy:\n\nbest parts of S3 and S4 - ease of S3 with power of S4\nRecently adopted in ggplot2 &gt;= v4.0.0\nSee more in rstudio::conf(2022) talk and the S7 website\n\nLonger-term plan to incorporate into base R\n\n\n\n\nParadigm: prototype OOP\nNoteworthy: OOP style used in ggplot2 &lt; v4.0.0.\n\n\n\n\nParadigm: hybrid functional and encapsulated (?)"
+  },
+  {
+    "objectID": "slides/12.html#sail-the-seas-of-oop",
+    "href": "slides/12.html#sail-the-seas-of-oop",
+    "title": "Intro to OOP and base types",
+    "section": "“Sail the seas of OOP”",
+    "text": "“Sail the seas of OOP”\n\nS Language Object-Oriented Programming\n\n\n\n\nSloop John B ship (left) and Beach Boys album cover (right)"
+  },
+  {
+    "objectID": "slides/12.html#use-sloopotype-to-determine-oop-system",
+    "href": "slides/12.html#use-sloopotype-to-determine-oop-system",
+    "title": "Intro to OOP and base types",
+    "section": "Use sloop::otype to determine OOP system",
+    "text": "Use sloop::otype to determine OOP system\n\nlibrary(sloop)\notype(1:10)\n\n#&gt; [1] \"base\"\n\notype(mtcars)\n\n#&gt; [1] \"S3\"\n\nmle_obj &lt;- stats4::mle(function(x = 1) (x - 2) ^ 2)\notype(mle_obj)\n\n#&gt; [1] \"S4\""
+  },
+  {
+    "objectID": "slides/12.html#everything-is-an-object-but-not-everything-is-object-oriented",
+    "href": "slides/12.html#everything-is-an-object-but-not-everything-is-object-oriented",
+    "title": "Intro to OOP and base types",
+    "section": "Everything is an object, but not everything is object oriented",
+    "text": "Everything is an object, but not everything is object oriented\n\nbase objects and OO objects are different subsets of objects"
+  },
+  {
+    "objectID": "slides/12.html#you-can-use-functions-to-determine-if-object-is-base-or-oop",
+    "href": "slides/12.html#you-can-use-functions-to-determine-if-object-is-base-or-oop",
+    "title": "Intro to OOP and base types",
+    "section": "You can use functions to determine if object is base or OOP",
+    "text": "You can use functions to determine if object is base or OOP\n\nbase::is.object(): TRUE/FALSE for OOP\nsloop::otype(): gives object type: \"base\", \"S3\", etc.\n\n\n# Example 1: a base object\nis.object(1:10)\n\n#&gt; [1] FALSE\n\nsloop::otype(1:10)\n\n#&gt; [1] \"base\"\n\n# Example 2: an OO object\nis.object(mtcars)\n\n#&gt; [1] TRUE\n\nsloop::otype(mtcars)\n\n#&gt; [1] \"S3\""
+  },
+  {
+    "objectID": "slides/12.html#oo-objects-have-a-class-attribute-base-objects-do-not",
+    "href": "slides/12.html#oo-objects-have-a-class-attribute-base-objects-do-not",
+    "title": "Intro to OOP and base types",
+    "section": "OO objects have a “class” attribute, base objects do not",
+    "text": "OO objects have a “class” attribute, base objects do not\n\n# base object has no class attribute\nM &lt;- matrix(1:4, 2)\nattr(M, \"class\")\n\n#&gt; NULL\n\n\n\n# OO object has one or more classes\nattr(mtcars, \"class\")\n\n#&gt; [1] \"data.frame\"\n\nattr(palmerpenguins::penguins, \"class\")\n\n#&gt; [1] \"tbl_df\"     \"tbl\"        \"data.frame\""
+  },
+  {
+    "objectID": "slides/12.html#be-careful-with-class",
+    "href": "slides/12.html#be-careful-with-class",
+    "title": "Intro to OOP and base types",
+    "section": "Be careful with class()",
+    "text": "Be careful with class()\nclass() gives misleading results for base objects.\nIt is not enough to call class() on an object to determine if it is base or OO, as this will return the implicit class (rather than NULL) when there is no class attribute (i.e. \"matrix\", \"array\", \"function\", \"numeric\" or result of typeof()):\n\nclass(1:10)\n\n#&gt; [1] \"integer\"\n\nclass(M)\n\n#&gt; [1] \"matrix\" \"array\"\n\n\nsloop::s3_class() is safer, as it returns the implicit class that the S3 and S4 systems will use to pick methods\n\ns3_class(M)\n\n#&gt; [1] \"matrix\"  \"integer\" \"numeric\""
   },
   {
     "objectID": "slides/12.html#what-about-types",
     "href": "slides/12.html#what-about-types",
-    "title": "Base types",
+    "title": "Intro to OOP and base types",
     "section": "What about types?",
-    "text": "What about types?\nOnly OO objects have a “class” attribute, but every object–whether base or OO–has class\nVectors\n\ntypeof(NULL)\n\n#&gt; [1] \"NULL\"\n\ntypeof(c(\"a\", \"b\", \"c\"))\n\n#&gt; [1] \"character\"\n\ntypeof(1L)\n\n#&gt; [1] \"integer\"\n\ntypeof(1i)\n\n#&gt; [1] \"complex\"\n\n\nFunctions\n\n# \"normal\" function\nmy_fun &lt;- function(x) { x + 1 }\ntypeof(my_fun)\n\n#&gt; [1] \"closure\"\n\n# internal function\ntypeof(`[`)\n\n#&gt; [1] \"special\"\n\n# primitive function\ntypeof(sum)    \n\n#&gt; [1] \"builtin\"\n\n\nEnvironments\n\ntypeof(globalenv())\n\n#&gt; [1] \"environment\"\n\n\nS4\n\nmle_obj &lt;- stats4::mle(function(x = 1) (x - 2) ^ 2)\ntypeof(mle_obj)\n\n#&gt; [1] \"S4\"\n\n\nLanguage components\n\ntypeof(quote(a))\n\n#&gt; [1] \"symbol\"\n\ntypeof(quote(a + 1))\n\n#&gt; [1] \"language\"\n\ntypeof(formals(my_fun))\n\n#&gt; [1] \"pairlist\"\n\n\nConcept Map\n\nBase types in R\n\nSankey graph code\n\nThe graph above was made with SankeyMATIC\n// toggle \"Show Values\"\n// set Default Flow Colors from \"each flow's Source\"\n\nbase\\ntypes [8] vectors\nbase\\ntypes [3] functions\nbase\\ntypes [1] environments\nbase\\ntypes [1] S4 OOP\nbase\\ntypes [3] language\\ncomponents\nbase\\ntypes [6] C components\n\nvectors [1] NULL\nvectors [1] logical\nvectors [1] integer\nvectors [1] double\nvectors [1] complex\nvectors [1] character\nvectors [1] list\nvectors [1] raw\n\nfunctions [1] closure\nfunctions [1] special\nfunctions [1] builtin\n\nenvironments [1] environment\n\nS4 OOP [1] S4\n\nlanguage\\ncomponents [1] symbol\nlanguage\\ncomponents [1] language\nlanguage\\ncomponents [1] pairlist\n\nC components [1] externalptr\nC components [1] weakref\nC components [1] bytecode\nC components [1] promise\nC components [1] ...\nC components [1] any"
+    "text": "What about types?\nOnly OO objects have a “class” attribute, but every object–whether base or OO–has a base type\nThere are 25 types.\nThey are most important in C code, so often see them called by their C type names, e.g. NILSXP for NULL."
+  },
+  {
+    "objectID": "slides/12.html#type-examples",
+    "href": "slides/12.html#type-examples",
+    "title": "Intro to OOP and base types",
+    "section": "Type examples",
+    "text": "Type examples\n\nVectorsFunctionsEnvironmentsS4Language components\n\n\n\ntypeof(NULL) # NILSXP\n\n#&gt; [1] \"NULL\"\n\ntypeof(c(\"a\", \"b\", \"c\")) # STRSXP\n\n#&gt; [1] \"character\"\n\ntypeof(mtcars) # VECSXP\n\n#&gt; [1] \"list\"\n\ntypeof(1) # REALSXP\n\n#&gt; [1] \"double\"\n\ntypeof(1L) # INTSXP\n\n#&gt; [1] \"integer\"\n\ntypeof(1i) # CPLXSXP\n\n#&gt; [1] \"complex\"\n\n\n\n\n\n# \"normal\" function\nmy_fun &lt;- function(x) { x + 1 }\ntypeof(my_fun) # CLOSXP\n\n#&gt; [1] \"closure\"\n\n# internal function\ntypeof(`[`) # SPECIALSXP\n\n#&gt; [1] \"special\"\n\n# primitive function\ntypeof(sum) # BUILTINSXP\n\n#&gt; [1] \"builtin\"\n\n\n\n\n\ntypeof(globalenv()) # ENVSXP\n\n#&gt; [1] \"environment\"\n\n\n\n\n\nmle_obj &lt;- stats4::mle(function(x = 1) (x - 2) ^ 2)\ntypeof(mle_obj) # S4SXP\n\n#&gt; [1] \"S4\"\n\n\n\n\n\ntypeof(quote(a)) # SYMSXP\n\n#&gt; [1] \"symbol\"\n\ntypeof(quote(a + 1)) # LANGSXP\n\n#&gt; [1] \"language\"\n\ntypeof(formals(my_fun)) # LISTSXP\n\n#&gt; [1] \"pairlist\""
+  },
+  {
+    "objectID": "slides/12.html#concept-map-1",
+    "href": "slides/12.html#concept-map-1",
+    "title": "Intro to OOP and base types",
+    "section": "Concept Map",
+    "text": "Concept Map\n\nBase types in R\n\nSankey graph code\n\nThe graph above was made with SankeyMATIC\n// toggle \"Show Values\"\n// set Default Flow Colors from \"each flow's Source\"\n\nbase\\ntypes [8] vectors\nbase\\ntypes [3] functions\nbase\\ntypes [1] environments\nbase\\ntypes [1] S4 OOP\nbase\\ntypes [3] language\\ncomponents\nbase\\ntypes [6] C components\n\nvectors [1] NULL\nvectors [1] logical\nvectors [1] integer\nvectors [1] double\nvectors [1] complex\nvectors [1] character\nvectors [1] list\nvectors [1] raw\n\nfunctions [1] closure\nfunctions [1] special\nfunctions [1] builtin\n\nenvironments [1] environment\n\nS4 OOP [1] S4\n\nlanguage\\ncomponents [1] symbol\nlanguage\\ncomponents [1] language\nlanguage\\ncomponents [1] pairlist\n\nC components [1] externalptr\nC components [1] weakref\nC components [1] bytecode\nC components [1] promise\nC components [1] ...\nC components [1] any"
   },
   {
     "objectID": "slides/12.html#be-careful-about-the-numeric-type",
     "href": "slides/12.html#be-careful-about-the-numeric-type",
-    "title": "Base types",
+    "title": "Intro to OOP and base types",
     "section": "Be careful about the numeric type",
-    "text": "Be careful about the numeric type\n\nOften “numeric” is treated as synonymous for double:\n\n\n# create a double and integeger objects\none &lt;- 1\noneL &lt;- 1L\ntypeof(one)\n\n#&gt; [1] \"double\"\n\ntypeof(oneL)\n\n#&gt; [1] \"integer\"\n\n# check their type after as.numeric()\none |&gt; as.numeric() |&gt; typeof()\n\n#&gt; [1] \"double\"\n\noneL |&gt; as.numeric() |&gt; typeof()\n\n#&gt; [1] \"double\"\n\n\n\nIn S3 and S4, “numeric” is taken as either integer or double, when choosing methods:\n\n\nsloop::s3_class(1)\n\n#&gt; [1] \"double\"  \"numeric\"\n\nsloop::s3_class(1L)\n\n#&gt; [1] \"integer\" \"numeric\"\n\n\n\nis.numeric() tests whether an object behaves like a number\n\n\ntypeof(factor(\"x\"))\n\n#&gt; [1] \"integer\"\n\nis.numeric(factor(\"x\"))\n\n#&gt; [1] FALSE\n\n\nBut Advanced R consistently uses numeric to mean integer or double type."
+    "text": "Be careful about the numeric type\nR uses “numeric” to mean three slightly different things:\n\nAlias for double\nIn S3 and S4, as shorthand for integer or double\nis.numeric() tests for objects that behave like numbers\n\nAdvanced R consistently uses numeric to mean an object of type integer or double."
+  },
+  {
+    "objectID": "slides/12.html#numeric-is-treated-as-synonymous-for-double",
+    "href": "slides/12.html#numeric-is-treated-as-synonymous-for-double",
+    "title": "Intro to OOP and base types",
+    "section": "1: “numeric” is treated as synonymous for double",
+    "text": "1: “numeric” is treated as synonymous for double\n\n# create a double and integeger objects\none &lt;- 1\noneL &lt;- 1L\ntypeof(one)\n\n#&gt; [1] \"double\"\n\ntypeof(oneL)\n\n#&gt; [1] \"integer\"\n\n# check their type after as.numeric()\none |&gt; as.numeric() |&gt; typeof()\n\n#&gt; [1] \"double\"\n\noneL |&gt; as.numeric() |&gt; typeof()\n\n#&gt; [1] \"double\""
+  },
+  {
+    "objectID": "slides/12.html#in-s3-and-s4",
+    "href": "slides/12.html#in-s3-and-s4",
+    "title": "Intro to OOP and base types",
+    "section": "2: in S3 and S4",
+    "text": "2: in S3 and S4\n“numeric” is taken as either integer or double, and used when choosing methods:\n\nsloop::s3_class(1)\n\n#&gt; [1] \"double\"  \"numeric\"\n\nsloop::s3_class(1L)\n\n#&gt; [1] \"integer\" \"numeric\""
+  },
+  {
+    "objectID": "slides/12.html#testing-behaviour",
+    "href": "slides/12.html#testing-behaviour",
+    "title": "Intro to OOP and base types",
+    "section": "3: testing behaviour",
+    "text": "3: testing behaviour\n\ntypeof(factor(\"x\"))\n\n#&gt; [1] \"integer\"\n\nis.numeric(factor(\"x\"))\n\n#&gt; [1] FALSE"
   },
   {
     "objectID": "slides/14.html#learning-objectives",

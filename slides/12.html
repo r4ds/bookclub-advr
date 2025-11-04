@@ -9,7 +9,7 @@
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.25">
 
-  <title>Advanced R Book Club – Base types</title>
+  <title>Advanced R Book Club – Intro to OOP and base types</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -202,7 +202,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Base types</h1>
+  <h1 class="title">Intro to OOP and base types</h1>
 
 <div class="quarto-title-authors">
 </div>
@@ -225,21 +225,18 @@ Session Info
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>utils<span class="sc">::</span><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; R version 4.5.1 (2025-06-13 ucrt)
-#&gt; Platform: x86_64-w64-mingw32/x64
-#&gt; Running under: Windows 11 x64 (build 26100)
+<pre><code>#&gt; R version 4.5.1 (2025-06-13)
+#&gt; Platform: aarch64-apple-darwin20
+#&gt; Running under: macOS Sequoia 15.7.1
 #&gt; 
 #&gt; Matrix products: default
-#&gt;   LAPACK version 3.12.1
+#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
+#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
 #&gt; 
 #&gt; locale:
-#&gt; [1] LC_COLLATE=English_United States.utf8 
-#&gt; [2] LC_CTYPE=English_United States.utf8   
-#&gt; [3] LC_MONETARY=English_United States.utf8
-#&gt; [4] LC_NUMERIC=C                          
-#&gt; [5] LC_TIME=English_United States.utf8    
+#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 #&gt; 
-#&gt; time zone: America/Chicago
+#&gt; time zone: Europe/London
 #&gt; tzcode source: internal
 #&gt; 
 #&gt; attached base packages:
@@ -249,11 +246,11 @@ Session Info
 #&gt; [1] DiagrammeR_1.0.11
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;  [1] digest_0.6.37      RColorBrewer_1.1-3 R6_2.6.1           fastmap_1.2.0     
-#&gt;  [5] xfun_0.52          magrittr_2.0.3     glue_1.8.0         knitr_1.50        
-#&gt;  [9] htmltools_0.5.8.1  rmarkdown_2.29     cli_3.6.5          visNetwork_2.1.2  
-#&gt; [13] compiler_4.5.1     tools_4.5.1        evaluate_1.0.4     yaml_2.3.10       
-#&gt; [17] rlang_1.1.6        jsonlite_2.0.0     htmlwidgets_1.6.4  keyring_1.4.1</code></pre>
+#&gt;  [1] digest_0.6.37      RColorBrewer_1.1-3 fastmap_1.2.0      xfun_0.53         
+#&gt;  [5] magrittr_2.0.4     glue_1.8.0         knitr_1.50         htmltools_0.5.8.1 
+#&gt;  [9] rmarkdown_2.30     cli_3.6.5          visNetwork_2.1.4   compiler_4.5.1    
+#&gt; [13] tools_4.5.1        evaluate_1.0.5     yaml_2.3.10        rlang_1.1.6       
+#&gt; [17] jsonlite_2.0.0     htmlwidgets_1.6.4</code></pre>
 </div>
 </div>
 </details>
@@ -272,11 +269,14 @@ Session Info
 </figure>
 </div>
 </section>
-<section id="oop-big-ideas" class="slide level2 scrollable">
-<h2>OOP: Big Ideas</h2>
-<ol type="1">
-<li><strong>Polymorphism.</strong> Function has a single interface (outside), but contains (inside) several class-specific implementations.</li>
-</ol>
+<section>
+<section id="object-oriented-programming-oop" class="title-slide slide level1 center">
+<h1>Object Oriented Programming (OOP)</h1>
+
+</section>
+<section id="oop-big-idea---polymorphism" class="slide level2">
+<h2>OOP: Big Idea - Polymorphism</h2>
+<p>Function has a single interface (outside), but contains (inside) several class-specific implementations.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="co"># imagine a function with object x as an argument</span></span>
 <span id="cb4-2"><a></a><span class="co"># from the outside, users interact with the same function</span></span>
@@ -289,25 +289,44 @@ Session Info
 <span id="cb4-9"><a></a>  } ...</span>
 <span id="cb4-10"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
+<section id="oop-big-idea---polymorphism-example" class="slide level2">
+<h2>OOP: Big Idea - Polymorphism example</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># data frame, with columns of different types</span></span>
+<span id="cb5-2"><a></a><span class="fu">summary</span>(palmerpenguins<span class="sc">::</span>penguins[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;       species          island    bill_length_mm  bill_depth_mm  
+#&gt;  Adelie   :152   Biscoe   :168   Min.   :32.10   Min.   :13.10  
+#&gt;  Chinstrap: 68   Dream    :124   1st Qu.:39.23   1st Qu.:15.60  
+#&gt;  Gentoo   :124   Torgersen: 52   Median :44.45   Median :17.30  
+#&gt;                                  Mean   :43.92   Mean   :17.15  
+#&gt;                                  3rd Qu.:48.50   3rd Qu.:18.70  
+#&gt;                                  Max.   :59.60   Max.   :21.50  
+#&gt;                                  NA's   :2       NA's   :2</code></pre>
+</div>
+</div>
 <details>
 <summary>
-Example of polymorphism
+Improving <code>summary</code> for character vectors
 </summary>
+<p><code>summary</code> on character vectors is current pretty useless.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># data frame</span></span>
-<span id="cb5-2"><a></a><span class="fu">summary</span>(mtcars[,<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"Adelie"</span>, <span class="st">"Adelie"</span>, <span class="st">"Chinstrap"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;       mpg             cyl             disp             hp       
-#&gt;  Min.   :10.40   Min.   :4.000   Min.   : 71.1   Min.   : 52.0  
-#&gt;  1st Qu.:15.43   1st Qu.:4.000   1st Qu.:120.8   1st Qu.: 96.5  
-#&gt;  Median :19.20   Median :6.000   Median :196.3   Median :123.0  
-#&gt;  Mean   :20.09   Mean   :6.188   Mean   :230.7   Mean   :146.7  
-#&gt;  3rd Qu.:22.80   3rd Qu.:8.000   3rd Qu.:326.0   3rd Qu.:180.0  
-#&gt;  Max.   :33.90   Max.   :8.000   Max.   :472.0   Max.   :335.0</code></pre>
+<pre><code>#&gt;    Length     Class      Mode 
+#&gt;         3 character character</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># statistical model</span></span>
-<span id="cb7-2"><a></a>lin_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp, <span class="at">data =</span> mtcars)</span>
-<span id="cb7-3"><a></a><span class="fu">summary</span>(lin_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Improvements are in the works (<a href="https://github.com/r-devel/r-dev-day/issues/117">GitHub</a>, <a href="https://bugs.r-project.org/show_bug.cgi?id=16750">bugzilla</a>).</p>
+</details>
+</section>
+<section id="oop-big-idea---polymorphism-example-1" class="slide level2">
+<h2>OOP: Big Idea - Polymorphism example</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="co"># statistical model</span></span>
+<span id="cb9-2"><a></a>lin_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp, <span class="at">data =</span> mtcars)</span>
+<span id="cb9-3"><a></a><span class="fu">summary</span>(lin_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 
 #&gt; Call:
@@ -329,14 +348,21 @@ Example of polymorphism
 #&gt; F-statistic: 45.46 on 1 and 30 DF,  p-value: 1.788e-07</code></pre>
 </div>
 </div>
-</details>
-<ol start="2" type="1">
-<li><strong>Encapsulation.</strong> Function “encapsulates”–that is, encloses in an inviolate capsule–both data and how it acts on data. Think of a REST API: a client interacts with with an API only through a set of discrete endpoints (i.e., things to get or set), but the server does not otherwise give access to its internal workings or state. Like with an API, this creates a separation of concerns: OOP functions take inputs and yield results; users only consume those results.</li>
-</ol>
 </section>
-<section id="oop-properties" class="slide level2">
-<h2>OOP: Properties</h2>
-<h3 id="objects-have-class">Objects have class</h3>
+<section id="oop-big-idea---encapsulation" class="slide level2 scrollable">
+<h2>OOP: Big Idea - Encapsulation</h2>
+<ol start="2" type="1">
+<li><strong>Encapsulation.</strong> Function “encapsulates”–that is, encloses in an inviolate capsule–both data and how it acts on data. The user doesn’t need to worry about details of an object because they are encapsulated behind a standard interface.</li>
+</ol>
+<details>
+<summary>
+REST API comparison
+</summary>
+Think of a REST API: a client interacts with with an API only through a set of discrete endpoints (i.e., things to get or set), but the server does not otherwise give access to its internal workings or state. Like with an API, this creates a separation of concerns: OOP functions take inputs and yield results; users only consume those results.
+</details>
+</section>
+<section id="objects-have-class" class="slide level2">
+<h2>Objects have class</h2>
 <ul>
 <li>Class defines:
 <ul>
@@ -345,7 +371,12 @@ Example of polymorphism
 </ul></li>
 <li>Objects are an instance of a class</li>
 </ul>
-<h3 id="class-is-inherited">Class is inherited</h3>
+<blockquote>
+<p>A class defines what an object <em>is</em> and methods describe what that object can <em>do</em>.</p>
+</blockquote>
+</section>
+<section id="class-is-inherited" class="slide level2">
+<h2>Class is inherited</h2>
 <ul>
 <li>Class is defined:
 <ul>
@@ -359,33 +390,44 @@ Example of polymorphism
 <li>The process of finding a method, is called dispatch</li>
 </ul></li>
 </ul>
+</section></section>
+<section>
+<section id="oop-in-r" class="title-slide slide level1 center">
+<h1>OOP in R</h1>
+
 </section>
 <section id="oop-in-r-two-paradigms" class="slide level2">
 <h2>OOP in R: Two Paradigms</h2>
 <p><strong>1. Encapsulated OOP</strong></p>
 <ul>
-<li>Objects “encapsulate”
+<li>Methods belong to objects or classes</li>
+<li>Method calls typically look like <code>object.method(arg1, arg2)</code></li>
+</ul>
+<details>
 <ul>
-<li>Methods (i.e., what can be done)</li>
-<li>Fields (i.e., data on which things are done)</li>
-</ul></li>
-<li>Calls communicate this encapsulation, since form follows function
+<li>Calls communicate encapsulation, since form follows function
 <ul>
 <li>Form: <code>object.method(arg1, arg2)</code></li>
 <li>Function: for <code>object</code>, apply <code>method</code> for <code>object</code>’s class with arguments <code>arg1</code> and <code>arg2</code></li>
 </ul></li>
 </ul>
+</details>
+</section>
+<section id="oop-in-r-two-paradigms-1" class="slide level2">
+<h2>OOP in R: Two Paradigms</h2>
 <p><strong>2. Functional OOP</strong></p>
 <ul>
 <li>Methods belong to “generic” functions</li>
 <li>From the outside, look like regular functions: <code>generic(object, arg2, arg3)</code></li>
 <li>From the inside, components are also functions</li>
 </ul>
-<h3 id="concept-map">Concept Map</h3>
+</section>
+<section id="concept-map" class="slide level2">
+<h2>Concept Map</h2>
 <div class="cell">
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-f19ffbf1ff0c903a1236" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-f19ffbf1ff0c903a1236">{"x":{"diagram":"\ngraph LR\n\nOOP --> encapsulated_OOP\nOOP --> functional_OOP\n\nfunctional_OOP --> S3\nfunctional_OOP --> S4\n\nencapsulated_OOP --> R6\nencapsulated_OOP --> RC\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-728c3543c341c587e3d1" style="width:960px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-728c3543c341c587e3d1">{"x":{"diagram":"\ngraph TB\n\nOOP --> encapsulated_OOP\nOOP --> functional_OOP\n\nfunctional_OOP --> S3\nfunctional_OOP --> S4\n\nencapsulated_OOP --> R6\nencapsulated_OOP --> RC\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <details>
@@ -393,38 +435,48 @@ Example of polymorphism
 Mermaid code
 </summary>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>DiagrammeR<span class="sc">::</span><span class="fu">mermaid</span>(<span class="st">"</span></span>
-<span id="cb9-2"><a></a><span class="st">graph LR</span></span>
-<span id="cb9-3"><a></a></span>
-<span id="cb9-4"><a></a><span class="st">OOP --&gt; encapsulated_OOP</span></span>
-<span id="cb9-5"><a></a><span class="st">OOP --&gt; functional_OOP</span></span>
-<span id="cb9-6"><a></a></span>
-<span id="cb9-7"><a></a><span class="st">functional_OOP --&gt; S3</span></span>
-<span id="cb9-8"><a></a><span class="st">functional_OOP --&gt; S4</span></span>
-<span id="cb9-9"><a></a></span>
-<span id="cb9-10"><a></a><span class="st">encapsulated_OOP --&gt; R6</span></span>
-<span id="cb9-11"><a></a><span class="st">encapsulated_OOP --&gt; RC</span></span>
-<span id="cb9-12"><a></a><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>DiagrammeR<span class="sc">::</span><span class="fu">mermaid</span>(<span class="st">"</span></span>
+<span id="cb11-2"><a></a><span class="st">graph TB</span></span>
+<span id="cb11-3"><a></a></span>
+<span id="cb11-4"><a></a><span class="st">OOP --&gt; encapsulated_OOP</span></span>
+<span id="cb11-5"><a></a><span class="st">OOP --&gt; functional_OOP</span></span>
+<span id="cb11-6"><a></a></span>
+<span id="cb11-7"><a></a><span class="st">functional_OOP --&gt; S3</span></span>
+<span id="cb11-8"><a></a><span class="st">functional_OOP --&gt; S4</span></span>
+<span id="cb11-9"><a></a></span>
+<span id="cb11-10"><a></a><span class="st">encapsulated_OOP --&gt; R6</span></span>
+<span id="cb11-11"><a></a><span class="st">encapsulated_OOP --&gt; RC</span></span>
+<span id="cb11-12"><a></a><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </details>
 </section>
-<section id="oop-in-base-r" class="slide level2">
-<h2>OOP in base R</h2>
-<ul>
-<li><strong>S3</strong>
+<section id="functional-oop-in-base-r" class="slide level2">
+<h2>Functional OOP in base R</h2>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1"><strong>S3</strong></a></li><li><a href="#tabset-1-2"><strong>S4</strong></a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
 <ul>
 <li>Paradigm: functional OOP</li>
 <li>Noteworthy: R’s first OOP system</li>
 <li>Use case: low-cost solution for common problems</li>
 <li>Downsides: no guarantees</li>
-</ul></li>
-<li><strong>S4</strong>
+</ul>
+</div>
+<div id="tabset-1-2">
 <ul>
 <li>Paradigm: functional OOP</li>
 <li>Noteworthy: rewrite of S3, used by <code>Bioconductor</code></li>
 <li>Use case: “more guarantees and greater encapsulation” than S3</li>
 <li>Downsides: higher setup cost than S3</li>
-</ul></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="encapsulated-oop-in-base-r" class="slide level2">
+<h2>Encapsulated OOP in base R</h2>
+<ul>
 <li><strong>RC</strong>
 <ul>
 <li>Paradigm: encapsulated OOP</li>
@@ -434,162 +486,256 @@ Mermaid code
 </ul></li>
 </ul>
 </section>
-<section id="oop-in-packages" class="slide level2">
-<h2>OOP in packages</h2>
-<ul>
-<li><strong>R6</strong>
+<section id="oop-in-packages-various-paradigms" class="slide level2">
+<h2>OOP in packages (various paradigms)</h2>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1"><strong>R6</strong></a></li><li><a href="#tabset-2-2"><strong>S7</strong></a></li><li><a href="#tabset-2-3"><strong>proto</strong></a></li><li><a href="#tabset-2-4"><strong>R.oo</strong></a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
 <ul>
 <li>Paradigm: encapsulated OOP</li>
 <li>Noteworthy: resolves issues with RC</li>
-</ul></li>
-<li><strong>R7</strong>
+</ul>
+</div>
+<div id="tabset-2-2">
 <ul>
 <li>Paradigm: functional OOP</li>
 <li>Noteworthy:
 <ul>
-<li>best parts of S3 and S4</li>
-<li>ease of S3</li>
-<li>power of S4</li>
-<li>See more in <a href="https://www.rstudio.com/conference/2022/talks/introduction-to-r7/">rstudio::conf(2022) talk</a></li>
+<li>best parts of S3 and S4 - ease of S3 with power of S4</li>
+<li>Recently adopted in <code>ggplot2 &gt;= v4.0.0</code></li>
+<li>See more in <a href="https://www.rstudio.com/conference/2022/talks/introduction-to-r7/">rstudio::conf(2022) talk</a> and the <a href="https://rconsortium.github.io/S7/">S7 website</a></li>
 </ul></li>
-</ul></li>
-<li><strong>R.oo</strong>
-<ul>
-<li>Paradigm: hybrid functional and encapsulated (?)</li>
-</ul></li>
-<li><strong>proto</strong>
+<li>Longer-term plan to incorporate into base R</li>
+</ul>
+</div>
+<div id="tabset-2-3">
 <ul>
 <li>Paradigm: prototype OOP</li>
-<li>Noteworthy: OOP style used in <code>ggplot2</code></li>
-</ul></li>
+<li>Noteworthy: OOP style used in <code>ggplot2 &lt; v4.0.0</code>.</li>
 </ul>
-</section>
-<section id="how-can-you-tell-if-an-object-is-base-or-oop" class="slide level2">
-<h2>How can you tell if an object is base or OOP?</h2>
-<h3 id="functions">Functions</h3>
-<p>Two functions:</p>
+</div>
+<div id="tabset-2-4">
 <ul>
-<li><code>base::is.object()</code>, which yields TRUE/FALSE about whether is OOP object</li>
-<li><code>sloop::otype()</code>, which says what type of object type: <code>"base"</code>, <code>"S3"</code>, etc.</li>
+<li>Paradigm: hybrid functional and encapsulated (?)</li>
 </ul>
-<p>An few examples:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="co"># Example 1: a base object</span></span>
-<span id="cb10-2"><a></a><span class="fu">is.object</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] FALSE</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>sloop<span class="sc">::</span><span class="fu">otype</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "base"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="co"># Example 2: an OO object</span></span>
-<span id="cb14-2"><a></a><span class="fu">is.object</span>(mtcars)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] TRUE</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>sloop<span class="sc">::</span><span class="fu">otype</span>(mtcars)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "S3"</code></pre>
 </div>
 </div>
-<h3 id="sloop">sloop</h3>
+</div>
+</section></section>
+<section>
+<section id="sloop-r-package" class="title-slide slide level1 center">
+<h1>sloop R package</h1>
+
+</section>
+<section id="sail-the-seas-of-oop" class="slide level2">
+<h2>“Sail the seas of OOP”</h2>
 <ul>
 <li><strong>S</strong> <strong>L</strong>anguage <strong>O</strong>bject-<strong>O</strong>riented <strong>P</strong>rogramming</li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
 <p><a href="https://en.wikipedia.org/wiki/Sloop_John_B"><img data-src="images/base_types/sloop_john_b.png"></a></p>
-<figcaption>XKCD 927</figcaption>
+<figcaption>Sloop John B ship (left) and Beach Boys album cover (right)</figcaption>
 </figure>
 </div>
-<h3 id="class">Class</h3>
-<p>OO objects have a “class” attribute:</p>
+</section>
+<section id="use-sloopotype-to-determine-oop-system" class="slide level2">
+<h2>Use <code>sloop::otype</code> to determine OOP system</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># base object has no class</span></span>
-<span id="cb18-2"><a></a><span class="fu">attr</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="st">"class"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">library</span>(sloop)</span>
+<span id="cb12-2"><a></a><span class="fu">otype</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "base"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">otype</span>(mtcars)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "S3"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>mle_obj <span class="ot">&lt;-</span> stats4<span class="sc">::</span><span class="fu">mle</span>(<span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) (x <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb16-2"><a></a><span class="fu">otype</span>(mle_obj)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "S4"</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="base-types" class="title-slide slide level1 center">
+<h1>Base types</h1>
+
+</section>
+<section id="everything-is-an-object-but-not-everything-is-object-oriented" class="slide level2">
+<h2>Everything <em>is</em> an object, but not everything is object oriented</h2>
+
+<img data-src="images/base_types/oo-venn.png" class="r-stretch quarto-figure-center"><p class="caption">base objects and OO objects are different subsets of objects</p></section>
+<section id="you-can-use-functions-to-determine-if-object-is-base-or-oop" class="slide level2">
+<h2>You can use functions to determine if object is base or OOP</h2>
+<ul>
+<li><code>base::is.object()</code>: TRUE/FALSE for OOP</li>
+<li><code>sloop::otype()</code>: gives object type: <code>"base"</code>, <code>"S3"</code>, etc.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># Example 1: a base object</span></span>
+<span id="cb18-2"><a></a><span class="fu">is.object</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] FALSE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>sloop<span class="sc">::</span><span class="fu">otype</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "base"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="co"># Example 2: an OO object</span></span>
+<span id="cb22-2"><a></a><span class="fu">is.object</span>(mtcars)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>sloop<span class="sc">::</span><span class="fu">otype</span>(mtcars)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "S3"</code></pre>
+</div>
+</div>
+</section>
+<section id="oo-objects-have-a-class-attribute-base-objects-do-not" class="slide level2">
+<h2>OO objects have a “class” attribute, base objects do not</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="co"># base object has no class attribute</span></span>
+<span id="cb26-2"><a></a>M <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">2</span>)</span>
+<span id="cb26-3"><a></a><span class="fu">attr</span>(M, <span class="st">"class"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; NULL</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># OO object has one or more classes</span></span>
-<span id="cb20-2"><a></a><span class="fu">attr</span>(mtcars, <span class="st">"class"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="co"># OO object has one or more classes</span></span>
+<span id="cb28-2"><a></a><span class="fu">attr</span>(mtcars, <span class="st">"class"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "data.frame"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">attr</span>(palmerpenguins<span class="sc">::</span>penguins, <span class="st">"class"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "tbl_df"     "tbl"        "data.frame"</code></pre>
+</div>
+</div>
+</section>
+<section id="be-careful-with-class" class="slide level2">
+<h2>Be careful with <code>class()</code></h2>
+<p><code>class()</code> gives misleading results for base objects.</p>
+<p>It is <em>not</em> enough to call <code>class()</code> on an object to determine if it is base or OO, as this will return the <em>implicit class</em> (rather than <code>NULL</code>) when there is no class attribute (i.e.&nbsp;<code>"matrix"</code>, <code>"array"</code>, <code>"function"</code>, <code>"numeric"</code> or result of <code>typeof()</code>):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">class</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "integer"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="fu">class</span>(M)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "matrix" "array"</code></pre>
+</div>
+</div>
+<p><code>sloop::s3_class()</code> is safer, as it returns the implicit class that the S3 and S4 systems will use to pick methods</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="fu">s3_class</span>(M)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "matrix"  "integer" "numeric"</code></pre>
 </div>
 </div>
 </section>
 <section id="what-about-types" class="slide level2">
 <h2>What about types?</h2>
-<p>Only OO objects have a “class” attribute, but every object–whether base or OO–has class</p>
-<h3 id="vectors">Vectors</h3>
+<p>Only OO objects have a “class” attribute, but every object–whether base or OO–has a <strong>base type</strong></p>
+<p>There are 25 types.</p>
+<p>They are most important in C code, so often see them called by their C type names, e.g.&nbsp;<code>NILSXP</code> for <code>NULL</code>.</p>
+</section>
+<section id="type-examples" class="slide level2">
+<h2>Type examples</h2>
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Vectors</a></li><li><a href="#tabset-3-2">Functions</a></li><li><a href="#tabset-3-3">Environments</a></li><li><a href="#tabset-3-4">S4</a></li><li><a href="#tabset-3-5">Language components</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">typeof</span>(<span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="fu">typeof</span>(<span class="cn">NULL</span>) <span class="co"># NILSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "NULL"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">typeof</span>(<span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a><span class="fu">typeof</span>(<span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>)) <span class="co"># STRSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "character"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">typeof</span>(<span class="dv">1</span>L)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">typeof</span>(mtcars) <span class="co"># VECSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "list"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">typeof</span>(<span class="dv">1</span>) <span class="co"># REALSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "double"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="fu">typeof</span>(<span class="dv">1</span>L) <span class="co"># INTSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "integer"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">typeof</span>(<span class="dv">1</span>i)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a><span class="fu">typeof</span>(<span class="dv">1</span>i) <span class="co"># CPLXSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "complex"</code></pre>
 </div>
 </div>
-<h3 id="functions-1">Functions</h3>
+</div>
+<div id="tabset-3-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="co"># "normal" function</span></span>
-<span id="cb30-2"><a></a>my_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(x) { x <span class="sc">+</span> <span class="dv">1</span> }</span>
-<span id="cb30-3"><a></a><span class="fu">typeof</span>(my_fun)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="co"># "normal" function</span></span>
+<span id="cb50-2"><a></a>my_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(x) { x <span class="sc">+</span> <span class="dv">1</span> }</span>
+<span id="cb50-3"><a></a><span class="fu">typeof</span>(my_fun) <span class="co"># CLOSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "closure"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="co"># internal function</span></span>
-<span id="cb32-2"><a></a><span class="fu">typeof</span>(<span class="st">`</span><span class="at">[</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a><span class="co"># internal function</span></span>
+<span id="cb52-2"><a></a><span class="fu">typeof</span>(<span class="st">`</span><span class="at">[</span><span class="st">`</span>) <span class="co"># SPECIALSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "special"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="co"># primitive function</span></span>
-<span id="cb34-2"><a></a><span class="fu">typeof</span>(sum)    </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a><span class="co"># primitive function</span></span>
+<span id="cb54-2"><a></a><span class="fu">typeof</span>(sum) <span class="co"># BUILTINSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "builtin"</code></pre>
 </div>
 </div>
-<h3 id="environments">Environments</h3>
+</div>
+<div id="tabset-3-3">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="fu">typeof</span>(<span class="fu">globalenv</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a><span class="fu">typeof</span>(<span class="fu">globalenv</span>()) <span class="co"># ENVSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "environment"</code></pre>
 </div>
 </div>
-<h3 id="s4">S4</h3>
+</div>
+<div id="tabset-3-4">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>mle_obj <span class="ot">&lt;-</span> stats4<span class="sc">::</span><span class="fu">mle</span>(<span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) (x <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">^</span> <span class="dv">2</span>)</span>
-<span id="cb38-2"><a></a><span class="fu">typeof</span>(mle_obj)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a>mle_obj <span class="ot">&lt;-</span> stats4<span class="sc">::</span><span class="fu">mle</span>(<span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) (x <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb58-2"><a></a><span class="fu">typeof</span>(mle_obj) <span class="co"># S4SXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "S4"</code></pre>
 </div>
 </div>
-<h3 id="language-components">Language components</h3>
+</div>
+<div id="tabset-3-5">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a><span class="fu">typeof</span>(<span class="fu">quote</span>(a))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a><span class="fu">typeof</span>(<span class="fu">quote</span>(a)) <span class="co"># SYMSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "symbol"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">typeof</span>(<span class="fu">quote</span>(a <span class="sc">+</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a><span class="fu">typeof</span>(<span class="fu">quote</span>(a <span class="sc">+</span> <span class="dv">1</span>)) <span class="co"># LANGSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "language"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">typeof</span>(<span class="fu">formals</span>(my_fun))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a></a><span class="fu">typeof</span>(<span class="fu">formals</span>(my_fun)) <span class="co"># LISTSXP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "pairlist"</code></pre>
 </div>
 </div>
-<h3 id="concept-map-1">Concept Map</h3>
+</div>
+</div>
+</div>
+</section>
+<section id="concept-map-1" class="slide level2">
+<h2>Concept Map</h2>
 
 <img data-src="images/base_types/base_types_Sankey_graph.png" class="r-stretch quarto-figure-center"><p class="caption">Base types in R</p><details>
 <summary>
@@ -637,61 +783,68 @@ C components [1] any</code></pre>
 </section>
 <section id="be-careful-about-the-numeric-type" class="slide level2 scrollable">
 <h2>Be careful about the numeric type</h2>
+<p>R uses “numeric” to mean three slightly different things:</p>
 <ol type="1">
-<li>Often “numeric” is treated as synonymous for double:</li>
+<li><p>Alias for double</p></li>
+<li><p>In S3 and S4, as shorthand for integer or double</p></li>
+<li><p><code>is.numeric()</code> tests for objects that <em>behave</em> like numbers</p></li>
 </ol>
+<p>Advanced R consistently uses numeric to mean an object of type integer or double.</p>
+</section>
+<section id="numeric-is-treated-as-synonymous-for-double" class="slide level2">
+<h2>1: “numeric” is treated as synonymous for double</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a><span class="co"># create a double and integeger objects</span></span>
-<span id="cb47-2"><a></a>one <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb47-3"><a></a>oneL <span class="ot">&lt;-</span> <span class="dv">1</span>L</span>
-<span id="cb47-4"><a></a><span class="fu">typeof</span>(one)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a></a><span class="co"># create a double and integeger objects</span></span>
+<span id="cb67-2"><a></a>one <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb67-3"><a></a>oneL <span class="ot">&lt;-</span> <span class="dv">1</span>L</span>
+<span id="cb67-4"><a></a><span class="fu">typeof</span>(one)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "double"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a><span class="fu">typeof</span>(oneL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a></a><span class="fu">typeof</span>(oneL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "integer"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a></a><span class="co"># check their type after as.numeric()</span></span>
-<span id="cb51-2"><a></a>one <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>() <span class="sc">|&gt;</span> <span class="fu">typeof</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a><span class="co"># check their type after as.numeric()</span></span>
+<span id="cb71-2"><a></a>one <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>() <span class="sc">|&gt;</span> <span class="fu">typeof</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "double"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a></a>oneL <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>() <span class="sc">|&gt;</span> <span class="fu">typeof</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a>oneL <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>() <span class="sc">|&gt;</span> <span class="fu">typeof</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "double"</code></pre>
 </div>
 </div>
-<ol start="2" type="1">
-<li>In S3 and S4, “numeric” is taken as either integer or double, when choosing methods:</li>
-</ol>
+</section>
+<section id="in-s3-and-s4" class="slide level2">
+<h2>2: in S3 and S4</h2>
+<p>“numeric” is taken as either integer or double, and used when choosing methods:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_class</span>(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_class</span>(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "double"  "numeric"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_class</span>(<span class="dv">1</span>L)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_class</span>(<span class="dv">1</span>L)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "integer" "numeric"</code></pre>
 </div>
 </div>
-<ol start="3" type="1">
-<li><code>is.numeric()</code> tests whether an object behaves like a number</li>
-</ol>
+</section>
+<section id="testing-behaviour" class="slide level2">
+<h2>3: testing behaviour</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a></a><span class="fu">typeof</span>(<span class="fu">factor</span>(<span class="st">"x"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a><span class="fu">typeof</span>(<span class="fu">factor</span>(<span class="st">"x"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "integer"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a><span class="fu">is.numeric</span>(<span class="fu">factor</span>(<span class="st">"x"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a><span class="fu">is.numeric</span>(<span class="fu">factor</span>(<span class="st">"x"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] FALSE</code></pre>
 </div>
 </div>
-<p>But Advanced R consistently uses numeric to mean integer or double type.</p>
 
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -907,6 +1060,44 @@ C components [1] any</code></pre>
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")

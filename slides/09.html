@@ -268,11 +268,11 @@
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>randomise <span class="ot">&lt;-</span> <span class="cf">function</span>(f) <span class="fu">f</span>(<span class="fu">runif</span>(<span class="fl">1e3</span>))</span>
 <span id="cb1-2"><a></a><span class="fu">randomise</span>(mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.503158</code></pre>
+<pre><code>#&gt; [1] 0.5121223</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">randomise</span>(sum)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 488.8966</code></pre>
+<pre><code>#&gt; [1] 513.4846</code></pre>
 </div>
 </div>
 <p>Common examples:</p>
@@ -455,7 +455,7 @@
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">map2_dbl</span>(xs, ws, weighted.mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.4177741 0.3291613 0.5979996</code></pre>
+<pre><code>#&gt; [1] 0.6440215 0.6924380 0.3267970</code></pre>
 </div>
 </div>
 </section>
@@ -490,7 +490,7 @@
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="sc">~</span> <span class="fu">sample</span>(<span class="dv">100</span>, <span class="dv">5</span>))</span>
 <span id="cb37-2"><a></a><span class="fu">imap_chr</span>(x, <span class="sc">~</span> <span class="fu">paste0</span>(<span class="st">"The max of element "</span>, .y, <span class="st">" is "</span>, <span class="fu">max</span>(.x)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "The max of element 1 is 91" "The max of element 2 is 79"</code></pre>
+<pre><code>#&gt; [1] "The max of element 1 is 81" "The max of element 2 is 99"</code></pre>
 </div>
 </div>
 </section>
@@ -511,10 +511,10 @@
 <span id="cb39-7"><a></a><span class="fu">pmap</span>(params, runif)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [[1]]
-#&gt; [1] 0.3748636
+#&gt; [1] 0.459406
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 16.69814 71.90847</code></pre>
+#&gt; [1] 92.79760 35.52806</code></pre>
 </div>
 </div>
 </section>
