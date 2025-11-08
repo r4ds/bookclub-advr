@@ -12,3 +12,5 @@
 /site_libs/
 figure-revealjs
 /[0-9][0-9]*.qmd
+
+**/*.quarto_ipynb

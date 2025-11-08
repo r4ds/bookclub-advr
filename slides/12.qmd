@@ -1,0 +1,440 @@
+---
+engine: knitr
+title: Intro to OOP and base types
+---
+
+## Learning objectives:
+
+- Understand what OOP means--at the very least for R
+- Know how to discern an object's nature--base or OO--and type
+
+![John Chambers, creator of S programming language](images/base_types/john_chambers_about_objects.png)
+
+<details>
+<summary>Session Info</summary>
+```{r}
+library("DiagrammeR")
+```
+
+```{r}
+utils::sessionInfo()
+```
+
+</details>
+
+
+## Why OOP is hard in R
+
+- Multiple OOP systems exist: S3, R6, S4, and (now/soon) S7.
+- Multiple preferences: some users prefer one system; others, another.
+- R's OOP systems are different enough that prior OOP experience may not transfer well.
+
+[![XKCD 927](images/base_types/standards.png)](https://xkcd.com/927/)
+
+# Object Oriented Programming (OOP)
+
+## OOP: Big Idea - Polymorphism
+
+Function has a single interface (outside), but contains (inside) several class-specific implementations.
+```{r, eval=FALSE}
+# imagine a function with object x as an argument
+# from the outside, users interact with the same function
+# but inside the function, there are provisions to deal with objects of different classes
+some_function <- function(x) {
+  if is.numeric(x) {
+    # implementation for numeric x
+  } else if is.character(x) {
+    # implementation for character x
+  } ...
+}
+```
+
+## OOP: Big Idea - Polymorphism example
+
+```{r polymorphism_example}
+# data frame, with columns of different types
+summary(palmerpenguins::penguins[, 1:4])
+```
+
+<details>
+<summary>Improving `summary` for character vectors</summary>
+`summary` on character vectors is current pretty useless. 
+
+```{r}
+summary(c("Adelie", "Adelie", "Chinstrap"))
+```
+
+Improvements are in the works ([GitHub](https://github.com/r-devel/r-dev-day/issues/117), [bugzilla](https://bugs.r-project.org/show_bug.cgi?id=16750)).
+
+</details>
+
+## OOP: Big Idea - Polymorphism example
+
+```{r}
+# statistical model
+lin_fit <- lm(mpg ~ hp, data = mtcars)
+summary(lin_fit)
+```
+
+## OOP: Big Idea - Encapsulation
+
+2. **Encapsulation.** Function "encapsulates"--that is, encloses in an inviolate capsule--both data and how it acts on data. The user doesn’t need to worry about details of an object because they are encapsulated behind a standard interface.
+
+<details>
+<summary>REST API comparison</summary>
+Think of a REST API: a client interacts with with an API only through a set of discrete endpoints (i.e., things to get or set), but the server does not otherwise give access to its internal workings or state. Like with an API, this creates a separation of concerns: OOP functions take inputs and yield results; users only consume those results.
+</details>
+
+## Objects have class
+
+- Class defines:
+  - Method (i.e., what can be done with object)
+  - Fields (i.e., data that defines an instance of the class)
+- Objects are an instance of a class
+
+> A class defines what an object *is* and methods describe what that object can *do*.
+
+## Class is inherited
+
+- Class is defined:
+  - By an object's class (e.g., ordered factor)
+  - By the parent of the object's class (e.g., factor)
+- Inheritance matters for method dispatch
+  - If a method is defined for an object's class, use that method
+  - If an object doesn't have a method, use the method of the parent class
+  - The process of finding a method, is called dispatch
+
+# OOP in R
+
+## OOP in R: Two Paradigms
+
+**1. Encapsulated OOP**
+
+- Methods belong to objects or classes
+- Method calls typically look like `object.method(arg1, arg2)`
+
+<details>
+- Calls communicate encapsulation, since form follows function
+  - Form: `object.method(arg1, arg2)`
+  - Function: for `object`, apply `method` for `object`'s class with arguments `arg1` and `arg2`
+</details>
+
+## OOP in R: Two Paradigms
+
+**2. Functional OOP**
+
+- Methods belong to "generic" functions
+- From the outside, look like regular functions: `generic(object, arg2, arg3)`
+- From the inside, components are also functions
+
+## Concept Map
+
+```{r, echo = FALSE, eval = TRUE}
+DiagrammeR::mermaid("
+graph TB
+
+OOP --> encapsulated_OOP
+OOP --> functional_OOP
+
+functional_OOP --> S3
+functional_OOP --> S4
+
+encapsulated_OOP --> R6
+encapsulated_OOP --> RC
+")
+```
+
+<details>
+<summary>Mermaid code</summary>
+```{r, echo = TRUE, eval = FALSE}
+DiagrammeR::mermaid("
+graph TB
+
+OOP --> encapsulated_OOP
+OOP --> functional_OOP
+
+functional_OOP --> S3
+functional_OOP --> S4
+
+encapsulated_OOP --> R6
+encapsulated_OOP --> RC
+")
+```
+</details>
+
+## Functional OOP in base R
+
+::: {.panel-tabset}
+
+## **S3**
+  - Paradigm: functional OOP
+  - Noteworthy: R's first OOP system
+  - Use case: low-cost solution for common problems
+  - Downsides: no guarantees
+
+## **S4**
+  - Paradigm: functional OOP
+  - Noteworthy: rewrite of S3, used by `Bioconductor`
+  - Use case: "more guarantees and greater encapsulation" than S3
+  - Downsides: higher setup cost than S3
+
+:::
+
+## Encapsulated OOP in base R
+
+- **RC**
+  - Paradigm: encapsulated OOP
+  - Noteworthy: special type of S4 object is mutable--in other words, that can be modified in place (instead of R's usual copy-on-modify behavior)
+  - Use cases: problems that are hard to tackle with functional OOP (in S3 and S4)
+  - Downsides: harder to reason about (because of modify-in-place logic)
+
+## OOP in packages (various paradigms)
+
+::: {.panel-tabset}
+
+## **R6**
+  - Paradigm: encapsulated OOP
+  - Noteworthy: resolves issues with RC
+
+## **S7**
+  - Paradigm: functional OOP
+  - Noteworthy: 
+    - best parts of S3 and S4 - ease of S3 with power of S4
+    - Recently adopted in `ggplot2 >= v4.0.0`
+    - See more in [rstudio::conf(2022) talk](https://www.rstudio.com/conference/2022/talks/introduction-to-r7/) and the [S7 website](https://rconsortium.github.io/S7/)
+  - Longer-term plan to incorporate into base R
+
+## **proto**
+  - Paradigm: prototype OOP
+  - Noteworthy: OOP style used in `ggplot2 < v4.0.0`.
+
+## **R.oo**
+  - Paradigm: hybrid functional and encapsulated (?)
+::: 
+
+# sloop R package
+
+## "Sail the seas of OOP"
+
+* **S** **L**anguage **O**bject-**O**riented **P**rogramming
+
+[![Sloop John B ship (left) and Beach Boys album cover (right)](images/base_types/sloop_john_b.png)](https://en.wikipedia.org/wiki/Sloop_John_B)
+
+## Use `sloop::otype` to determine OOP system
+
+```{r}
+library(sloop)
+otype(1:10)
+otype(mtcars)
+mle_obj <- stats4::mle(function(x = 1) (x - 2) ^ 2)
+otype(mle_obj)
+```
+
+# Base types
+
+## Everything *is* an object, but not everything is object oriented
+
+![base objects and OO objects are different subsets of objects](images/base_types/oo-venn.png)
+
+## You can use functions to determine if object is base or OOP
+
+- `base::is.object()`: TRUE/FALSE for OOP 
+- `sloop::otype()`: gives object type: `"base"`, `"S3"`, etc.
+
+
+```{r}
+# Example 1: a base object
+is.object(1:10)
+sloop::otype(1:10)
+
+# Example 2: an OO object
+is.object(mtcars)
+sloop::otype(mtcars)
+```
+
+
+## OO objects have a "class" attribute, base objects do not
+
+```{r}
+# base object has no class attribute
+M <- matrix(1:4, 2)
+attr(M, "class")
+```
+
+```{r}
+# OO object has one or more classes
+attr(mtcars, "class")
+attr(palmerpenguins::penguins, "class")
+```
+
+
+## Be careful with `class()`
+
+`class()` gives misleading results for base objects.
+
+It is *not* enough to call `class()` on an object to determine if it is base or OO, as this will return the *implicit class* (rather than `NULL`) when there is no class attribute (i.e. `"matrix"`, `"array"`, `"function"`, `"numeric"` or result of `typeof()`):
+
+```{r}
+class(1:10)
+class(M)
+```
+
+`sloop::s3_class()` is safer, as it returns the implicit class that the S3 and S4 systems will use to pick methods
+
+```{r}
+s3_class(M)
+```
+
+
+## What about types?
+
+Only OO objects have a "class" attribute, but every object--whether base or OO--has a **base type**
+
+There are 25 types.
+
+They are most important in C code, so often see them called by their C type names, e.g. `NILSXP` for `NULL`.
+
+## Type examples
+
+::: {.panel-tabset}
+
+## Vectors
+
+```{r}
+typeof(NULL) # NILSXP
+typeof(c("a", "b", "c")) # STRSXP
+typeof(mtcars) # VECSXP
+typeof(1) # REALSXP
+typeof(1L) # INTSXP
+typeof(1i) # CPLXSXP
+```
+
+## Functions
+
+```{r}
+# "normal" function
+my_fun <- function(x) { x + 1 }
+typeof(my_fun) # CLOSXP
+# internal function
+typeof(`[`) # SPECIALSXP
+# primitive function
+typeof(sum) # BUILTINSXP
+```
+
+## Environments
+
+```{r}
+typeof(globalenv()) # ENVSXP
+```
+
+## S4
+
+```{r}
+mle_obj <- stats4::mle(function(x = 1) (x - 2) ^ 2)
+typeof(mle_obj) # S4SXP
+```
+
+## Language components
+
+```{r}
+typeof(quote(a)) # SYMSXP
+typeof(quote(a + 1)) # LANGSXP
+typeof(formals(my_fun)) # LISTSXP
+```
+
+:::
+
+## Concept Map
+
+![Base types in R](images/base_types/base_types_Sankey_graph.png)
+
+<details>
+<summary>Sankey graph code</summary>
+
+The graph above was made with [SankeyMATIC](https://sankeymatic.com/)
+
+```
+// toggle "Show Values"
+// set Default Flow Colors from "each flow's Source"
+
+base\ntypes [8] vectors
+base\ntypes [3] functions
+base\ntypes [1] environments
+base\ntypes [1] S4 OOP
+base\ntypes [3] language\ncomponents
+base\ntypes [6] C components
+
+vectors [1] NULL
+vectors [1] logical
+vectors [1] integer
+vectors [1] double
+vectors [1] complex
+vectors [1] character
+vectors [1] list
+vectors [1] raw
+
+functions [1] closure
+functions [1] special
+functions [1] builtin
+
+environments [1] environment
+
+S4 OOP [1] S4
+
+language\ncomponents [1] symbol
+language\ncomponents [1] language
+language\ncomponents [1] pairlist
+
+C components [1] externalptr
+C components [1] weakref
+C components [1] bytecode
+C components [1] promise
+C components [1] ...
+C components [1] any
+```
+
+</details>
+
+## Be careful about the numeric type
+
+R uses "numeric" to mean three slightly different things:
+
+1. Alias for double
+
+2. In S3 and S4, as shorthand for integer or double
+
+3. `is.numeric()` tests for objects that *behave* like numbers 
+
+Advanced R consistently uses numeric to mean an object of type integer or double.
+
+## 1: "numeric" is treated as synonymous for double
+
+```{r}
+# create a double and integeger objects
+one <- 1
+oneL <- 1L
+typeof(one)
+typeof(oneL)
+
+# check their type after as.numeric()
+one |> as.numeric() |> typeof()
+oneL |> as.numeric() |> typeof()
+```
+
+## 2: in S3 and S4 
+
+"numeric" is taken as either integer or double, and used when choosing methods:
+
+```{r}
+sloop::s3_class(1)
+sloop::s3_class(1L)
+```
+
+## 3: testing behaviour
+
+```{r}
+typeof(factor("x"))
+is.numeric(factor("x"))
+```
+
+
