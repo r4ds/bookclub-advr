@@ -9,8 +9,9 @@ title: S3
 
 1. What is an S3 object and class?
 2. How to create an S3 class?
-3. How to create a custom S3 class?
-4. How to create S3 generic functions
+3. How to create S3 generic function?
+
+# What is an S3 object?
 
 ## We identify S3 objects by their attributes
 
@@ -25,9 +26,7 @@ attributes(f)
 
 The `print` function is an S3 class that displays objects depending on the class attribute.
 
-::: {.panel-tabset}
-
-### The `print` function is an S3 class
+## 1. The `print` function is an S3 class
 
 ```{r}
 sloop::ftype(print)
@@ -35,7 +34,7 @@ body(print)
 sloop::s3_dispatch(print(f))
 ```
 
-### The `print` S3 class dispatches based on 'class'
+## `print` behaves or dispatches based on the object's class
 
 ```{r}
 class(f)
@@ -45,13 +44,13 @@ class(f_uc)
 print(f_uc)
 ```
 
-### `body(print.factor)` shows the behavior for factors
+## `body(print.factor)` shows the behavior for factors
 
 ```{r}
-body(print.factor)
+body(print.factor) #or sloop::s3_get_method("print.factor")
 ```
 
-:::
+# How does one create an S3 class?
 
 ## Creating an S3 class means creating a new object with `structure`
 
@@ -135,7 +134,15 @@ factor <- function(x = character(), levels = unique(x)) {
 factor(c("a", "a", "b"))
 ```
 
-##  The function `summary` is a generic S3 function
+## There are example S3 classes 'in the wild' using the recommended interface
+
+-   `tibble::new_tibble`, `tibble::validate_tibble`, `tibble::tibble`
+
+-   `dplyr::new_grouped_df`, `dplyr::validate_grouped_df`, `dplyr::grouped_df`
+
+# How do S3 generics perform dispatching?
+
+##  The function `summary` is a S3 class with a 'dispatching purpose'
 
 ```{r}
 sloop::is_s3_generic("summary")
@@ -146,19 +153,46 @@ sloop::s3_methods_generic(
   knitr::kable()
 ```
 
+## `summary` behaves differently given its input object's class
+
+However, `summary` does not have a consistent output class.
+
+::: {.panel-tabset}
+
+### iris$Sepal.Length
+
+```{r}
+a <- iris$Sepal.Length
+class(a)
+(a_summary <- summary(a))
+sloop::s3_class(a_summary)
+```
+
+### iris$Species
+
+```{r}
+b <- iris$Species
+class(b)
+(b_summary <- summary(b))
+sloop::s3_class(b_summary)
+```
+:::
 
 ## The custom `summarizer` S3 generic summarizes different vectors
 
--   The goal is to summarize characters, factors, numeric, etc. objects
--   The output should always be a length one character vector
+-   The goal is to summarize characters, factors, and numeric objects
+-   The output should always be a length one character object
 
 ### There are two rules when creating a new S3 generic
 
 1.   Only write a method if you own the generic. Otherwise, bad manners.
 2.   Method must have same arguments as its generic--with one important exception: `...`
 
+But this is just for demomstration purposes...
 
-### `NextMethod()`
+# Extra
+
+## `NextMethod()`
 
 Consider `secret` class that masks each character of the input with `x` in output
 
@@ -214,7 +248,7 @@ y[1]
 ```
 
 
-### Allowing subclassing
+## Allowing subclassing
 
 Continue the example above to have a `supersecret` subclass that hides even the number of characters in the input (e.g., `123` -> `xxxxx`, 12345678 -> `xxxxx`, 1 -> `xxxxx`).
 
