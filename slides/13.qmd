@@ -3,13 +3,14 @@ engine: knitr
 title: S3
 ---
 
-# The S3 class is R's first and simplest OOP system in R
+# The S3 class is R's first and simplest functional OOP system in R
 
 ## Learning Objectives
 
 1. What is an S3 object and class?
 2. How to create an S3 class?
 3. How to create S3 generic function?
+4. What are advanced implementations of S3 classes?
 
 # What is an S3 object?
 
@@ -74,7 +75,7 @@ But currently, this is pretty useless...
 
 ## 1. The constructor creates your class appropriately
 
-This superc simple `factor` class inherits all the existing methods for this class.
+This super simple `factor` class inherits all the existing methods for this class.
 
 ```{r}
 #| error: true
@@ -89,8 +90,7 @@ new_factor <- function(x = integer(), levels = character()) {
   )
 }
 
-new_factor(1:5, "a")
-new_factor(0:1, "a") #This errors
+new_factor(1:3, c("a","b","c"))
 ```
 
 ## 2. The validator provides the checks  to ensure re-usability
@@ -147,6 +147,8 @@ factor(c("a", "a", "b"))
 ```{r}
 sloop::is_s3_generic("summary")
 
+summary
+
 sloop::s3_methods_generic(
   "summary"
 ) |> 
@@ -154,6 +156,8 @@ sloop::s3_methods_generic(
 ```
 
 ## `summary` behaves differently given its input object's class
+
+Polymorphism!
 
 However, `summary` does not have a consistent output class.
 
@@ -190,11 +194,140 @@ sloop::s3_class(b_summary)
 
 But this is just for demomstration purposes...
 
-# Extra
+## The `summarizer` generic includes `UseMethod` for dispatching
 
-## `NextMethod()`
+```{r}
+summarizer <- function(x, probs = c(0.25, 0.5, 0.75)) {
+  UseMethod("summarizer")
+}
+```
 
-Consider `secret` class that masks each character of the input with `x` in output
+:::{.callout-caution}
+You don’t pass any of the arguments of the generic to UseMethod(); it uses deep magic to pass to the method automatically. The precise process is complicated and frequently surprising, so you should avoid doing any computation in a generic. See `?UseMethod` for details.
+:::
+
+## `summarizer` outputs consistent summary strings
+
+Don't need to worry about which to dispatch to - Encapsulation!
+
+::: {.panel-tabset}
+
+### Characters
+
+```{r}
+summarizer.character <- function(x, probs = c(0.25, 0.5, 0.75)) {
+  tab <- sort(table(x), decreasing = TRUE)
+  # Format as "value (n)"
+  pairs <- paste0(names(tab), " (", tab, ")")
+  paste(pairs, collapse = ", ")
+}
+```
+
+### Numerics
+
+```{r}
+summarizer.numeric <- function(x, probs = c(0.25, 0.5, 0.75)) {
+  # Remove NAs to avoid warnings
+  x_no_na <- x[!is.na(x)]
+  
+  qs <- quantile(x_no_na, probs = probs, names = FALSE)
+  names(qs) <- paste0("Q", seq_along(qs))
+
+  stats <- c(
+    Min = min(x_no_na),
+    qs,
+    Max = max(x_no_na)
+  )
+  
+  paste0(
+    paste(names(stats), format(stats), sep = ": ", collapse = ", ")
+  )
+}
+```
+
+### Factors
+
+```{r}
+summarizer.factor <- function(x, probs = c(0.25, 0.5, 0.75)) {
+  # Just delegate to character method on the labels
+  summarizer(as.character(x), probs = probs)
+}
+```
+
+### Default
+
+```{r}
+summarizer.default <- function(x, probs = c(0.25, 0.5, 0.75)) {
+  cls <- paste(class(x), collapse = ", ")
+  paste0("No summarizer method for class: ", cls)
+}
+```
+
+### Vector Examples
+
+```{r}
+summarizer(c("apple", "apple", "pear", "pear", "pear", "orange"))
+
+summarizer(factor(c("a","b","b","a","c","c","c")))
+
+summarizer(c(1,2,3,4,5,6,10))
+
+summarizer(c(1,50,100,250), probs = c(.1, .9))
+
+```
+
+### Dataframe Example
+
+```{r}
+iris |> 
+  vapply(
+    summarizer,
+    character(1)
+  )
+
+survival::lung |> 
+  vapply(
+    summarizer,
+    character(1)
+  )
+```
+
+:::
+
+## If a `summarizer` generic doesn't exist for an object's class, it'll look at the next class
+
+This is an example of *Inheritance*
+
+```{r}
+a <- iris$Species
+summarizer(a)
+(class(a) <- c("my_class",class(a)))
+summarizer(a)
+
+```
+
+# What are advanced implementations of S3 classes?
+
+## S3 classes can 'conceal' data elements from `length` for concise representation
+
+-   Record style objects use a list of equal-length vectors to represent individual components of the object. 
+-   The best example of this is POSIXlt, which underneath the hood is a list of 11 date-time components like year, month, and day. 
+-   Record style classes override length() and subsetting methods to conceal this implementation detail.
+
+```{r}
+x <- as.POSIXlt(ISOdatetime(2020, 1, 1, 0, 0, 1:3))
+x
+
+length(x)
+length(unclass(x))
+
+x[[1]] # the first date time
+unclass(x)[[1]] # the first component, the number of seconds
+```
+
+## `NextMethod()`delegates dispatch behavior for classes without explicit generics
+
+## Consider `secret` class that masks each character of the input with `x` in output
 
 ```{r}
 new_secret <- function(x = double()) {
@@ -211,6 +344,8 @@ y <- new_secret(c(15, 1, 456))
 y
 ```
 
+## Without a `[` generic for the secret class, the behavior is unexpected
+
 Notice that the `[` method is problematic in that it does not preserve the `secret` class.  Additionally, it returns `15` as the first element instead of `xx`.
 
 ```{r}
@@ -219,6 +354,8 @@ y[1]
 ```
 
 Fix this with a `[.secret` method:
+
+## Inefficient `[` generic for the secret class
 
 The first fix (not run) is inefficient because it creates a copy of `y`.
 
@@ -230,7 +367,9 @@ The first fix (not run) is inefficient because it creates a copy of `y`.
 }
 ```
 
-`NextMethod()` is more efficient.
+## Efficient `NextMethod()` for the secret class
+
+-   Avoids copying and infinite loop
 
 ```{r}
 `[.secret` <- function(x, i) {
@@ -240,7 +379,8 @@ The first fix (not run) is inefficient because it creates a copy of `y`.
 }
 ```
 
-Notice that `[.secret` is selected for dispatch, but that the method delegates to the internal `[`.
+-   `[.secret` is selected, but delegates to internal `[`.
+-   Makes secret object for that element alone
 
 ```{r}
 sloop::s3_dispatch(y[1])
@@ -248,14 +388,13 @@ y[1]
 ```
 
 
-## Allowing subclassing
+## Allow subclassing to inherit 'heavy lifting'
 
-Continue the example above to have a `supersecret` subclass that hides even the number of characters in the input (e.g., `123` -> `xxxxx`, 12345678 -> `xxxxx`, 1 -> `xxxxx`).
+::: {.panel-tabset}
 
-To allow for this subclass, the constructor function needs to include two additional arguments:
+### Include superclass
 
-- `...` for passing an arbitrary set of arguments to different subclasses
-- `class` for defining the subclass
+-   You should 'own' the superclass constructor
 
 ```{r}
 new_secret <- function(x, ..., class = character()) {
@@ -269,7 +408,9 @@ new_secret <- function(x, ..., class = character()) {
 }
 ```
 
-To create the subclass, simply invoke the parent class constructor inside of the subclass constructor:
+### Create subclass
+
+-   Simply invoke the superclass constructor inside of the subclass constructor:
 
 ```{r}
 new_supersecret <- function(x) {
@@ -280,12 +421,23 @@ print.supersecret <- function(x, ...) {
   print(rep("xxxxx", length(x)))
   invisible(x)
 }
+
+x2 <- new_supersecret(c(15, 1, 456))
+x2
 ```
 
-But this means the subclass inherits all parent methods and needs to overwrite all parent methods with subclass methods that return the sublclass rather than the parent class.
+### `vctrs::vec_restore`
 
-There's no easy solution to this problem in base R.
+- No way in base R to properly delegate methods in inheritance chain
+- `vctrs::vec_restore` provides proper method chaining
 
-There is a solution in the vectors package: `vctrs::vec_restore()`
+```{r}
+vec_restore.secret <- function(x, to, ...) new_secret(x)
+vec_restore.supersecret <- function(x, to, ...) new_supersecret(x)
+`[.secret` <- function(x, ...) {
+  vctrs::vec_restore(NextMethod(), x)
+}
+x2[1:3]
+```
 
-<!-- TODO: read docs/vignettes to be able to summarize how this works -->
+:::
