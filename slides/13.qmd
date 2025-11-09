@@ -56,7 +56,7 @@ print.factor # or sloop::s3_get_method("print.factor")
 
 # How does one create an S3 class?
 
-## Creating an S3 class means creating a new object with `structure`
+## Assign an S3 class to a new object with `structure()` or `class()<-`
 
 ```{r}
 x <- structure(list(), class = "my_class")
