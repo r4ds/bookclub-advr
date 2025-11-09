@@ -68,7 +68,7 @@ attributes(x)
 
 But currently, this is pretty useless...
 
-## It is recommended that S3 classes be created with 3 functions
+## Create new S3 classes with 3 functions
 
 1. A **low-level constructor**, new_myclass(), that efficiently creates new objects with the correct structure.
 
