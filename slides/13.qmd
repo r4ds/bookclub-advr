@@ -25,7 +25,8 @@ attributes(f)
 
 ## S3 classes provide an interface to a particular behavior
 
-The `print` function is an S3 class that displays objects depending on the class attribute.
+- Generic function (or "generic"): Function that can be customized for different object classes.
+- `print()` is an S3 generic for displaying objects depending on their class attribute.
 
 ## 1. The `print` function is an S3 class
 
