@@ -7,10 +7,10 @@ title: S3
 
 ## Learning Objectives
 
-1. What is an S3 object and class?
-2. How to create an S3 class?
-3. How to create S3 generic function?
-4. What are advanced implementations of S3 classes?
+1. Recognize S3 objects and classes.
+2. Assign S3 classes to objects.
+3. Create S3 generics and methods.
+4. Implement advanced features of S3.
 
 # What is an S3 object?
 
