@@ -23,7 +23,7 @@ f <- factor(c("a", "b", "c"))
 attributes(f)
 ```
 
-## S3 classes provide an interface to a particular behavior
+## S3 generics provide an interface to a particular behavior
 
 - Generic function (or "generic"): Function that can be customized for different object classes.
 - `print()` is an S3 generic for displaying objects depending on their class attribute.
