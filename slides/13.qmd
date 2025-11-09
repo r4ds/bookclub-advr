@@ -36,7 +36,7 @@ body(print)
 sloop::s3_dispatch(print(f))
 ```
 
-## `print` behaves or dispatches based on the object's class
+## `print()` behaves differently depending on the object's class
 
 ```{r}
 class(f)
