@@ -16,7 +16,7 @@ title: S3
 
 ## We identify S3 objects by their attributes
 
-An S3 object has atleast one attribute called 'class'.
+An S3 object has an attribute called "class" with at least one value.
 
 ```{r}
 f <- factor(c("a", "b", "c"))
