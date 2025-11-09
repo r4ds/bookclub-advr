@@ -14,7 +14,7 @@ title: S3
 
 # What is an S3 object?
 
-## We identify S3 objects by their attributes
+## S3 objects have a `class` attribute
 
 An S3 object has an attribute called "class" with at least one value.
 
