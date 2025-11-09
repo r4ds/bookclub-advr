@@ -28,7 +28,7 @@ attributes(f)
 - Generic function (or "generic"): Function that can be customized for different object classes.
 - `print()` is an S3 generic for displaying objects depending on their class attribute.
 
-## 1. The `print` function is an S3 class
+## `print()` is an S3 generic
 
 ```{r}
 sloop::ftype(print)
