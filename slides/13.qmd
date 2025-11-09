@@ -70,11 +70,11 @@ But currently, this is pretty useless...
 
 ## Create new S3 classes with 3 functions
 
-1. A **low-level constructor**, new_myclass(), that efficiently creates new objects with the correct structure.
+1. A **low-level constructor**, `new_myclass()`, that efficiently creates new objects with the correct structure.
 
-2. A **validator**, validate_myclass(), that performs more computationally expensive checks to ensure that the object has correct values.
+2. A **validator**, `validate_myclass()`, that performs more computationally expensive checks to ensure that the object has correct values.
 
-3. A **user-friendly helper**, myclass(), that provides a convenient way for others to create objects of your class.
+3. A **user-friendly helper**, `myclass()`, that provides a convenient way for others to create objects of your class.
 
 ## 1. The constructor creates your class appropriately
 
