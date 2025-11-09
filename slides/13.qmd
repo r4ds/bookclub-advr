@@ -46,10 +46,12 @@ class(f_uc)
 print(f_uc)
 ```
 
-## `body(print.factor)` shows the behavior for factors
+## `print.factor()` is a `print()` method for factors
+
+Method: A function customized for a particular class.
 
 ```{r}
-body(print.factor) #or sloop::s3_get_method("print.factor")
+print.factor # or sloop::s3_get_method("print.factor")
 ```
 
 # How does one create an S3 class?
