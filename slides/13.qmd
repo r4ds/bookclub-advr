@@ -3,14 +3,14 @@ engine: knitr
 title: S3
 ---
 
-# The S3 class is R's first and simplest functional OOP system in R
+# The S3 class is R's first and simplest functional OOP system
 
 ## Learning Objectives
 
-1. Recognize S3 objects and classes.
-2. Assign S3 classes to objects.
-3. Create S3 generics and methods.
-4. Implement advanced features of S3.
+1.  Recognize S3 objects and classes.
+2.  Assign S3 classes to objects.
+3.  Create S3 generics and methods.
+4.  Implement advanced features of S3.
 
 # What is an S3 object?
 
@@ -25,8 +25,8 @@ attributes(f)
 
 ## S3 generics provide an interface to a particular behavior
 
-- Generic function (or "generic"): Function that can be customized for different object classes.
-- `print()` is an S3 generic for displaying objects depending on their class attribute.
+-   Generic function (or "generic"): Function that can be customized for different object classes.
+-   `print()` is an S3 generic for displaying objects depending on their class attribute.
 
 ## `print()` is an S3 generic
 
@@ -70,15 +70,15 @@ But currently, this is pretty useless...
 
 ## Create new S3 classes with 3 functions
 
-1. A **low-level constructor**, `new_myclass()`, that efficiently creates new objects with the correct structure.
+1.  A **low-level constructor**, `new_myclass()`, that efficiently creates new objects with the correct structure.
 
-2. A **validator**, `validate_myclass()`, that performs more computationally expensive checks to ensure that the object has correct values.
+2.  A **validator**, `validate_myclass()`, that performs more computationally expensive checks to ensure that the object has correct values.
 
-3. A **user-friendly helper**, `myclass()`, that provides a convenient way for others to create objects of your class.
+3.  A **user-friendly helper**, `myclass()`, that provides a convenient way for others to create objects of your class.
 
-## 1. The constructor creates your class appropriately
+## 1. `new_factor()` creates the new S3 object
 
-This super simple `factor` class inherits all the existing methods for this class.
+The developer-facing function applies the correct structure for the object.
 
 ```{r}
 #| error: true
@@ -96,7 +96,9 @@ new_factor <- function(x = integer(), levels = character()) {
 new_factor(1:3, c("a","b","c"))
 ```
 
-## 2. The validator provides the checks  to ensure re-usability
+## 2. `validate_factor()` provides assurances on correctness
+
+Though computationally expensive, the checks ensure correct values before creating the S3 object.
 
 ```{r}
 #| error: true
@@ -125,7 +127,9 @@ validate_factor(new_factor(1:5, "a"))
 validate_factor(new_factor(0:1, "a"))
 ```
 
-## 3. The helper provides a safer approach to create the object
+## 3. `factor()` provides a safe approach for users to create objects
+
+The user-facing validates the values before creating the S3 object.
 
 ```{r}
 factor <- function(x = character(), levels = unique(x)) {
@@ -137,15 +141,15 @@ factor <- function(x = character(), levels = unique(x)) {
 factor(c("a", "a", "b"))
 ```
 
-## There are example S3 classes 'in the wild' using the recommended interface
+## Example S3 classes "in the wild" use the recommended interface
 
--   `tibble::new_tibble`, `tibble::validate_tibble`, `tibble::tibble`
+-   `tibble::new_tibble()`, `tibble::validate_tibble()`, `tibble::tibble()`
 
--   `dplyr::new_grouped_df`, `dplyr::validate_grouped_df`, `dplyr::grouped_df`
+-   `dplyr::new_grouped_df()`, `dplyr::validate_grouped_df()`, `dplyr::grouped_df()`
 
-# How do S3 generics perform dispatching?
+# How do generics perform dispatching?
 
-##  The function `summary` is a S3 class with a 'dispatching purpose'
+## `summary()`  is an S3 generic that behaves based on an object's class
 
 ```{r}
 sloop::is_s3_generic("summary")
@@ -158,15 +162,14 @@ sloop::s3_methods_generic(
   knitr::kable()
 ```
 
-## `summary` behaves differently given its input object's class
+## `summary()` is an interface to different methods
 
-Polymorphism!
+-   Polymorphism: a single interface to different behaviors.
 
-However, `summary` does not have a consistent output class.
+-   However, `summary()` does not have a consistent output class.
 
-::: {.panel-tabset}
-
-### iris$Sepal.Length
+::: panel-tabset
+### iris\$Sepal.Length
 
 ```{r}
 a <- iris$Sepal.Length
@@ -175,7 +178,7 @@ class(a)
 sloop::s3_class(a_summary)
 ```
 
-### iris$Species
+### iris\$Species
 
 ```{r}
 b <- iris$Species
@@ -185,19 +188,17 @@ sloop::s3_class(b_summary)
 ```
 :::
 
-## The custom `summarizer` S3 generic summarizes different vectors
+## The custom `summarizer()` S3 generic outputs a consistent object
 
 -   The goal is to summarize characters, factors, and numeric objects
 -   The output should always be a length one character object
 
-### There are two rules when creating a new S3 generic
+### Create a new S3 generic following two rules
 
-1.   Only write a method if you own the generic. Otherwise, bad manners.
-2.   Method must have same arguments as its generic--with one important exception: `...`
+1.  Only write a method if you own the generic. Otherwise, it is considdered bad manners.
+2.  The method must have the same arguments as its generic--with one important exception: `...`
 
-But this is just for demomstration purposes...
-
-## The `summarizer` generic includes `UseMethod` for dispatching
+## `summarizer()` includes `UseMethod` for dispatching
 
 ```{r}
 summarizer <- function(x, probs = c(0.25, 0.5, 0.75)) {
@@ -205,16 +206,15 @@ summarizer <- function(x, probs = c(0.25, 0.5, 0.75)) {
 }
 ```
 
-:::{.callout-caution}
+::: callout-caution
 You don’t pass any of the arguments of the generic to UseMethod(); it uses deep magic to pass to the method automatically. The precise process is complicated and frequently surprising, so you should avoid doing any computation in a generic. See `?UseMethod` for details.
 :::
 
-## `summarizer` outputs consistent summary strings
+## `summarizer()` outputs consistent summary strings
 
-Don't need to worry about which to dispatch to - Encapsulation!
+Encapsulation: Bundle data and methods into a single object or "unit".
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ### Characters
 
 ```{r}
@@ -294,12 +294,11 @@ survival::lung |>
     character(1)
   )
 ```
-
 :::
 
-## If a `summarizer` generic doesn't exist for an object's class, it'll look at the next class
+## The next method is used for missing `summarizer()` generics
 
-This is an example of *Inheritance*
+Inheritance: method dispatching through the "class" attribute.
 
 ```{r}
 a <- iris$Species
@@ -311,10 +310,10 @@ summarizer(a)
 
 # What are advanced implementations of S3 classes?
 
-## S3 classes can 'conceal' data elements from `length` for concise representation
+## S3 classes can *conceal* data elements from `length()` for concise representation
 
--   Record style objects use a list of equal-length vectors to represent individual components of the object. 
--   The best example of this is POSIXlt, which underneath the hood is a list of 11 date-time components like year, month, and day. 
+-   Record style objects use a list of equal-length vectors to represent individual components of the object.
+-   The best example of this is POSIXlt, which underneath the hood is a list of 11 date-time components like year, month, and day.
 -   Record style classes override length() and subsetting methods to conceal this implementation detail.
 
 ```{r}
@@ -330,7 +329,7 @@ unclass(x)[[1]] # the first component, the number of seconds
 
 ## `NextMethod()`delegates dispatch behavior for classes without explicit generics
 
-## Consider `secret` class that masks each character of the input with `x` in output
+## `secret()` masks each character of the input with `x` in the output
 
 ```{r}
 new_secret <- function(x = double()) {
@@ -347,9 +346,10 @@ y <- new_secret(c(15, 1, 456))
 y
 ```
 
-## Without a `[` generic for the secret class, the behavior is unexpected
+## There is unexpected behavior without a `[` generic for the secret class
 
-Notice that the `[` method is problematic in that it does not preserve the `secret` class.  Additionally, it returns `15` as the first element instead of `xx`.
+-   The `[` method is problematic in that it does not preserve the `secret` class.
+-   `y[1]` returns `15` as the first element instead of `xx`.
 
 ```{r}
 sloop::s3_dispatch(y[1])
@@ -358,21 +358,11 @@ y[1]
 
 Fix this with a `[.secret` method:
 
-## Inefficient `[` generic for the secret class
+## `NextMethod()` is an efficient way to subset a secret class
 
-The first fix (not run) is inefficient because it creates a copy of `y`.
+::: {.panel-tabset}
 
-```{r eval = FALSE}
-# not run
-`[.secret` <- function(x, i) {
-  x <- unclass(x)
-  new_secret(x[i])
-}
-```
-
-## Efficient `NextMethod()` for the secret class
-
--   Avoids copying and infinite loop
+### `NextMethod()`
 
 ```{r}
 `[.secret` <- function(x, i) {
@@ -390,14 +380,27 @@ sloop::s3_dispatch(y[1])
 y[1]
 ```
 
+### Inefficient approach 
 
-## Allow subclassing to inherit 'heavy lifting'
+-   Includes copying and infinite loop
 
-::: {.panel-tabset}
+```{r eval = FALSE}
+# not run
+`[.secret` <- function(x, i) {
+  x <- unclass(x)
+  new_secret(x[i])
+}
+```
+
+:::
+
+## S3 classes can inherit generics from the superclass
+
+::: panel-tabset
 
 ### Include superclass
 
--   You should 'own' the superclass constructor
+-   Note: You should 'own' the superclass constructor
 
 ```{r}
 new_secret <- function(x, ..., class = character()) {
@@ -411,7 +414,7 @@ new_secret <- function(x, ..., class = character()) {
 }
 ```
 
-### Create subclass
+### Create subclass generic
 
 -   Simply invoke the superclass constructor inside of the subclass constructor:
 
@@ -429,10 +432,10 @@ x2 <- new_supersecret(c(15, 1, 456))
 x2
 ```
 
-### `vctrs::vec_restore`
+### Use `vctrs::vec_restore`
 
-- No way in base R to properly delegate methods in inheritance chain
-- `vctrs::vec_restore` provides proper method chaining
+-   No way in base R to properly delegate methods in inheritance chain
+-   `vctrs::vec_restore` provides proper method chaining
 
 ```{r}
 vec_restore.secret <- function(x, to, ...) new_secret(x)
@@ -442,5 +445,4 @@ vec_restore.supersecret <- function(x, to, ...) new_supersecret(x)
 }
 x2[1:3]
 ```
-
 :::
