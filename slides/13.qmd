@@ -1,0 +1,448 @@
+---
+engine: knitr
+title: S3
+---
+
+# The S3 class is R's first and simplest functional OOP system
+
+## Learning Objectives
+
+1.  Recognize S3 objects and classes.
+2.  Assign S3 classes to objects.
+3.  Create S3 generics and methods.
+4.  Implement advanced features of S3.
+
+# What is an S3 object?
+
+## S3 objects have a `class` attribute
+
+An S3 object has an attribute called "class" with at least one value.
+
+```{r}
+f <- factor(c("a", "b", "c"))
+attributes(f)
+```
+
+## S3 generics provide an interface to a particular behavior
+
+-   Generic function (or "generic"): Function that can be customized for different object classes.
+-   `print()` is an S3 generic for displaying objects depending on their class attribute.
+
+## `print()` is an S3 generic
+
+```{r}
+sloop::ftype(print)
+body(print)
+sloop::s3_dispatch(print(f))
+```
+
+## `print()` behaves differently depending on the object's class
+
+```{r}
+class(f)
+print(f)
+f_uc <- unclass(f)
+class(f_uc)
+print(f_uc)
+```
+
+## `print.factor()` is a `print()` method for factors
+
+Method: A function customized for a particular class.
+
+```{r}
+print.factor # or sloop::s3_get_method("print.factor")
+```
+
+# How does one create an S3 class?
+
+## Assign an S3 class to a new object with `structure()` or `class()<-`
+
+```{r}
+x <- structure(list(), class = "my_class")
+
+x <- list()
+class(x) <- "my_class"
+attributes(x)
+```
+
+But currently, this is pretty useless...
+
+## Create new S3 classes with 3 functions
+
+1.  A **low-level constructor**, `new_myclass()`, that efficiently creates new objects with the correct structure.
+
+2.  A **validator**, `validate_myclass()`, that performs more computationally expensive checks to ensure that the object has correct values.
+
+3.  A **user-friendly helper**, `myclass()`, that provides a convenient way for others to create objects of your class.
+
+## 1. `new_factor()` creates the new S3 object
+
+The developer-facing function applies the correct structure for the object.
+
+```{r}
+#| error: true
+new_factor <- function(x = integer(), levels = character()) {
+  stopifnot(is.integer(x))
+  stopifnot(is.character(levels))
+
+  structure(
+    x,
+    levels = levels,
+    class = "factor"
+  )
+}
+
+new_factor(1:3, c("a","b","c"))
+```
+
+## 2. `validate_factor()` provides assurances on correctness
+
+Though computationally expensive, the checks ensure correct values before creating the S3 object.
+
+```{r}
+#| error: true
+validate_factor <- function(x) {
+  values <- unclass(x)
+  levels <- attr(x, "levels")
+
+  if (!all(!is.na(values) & values > 0)) {
+    stop(
+      "All `x` values must be non-missing and greater than zero",
+      call. = FALSE
+    )
+  }
+
+  if (length(levels) < max(values)) {
+    stop(
+      "There must be at least as many `levels` as possible values in `x`",
+      call. = FALSE
+    )
+  }
+
+  x
+}
+
+validate_factor(new_factor(1:5, "a"))
+validate_factor(new_factor(0:1, "a"))
+```
+
+## 3. `factor()` provides a safe approach for users to create objects
+
+The user-facing validates the values before creating the S3 object.
+
+```{r}
+factor <- function(x = character(), levels = unique(x)) {
+  ind <- match(x, levels)
+  new_factor(ind, levels) |> 
+    validate_factor()
+}
+
+factor(c("a", "a", "b"))
+```
+
+## Example S3 classes "in the wild" use the recommended interface
+
+-   `tibble::new_tibble()`, `tibble::validate_tibble()`, `tibble::tibble()`
+
+-   `dplyr::new_grouped_df()`, `dplyr::validate_grouped_df()`, `dplyr::grouped_df()`
+
+# How do generics perform dispatching?
+
+## `summary()`  is an S3 generic that behaves based on an object's class
+
+```{r}
+sloop::is_s3_generic("summary")
+
+summary
+
+sloop::s3_methods_generic(
+  "summary"
+) |> 
+  knitr::kable()
+```
+
+## `summary()` is an interface to different methods
+
+-   Polymorphism: a single interface to different behaviors.
+
+-   However, `summary()` does not have a consistent output class.
+
+::: panel-tabset
+### iris\$Sepal.Length
+
+```{r}
+a <- iris$Sepal.Length
+class(a)
+(a_summary <- summary(a))
+sloop::s3_class(a_summary)
+```
+
+### iris\$Species
+
+```{r}
+b <- iris$Species
+class(b)
+(b_summary <- summary(b))
+sloop::s3_class(b_summary)
+```
+:::
+
+## The custom `summarizer()` S3 generic outputs a consistent object
+
+-   The goal is to summarize characters, factors, and numeric objects
+-   The output should always be a length one character object
+
+### Create a new S3 generic following two rules
+
+1.  Only write a method if you own the generic. Otherwise, it is considdered bad manners.
+2.  The method must have the same arguments as its generic--with one important exception: `...`
+
+## `summarizer()` includes `UseMethod` for dispatching
+
+```{r}
+summarizer <- function(x, probs = c(0.25, 0.5, 0.75)) {
+  UseMethod("summarizer")
+}
+```
+
+::: callout-caution
+You don’t pass any of the arguments of the generic to UseMethod(); it uses deep magic to pass to the method automatically. The precise process is complicated and frequently surprising, so you should avoid doing any computation in a generic. See `?UseMethod` for details.
+:::
+
+## `summarizer()` outputs consistent summary strings
+
+Encapsulation: Bundle data and methods into a single object or "unit".
+
+::: panel-tabset
+### Characters
+
+```{r}
+summarizer.character <- function(x, probs = c(0.25, 0.5, 0.75)) {
+  tab <- sort(table(x), decreasing = TRUE)
+  # Format as "value (n)"
+  pairs <- paste0(names(tab), " (", tab, ")")
+  paste(pairs, collapse = ", ")
+}
+```
+
+### Numerics
+
+```{r}
+summarizer.numeric <- function(x, probs = c(0.25, 0.5, 0.75)) {
+  # Remove NAs to avoid warnings
+  x_no_na <- x[!is.na(x)]
+  
+  qs <- quantile(x_no_na, probs = probs, names = FALSE)
+  names(qs) <- paste0("Q", seq_along(qs))
+
+  stats <- c(
+    Min = min(x_no_na),
+    qs,
+    Max = max(x_no_na)
+  )
+  
+  paste0(
+    paste(names(stats), format(stats), sep = ": ", collapse = ", ")
+  )
+}
+```
+
+### Factors
+
+```{r}
+summarizer.factor <- function(x, probs = c(0.25, 0.5, 0.75)) {
+  # Just delegate to character method on the labels
+  summarizer(as.character(x), probs = probs)
+}
+```
+
+### Default
+
+```{r}
+summarizer.default <- function(x, probs = c(0.25, 0.5, 0.75)) {
+  cls <- paste(class(x), collapse = ", ")
+  paste0("No summarizer method for class: ", cls)
+}
+```
+
+### Vector Examples
+
+```{r}
+summarizer(c("apple", "apple", "pear", "pear", "pear", "orange"))
+
+summarizer(factor(c("a","b","b","a","c","c","c")))
+
+summarizer(c(1,2,3,4,5,6,10))
+
+summarizer(c(1,50,100,250), probs = c(.1, .9))
+
+```
+
+### Dataframe Example
+
+```{r}
+iris |> 
+  vapply(
+    summarizer,
+    character(1)
+  )
+
+survival::lung |> 
+  vapply(
+    summarizer,
+    character(1)
+  )
+```
+:::
+
+## The next method is used for missing `summarizer()` generics
+
+Inheritance: method dispatching through the "class" attribute.
+
+```{r}
+a <- iris$Species
+summarizer(a)
+(class(a) <- c("my_class",class(a)))
+summarizer(a)
+
+```
+
+# What are advanced implementations of S3 classes?
+
+## S3 classes can *conceal* data elements from `length()` for concise representation
+
+-   Record style objects use a list of equal-length vectors to represent individual components of the object.
+-   The best example of this is POSIXlt, which underneath the hood is a list of 11 date-time components like year, month, and day.
+-   Record style classes override length() and subsetting methods to conceal this implementation detail.
+
+```{r}
+x <- as.POSIXlt(ISOdatetime(2020, 1, 1, 0, 0, 1:3))
+x
+
+length(x)
+length(unclass(x))
+
+x[[1]] # the first date time
+unclass(x)[[1]] # the first component, the number of seconds
+```
+
+## `NextMethod()`delegates dispatch behavior for classes without explicit generics
+
+## `secret()` masks each character of the input with `x` in the output
+
+```{r}
+new_secret <- function(x = double()) {
+  stopifnot(is.double(x))
+  structure(x, class = "secret")
+}
+
+print.secret <- function(x, ...) {
+  print(strrep("x", nchar(x)))
+  invisible(x)
+}
+
+y <- new_secret(c(15, 1, 456))
+y
+```
+
+## There is unexpected behavior without a `[` generic for the secret class
+
+-   The `[` method is problematic in that it does not preserve the `secret` class.
+-   `y[1]` returns `15` as the first element instead of `xx`.
+
+```{r}
+sloop::s3_dispatch(y[1])
+y[1]
+```
+
+Fix this with a `[.secret` method:
+
+## `NextMethod()` is an efficient way to subset a secret class
+
+::: {.panel-tabset}
+
+### `NextMethod()`
+
+```{r}
+`[.secret` <- function(x, i) {
+  # first, dispatch to `[`
+  # then, coerce subset value to `secret` class
+  new_secret(NextMethod())
+}
+```
+
+-   `[.secret` is selected, but delegates to internal `[`.
+-   Makes secret object for that element alone
+
+```{r}
+sloop::s3_dispatch(y[1])
+y[1]
+```
+
+### Inefficient approach 
+
+-   Includes copying and infinite loop
+
+```{r eval = FALSE}
+# not run
+`[.secret` <- function(x, i) {
+  x <- unclass(x)
+  new_secret(x[i])
+}
+```
+
+:::
+
+## S3 classes can inherit generics from the superclass
+
+::: panel-tabset
+
+### Include superclass
+
+-   Note: You should 'own' the superclass constructor
+
+```{r}
+new_secret <- function(x, ..., class = character()) {
+  stopifnot(is.double(x))
+
+  structure(
+    x,
+    ...,
+    class = c(class, "secret")
+  )
+}
+```
+
+### Create subclass generic
+
+-   Simply invoke the superclass constructor inside of the subclass constructor:
+
+```{r}
+new_supersecret <- function(x) {
+  new_secret(x, class = "supersecret")
+}
+
+print.supersecret <- function(x, ...) {
+  print(rep("xxxxx", length(x)))
+  invisible(x)
+}
+
+x2 <- new_supersecret(c(15, 1, 456))
+x2
+```
+
+### Use `vctrs::vec_restore`
+
+-   No way in base R to properly delegate methods in inheritance chain
+-   `vctrs::vec_restore` provides proper method chaining
+
+```{r}
+vec_restore.secret <- function(x, to, ...) new_secret(x)
+vec_restore.supersecret <- function(x, to, ...) new_supersecret(x)
+`[.secret` <- function(x, ...) {
+  vctrs::vec_restore(NextMethod(), x)
+}
+x2[1:3]
+```
+:::
