@@ -2,7 +2,7 @@
 
 Welcome to the DSLC Advanced R Book Club!
 
-We are working together to read [_Advanced R_](https://adv-r.hadley.nz/) by Hadley Wickham (Chapman & Hall, copyright 2019, [9780815384571](https://www.routledge.com/Advanced-R-Second-Edition/Wickham/p/book/9780815384571)).
+We are working together to read [_Advanced R_](https://adv-r.hadley.nz/) by Hadley Wickham (Chapman & Hall, copyright 2019, [9780815384571](https://www.routledge.com/Advanced-R-Second-Edition/Wickham/p/book/9780815384571)). If you'd like to buy a physical copy of the book, please consider using [this affiliate link](https://amzn.to/3DXiFGG) to support the Data Science Learning Community.
 
 Join the [#book_club-advr](https://dslcio.slack.com/archives/C010GJ3VAE5) channel on the [DSLC Slack](https://dslc.io/join) to participate.
 As we read, we are producing [slides about the book](https://dslc.io/advr).
