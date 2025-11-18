@@ -325,7 +325,7 @@
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_print</span>(e1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x562084b64dc8&gt;
+<pre><code>#&gt; &lt;environment: 0x556284cef508&gt;
 #&gt; Parent: &lt;environment: global&gt;
 #&gt; Bindings:
 #&gt; • a: &lt;lgl&gt;
@@ -423,11 +423,11 @@
 <span id="cb20-4"><a></a></span>
 <span id="cb20-5"><a></a>rlang<span class="sc">::</span><span class="fu">env_parent</span>(e2b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x562088b18b00&gt;</code></pre>
+<pre><code>#&gt; &lt;environment: 0x556288ca3240&gt;</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_parents</span>(e2b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [[1]]   &lt;env: 0x562088b18b00&gt;
+<pre><code>#&gt; [[1]]   &lt;env: 0x556288ca3240&gt;
 #&gt; [[2]] $ &lt;env: global&gt;</code></pre>
 </div>
 </div>
@@ -474,7 +474,7 @@
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>rlang<span class="sc">::</span><span class="fu">env_parents</span>(e2b, <span class="at">last =</span> rlang<span class="sc">::</span><span class="fu">empty_env</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  [[1]]   &lt;env: 0x562088b18b00&gt;
+<pre><code>#&gt;  [[1]]   &lt;env: 0x556288ca3240&gt;
 #&gt;  [[2]] $ &lt;env: global&gt;
 #&gt;  [[3]] $ &lt;env: package:stats&gt;
 #&gt;  [[4]] $ &lt;env: package:graphics&gt;
