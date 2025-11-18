@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.8.25">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
 
   <title>Advanced R Book Club – Functions</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -221,8 +221,8 @@
 <p>Functions have three parts, <code>formals()</code>, <code>body()</code>, and <code>environment()</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="htmlwidget-5eb6aedb05e5a5bb0f75" style="width:100%;height:100%;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5eb6aedb05e5a5bb0f75">{"x":{"diagram":"\n   graph LR\n     A{formals}-->B(body)\n     B-->C(environment)\nstyle A fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-1ff665fb23536e8ae2f3" style="width:100%;height:100%;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1ff665fb23536e8ae2f3">{"x":{"diagram":"\n   graph LR\n     A{formals}-->B(body)\n     B-->C(environment)\nstyle A fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -365,7 +365,7 @@
 <span id="cb23-4"><a></a>deviation <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">-</span> <span class="fu">mean</span>(x)</span>
 <span id="cb23-5"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>(<span class="fu">square</span>(<span class="fu">deviation</span>(x))))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.2723496</code></pre>
+<pre><code>#&gt; [1] 0.3020604</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -376,7 +376,7 @@
 <span id="cb25-5"><a></a>out <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(out)</span>
 <span id="cb25-6"><a></a>out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.2723496</code></pre>
+<pre><code>#&gt; [1] 0.3020604</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -387,7 +387,7 @@
 <span id="cb27-5"><a></a>  <span class="fu">mean</span>() <span class="sc">|&gt;</span></span>
 <span id="cb27-6"><a></a>  <span class="fu">sqrt</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.2723496</code></pre>
+<pre><code>#&gt; [1] 0.3020604</code></pre>
 </div>
 </div>
 </section>
@@ -732,7 +732,7 @@
 #&gt;             times, func, parms, ...))
 #&gt;     return(out)
 #&gt; }
-#&gt; &lt;bytecode: 0x55e0c826e348&gt;
+#&gt; &lt;bytecode: 0x55b492ce7ff0&gt;
 #&gt; &lt;environment: namespace:deSolve&gt;</code></pre>
 </div>
 </div>
@@ -793,7 +793,7 @@
 #&gt; {
 #&gt;     UseMethod("melt", data)
 #&gt; }
-#&gt; &lt;bytecode: 0x55e0c74ebd78&gt;
+#&gt; &lt;bytecode: 0x55b491efa518&gt;
 #&gt; &lt;environment: namespace:reshape2&gt;</code></pre>
 </div>
 </div>
@@ -886,10 +886,11 @@
 #&gt;     measure.attributes &lt;- args$measure.attributes
 #&gt;     factorsAsStrings &lt;- args$factorsAsStrings
 #&gt;     valueAsFactor &lt;- "factor" %in% measure.attributes$class
-#&gt;     df &lt;- melt_dataframe(data, as.integer(id.ind - 1), as.integer(measure.ind - 
-#&gt;         1), as.character(variable.name), as.character(value.name), 
-#&gt;         as.pairlist(measure.attributes), as.logical(factorsAsStrings), 
-#&gt;         as.logical(valueAsFactor))
+#&gt;     df &lt;- melt_dataframe(data, as.integer(id.ind - 1L), as.integer(measure.ind - 
+#&gt;         1L), as.character(variable.name), as.character(value.name), 
+#&gt;         as.logical(factorsAsStrings), as.logical(valueAsFactor))
+#&gt;     if (!is.null(measure.attributes)) 
+#&gt;         attributes(df[[value.name]]) &lt;- measure.attributes
 #&gt;     if (na.rm) {
 #&gt;         return(df[!is.na(df[[value.name]]), ])
 #&gt;     }
@@ -897,7 +898,7 @@
 #&gt;         return(df)
 #&gt;     }
 #&gt; }
-#&gt; &lt;bytecode: 0x55e0bef7fab8&gt;
+#&gt; &lt;bytecode: 0x55b48980db60&gt;
 #&gt; &lt;environment: namespace:reshape2&gt;</code></pre>
 </div>
 </div>

@@ -960,39 +960,340 @@
     "text": "Quosures\n\nQuosures bundles expression with an environment\nUse enquo() instead of enexpr() (with eval_tidy())\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enquo(expr), df)\n}\n\ndf &lt;- data.frame(x = 1:3)\na &lt;- 10\nwith2(df, x + a)\n\n#&gt; [1] 11 12 13\n\n\n\n“Whenever you use a data mask, you must always use enquo() instead of enexpr().\n\nThis comes back in Chapter 20.\nWhich environment is bundled?\n\nThe environment where the expression is created (i.e. the parent of where enquo() is called)\n\nHere, the global environment\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eq &lt;- enquo(expr)\n  message(\"with2() Parent/Calling environment: \")\n  print(rlang::caller_env())\n  message(\"with2() environment: \")\n  print(rlang::current_env())\n  message(\"Quosure details: \")\n  print(eq)  # Print the details of the quosure\n  eval_tidy(eq, df)\n}\n\na &lt;- 10000\ndf &lt;- data.frame(x = 1:3)\nwith2(df, x + a)\n\n#&gt; with2() Parent/Calling environment:\n\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n#&gt; with2() environment:\n\n\n#&gt; &lt;environment: 0x0000018dede5ddd0&gt;\n\n\n#&gt; Quosure details:\n\n\n#&gt; &lt;quosure&gt;\n#&gt; expr: ^x + a\n#&gt; env:  global\n\n\n#&gt; [1] 10001 10002 10003\n\n\nHere, the fun1() environment\n\nfun1 &lt;- function(df) {\n  a &lt;- 10\n  message(\"fun1() Parent/Calling environment: \")\n  print(rlang::caller_env())\n  message(\"fun1() environment: \")\n  print(rlang::current_env())\n  with2(df, x + a)\n}\n\na &lt;- 10000\ndf &lt;- data.frame(x = 1:3)\nfun1(df)\n\n#&gt; fun1() Parent/Calling environment:\n\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n#&gt; fun1() environment:\n\n\n#&gt; &lt;environment: 0x0000018df3e748f8&gt;\n\n\n#&gt; with2() Parent/Calling environment:\n\n\n#&gt; &lt;environment: 0x0000018df3e748f8&gt;\n\n\n#&gt; with2() environment:\n\n\n#&gt; &lt;environment: 0x0000018df3ebc698&gt;\n\n\n#&gt; Quosure details:\n\n\n#&gt; &lt;quosure&gt;\n#&gt; expr: ^x + a\n#&gt; env:  0x0000018df3e748f8\n\n\n#&gt; [1] 11 12 13"
   },
   {
-    "objectID": "slides/15.html#introduction",
-    "href": "slides/15.html#introduction",
+    "objectID": "slides/15.html#learning-objectives",
+    "href": "slides/15.html#learning-objectives",
     "title": "S4",
-    "section": "Introduction",
-    "text": "Introduction\nObject consists of:\n\nSlots. Like fields in R6.\nMethods. Accessed through generics. Dispatched to particular methods.\n\nUses functions to define classes and their methods:\n\nsetClass(). Define class and its components.\nsetGenerics(). Define generic functions. Used to dispatch.\nsetMethods(). Define methods"
+    "section": "Learning Objectives",
+    "text": "Learning Objectives\n\nIdentify the main components of S4 objects, including the new slot component\nLearn best practices for creating new S4 classes and creating/modifying/accessing their objects\n“Understand” multiple inheritance, multiple dispatch, and appreciate their risks and complexity"
   },
   {
-    "objectID": "slides/15.html#basics-overview",
-    "href": "slides/15.html#basics-overview",
+    "objectID": "slides/15.html#not-learning-objectives",
+    "href": "slides/15.html#not-learning-objectives",
     "title": "S4",
-    "section": "Basics overview",
-    "text": "Basics overview\nSet class\nDefine the class:\n\nsetClass(\"Person\", \n  slots = c(\n    name = \"character\", \n    age = \"numeric\"\n  )\n)\n\nCreate an instance of the class\n\njohn &lt;- new(\"Person\", name = \"John Smith\", age = NA_real_)\n\nSet generics\nDefine generic functions for setting and getting the age slot\n\n# get the value\nsetGeneric(\"age\", function(x) standardGeneric(\"age\"))\n\n#&gt; [1] \"age\"\n\n# set the value\nsetGeneric(\"age&lt;-\", function(x, value) standardGeneric(\"age&lt;-\"))\n\n#&gt; [1] \"age&lt;-\"\n\n\nSet methods\nDefine methods for the generics:\n\n# get the value\nsetMethod(\"age\", \"Person\", function(x) x@age)\n# set the value\nsetMethod(\"age&lt;-\", \"Person\", function(x, value) {\n  x@age &lt;- value\n  x\n})\n\n# set the value\nage(john) &lt;- 50\n# get the value\nage(john)\n\n#&gt; [1] 50\n\n\nTo give a flavor, there is only one method per slot. In more realistic cases, there might be several methods."
+    "section": "Not Learning Objectives",
+    "text": "Not Learning Objectives\n\nHow to most effectively deploy S4\n\nNo single reference.\nExisting references often conflict."
   },
   {
-    "objectID": "slides/15.html#details-on-defining-the-class",
-    "href": "slides/15.html#details-on-defining-the-class",
+    "objectID": "slides/15.html#all-functions-related-to-s4-live-in-the-methods-package",
+    "href": "slides/15.html#all-functions-related-to-s4-live-in-the-methods-package",
     "title": "S4",
-    "section": "Details on defining the class",
-    "text": "Details on defining the class\nInheritance\n\nsetClass(\"Employee\", \n  contains = \"Person\", \n  slots = c(\n    boss = \"Person\"\n  ),\n  prototype = list(\n    boss = new(\"Person\")\n  )\n)\n\nInstantiation\nCreate an instance of the class at two levels:\n\nFor developer (you): methods::new()\nFor user: constructor function\n\n\n# how user constructs an instance\nPerson &lt;- function(name, age = NA) {\n  age &lt;- as.double(age)\n  \n  # how the developer constructs an instance\n  new(\"Person\", name = name, age = age)\n}\n\nPerson(\"Someone\")\n\n#&gt; An object of class \"Person\"\n#&gt; Slot \"name\":\n#&gt; [1] \"Someone\"\n#&gt; \n#&gt; Slot \"age\":\n#&gt; [1] NA\n\n\nValidation\nS4 objects\n\nCheck class of slot at creation\n\n\nPerson(mtcars)\n\n#&gt; Error in validObject(.Object): invalid class \"Person\" object: invalid object for slot \"name\" in class \"Person\": got class \"data.frame\", should be or extend class \"character\"\n\n\n\nDo not check other things\n\n\nPerson(\"Hadley\", age = c(30, 37))\n\n#&gt; An object of class \"Person\"\n#&gt; Slot \"name\":\n#&gt; [1] \"Hadley\"\n#&gt; \n#&gt; Slot \"age\":\n#&gt; [1] 30 37\n\n\nThat’s where validation comes in–at two stages:\n\nAt creation\nAt modification\n\nAt creation\n\nsetValidity(\"Person\", function(object) {\n  if (length(object@name) != length(object@age)) {\n    \"@name and @age must be same length\"\n  } else {\n    TRUE\n  }\n})\n\n#&gt; Class \"Person\" [in \".GlobalEnv\"]\n#&gt; \n#&gt; Slots:\n#&gt;                           \n#&gt; Name:       name       age\n#&gt; Class: character   numeric\n\nPerson(\"Hadley\", age = c(30, 37))\n\n#&gt; Error in validObject(.Object): invalid class \"Person\" object: @name and @age must be same length\n\n\nAt modification\n\n# get value\nsetGeneric(\"name\", function(x) standardGeneric(\"name\"))\n\n#&gt; [1] \"name\"\n\nsetMethod(\"name\", \"Person\", function(x) x@name)\n\n# set value--and assess whether resulting object is valid\nsetGeneric(\"name&lt;-\", function(x, value) standardGeneric(\"name&lt;-\"))\n\n#&gt; [1] \"name&lt;-\"\n\nsetMethod(\"name&lt;-\", \"Person\", function(x, value) {\n  x@name &lt;- value\n  validObject(x)\n  x\n})\n\n# normal name; no problem\nname(john) &lt;- \"Jon Smythe\"\nname(john)\n\n#&gt; [1] \"Jon Smythe\"\n\n# invalid name; error thrown\nname(john) &lt;- letters\n\n#&gt; Error in validObject(x): invalid class \"Person\" object: @name and @age must be same length"
+    "section": "All functions related to S4 live in the {methods} package",
+    "text": "All functions related to S4 live in the {methods} package\n\nlibrary(methods)\n\n\n\n\n\n\n\nTip\n\n\nBest practice to explicitly call library(methods) since it is not loaded by default in non-interactive environments (i.e. Rscript)"
   },
   {
-    "objectID": "slides/15.html#details-on-generics-and-methods",
-    "href": "slides/15.html#details-on-generics-and-methods",
+    "objectID": "slides/15.html#setclass-defines-an-s4-class-and-its-slots-new-creates-a-new-object",
+    "href": "slides/15.html#setclass-defines-an-s4-class-and-its-slots-new-creates-a-new-object",
     "title": "S4",
-    "section": "Details on generics and methods",
-    "text": "Details on generics and methods\nDictate dispatch via signature\nSpecify function arguments to be used in determining method.\n\nsetGeneric(\"myGeneric\", \n  function(x, ..., verbose = TRUE) standardGeneric(\"myGeneric\"),\n  signature = \"x\"\n)\n\n#&gt; [1] \"myGeneric\"\n\n\nDefine generics\nGeneral form:\n\nsetMethod(\"myGeneric\", \"Person\", function(x) {\n  # method implementation\n})\n\nExample to print object:\n\nsetMethod(\"show\", \"Person\", function(object) {\n  cat(is(object)[[1]], \"\\n\",\n      \"  Name: \", object@name, \"\\n\",\n      \"  Age:  \", object@age, \"\\n\",\n      sep = \"\"\n  )\n})\njohn\n\n#&gt; Person\n#&gt;   Name: Jon Smythe\n#&gt;   Age:  50\n\n\nExample to access slot:\n\nsetGeneric(\"name\", function(x) standardGeneric(\"name\"))\n\n#&gt; [1] \"name\"\n\nsetMethod(\"name\", \"Person\", function(x) x@name)\n\nname(john)\n\n#&gt; [1] \"Jon Smythe\"\n\n\nThis is how end users should access slots."
+    "section": "setClass() defines an S4 class and its slots; new() creates a new object",
+    "text": "setClass() defines an S4 class and its slots; new() creates a new object\n\nsetClass(\"Person\", \n  slots = c(\n    name = \"character\", \n    age = \"numeric\"\n  )\n)\n\njohn &lt;- new(\"Person\", name = \"John Smith\", age = NA_real_)"
   },
   {
-    "objectID": "slides/15.html#example-lubridateperiod",
-    "href": "slides/15.html#example-lubridateperiod",
+    "objectID": "slides/15.html#access-slots-with-or-slot-but-dont-use-it-outside-of-your-own-methods",
+    "href": "slides/15.html#access-slots-with-or-slot-but-dont-use-it-outside-of-your-own-methods",
     "title": "S4",
-    "section": "Example: lubridate::period()",
-    "text": "Example: lubridate::period()\nDefine the class\n\nsetClass(\"Period\",\n  # inherits from these classes\n  contains = c(\"Timespan\", \"numeric\"),\n  # has slots for time components\n  slots = c(\n    year = \"numeric\", \n    month = \"numeric\", \n    day = \"numeric\",\n    hour = \"numeric\", \n    minute = \"numeric\"\n  ),\n  # defines prototype as period of zero duration for all slots\n  prototype = prototype(year = 0, month = 0, day = 0, hour = 0, minute = 0),\n  # check validity with `check_period` function; see section below\n  validity = check_period\n)\n\nSee source code here\nValidate object\nCheck whether object is valid–notably if all arugments have the same length and are integers.\n\ncheck_period &lt;- function(object) {\n  # start with an empty vector of error messages\n  errors &lt;- character()\n\n  # check length of object's data\n  length(object@.Data) -&gt; n\n  # check length of each slot\n  lengths &lt;- c(\n    length(object@year), \n    length(object@month),\n    length(object@day), \n    length(object@hour), \n    length(object@minute)\n  )\n\n  # if length of any slot is different than overall length, compose error message\n  if (any(lengths != n)) {\n    msg &lt;- paste(\"Inconsistent lengths: year = \", lengths[1],\n      \", month = \", lengths[2],\n      \", day = \", lengths[3],\n      \", hour = \", lengths[4],\n      \", minute = \", lengths[5],\n      \", second = \", n,\n      sep = \"\"\n    )\n    # add just-composed error to vector of error messages\n    errors &lt;- c(errors, msg)\n  }\n\n  values &lt;- c(object@year, object@month, object@day, object@hour, object@minute)\n  values &lt;- na.omit(values)\n  if (sum(values - trunc(values))) {\n    msg &lt;- \"periods must have integer values\"\n    errors &lt;- c(errors, msg)\n  }\n\n  if (length(errors) == 0) {\n    TRUE\n  } else {\n    errors\n  }\n}\n\nSee source code here.\nSet methods\nShow period:\n\n#' @export\nsetMethod(\"show\", signature(object = \"Period\"), function(object) {\n  if (length(object@.Data) == 0) {\n    cat(\"&lt;Period[0]&gt;\\n\")\n  } else {\n    print(format(object))\n  }\n})\n\n#' @export\nformat.Period &lt;- function(x, ...) {\n  if (length(x) == 0) {\n    return(character())\n  }\n\n  show &lt;- paste(\n    x@year, \"y \", x@month, \"m \", x@day, \"d \",\n    x@hour, \"H \", x@minute, \"M \", x@.Data, \"S\",\n    sep = \"\"\n  )\n  start &lt;- regexpr(\"[-1-9]|(0\\\\.)\", show)\n  show &lt;- ifelse(start &gt; 0, substr(show, start, nchar(show)), \"0S\")\n\n  show[is.na(x)] &lt;- NA\n  show\n}\n\nSee source code here"
+    "section": "Access slots with @ or slot(), but don’t use it outside of your own methods",
+    "text": "Access slots with @ or slot(), but don’t use it outside of your own methods\n\njohn@name\n\n#&gt; [1] \"John Smith\"\n\nslot(john, \"age\")\n\n#&gt; [1] NA"
+  },
+  {
+    "objectID": "slides/15.html#supply-accessor-functions-for-others-to-use-with-your-class",
+    "href": "slides/15.html#supply-accessor-functions-for-others-to-use-with-your-class",
+    "title": "S4",
+    "section": "Supply accessor functions for others to use with your class",
+    "text": "Supply accessor functions for others to use with your class\n\nsetGeneric(\"age\", function(x) standardGeneric(\"age\"))\nsetGeneric(\"age&lt;-\", function(x, value) standardGeneric(\"age&lt;-\"))\n\nsetMethod(\"age\", \"Person\", function(x) x@age)\nsetMethod(\"age&lt;-\", \"Person\", function(x, value) {\n  x@age &lt;- value\n  x\n})\n\n\nage(john) &lt;- 50\nage(john)\n\n#&gt; [1] 50\n\n\n\n\n\n\n\n\nTip\n\n\nLook for accessor functions when working with classes maintained by others"
+  },
+  {
+    "objectID": "slides/15.html#sloop-can-help-you-identify-s4-objects-and-generics",
+    "href": "slides/15.html#sloop-can-help-you-identify-s4-objects-and-generics",
+    "title": "S4",
+    "section": "{sloop} can help you identify S4 objects and generics",
+    "text": "{sloop} can help you identify S4 objects and generics\n\nsloop::otype(john)\n\n#&gt; [1] \"S4\"\n\nsloop::ftype(age)\n\n#&gt; [1] \"S4\"      \"generic\""
+  },
+  {
+    "objectID": "slides/15.html#setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.",
+    "href": "slides/15.html#setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.",
+    "title": "S4",
+    "section": "setClass() has 4 arguments you should use. The rest should be ignored.",
+    "text": "setClass() has 4 arguments you should use. The rest should be ignored.\n\nClass sets the class name.\n\nBy convention use UpperCamelCase\n\nslots sets the available slots (fields) using a named character vector of classes\nprototype list default values for each slot\n\nAlways provide prototype, even though its optional\n\ncontains specifies classes to inherit slots from"
+  },
+  {
+    "objectID": "slides/15.html#setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.-1",
+    "href": "slides/15.html#setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.-1",
+    "title": "S4",
+    "section": "setClass() has 4 arguments you should use. The rest should be ignored.",
+    "text": "setClass() has 4 arguments you should use. The rest should be ignored.\n\nsetClass(\"Person\", \n  slots = c(\n    name = \"character\", \n    age = \"numeric\"\n  ), \n  prototype = list(\n    name = NA_character_,\n    age = NA_real_\n  )\n)\n\nme &lt;- new(\"Person\", name = \"Hadley\")\nstr(me)\n\n#&gt; Formal class 'Person' [package \".GlobalEnv\"] with 2 slots\n#&gt;   ..@ name: chr \"Hadley\"\n#&gt;   ..@ age : num NA"
+  },
+  {
+    "objectID": "slides/15.html#setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.-2",
+    "href": "slides/15.html#setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.-2",
+    "title": "S4",
+    "section": "setClass() has 4 arguments you should use. The rest should be ignored.",
+    "text": "setClass() has 4 arguments you should use. The rest should be ignored.\n\nsetClass(\"Employee\", \n  contains = \"Person\", \n  slots = c(\n    boss = \"Person\"\n  ),\n  prototype = list(\n    boss = new(\"Person\")\n  )\n)\n\nstr(new(\"Employee\"))\n\n#&gt; Formal class 'Employee' [package \".GlobalEnv\"] with 3 slots\n#&gt;   ..@ boss:Formal class 'Person' [package \".GlobalEnv\"] with 2 slots\n#&gt;   .. .. ..@ name: chr NA\n#&gt;   .. .. ..@ age : num NA\n#&gt;   ..@ name: chr NA\n#&gt;   ..@ age : num NA"
+  },
+  {
+    "objectID": "slides/15.html#setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.-3",
+    "href": "slides/15.html#setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.-3",
+    "title": "S4",
+    "section": "setClass() has 4 arguments you should use. The rest should be ignored.",
+    "text": "setClass() has 4 arguments you should use. The rest should be ignored.\n\n\n\n\n\n\nCaution\n\n\nUse setClass() with care. It’s possible to create invalid objects if you redefine a class after already having instantiated an object.\n\n\n\n\nsetClass(\"A\", slots = c(x = \"numeric\"))\na &lt;- new(\"A\", x = 10)\n\nsetClass(\"A\", slots = c(a_different_slot = \"numeric\"))\na\n\n#&gt; An object of class \"A\"\n#&gt; Slot \"a_different_slot\":\n\n\n#&gt; Error in slot(object, what): no slot of name \"a_different_slot\" for this object of class \"A\""
+  },
+  {
+    "objectID": "slides/15.html#use-is-to-determine-an-objects-classes-or-test-for-a-specific-class",
+    "href": "slides/15.html#use-is-to-determine-an-objects-classes-or-test-for-a-specific-class",
+    "title": "S4",
+    "section": "Use is() to determine an objects classes or test for a specific class",
+    "text": "Use is() to determine an objects classes or test for a specific class\n\nis(new(\"Person\"))\n\n#&gt; [1] \"Person\"\n\nis(new(\"Employee\"))\n\n#&gt; [1] \"Employee\" \"Person\"\n\nis(john, \"Person\")\n\n#&gt; [1] TRUE"
+  },
+  {
+    "objectID": "slides/15.html#user-facing-classes-should-be-paired-with-a-helper-function-to-create-new-objects",
+    "href": "slides/15.html#user-facing-classes-should-be-paired-with-a-helper-function-to-create-new-objects",
+    "title": "S4",
+    "section": "User-facing classes should be paired with a helper function to create new objects",
+    "text": "User-facing classes should be paired with a helper function to create new objects\n\n\n\nPerson &lt;- function(name, age = NA) {\n  age &lt;- as.double(age)\n  \n  new(\"Person\", name = name, age = age)\n}\n\nPerson(\"Hadley\")\n\n#&gt; An object of class \"Person\"\n#&gt; Slot \"name\":\n#&gt; [1] \"Hadley\"\n#&gt; \n#&gt; Slot \"age\":\n#&gt; [1] NA\n\n\n\n\nUse the same name as the class.\nCraft user interface with carefully chosen defaults and useful conversions.\nCraft error messages tailored towards an end-user.\nFinish by calling methods::new()."
+  },
+  {
+    "objectID": "slides/15.html#create-a-validator-to-enforce-rules-around-slot-values",
+    "href": "slides/15.html#create-a-validator-to-enforce-rules-around-slot-values",
+    "title": "S4",
+    "section": "Create a validator to enforce rules around slot values",
+    "text": "Create a validator to enforce rules around slot values\n\n\n\nS4 automatically checks slots for the correct class\nUse setValidity() to enforce more complex rules\nCheck validity with validObject()\n\n\n\nsetValidity(\"Person\", function(object) {\n  if (length(object@name) != length(object@age)) {\n    \"@name and @age must be same length\"\n  } else {\n    TRUE\n  }\n})\n\n\nPerson(\"Hadley\", age = c(30, 37))\n\n#&gt; Error in validObject(.Object): invalid class \"Person\" object: @name and @age must be same length\n\nvalidObject(john)\n\n#&gt; [1] TRUE\n\n\n\n\n\n\n\n\n\nCaution\n\n\nValidity is only called automatically by new(). Slots can be modified with invalid values."
+  },
+  {
+    "objectID": "slides/15.html#create-an-s4-generic-with-setgeneric-and-standardgeneric",
+    "href": "slides/15.html#create-an-s4-generic-with-setgeneric-and-standardgeneric",
+    "title": "S4",
+    "section": "Create an S4 generic with setGeneric() and standardGeneric()",
+    "text": "Create an S4 generic with setGeneric() and standardGeneric()\n\nsetGeneric(\"myGeneric\", function(x) standardGeneric(\"myGeneric\"))\n\n\nBy convention use lowerCamelCase\n\n\n\n\n\n\n\nCaution\n\n\nUsing {} in function() definition triggers a expensive special case and should be avoided.\n\n# Don't do this!\nsetGeneric(\"myGeneric\", function(x) {\n  standardGeneric(\"myGeneric\")\n})"
+  },
+  {
+    "objectID": "slides/15.html#use-the-signature-argument-of-setgeneric-to-help-control-dispatch",
+    "href": "slides/15.html#use-the-signature-argument-of-setgeneric-to-help-control-dispatch",
+    "title": "S4",
+    "section": "Use the signature argument of setGeneric() to help control dispatch",
+    "text": "Use the signature argument of setGeneric() to help control dispatch\n\nsetGeneric(\"myGeneric\", \n  function(x, ..., verbose = TRUE) standardGeneric(\"myGeneric\"),\n  signature = \"x\"\n)\n\n\nWithout signature all arguments (except for ...) are considered during dispatch\nHelpful for adding arguments like verbose = TRUE and quiet = FALSE"
+  },
+  {
+    "objectID": "slides/15.html#define-methods-using-setmethod",
+    "href": "slides/15.html#define-methods-using-setmethod",
+    "title": "S4",
+    "section": "Define methods using setMethod()",
+    "text": "Define methods using setMethod()\n\nOnly use the following 3 arguments (never use others)\n\nf: the name of the generic\nsignature: class or classes to use for dispatch\ndefinition: the function definition for the method\n\n\n\nsetMethod(\"myGeneric\", \"Person\", function(x) {\n  # method implementation\n})"
+  },
+  {
+    "objectID": "slides/15.html#the-show-method-controls-how-the-object-is-printed.",
+    "href": "slides/15.html#the-show-method-controls-how-the-object-is-printed.",
+    "title": "S4",
+    "section": "The show() method controls how the object is printed.",
+    "text": "The show() method controls how the object is printed.\n\nIt is the most commonly defined S4 method\n\n\n# Determine arguments required\nargs(getGeneric(\"show\"))\n\n#&gt; function (object) \n#&gt; NULL\n\nsetMethod(\"show\", \"Person\", function(object) {\n  cat(is(object)[[1]], \"\\n\",\n      \"  Name: \", object@name, \"\\n\",\n      \"  Age:  \", object@age, \"\\n\",\n      sep = \"\"\n  )\n})\njohn\n\n#&gt; Person\n#&gt;   Name: John Smith\n#&gt;   Age:  50"
+  },
+  {
+    "objectID": "slides/15.html#all-user-accessible-slots-should-be-accompanied-by-a-pair-of-accessors",
+    "href": "slides/15.html#all-user-accessible-slots-should-be-accompanied-by-a-pair-of-accessors",
+    "title": "S4",
+    "section": "All user-accessible slots should be accompanied by a pair of accessors",
+    "text": "All user-accessible slots should be accompanied by a pair of accessors\nOne for reading…\n\nsetGeneric(\"name\", function(x) standardGeneric(\"name\"))\n\n#&gt; [1] \"name\"\n\nsetMethod(\"name\", \"Person\", function(x) x@name)\n\nname(john)\n\n#&gt; [1] \"John Smith\""
+  },
+  {
+    "objectID": "slides/15.html#all-user-accessible-slots-should-be-accompanied-by-a-pair-of-accessors-1",
+    "href": "slides/15.html#all-user-accessible-slots-should-be-accompanied-by-a-pair-of-accessors-1",
+    "title": "S4",
+    "section": "All user-accessible slots should be accompanied by a pair of accessors",
+    "text": "All user-accessible slots should be accompanied by a pair of accessors\n…and one for writing.\n\nsetGeneric(\"name&lt;-\", function(x, value) standardGeneric(\"name&lt;-\"))\n\n#&gt; [1] \"name&lt;-\"\n\nsetMethod(\"name&lt;-\", \"Person\", function(x, value) {\n  x@name &lt;- value\n  validObject(x)\n  x\n})\n\nname(john) &lt;- \"Jon Smythe\"\nname(john)\n\n#&gt; [1] \"Jon Smythe\"\n\n\n\n\n\n\n\n\nTip\n\n\nAlways include validObject() in the setter function."
+  },
+  {
+    "objectID": "slides/15.html#use-methods-and-selectmethods-to-investigate-available-methods-for-a-generic-or-class",
+    "href": "slides/15.html#use-methods-and-selectmethods-to-investigate-available-methods-for-a-generic-or-class",
+    "title": "S4",
+    "section": "Use methods() and selectMethods() to investigate available methods for a generic or class",
+    "text": "Use methods() and selectMethods() to investigate available methods for a generic or class\n\nmethods(\"age\")\n\n#&gt; [1] age,Person-method\n#&gt; see '?methods' for accessing help and source code\n\nmethods(class = \"Person\")\n\n#&gt; [1] age    age&lt;-  name   name&lt;- show  \n#&gt; see '?methods' for accessing help and source code\n\nselectMethod(\"age\", \"Person\")\n\n#&gt; Method Definition:\n#&gt; \n#&gt; function (x) \n#&gt; x@age\n#&gt; \n#&gt; Signatures:\n#&gt;         x       \n#&gt; target  \"Person\"\n#&gt; defined \"Person\""
+  },
+  {
+    "objectID": "slides/15.html#s4-dispatch-is-complicated",
+    "href": "slides/15.html#s4-dispatch-is-complicated",
+    "title": "S4",
+    "section": "S4 dispatch is complicated!",
+    "text": "S4 dispatch is complicated!\n\nMultiple inheritance, i.e. a class can have multiple parents\nMultiple dispatch, i.e. a generic can use multiple arguments to pick a method.\n\n\n\n\n\n\n\nTip\n\n\nKeep method dispatch as simple as possible by avoiding multiple inheritance, and reserving multiple dispatch only for where it is absolutely necessary."
+  },
+  {
+    "objectID": "slides/15.html#it-can-help-to-visualize-dispatch-as-a-graph",
+    "href": "slides/15.html#it-can-help-to-visualize-dispatch-as-a-graph",
+    "title": "S4",
+    "section": "It can help to visualize dispatch as a graph",
+    "text": "It can help to visualize dispatch as a graph"
+  },
+  {
+    "objectID": "slides/15.html#single-dispatch-is-straight-forward",
+    "href": "slides/15.html#single-dispatch-is-straight-forward",
+    "title": "S4",
+    "section": "Single dispatch is straight forward",
+    "text": "Single dispatch is straight forward"
+  },
+  {
+    "objectID": "slides/15.html#pseudo-classes-any-and-missing-can-help-define-useful-behaviors",
+    "href": "slides/15.html#pseudo-classes-any-and-missing-can-help-define-useful-behaviors",
+    "title": "S4",
+    "section": "Pseudo-classes ANY and MISSING can help define useful behaviors",
+    "text": "Pseudo-classes ANY and MISSING can help define useful behaviors\n\nANY matches any class and is always at the end of a method graph\n\n\n\nMISSING matches whenever an argument is missing\n\nUseful for functions like + and -"
+  },
+  {
+    "objectID": "slides/15.html#multiple-inheritance-is-tricky",
+    "href": "slides/15.html#multiple-inheritance-is-tricky",
+    "title": "S4",
+    "section": "Multiple inheritance is tricky",
+    "text": "Multiple inheritance is tricky\n\nClass with the shortest distance to the specified class gets dispatched."
+  },
+  {
+    "objectID": "slides/15.html#multiple-inheritance-can-lead-to-ambigious-method-dispatch",
+    "href": "slides/15.html#multiple-inheritance-can-lead-to-ambigious-method-dispatch",
+    "title": "S4",
+    "section": "Multiple inheritance can lead to ambigious method dispatch",
+    "text": "Multiple inheritance can lead to ambigious method dispatch\n\n\n\n\n\nMethods of equal distance cause ambiguous method dispatch and generate a warning\nAlways resolve ambiguity by providing a more precise method"
+  },
+  {
+    "objectID": "slides/15.html#use-multiple-inheritance-with-extreme-care",
+    "href": "slides/15.html#use-multiple-inheritance-with-extreme-care",
+    "title": "S4",
+    "section": "Use multiple inheritance with extreme care",
+    "text": "Use multiple inheritance with extreme care\nIt is hard to prevent ambiguity, ensure every terminal method has an implementation, and minimize the number of defined methods.\n\nOnly one of the above calls is free from problems."
+  },
+  {
+    "objectID": "slides/15.html#multiple-dispatch-is-less-tricky-to-work-with-than-multiple-inheritance",
+    "href": "slides/15.html#multiple-dispatch-is-less-tricky-to-work-with-than-multiple-inheritance",
+    "title": "S4",
+    "section": "Multiple dispatch is less tricky to work with than multiple inheritance",
+    "text": "Multiple dispatch is less tricky to work with than multiple inheritance\n\nFewer terminal class combinations allow you to define a single method and have default behavior\n\n\nClasses are separated by a comma"
+  },
+  {
+    "objectID": "slides/15.html#multiple-dispatch-with-multiple-inheritance-is-complex",
+    "href": "slides/15.html#multiple-dispatch-with-multiple-inheritance-is-complex",
+    "title": "S4",
+    "section": "Multiple dispatch with multiple inheritance is complex 😵‍💫",
+    "text": "Multiple dispatch with multiple inheritance is complex 😵‍💫\n\nTwo classes each with multiple inheritance"
+  },
+  {
+    "objectID": "slides/15.html#s3-must-first-be-registered-with-setoldclass-before-inclusion-in-s4",
+    "href": "slides/15.html#s3-must-first-be-registered-with-setoldclass-before-inclusion-in-s4",
+    "title": "S4",
+    "section": "S3 must first be registered with setOldClass() before inclusion in S4",
+    "text": "S3 must first be registered with setOldClass() before inclusion in S4\nCan be as simple as\n\nsetOldClass(\"factor\")"
+  },
+  {
+    "objectID": "slides/15.html#s3-must-first-be-registered-with-setoldclass-before-inclusion-in-s4-1",
+    "href": "slides/15.html#s3-must-first-be-registered-with-setoldclass-before-inclusion-in-s4-1",
+    "title": "S4",
+    "section": "S3 must first be registered with setOldClass() before inclusion in S4",
+    "text": "S3 must first be registered with setOldClass() before inclusion in S4\nBut better to specify a full S4 definition\n\nsetClass(\"factor\",\n  contains = \"integer\",\n  slots = c(\n    levels = \"character\"\n  ),\n  prototype = structure(\n    integer(),\n    levels = character()\n  )\n)\nsetOldClass(\"factor\", S4Class = \"factor\")\n\n\n\n\n\n\n\nCaution\n\n\nThese definitions should be provided by the creator of the S3 class. Don’t trying building an S4 class on top of an S3 class provided by a package. Instead request that the package maintainer add this call to their package."
+  },
+  {
+    "objectID": "slides/15.html#s4-classes-recieve-as-special-.data-slot-when-inheriting-from-s3-or-base-types",
+    "href": "slides/15.html#s4-classes-recieve-as-special-.data-slot-when-inheriting-from-s3-or-base-types",
+    "title": "S4",
+    "section": "S4 classes recieve as special .Data slot when inheriting from S3 or base types",
+    "text": "S4 classes recieve as special .Data slot when inheriting from S3 or base types\n\nRangedNumeric &lt;- setClass(\n  \"RangedNumeric\",\n  contains = \"numeric\",\n  slots = c(min = \"numeric\", max = \"numeric\"),\n  prototype = structure(numeric(), min = NA_real_, max = NA_real_)\n)\nrn &lt;- RangedNumeric(1:10, min = 1, max = 10)\nrn@min\n\n#&gt; [1] 1\n\nrn@.Data\n\n#&gt;  [1]  1  2  3  4  5  6  7  8  9 10"
+  },
+  {
+    "objectID": "slides/15.html#s3-generics-are-easily-converted-to-s4-generics",
+    "href": "slides/15.html#s3-generics-are-easily-converted-to-s4-generics",
+    "title": "S4",
+    "section": "S3 generics are easily converted to S4 generics",
+    "text": "S3 generics are easily converted to S4 generics\n\nsetGeneric(\"mean\")\n\n\nselectMethod(\"mean\", \"ANY\")\n\n#&gt; Method Definition (Class \"derivedDefaultMethod\"):\n#&gt; \n#&gt; function (x, ...) \n#&gt; UseMethod(\"mean\")\n#&gt; &lt;bytecode: 0x55711698d668&gt;\n#&gt; &lt;environment: namespace:base&gt;\n#&gt; \n#&gt; Signatures:\n#&gt;         x    \n#&gt; target  \"ANY\"\n#&gt; defined \"ANY\"\n\n\n\n\n\n\n\n\nCaution\n\n\nIt is OK to convert an existing S3 generic to S4, but you should avoid converting regular functions to S4 generics"
+  },
+  {
+    "objectID": "slides/15.html#lubridateperiod-returns-an-s4-class.-what-slots-does-it-have-what-class-is-each-slot-what-accessors-does-it-provide",
+    "href": "slides/15.html#lubridateperiod-returns-an-s4-class.-what-slots-does-it-have-what-class-is-each-slot-what-accessors-does-it-provide",
+    "title": "S4",
+    "section": "lubridate::period() returns an S4 class. What slots does it have? What class is each slot? What accessors does it provide?",
+    "text": "lubridate::period() returns an S4 class. What slots does it have? What class is each slot? What accessors does it provide?\n\nObjects of the S4 Period class have six slots named year, month, day, hour, minute, and .Data (which contains the number of seconds). All slots are of type double. Most fields can be retrieved by an identically named accessor (e.g. lubridate::year() will return the field), use second() to get the .Data slot.\nAs a short example, we create a period of 1 second, 2 minutes, 3 hours, 4 days and 5 weeks.\n\nexample_12345 &lt;- lubridate::period(\n  c(1, 2, 3, 4, 5), \n  c(\"second\", \"minute\", \"hour\", \"day\", \"week\")\n)\n\nThis should add up to a period of 39 days, 3 hours, 2 minutes and 1 second.\n\nexample_12345\n\n#&gt; [1] \"39d 3H 2M 1S\"\n\n\nWhen we inspect example_12345, we see the fields and infer that the seconds are stored in the .Data field.\n\nstr(example_12345)\n\n#&gt; Formal class 'Period' [package \"lubridate\"] with 6 slots\n#&gt;   ..@ .Data : num 1\n#&gt;   ..@ year  : num 0\n#&gt;   ..@ month : num 0\n#&gt;   ..@ day   : num 39\n#&gt;   ..@ hour  : num 3\n#&gt;   ..@ minute: num 2"
+  },
+  {
+    "objectID": "slides/15.html#what-other-ways-can-you-find-help-for-a-method-read-and-summarise-the-details.",
+    "href": "slides/15.html#what-other-ways-can-you-find-help-for-a-method-read-and-summarise-the-details.",
+    "title": "S4",
+    "section": "What other ways can you find help for a method? Read ?\"?\" and summarise the details.",
+    "text": "What other ways can you find help for a method? Read ?\"?\" and summarise the details.\n\nBesides adding ? in front of a function call (i.e. ?method()), we may find:\n\ngeneral documentation for a generic via ?genericName\ngeneral documentation for the methods of a generic via methods?genericName\ndocumentation for a specific method via ClassName?methodName."
+  },
+  {
+    "objectID": "slides/15.html#extend-the-person-class-with-fields-to-match-utilsperson.-think-about-what-slots-you-will-need-what-class-each-slot-should-have-and-what-youll-need-to-check-in-your-validity-method.",
+    "href": "slides/15.html#extend-the-person-class-with-fields-to-match-utilsperson.-think-about-what-slots-you-will-need-what-class-each-slot-should-have-and-what-youll-need-to-check-in-your-validity-method.",
+    "title": "S4",
+    "section": "Extend the Person class with fields to match utils::person(). Think about what slots you will need, what class each slot should have, and what you’ll need to check in your validity method.",
+    "text": "Extend the Person class with fields to match utils::person(). Think about what slots you will need, what class each slot should have, and what you’ll need to check in your validity method.\n\nThe Person class from Advanced R contains the slots name and age. The person class from the {utils} package contains the slots given (vector of given names), family, role, email and comment (see ?utils::person).\nAll slots from utils::person() besides role must be of type character and length 1. The entries in the role slot must match one of the following abbreviations “aut”, “com”, “cph”, “cre”, “ctb”, “ctr”, “dtc”, “fnd”, “rev”, “ths”, “trl”. Therefore, role might be of different length than the other slots and we’ll add a corresponding constraint within the validator.\n\n# Definition of the Person class\nsetClass(\"Person\",\n  slots = c(\n    age = \"numeric\",\n    given = \"character\",\n    family = \"character\",\n    role = \"character\",\n    email = \"character\",\n    comment = \"character\"\n  ),\n  prototype = list(\n    age = NA_real_,\n    given = NA_character_,\n    family = NA_character_,\n    role = NA_character_,\n    email = NA_character_,\n    comment = NA_character_\n  )\n)\n\n# Helper to create instances of the Person class\nPerson &lt;- function(given, family,\n                   age = NA_real_,\n                   role = NA_character_,\n                   email = NA_character_,\n                   comment = NA_character_) {\n  age &lt;- as.double(age)\n\n  new(\"Person\",\n    age = age,\n    given = given,\n    family = family,\n    role = role,\n    email = email,\n    comment = comment\n  )\n}\n\n# Validator to ensure that each slot is of length one\nsetValidity(\"Person\", function(object) {\n  invalids &lt;- c()\n  if (length(object@age)     != 1 ||\n      length(object@given)   != 1 ||\n      length(object@family)  != 1 ||\n      length(object@email)   != 1 ||\n      length(object@comment) != 1) {\n    invalids &lt;- paste0(\"@name, @age, @given, @family, @email, \",\n                       \"@comment must be of length 1\")\n  } \n  \n  known_roles &lt;- c(\n    NA_character_, \"aut\", \"com\", \"cph\", \"cre\", \"ctb\",\n    \"ctr\", \"dtc\", \"fnd\", \"rev\", \"ths\", \"trl\"\n  )\n  \n  if (!all(object@role %in% known_roles)) {\n    paste(\n      \"@role(s) must be one of\", \n      paste(known_roles, collapse = \", \")\n    )\n  }\n  \n  if (length(invalids)) return(invalids)  \n  TRUE\n})\n\n#&gt; Class \"Person\" [in \".GlobalEnv\"]\n#&gt; \n#&gt; Slots:\n#&gt;                                                                   \n#&gt; Name:        age     given    family      role     email   comment\n#&gt; Class:   numeric character character character character character"
+  },
+  {
+    "objectID": "slides/15.html#what-happens-if-you-define-a-new-s4-class-that-doesnt-have-any-slots-hint-read-about-virtual-classes-in-setclass.",
+    "href": "slides/15.html#what-happens-if-you-define-a-new-s4-class-that-doesnt-have-any-slots-hint-read-about-virtual-classes-in-setclass.",
+    "title": "S4",
+    "section": "What happens if you define a new S4 class that doesn’t have any slots? (Hint: read about virtual classes in ?setClass.)",
+    "text": "What happens if you define a new S4 class that doesn’t have any slots? (Hint: read about virtual classes in ?setClass.)\n\nIt depends on the other arguments. If we inherit from another class, we get the same slots. But something interesting happens if we don’t inherit from an existing class. We get a virtual class. A virtual class can’t be instantiated:\n\nsetClass(\"Human\")\nnew(\"Human\")\n\n#&gt; Error in new(\"Human\"): trying to generate an object from a virtual class (\"Human\")\n\n\nBut can be inherited from:\n\nsetClass(\"Programmer\", contains = \"Human\")"
+  },
+  {
+    "objectID": "slides/15.html#imagine-you-were-going-to-reimplement-factors-dates-and-data-frames-in-s4.-sketch-out-the-setclass-calls-that-you-would-use-to-define-the-classes.-think-about-appropriate-slots-and-prototype.",
+    "href": "slides/15.html#imagine-you-were-going-to-reimplement-factors-dates-and-data-frames-in-s4.-sketch-out-the-setclass-calls-that-you-would-use-to-define-the-classes.-think-about-appropriate-slots-and-prototype.",
+    "title": "S4",
+    "section": "Imagine you were going to reimplement factors, dates, and data frames in S4. Sketch out the setClass() calls that you would use to define the classes. Think about appropriate slots and prototype.",
+    "text": "Imagine you were going to reimplement factors, dates, and data frames in S4. Sketch out the setClass() calls that you would use to define the classes. Think about appropriate slots and prototype.\n\nFor all these classes we need one slot for the data and one slot per attribute. Keep in mind, that inheritance matters for ordered factors and dates. For data frames, special checks like equal lengths of the underlying list’s elements should be done within a validator.\nFor simplicity we don’t introduce an explicit subclass for ordered factors. Instead, we introduce ordered as a slot.\n\nsetClass(\"Factor\",\n  slots = c(\n    data = \"integer\",\n    levels = \"character\",\n    ordered = \"logical\"\n  ),\n  prototype = list(\n    data = integer(),\n    levels = character(),\n    ordered = FALSE\n  )\n)\n\n\nnew(\"Factor\", data = c(1L, 2L), levels = letters[1:3])\n\n#&gt; An object of class \"Factor\"\n#&gt; Slot \"data\":\n#&gt; [1] 1 2\n#&gt; \n#&gt; Slot \"levels\":\n#&gt; [1] \"a\" \"b\" \"c\"\n#&gt; \n#&gt; Slot \"ordered\":\n#&gt; [1] FALSE\n\n\nThe Date2 class stores its dates as integers, similarly to base R which uses doubles. Dates don’t have any other attributes.\n\nsetClass(\"Date2\",\n  slots = list(\n    data = \"integer\"\n  ),\n  prototype = list(\n    data = integer()\n  )\n)\n\nnew(\"Date2\", data = 1L)\n\n#&gt; An object of class \"Date2\"\n#&gt; Slot \"data\":\n#&gt; [1] 1\n\n\nOur DataFrame class consists of a list and a slot for row.names. Most of the logic (e.g. checking that all elements of the list are a vector, and that they all have the same length) would need to be part of a validator.\n\nsetClass(\"DataFrame\",\n  slots = c(\n    data = \"list\",\n    row.names = \"character\"\n  ),\n  prototype = list(\n    data = list(),\n    row.names = character(0)\n  )\n)\n\nnew(\"DataFrame\", data = list(a = 1, b = 2))\n\n#&gt; An object of class \"DataFrame\"\n#&gt; Slot \"data\":\n#&gt; $a\n#&gt; [1] 1\n#&gt; \n#&gt; $b\n#&gt; [1] 2\n#&gt; \n#&gt; \n#&gt; Slot \"row.names\":\n#&gt; character(0)"
+  },
+  {
+    "objectID": "slides/15.html#add-age-accessors-for-the-person-class.",
+    "href": "slides/15.html#add-age-accessors-for-the-person-class.",
+    "title": "S4",
+    "section": "Add age() accessors for the Person class.",
+    "text": "Add age() accessors for the Person class.\n\nWe implement the accessors via an age() generic, with a method for the Person class and a corresponding replacement function age&lt;-:\n\nsetGeneric(\"age\", function(x) standardGeneric(\"age\"))\n\n#&gt; [1] \"age\"\n\nsetMethod(\"age\", \"Person\", function(x) x@age)\n\nsetGeneric(\"age&lt;-\", function(x, value) standardGeneric(\"age&lt;-\"))\n\n#&gt; [1] \"age&lt;-\"\n\nsetMethod(\"age&lt;-\", \"Person\", function(x, value) {\n  x@age &lt;- value\n  validObject(x)\n  x\n})"
+  },
+  {
+    "objectID": "slides/15.html#in-the-definition-of-the-generic-why-is-it-necessary-to-repeat-the-name-of-the-generic-twice",
+    "href": "slides/15.html#in-the-definition-of-the-generic-why-is-it-necessary-to-repeat-the-name-of-the-generic-twice",
+    "title": "S4",
+    "section": "In the definition of the generic, why is it necessary to repeat the name of the generic twice?",
+    "text": "In the definition of the generic, why is it necessary to repeat the name of the generic twice?\n\nWithin setGeneric() the name (1st argument) is needed as the name of the generic. Then, the name also explicitly incorporates method dispatch via standardGeneric() within the generic’s body (def parameter of setGeneric()). This behaviour is similar to UseMethod() in S3."
+  },
+  {
+    "objectID": "slides/15.html#why-does-the-show-method-defined-in-section-15.4.3-use-isobject1-hint-try-printing-the-employee-subclass.",
+    "href": "slides/15.html#why-does-the-show-method-defined-in-section-15.4.3-use-isobject1-hint-try-printing-the-employee-subclass.",
+    "title": "S4",
+    "section": "Why does the show() method defined in section 15.4.3 use is(object)[[1]]? (Hint: try printing the employee subclass.)",
+    "text": "Why does the show() method defined in section 15.4.3 use is(object)[[1]]? (Hint: try printing the employee subclass.)\n\nis(object) returns the class of the object. is(object) also contains the superclass, for subclasses like Employee. In order to always return the most specific class (the subclass), show() returns the first element of is(object)."
+  },
+  {
+    "objectID": "slides/15.html#what-happens-if-you-define-a-method-with-different-argument-names-to-the-generic",
+    "href": "slides/15.html#what-happens-if-you-define-a-method-with-different-argument-names-to-the-generic",
+    "title": "S4",
+    "section": "What happens if you define a method with different argument names to the generic?",
+    "text": "What happens if you define a method with different argument names to the generic?\n\nIt depends. We first create the object hadley of class Person:\n\n.Person &lt;- setClass(\n  \"Person\",\n  slots = c(name = \"character\", age = \"numeric\")\n)\n\nhadley &lt;- .Person(name = \"Hadley\")\nhadley\n\n#&gt; Person\n#&gt;   Name: Hadley\n#&gt;   Age:\n\n\nNow let’s see which arguments can be supplied to the show() generic.\n\nformals(\"show\")\n\n#&gt; $object\n\n\nUsually, we would use this argument when defining a new method.\n\nsetMethod(\"show\", \"Person\", function(object) {\n  cat(object@name, \"creates hard exercises\")\n})\n\nhadley\n\n#&gt; Hadley creates hard exercises\n\n\nWhen we supply another name as a first element of our method (e.g. x instead of object), this element will be matched to the correct object argument and we receive a warning. Our method will work, though:\n\nsetMethod(\"show\", \"Person\", function(x) {\n  cat(x@name, \"creates hard exercises\")\n})\n\nhadley\n\n#&gt; Hadley creates hard exercises\n\n\nIf we add more arguments to our method than our generic can handle, we will get an error.\n\nsetMethod(\"show\", \"Person\", function(x, y) {\n  cat(x@name, \"is\", x@age, \"years old\")\n})\n\n#&gt; Error in conformMethod(signature, mnames, fnames, f, fdef, definition): in method for 'show' with signature 'object=\"Person\"': formal arguments (object = \"Person\") omitted in the method definition cannot be in the signature\n\n\nIf we do this with arguments added to the correctly written object argument, we will receive an informative error message. It states that we could add other argument names for generics, which can take the ... argument.\n\nsetMethod(\"show\", \"Person\", function(object, y) {\n  cat(object@name, \"is\", object@age, \"years old\")\n})\n\n#&gt; Error in rematchDefinition(definition, fdef, mnames, fnames, signature): methods can add arguments to the generic 'show' only if '...' is an argument to the generic"
+  },
+  {
+    "objectID": "slides/15.html#draw-the-method-graph-for-f-.",
+    "href": "slides/15.html#draw-the-method-graph-for-f-.",
+    "title": "S4",
+    "section": "Draw the method graph for f(😅, 😽).",
+    "text": "Draw the method graph for f(😅, 😽).\n\nLook at the graph and repeat after me: “I will keep my class structure simple and use multiple inheritance sparingly”."
+  },
+  {
+    "objectID": "slides/15.html#draw-the-method-graph-for-f-.-1",
+    "href": "slides/15.html#draw-the-method-graph-for-f-.-1",
+    "title": "S4",
+    "section": "Draw the method graph for f(😃, 😉, 😙).",
+    "text": "Draw the method graph for f(😃, 😉, 😙).\n\nWe see that the method graph below looks simpler than the one above. Relatively speaking, multiple dispatch seems to introduce less complexity than multiple inheritance. Use it with care, though!"
+  },
+  {
+    "objectID": "slides/15.html#take-the-last-example-which-shows-multiple-dispatch-over-two-classes-that-use-multiple-inheritance.-what-happens-if-you-define-a-method-for-all-terminal-classes-why-does-method-dispatch-not-save-us-much-work-here",
+    "href": "slides/15.html#take-the-last-example-which-shows-multiple-dispatch-over-two-classes-that-use-multiple-inheritance.-what-happens-if-you-define-a-method-for-all-terminal-classes-why-does-method-dispatch-not-save-us-much-work-here",
+    "title": "S4",
+    "section": "Take the last example which shows multiple dispatch over two classes that use multiple inheritance. What happens if you define a method for all terminal classes? Why does method dispatch not save us much work here?",
+    "text": "Take the last example which shows multiple dispatch over two classes that use multiple inheritance. What happens if you define a method for all terminal classes? Why does method dispatch not save us much work here?\n\nWe will introduce ambiguity, since one class has distance 2 to all terminal nodes and the other four have distance 1 to two terminal nodes each. To resolve this ambiguity we have to define five more methods, one per class combination."
+  },
+  {
+    "objectID": "slides/15.html#what-would-a-full-setoldclass-definition-look-like-for-an-ordered-factor-i.e.-add-slots-and-prototype-to-the-definition-above",
+    "href": "slides/15.html#what-would-a-full-setoldclass-definition-look-like-for-an-ordered-factor-i.e.-add-slots-and-prototype-to-the-definition-above",
+    "title": "S4",
+    "section": "What would a full setOldClass() definition look like for an ordered factor (i.e. add slots and prototype to the definition above)?",
+    "text": "What would a full setOldClass() definition look like for an ordered factor (i.e. add slots and prototype to the definition above)?\n\nThe purpose of setOldClass() lies in registering an S3 class as a “formally defined class”, so that it can be used within the S4 object-oriented programming system. When using it, we may provide the argument S4Class, which will inherit the slots and their default values (prototype) to the registered class.\nLet’s build an S4 OrderedFactor on top of the S3 factor in such a way.\n\nsetOldClass(\"factor\")    # use build-in definition for brevity\n\nOrderedFactor &lt;- setClass(\n  \"OrderedFactor\",\n  contains = \"factor\",   # inherit from registered S3 class\n  slots = c(\n    levels = \"character\",\n    ordered = \"logical\"  # add logical order slot\n  ),\n  prototype = structure(\n    integer(),\n    levels = character(),\n    ordered = logical()  # add default value\n  )\n)\n\nWe can now register the (S3) ordered-class, while providing an “S4 template”. We can also use the S4-class to create new object directly.\n\nsetOldClass(\"ordered\", S4Class = \"OrderedFactor\")\n\nx &lt;- OrderedFactor(\n  c(1L, 2L, 2L),\n  levels = c(\"a\", \"b\", \"c\"),\n  ordered = TRUE\n)\nstr(x)\n\n#&gt; Formal class 'OrderedFactor' [package \".GlobalEnv\"] with 4 slots\n#&gt;   ..@ .Data   : int [1:3] 1 2 2\n#&gt;   ..@ levels  : chr [1:3] \"a\" \"b\" \"c\"\n#&gt;   ..@ ordered : logi TRUE\n#&gt;   ..@ .S3Class: chr \"factor\""
+  },
+  {
+    "objectID": "slides/15.html#define-a-length-method-for-the-person-class.",
+    "href": "slides/15.html#define-a-length-method-for-the-person-class.",
+    "title": "S4",
+    "section": "Define a length method for the Person class.",
+    "text": "Define a length method for the Person class.\n\nWe keep things simple and will just return \"180cm\" when the length() method is called on a Person object. The method can be defined either as an S3 or S4 method.\n\nlength.Person &lt;- function(x) \"180cm\"  # S3\nsetMethod(\"length\", \"Person\", function(x) \"180cm\")  # S4"
   },
   {
     "objectID": "slides/13.html#learning-objectives",
@@ -1034,7 +1335,7 @@
     "href": "slides/13.html#print.factor-is-a-print-method-for-factors",
     "title": "S3",
     "section": "print.factor() is a print() method for factors",
-    "text": "print.factor() is a print() method for factors\nMethod: A function customized for a particular class.\n\nprint.factor # or sloop::s3_get_method(\"print.factor\")\n\n#&gt; function (x, quote = FALSE, max.levels = NULL, width = getOption(\"width\"), \n#&gt;     ...) \n#&gt; {\n#&gt;     ord &lt;- is.ordered(x)\n#&gt;     if (length(x) == 0L) \n#&gt;         cat(if (ord) \n#&gt;             \"ordered\"\n#&gt;         else \"factor\", \"()\\n\", sep = \"\")\n#&gt;     else {\n#&gt;         xx &lt;- character(length(x))\n#&gt;         xx[] &lt;- as.character(x)\n#&gt;         keepAttrs &lt;- setdiff(names(attributes(x)), c(\"levels\", \n#&gt;             \"class\"))\n#&gt;         attributes(xx)[keepAttrs] &lt;- attributes(x)[keepAttrs]\n#&gt;         print(xx, quote = quote, ...)\n#&gt;     }\n#&gt;     maxl &lt;- max.levels %||% TRUE\n#&gt;     if (maxl) {\n#&gt;         n &lt;- length(lev &lt;- encodeString(levels(x), quote = ifelse(quote, \n#&gt;             \"\\\"\", \"\")))\n#&gt;         colsep &lt;- if (ord) \n#&gt;             \" &lt; \"\n#&gt;         else \" \"\n#&gt;         T0 &lt;- \"Levels: \"\n#&gt;         if (is.logical(maxl)) \n#&gt;             maxl &lt;- {\n#&gt;                 width &lt;- width - (nchar(T0, \"w\") + 3L + 1L + \n#&gt;                   3L)\n#&gt;                 lenl &lt;- cumsum(nchar(lev, \"w\") + nchar(colsep, \n#&gt;                   \"w\"))\n#&gt;                 if (n &lt;= 1L || lenl[n] &lt;= width) \n#&gt;                   n\n#&gt;                 else max(1L, which.max(lenl &gt; width) - 1L)\n#&gt;             }\n#&gt;         drop &lt;- n &gt; maxl\n#&gt;         cat(if (drop) \n#&gt;             paste(format(n), \"\"), T0, paste(if (drop) \n#&gt;             c(lev[1L:max(1, maxl - 1)], \"...\", if (maxl &gt; 1) lev[n])\n#&gt;         else lev, collapse = colsep), \"\\n\", sep = \"\")\n#&gt;     }\n#&gt;     if (!isTRUE(val &lt;- .valid.factor(x))) \n#&gt;         warning(val)\n#&gt;     invisible(x)\n#&gt; }\n#&gt; &lt;bytecode: 0x55b358a8c550&gt;\n#&gt; &lt;environment: namespace:base&gt;"
+    "text": "print.factor() is a print() method for factors\nMethod: A function customized for a particular class.\n\nprint.factor # or sloop::s3_get_method(\"print.factor\")\n\n#&gt; function (x, quote = FALSE, max.levels = NULL, width = getOption(\"width\"), \n#&gt;     ...) \n#&gt; {\n#&gt;     ord &lt;- is.ordered(x)\n#&gt;     if (length(x) == 0L) \n#&gt;         cat(if (ord) \n#&gt;             \"ordered\"\n#&gt;         else \"factor\", \"()\\n\", sep = \"\")\n#&gt;     else {\n#&gt;         xx &lt;- character(length(x))\n#&gt;         xx[] &lt;- as.character(x)\n#&gt;         keepAttrs &lt;- setdiff(names(attributes(x)), c(\"levels\", \n#&gt;             \"class\"))\n#&gt;         attributes(xx)[keepAttrs] &lt;- attributes(x)[keepAttrs]\n#&gt;         print(xx, quote = quote, ...)\n#&gt;     }\n#&gt;     maxl &lt;- max.levels %||% TRUE\n#&gt;     if (maxl) {\n#&gt;         n &lt;- length(lev &lt;- encodeString(levels(x), quote = ifelse(quote, \n#&gt;             \"\\\"\", \"\")))\n#&gt;         colsep &lt;- if (ord) \n#&gt;             \" &lt; \"\n#&gt;         else \" \"\n#&gt;         T0 &lt;- \"Levels: \"\n#&gt;         if (is.logical(maxl)) \n#&gt;             maxl &lt;- {\n#&gt;                 width &lt;- width - (nchar(T0, \"w\") + 3L + 1L + \n#&gt;                   3L)\n#&gt;                 lenl &lt;- cumsum(nchar(lev, \"w\") + nchar(colsep, \n#&gt;                   \"w\"))\n#&gt;                 if (n &lt;= 1L || lenl[n] &lt;= width) \n#&gt;                   n\n#&gt;                 else max(1L, which.max(lenl &gt; width) - 1L)\n#&gt;             }\n#&gt;         drop &lt;- n &gt; maxl\n#&gt;         cat(if (drop) \n#&gt;             paste(format(n), \"\"), T0, paste(if (drop) \n#&gt;             c(lev[1L:max(1, maxl - 1)], \"...\", if (maxl &gt; 1) lev[n])\n#&gt;         else lev, collapse = colsep), \"\\n\", sep = \"\")\n#&gt;     }\n#&gt;     if (!isTRUE(val &lt;- .valid.factor(x))) \n#&gt;         warning(val)\n#&gt;     invisible(x)\n#&gt; }\n#&gt; &lt;bytecode: 0x5607f9d25468&gt;\n#&gt; &lt;environment: namespace:base&gt;"
   },
   {
     "objectID": "slides/13.html#assign-an-s3-class-to-a-new-object-with-structure-or-class-",
@@ -1083,7 +1384,7 @@
     "href": "slides/13.html#summary-is-an-s3-generic-that-behaves-based-on-an-objects-class",
     "title": "S3",
     "section": "summary() is an S3 generic that behaves based on an object’s class",
-    "text": "summary() is an S3 generic that behaves based on an object’s class\n\nsloop::is_s3_generic(\"summary\")\n\n#&gt; [1] TRUE\n\nsummary\n\n#&gt; function (object, ...) \n#&gt; UseMethod(\"summary\")\n#&gt; &lt;bytecode: 0x55b3533ab7e0&gt;\n#&gt; &lt;environment: namespace:base&gt;\n\nsloop::s3_methods_generic(\n  \"summary\"\n) |&gt; \n  knitr::kable()\n\n\n\n\ngeneric\nclass\nvisible\nsource\n\n\n\n\nsummary\naov\nTRUE\nstats\n\n\nsummary\naovlist\nFALSE\nregistered S3method\n\n\nsummary\naspell\nFALSE\nregistered S3method\n\n\nsummary\ncheck_packages_in_dir\nFALSE\nregistered S3method\n\n\nsummary\nconnection\nTRUE\nbase\n\n\nsummary\ndata.frame\nTRUE\nbase\n\n\nsummary\nDate\nTRUE\nbase\n\n\nsummary\ndefault\nTRUE\nbase\n\n\nsummary\ndifftime\nTRUE\nbase\n\n\nsummary\necdf\nFALSE\nregistered S3method\n\n\nsummary\nfactor\nTRUE\nbase\n\n\nsummary\nglm\nTRUE\nstats\n\n\nsummary\ninfl\nFALSE\nregistered S3method\n\n\nsummary\nlm\nTRUE\nstats\n\n\nsummary\nloess\nFALSE\nregistered S3method\n\n\nsummary\nmanova\nTRUE\nstats\n\n\nsummary\nmatrix\nTRUE\nbase\n\n\nsummary\nmlm\nFALSE\nregistered S3method\n\n\nsummary\nnls\nFALSE\nregistered S3method\n\n\nsummary\npackageStatus\nFALSE\nregistered S3method\n\n\nsummary\nPOSIXct\nTRUE\nbase\n\n\nsummary\nPOSIXlt\nTRUE\nbase\n\n\nsummary\nppr\nFALSE\nregistered S3method\n\n\nsummary\nprcomp\nFALSE\nregistered S3method\n\n\nsummary\nprincomp\nFALSE\nregistered S3method\n\n\nsummary\nproc_time\nTRUE\nbase\n\n\nsummary\nrlang_error\nFALSE\nregistered S3method\n\n\nsummary\nrlang_message\nFALSE\nregistered S3method\n\n\nsummary\nrlang_trace\nFALSE\nregistered S3method\n\n\nsummary\nrlang_warning\nFALSE\nregistered S3method\n\n\nsummary\nrlang:::list_of_conditions\nFALSE\nregistered S3method\n\n\nsummary\nsrcfile\nTRUE\nbase\n\n\nsummary\nsrcref\nTRUE\nbase\n\n\nsummary\nstepfun\nTRUE\nstats\n\n\nsummary\nstl\nFALSE\nregistered S3method\n\n\nsummary\ntable\nTRUE\nbase\n\n\nsummary\ntukeysmooth\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_sclr\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_vctr\nFALSE\nregistered S3method\n\n\nsummary\nwarnings\nTRUE\nbase"
+    "text": "summary() is an S3 generic that behaves based on an object’s class\n\nsloop::is_s3_generic(\"summary\")\n\n#&gt; [1] TRUE\n\nsummary\n\n#&gt; function (object, ...) \n#&gt; UseMethod(\"summary\")\n#&gt; &lt;bytecode: 0x5607f4652548&gt;\n#&gt; &lt;environment: namespace:base&gt;\n\nsloop::s3_methods_generic(\n  \"summary\"\n) |&gt; \n  knitr::kable()\n\n\n\n\ngeneric\nclass\nvisible\nsource\n\n\n\n\nsummary\naov\nTRUE\nstats\n\n\nsummary\naovlist\nFALSE\nregistered S3method\n\n\nsummary\naspell\nFALSE\nregistered S3method\n\n\nsummary\ncheck_packages_in_dir\nFALSE\nregistered S3method\n\n\nsummary\nconnection\nTRUE\nbase\n\n\nsummary\ndata.frame\nTRUE\nbase\n\n\nsummary\nDate\nTRUE\nbase\n\n\nsummary\ndefault\nTRUE\nbase\n\n\nsummary\ndifftime\nTRUE\nbase\n\n\nsummary\necdf\nFALSE\nregistered S3method\n\n\nsummary\nfactor\nTRUE\nbase\n\n\nsummary\nglm\nTRUE\nstats\n\n\nsummary\ninfl\nFALSE\nregistered S3method\n\n\nsummary\nlm\nTRUE\nstats\n\n\nsummary\nloess\nFALSE\nregistered S3method\n\n\nsummary\nmanova\nTRUE\nstats\n\n\nsummary\nmatrix\nTRUE\nbase\n\n\nsummary\nmlm\nFALSE\nregistered S3method\n\n\nsummary\nnls\nFALSE\nregistered S3method\n\n\nsummary\npackageStatus\nFALSE\nregistered S3method\n\n\nsummary\nPOSIXct\nTRUE\nbase\n\n\nsummary\nPOSIXlt\nTRUE\nbase\n\n\nsummary\nppr\nFALSE\nregistered S3method\n\n\nsummary\nprcomp\nFALSE\nregistered S3method\n\n\nsummary\nprincomp\nFALSE\nregistered S3method\n\n\nsummary\nproc_time\nTRUE\nbase\n\n\nsummary\nrlang_error\nFALSE\nregistered S3method\n\n\nsummary\nrlang_message\nFALSE\nregistered S3method\n\n\nsummary\nrlang_trace\nFALSE\nregistered S3method\n\n\nsummary\nrlang_warning\nFALSE\nregistered S3method\n\n\nsummary\nrlang:::list_of_conditions\nFALSE\nregistered S3method\n\n\nsummary\nsrcfile\nTRUE\nbase\n\n\nsummary\nsrcref\nTRUE\nbase\n\n\nsummary\nstepfun\nTRUE\nstats\n\n\nsummary\nstl\nFALSE\nregistered S3method\n\n\nsummary\ntable\nTRUE\nbase\n\n\nsummary\ntukeysmooth\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_sclr\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_vctr\nFALSE\nregistered S3method\n\n\nsummary\nwarnings\nTRUE\nbase"
   },
   {
     "objectID": "slides/13.html#summary-is-an-interface-to-different-methods",
@@ -1272,7 +1573,7 @@
     "href": "slides/09.html#a-functional-takes-a-function-as-input-and-returns-a-vector-as-output",
     "title": "Functionals",
     "section": "A functional takes a function as input and returns a vector as output",
-    "text": "A functional takes a function as input and returns a vector as output\n\nrandomise &lt;- function(f) f(runif(1e3))\nrandomise(mean)\n\n#&gt; [1] 0.4992063\n\nrandomise(sum)\n\n#&gt; [1] 476.6927\n\n\nCommon examples:\n\nlapply(), apply(), and tapply() in base R\npurrr::map()\nMathematical functionals like integrate() or optim()"
+    "text": "A functional takes a function as input and returns a vector as output\n\nrandomise &lt;- function(f) f(runif(1e3))\nrandomise(mean)\n\n#&gt; [1] 0.4924681\n\nrandomise(sum)\n\n#&gt; [1] 506.548\n\n\nCommon examples:\n\nlapply(), apply(), and tapply() in base R\npurrr::map()\nMathematical functionals like integrate() or optim()"
   },
   {
     "objectID": "slides/09.html#functionals-are-better-than-for-loops",
@@ -1335,7 +1636,7 @@
     "href": "slides/09.html#purrrmap2-iterates-over-two-vectors-in-parallel",
     "title": "Functionals",
     "section": "purrr::map2() iterates over two vectors in parallel",
-    "text": "purrr::map2() iterates over two vectors in parallel\nFind a weighted mean from 2 lists: observations (xs) & weights (ws).\n\nxs &lt;- map(1:3, ~ runif(5))\nws &lt;- map(1:3, ~ rpois(5, 5) + 1)\n\nmap() passes the whole ws list to each call:\n\nmap_dbl(xs, weighted.mean, w = ws)\n\n#&gt; Error in `map_dbl()`:\n#&gt; ℹ In index: 1.\n#&gt; Caused by error in `weighted.mean.default()`:\n#&gt; ! 'x' and 'w' must have the same length\n\n\nmap2() iterates over xs and ws in parallel:\n\nmap2_dbl(xs, ws, weighted.mean)\n\n#&gt; [1] 0.3246127 0.3601246 0.4505961"
+    "text": "purrr::map2() iterates over two vectors in parallel\nFind a weighted mean from 2 lists: observations (xs) & weights (ws).\n\nxs &lt;- map(1:3, ~ runif(5))\nws &lt;- map(1:3, ~ rpois(5, 5) + 1)\n\nmap() passes the whole ws list to each call:\n\nmap_dbl(xs, weighted.mean, w = ws)\n\n#&gt; Error in `map_dbl()`:\n#&gt; ℹ In index: 1.\n#&gt; Caused by error in `weighted.mean.default()`:\n#&gt; ! 'x' and 'w' must have the same length\n\n\nmap2() iterates over xs and ws in parallel:\n\nmap2_dbl(xs, ws, weighted.mean)\n\n#&gt; [1] 0.6534310 0.4834761 0.1343670"
   },
   {
     "objectID": "slides/09.html#purrrwalk-is-for-functions-called-for-their-side-effects",
@@ -1349,14 +1650,14 @@
     "href": "slides/09.html#purrrimap-iterates-over-values-and-indices",
     "title": "Functionals",
     "section": "purrr::imap() iterates over values and indices",
-    "text": "purrr::imap() iterates over values and indices\nNamed input == map2(.x, names(.x), .f)\n\nimap_chr(iris[, 1:2], ~ paste0(\"The first value of '\", .y, \"' is \", .x[[1]]))\n\n#&gt;                               Sepal.Length \n#&gt; \"The first value of 'Sepal.Length' is 5.1\" \n#&gt;                                Sepal.Width \n#&gt;  \"The first value of 'Sepal.Width' is 3.5\"\n\n\nUnnamed input == map2(.x, seq_along(.x), .f)\n\nx &lt;- map(1:2, ~ sample(100, 5))\nimap_chr(x, ~ paste0(\"The max of element \", .y, \" is \", max(.x)))\n\n#&gt; [1] \"The max of element 1 is 99\" \"The max of element 2 is 97\""
+    "text": "purrr::imap() iterates over values and indices\nNamed input == map2(.x, names(.x), .f)\n\nimap_chr(iris[, 1:2], ~ paste0(\"The first value of '\", .y, \"' is \", .x[[1]]))\n\n#&gt;                               Sepal.Length \n#&gt; \"The first value of 'Sepal.Length' is 5.1\" \n#&gt;                                Sepal.Width \n#&gt;  \"The first value of 'Sepal.Width' is 3.5\"\n\n\nUnnamed input == map2(.x, seq_along(.x), .f)\n\nx &lt;- map(1:2, ~ sample(100, 5))\nimap_chr(x, ~ paste0(\"The max of element \", .y, \" is \", max(.x)))\n\n#&gt; [1] \"The max of element 1 is 68\"  \"The max of element 2 is 100\""
   },
   {
     "objectID": "slides/09.html#purrrpmap-iterates-over-multiple-arguments-in-a-list",
     "href": "slides/09.html#purrrpmap-iterates-over-multiple-arguments-in-a-list",
     "title": "Functionals",
     "section": "purrr::pmap() iterates over multiple arguments in a list",
-    "text": "purrr::pmap() iterates over multiple arguments in a list\npmap() applies function to list of arguments\n\nmap2(x, y, f) is equivalent to pmap(list(x, y), f).\nA data frame is a list, works great with pmap().\n\n\nparams &lt;- tibble::tribble(\n  ~n, ~min, ~max,\n  1L, 0, 1,\n  2L, 10, 100,\n)\n\npmap(params, runif)\n\n#&gt; [[1]]\n#&gt; [1] 0.5444131\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 48.07406 40.90175"
+    "text": "purrr::pmap() iterates over multiple arguments in a list\npmap() applies function to list of arguments\n\nmap2(x, y, f) is equivalent to pmap(list(x, y), f).\nA data frame is a list, works great with pmap().\n\n\nparams &lt;- tibble::tribble(\n  ~n, ~min, ~max,\n  1L, 0, 1,\n  2L, 10, 100,\n)\n\npmap(params, runif)\n\n#&gt; [[1]]\n#&gt; [1] 0.07899593\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 25.17984 77.95591"
   },
   {
     "objectID": "slides/09.html#purrrreduce-combines-vector-elements-with-a-binary-function",
@@ -1440,7 +1741,7 @@
     "href": "slides/07.html#inspect-environments-with-rlang",
     "title": "Environments",
     "section": "Inspect environments with {rlang}",
-    "text": "Inspect environments with {rlang}\n\nrlang::env_print(e1)\n\n#&gt; &lt;environment: 0x5614ffa2fdd0&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • a: &lt;lgl&gt;\n#&gt; • b: &lt;chr&gt;\n#&gt; • c: &lt;dbl&gt;\n#&gt; • d: &lt;int&gt;\n\n\n\nrlang::env_names(e1)\n\n#&gt; [1] \"a\" \"b\" \"c\" \"d\"\n\n\n\nrlang::env_has(e1, \"a\")\n\n#&gt;    a \n#&gt; TRUE\n\n\n\nrlang::env_get(e1, \"a\")\n\n#&gt; [1] FALSE\n\n\n\nrlang::env_parent(e1)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n\nbase::print() displays the memory address and is not as helpful as rlang::env_print()"
+    "text": "Inspect environments with {rlang}\n\nrlang::env_print(e1)\n\n#&gt; &lt;environment: 0x562084b64dc8&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • a: &lt;lgl&gt;\n#&gt; • b: &lt;chr&gt;\n#&gt; • c: &lt;dbl&gt;\n#&gt; • d: &lt;int&gt;\n\n\n\nrlang::env_names(e1)\n\n#&gt; [1] \"a\" \"b\" \"c\" \"d\"\n\n\n\nrlang::env_has(e1, \"a\")\n\n#&gt;    a \n#&gt; TRUE\n\n\n\nrlang::env_get(e1, \"a\")\n\n#&gt; [1] FALSE\n\n\n\nrlang::env_parent(e1)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n\nbase::print() displays the memory address and is not as helpful as rlang::env_print()"
   },
   {
     "objectID": "slides/07.html#by-default-the-current-environment-is-your-global-environment",
@@ -1454,7 +1755,7 @@
     "href": "slides/07.html#every-environment-has-a-parent-environment",
     "title": "Environments",
     "section": "Every environment has a parent environment",
-    "text": "Every environment has a parent environment\n\nAllows for lexical scoping\n\n\ne2a &lt;- rlang::env(d = 4, e = 5)\n\ne2b &lt;- rlang::env(e2a, a = 1, b = 2, c = 3)\n\nrlang::env_parent(e2b)\n\n#&gt; &lt;environment: 0x561503a0f5f0&gt;\n\nrlang::env_parents(e2b)\n\n#&gt; [[1]]   &lt;env: 0x561503a0f5f0&gt;\n#&gt; [[2]] $ &lt;env: global&gt;\n\n\n\n\nLexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)\nLexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time"
+    "text": "Every environment has a parent environment\n\nAllows for lexical scoping\n\n\ne2a &lt;- rlang::env(d = 4, e = 5)\n\ne2b &lt;- rlang::env(e2a, a = 1, b = 2, c = 3)\n\nrlang::env_parent(e2b)\n\n#&gt; &lt;environment: 0x562088b18b00&gt;\n\nrlang::env_parents(e2b)\n\n#&gt; [[1]]   &lt;env: 0x562088b18b00&gt;\n#&gt; [[2]] $ &lt;env: global&gt;\n\n\n\n\nLexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)\nLexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time"
   },
   {
     "objectID": "slides/07.html#only-the-empty-environment-does-not-have-a-parent",
@@ -1468,7 +1769,7 @@
     "href": "slides/07.html#all-environments-eventually-terminate-with-the-empty-environment",
     "title": "Environments",
     "section": "All environments eventually terminate with the empty environment",
-    "text": "All environments eventually terminate with the empty environment\n\nrlang::env_parents(e2b, last = rlang::empty_env())\n\n#&gt;  [[1]]   &lt;env: 0x561503a0f5f0&gt;\n#&gt;  [[2]] $ &lt;env: global&gt;\n#&gt;  [[3]] $ &lt;env: package:stats&gt;\n#&gt;  [[4]] $ &lt;env: package:graphics&gt;\n#&gt;  [[5]] $ &lt;env: package:grDevices&gt;\n#&gt;  [[6]] $ &lt;env: package:utils&gt;\n#&gt;  [[7]] $ &lt;env: package:datasets&gt;\n#&gt;  [[8]] $ &lt;env: package:methods&gt;\n#&gt;  [[9]] $ &lt;env: Autoloads&gt;\n#&gt; [[10]] $ &lt;env: package:base&gt;\n#&gt; [[11]] $ &lt;env: empty&gt;\n\n\n\nThe empty enviornment typically isn’t shown but can be displayed by setting the last parameter of rlang::env_parents()"
+    "text": "All environments eventually terminate with the empty environment\n\nrlang::env_parents(e2b, last = rlang::empty_env())\n\n#&gt;  [[1]]   &lt;env: 0x562088b18b00&gt;\n#&gt;  [[2]] $ &lt;env: global&gt;\n#&gt;  [[3]] $ &lt;env: package:stats&gt;\n#&gt;  [[4]] $ &lt;env: package:graphics&gt;\n#&gt;  [[5]] $ &lt;env: package:grDevices&gt;\n#&gt;  [[6]] $ &lt;env: package:utils&gt;\n#&gt;  [[7]] $ &lt;env: package:datasets&gt;\n#&gt;  [[8]] $ &lt;env: package:methods&gt;\n#&gt;  [[9]] $ &lt;env: Autoloads&gt;\n#&gt; [[10]] $ &lt;env: package:base&gt;\n#&gt; [[11]] $ &lt;env: empty&gt;\n\n\n\nThe empty enviornment typically isn’t shown but can be displayed by setting the last parameter of rlang::env_parents()"
   },
   {
     "objectID": "slides/07.html#be-wary-of-using--",
@@ -1867,7 +2168,7 @@
     "href": "slides/03.html#session-info",
     "title": "Vectors",
     "section": "Session Info",
-    "text": "Session Info\n\nlibrary(\"dplyr\")\nlibrary(\"gt\")\nlibrary(\"palmerpenguins\")\n\n\n\nSession Info\n\n\nutils::sessionInfo()\n\n#&gt; R version 4.5.2 (2025-10-31)\n#&gt; Platform: x86_64-pc-linux-gnu\n#&gt; Running under: Ubuntu 24.04.3 LTS\n#&gt; \n#&gt; Matrix products: default\n#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 \n#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0\n#&gt; \n#&gt; locale:\n#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       \n#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   \n#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          \n#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   \n#&gt; \n#&gt; time zone: UTC\n#&gt; tzcode source: system (glibc)\n#&gt; \n#&gt; attached base packages:\n#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     \n#&gt; \n#&gt; other attached packages:\n#&gt; [1] palmerpenguins_0.1.1 gt_1.1.0             dplyr_1.1.4         \n#&gt; \n#&gt; loaded via a namespace (and not attached):\n#&gt;  [1] digest_0.6.37     R6_2.6.1          fastmap_1.2.0     tidyselect_1.2.1 \n#&gt;  [5] xfun_0.54         magrittr_2.0.4    glue_1.8.0        tibble_3.3.0     \n#&gt;  [9] knitr_1.50        pkgconfig_2.0.3   htmltools_0.5.8.1 rmarkdown_2.30   \n#&gt; [13] generics_0.1.4    lifecycle_1.0.4   xml2_1.4.1        cli_3.6.5        \n#&gt; [17] vctrs_0.6.5       compiler_4.5.2    tools_4.5.2       pillar_1.11.1    \n#&gt; [21] evaluate_1.0.5    yaml_2.3.10       fs_1.6.6          rlang_1.1.6      \n#&gt; [25] jsonlite_2.0.0"
+    "text": "Session Info\n\nlibrary(\"dplyr\")\nlibrary(\"gt\")\nlibrary(\"palmerpenguins\")\n\n\n\nSession Info\n\n\nutils::sessionInfo()\n\n#&gt; R version 4.5.2 (2025-10-31)\n#&gt; Platform: x86_64-pc-linux-gnu\n#&gt; Running under: Ubuntu 24.04.3 LTS\n#&gt; \n#&gt; Matrix products: default\n#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 \n#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0\n#&gt; \n#&gt; locale:\n#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       \n#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   \n#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          \n#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   \n#&gt; \n#&gt; time zone: UTC\n#&gt; tzcode source: system (glibc)\n#&gt; \n#&gt; attached base packages:\n#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     \n#&gt; \n#&gt; other attached packages:\n#&gt; [1] palmerpenguins_0.1.1 gt_1.1.0             dplyr_1.1.4         \n#&gt; \n#&gt; loaded via a namespace (and not attached):\n#&gt;  [1] digest_0.6.38     R6_2.6.1          fastmap_1.2.0     tidyselect_1.2.1 \n#&gt;  [5] xfun_0.54         magrittr_2.0.4    glue_1.8.0        tibble_3.3.0     \n#&gt;  [9] knitr_1.50        pkgconfig_2.0.3   htmltools_0.5.8.1 rmarkdown_2.30   \n#&gt; [13] generics_0.1.4    lifecycle_1.0.4   xml2_1.4.1        cli_3.6.5        \n#&gt; [17] vctrs_0.6.5       compiler_4.5.2    tools_4.5.2       pillar_1.11.1    \n#&gt; [21] evaluate_1.0.5    yaml_2.3.10       fs_1.6.6          rlang_1.1.6      \n#&gt; [25] jsonlite_2.0.0"
   },
   {
     "objectID": "slides/03.html#aperitif",
@@ -2287,14 +2588,14 @@
     "href": "slides/03.html#dates-times-posixct",
     "title": "Vectors",
     "section": "Dates-times: POSIXct",
-    "text": "Dates-times: POSIXct\nWe’ll focus on POSIXct because:\n\nSimplest\nBuilt on an atomic (double) vector\nMost appropriate for use in a data frame\n\nLet’s now build and deconstruct a Date-time\n\n# Build\nnote_date_time &lt;- as.POSIXct(\n  x = Sys.time(), # time\n  tz = \"America/New_York\" # time zone, used only for formatting\n)\n\n# Inspect\nnote_date_time\n\n#&gt; [1] \"2025-11-11 11:43:21 EST\"\n\n# - type\ntypeof(note_date_time)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(note_date_time)\n\n#&gt; $class\n#&gt; [1] \"POSIXct\" \"POSIXt\" \n#&gt; \n#&gt; $tzone\n#&gt; [1] \"America/New_York\"\n\nstructure(note_date_time, tzone = \"Europe/Paris\")\n\n#&gt; [1] \"2025-11-11 17:43:21 CET\"\n\n\n\ndate_time &lt;- as.POSIXct(\"2024-02-22 12:34:56\", tz = \"EST\")\nunclass(date_time)\n\n#&gt; [1] 1708623296\n#&gt; attr(,\"tzone\")\n#&gt; [1] \"EST\""
+    "text": "Dates-times: POSIXct\nWe’ll focus on POSIXct because:\n\nSimplest\nBuilt on an atomic (double) vector\nMost appropriate for use in a data frame\n\nLet’s now build and deconstruct a Date-time\n\n# Build\nnote_date_time &lt;- as.POSIXct(\n  x = Sys.time(), # time\n  tz = \"America/New_York\" # time zone, used only for formatting\n)\n\n# Inspect\nnote_date_time\n\n#&gt; [1] \"2025-11-18 06:12:07 EST\"\n\n# - type\ntypeof(note_date_time)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(note_date_time)\n\n#&gt; $class\n#&gt; [1] \"POSIXct\" \"POSIXt\" \n#&gt; \n#&gt; $tzone\n#&gt; [1] \"America/New_York\"\n\nstructure(note_date_time, tzone = \"Europe/Paris\")\n\n#&gt; [1] \"2025-11-18 12:12:07 CET\"\n\n\n\ndate_time &lt;- as.POSIXct(\"2024-02-22 12:34:56\", tz = \"EST\")\nunclass(date_time)\n\n#&gt; [1] 1708623296\n#&gt; attr(,\"tzone\")\n#&gt; [1] \"EST\""
   },
   {
     "objectID": "slides/03.html#durations",
     "href": "slides/03.html#durations",
     "title": "Vectors",
     "section": "Durations",
-    "text": "Durations\nDurations represent the amount of time between pairs of dates or date-times.\n\nDouble vectors\nClass: “difftime”\nAttributes: “units”, or the unit of duration (e.g., weeks, hours, minutes, seconds, etc.)\n\n\n# Construct\none_minute &lt;- as.difftime(1, units = \"mins\")\n# Inspect\none_minute\n\n#&gt; Time difference of 1 mins\n\n# Dissect\n# - type\ntypeof(one_minute)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(one_minute)\n\n#&gt; $class\n#&gt; [1] \"difftime\"\n#&gt; \n#&gt; $units\n#&gt; [1] \"mins\"\n\n\n\ntime_since_01_01_1970 &lt;- notes_date - date\ntime_since_01_01_1970\n\n#&gt; Time difference of 20372 days\n\n\nSee also:\n\nlubridate::make_difftime()\nclock::date_time_build()"
+    "text": "Durations\nDurations represent the amount of time between pairs of dates or date-times.\n\nDouble vectors\nClass: “difftime”\nAttributes: “units”, or the unit of duration (e.g., weeks, hours, minutes, seconds, etc.)\n\n\n# Construct\none_minute &lt;- as.difftime(1, units = \"mins\")\n# Inspect\none_minute\n\n#&gt; Time difference of 1 mins\n\n# Dissect\n# - type\ntypeof(one_minute)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(one_minute)\n\n#&gt; $class\n#&gt; [1] \"difftime\"\n#&gt; \n#&gt; $units\n#&gt; [1] \"mins\"\n\n\n\ntime_since_01_01_1970 &lt;- notes_date - date\ntime_since_01_01_1970\n\n#&gt; Time difference of 20379 days\n\n\nSee also:\n\nlubridate::make_difftime()\nclock::date_time_build()"
   },
   {
     "objectID": "slides/03.html#exercises-13",
@@ -3181,7 +3482,7 @@
     "href": "slides/06.html#function-composition",
     "title": "Functions",
     "section": "Function composition",
-    "text": "Function composition\n\nx &lt;- runif(100)\n# Nested function calls\nsquare &lt;- function(x) x^2\ndeviation &lt;- function(x) x - mean(x)\nsqrt(mean(square(deviation(x))))\n\n#&gt; [1] 0.2723496\n\n\n\n# intermediate result\nout &lt;- deviation(x)\nout &lt;- square(out)\nout &lt;- mean(out)\nout &lt;- sqrt(out)\nout\n\n#&gt; [1] 0.2723496\n\n\n\n# Pipe workflow\nx |&gt; \n  deviation() |&gt;\n  square() |&gt;\n  mean() |&gt;\n  sqrt()\n\n#&gt; [1] 0.2723496"
+    "text": "Function composition\n\nx &lt;- runif(100)\n# Nested function calls\nsquare &lt;- function(x) x^2\ndeviation &lt;- function(x) x - mean(x)\nsqrt(mean(square(deviation(x))))\n\n#&gt; [1] 0.3020604\n\n\n\n# intermediate result\nout &lt;- deviation(x)\nout &lt;- square(out)\nout &lt;- mean(out)\nout &lt;- sqrt(out)\nout\n\n#&gt; [1] 0.3020604\n\n\n\n# Pipe workflow\nx |&gt; \n  deviation() |&gt;\n  square() |&gt;\n  mean() |&gt;\n  sqrt()\n\n#&gt; [1] 0.3020604"
   },
   {
     "objectID": "slides/06.html#more-about-functions-insights",
@@ -3202,7 +3503,7 @@
     "href": "slides/06.html#case-study-sir-model-function",
     "title": "Functions",
     "section": "Case Study: SIR model function",
-    "text": "Case Study: SIR model function\nThis is an interesting example taken from a course on Coursera: Infectious disease modelling-ICL\nThe purpose of this example is to show how to make a model passing through making a function.\nFirst we need to load some useful libraries:\n\nlibrary(deSolve)\nlibrary(reshape2)\n\nThen set the model inputs:\n\npopulation size (N)\nnumber of susceptable (S)\ninfected (I)\nrecovered (R)\n\nAnd add the model parameters:\n\ninfection rate (\\(\\beta\\))\nrecovery rate (\\(\\gamma\\))\n\n\nN&lt;- 100000                  # population\n\nstate_values&lt;- c(S = N -1,   # susceptible\n                 I = 1,      # infected\n                 R = 0)      # recovered\n\nparameters&lt;- c(beta = 1/2,  # infection rate days^-1\n               gamma = 1/4) # recovery rate days^-1\n\nThen we set the time as an important factor, which defines the length of time we are looking at this model run. It is intended as the time range in which the infections spread out, let’s say that we are aiming to investigate an infection period of 100 days.\n\ntimes&lt;- seq(0, 100, by = 1)\n\nFinally, we set up the SIR model, the susceptable, infected and recovered model. How do we do that is passing the paramenters through a function of the time, and state.\nWithin the model function we calculate one more paramenter, the force of infection: \\(\\lambda\\)\n\nsir_model&lt;- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    N&lt;- S + I + R\n    lambda = beta * I/N    # force of infection\n    dS&lt;- - lambda * S \n    dI&lt;- lambda * S - gamma * I\n    dR&lt;- gamma * I\n    return(list(c(dS,dI,dR)))\n  })\n}\n\nOnce we have our SIR model function ready, we can calculate the output of the model, with the help of the function ode() from {deSolve} package.\n\noutput&lt;- as.data.frame(ode(y = state_values,\n                           times = times,\n                           func = sir_model,\n                           parms = parameters))\noutput %&gt;% head\n\n#&gt;   time        S        I         R\n#&gt; 1    0 99999.00 1.000000 0.0000000\n#&gt; 2    1 99998.43 1.284018 0.2840252\n#&gt; 3    2 99997.70 1.648696 0.6487171\n#&gt; 4    3 99996.77 2.116939 1.1169863\n#&gt; 5    4 99995.56 2.718152 1.7182450\n#&gt; 6    5 99994.02 3.490086 2.4902600\n\n\nIn addition to our builtin SIR model function we can have a look at:\n\n?deSolve::ode()\n\nIt solves Ordinary Differential Equations.\n\ndeSolve:::ode\n\n#&gt; function (y, times, func, parms, method = c(\"lsoda\", \"lsode\", \n#&gt;     \"lsodes\", \"lsodar\", \"vode\", \"daspk\", \"euler\", \"rk4\", \"ode23\", \n#&gt;     \"ode45\", \"radau\", \"bdf\", \"bdf_d\", \"adams\", \"impAdams\", \"impAdams_d\", \n#&gt;     \"iteration\"), ...) \n#&gt; {\n#&gt;     if (is.null(method)) \n#&gt;         method &lt;- \"lsoda\"\n#&gt;     if (is.list(method)) {\n#&gt;         if (!inherits(method, \"rkMethod\")) \n#&gt;             stop(\"'method' should be given as string or as a list of class 'rkMethod'\")\n#&gt;         out &lt;- rk(y, times, func, parms, method = method, ...)\n#&gt;     }\n#&gt;     else if (is.function(method)) \n#&gt;         out &lt;- method(y, times, func, parms, ...)\n#&gt;     else if (is.complex(y)) \n#&gt;         out &lt;- switch(match.arg(method), vode = zvode(y, times, \n#&gt;             func, parms, ...), bdf = zvode(y, times, func, parms, \n#&gt;             mf = 22, ...), bdf_d = zvode(y, times, func, parms, \n#&gt;             mf = 23, ...), adams = zvode(y, times, func, parms, \n#&gt;             mf = 10, ...), impAdams = zvode(y, times, func, parms, \n#&gt;             mf = 12, ...), impAdams_d = zvode(y, times, func, \n#&gt;             parms, mf = 13, ...))\n#&gt;     else out &lt;- switch(match.arg(method), lsoda = lsoda(y, times, \n#&gt;         func, parms, ...), vode = vode(y, times, func, parms, \n#&gt;         ...), lsode = lsode(y, times, func, parms, ...), lsodes = lsodes(y, \n#&gt;         times, func, parms, ...), lsodar = lsodar(y, times, func, \n#&gt;         parms, ...), daspk = daspk(y, times, func, parms, ...), \n#&gt;         euler = rk(y, times, func, parms, method = \"euler\", ...), \n#&gt;         rk4 = rk(y, times, func, parms, method = \"rk4\", ...), \n#&gt;         ode23 = rk(y, times, func, parms, method = \"ode23\", ...), \n#&gt;         ode45 = rk(y, times, func, parms, method = \"ode45\", ...), \n#&gt;         radau = radau(y, times, func, parms, ...), bdf = lsode(y, \n#&gt;             times, func, parms, mf = 22, ...), bdf_d = lsode(y, \n#&gt;             times, func, parms, mf = 23, ...), adams = lsode(y, \n#&gt;             times, func, parms, mf = 10, ...), impAdams = lsode(y, \n#&gt;             times, func, parms, mf = 12, ...), impAdams_d = lsode(y, \n#&gt;             times, func, parms, mf = 13, ...), iteration = iteration(y, \n#&gt;             times, func, parms, ...))\n#&gt;     return(out)\n#&gt; }\n#&gt; &lt;bytecode: 0x55e0c826e348&gt;\n#&gt; &lt;environment: namespace:deSolve&gt;\n\n\n\nmethods(\"ode\")\n\n#&gt; [1] ode.1D   ode.2D   ode.3D   ode.band\n#&gt; see '?methods' for accessing help and source code"
+    "text": "Case Study: SIR model function\nThis is an interesting example taken from a course on Coursera: Infectious disease modelling-ICL\nThe purpose of this example is to show how to make a model passing through making a function.\nFirst we need to load some useful libraries:\n\nlibrary(deSolve)\nlibrary(reshape2)\n\nThen set the model inputs:\n\npopulation size (N)\nnumber of susceptable (S)\ninfected (I)\nrecovered (R)\n\nAnd add the model parameters:\n\ninfection rate (\\(\\beta\\))\nrecovery rate (\\(\\gamma\\))\n\n\nN&lt;- 100000                  # population\n\nstate_values&lt;- c(S = N -1,   # susceptible\n                 I = 1,      # infected\n                 R = 0)      # recovered\n\nparameters&lt;- c(beta = 1/2,  # infection rate days^-1\n               gamma = 1/4) # recovery rate days^-1\n\nThen we set the time as an important factor, which defines the length of time we are looking at this model run. It is intended as the time range in which the infections spread out, let’s say that we are aiming to investigate an infection period of 100 days.\n\ntimes&lt;- seq(0, 100, by = 1)\n\nFinally, we set up the SIR model, the susceptable, infected and recovered model. How do we do that is passing the paramenters through a function of the time, and state.\nWithin the model function we calculate one more paramenter, the force of infection: \\(\\lambda\\)\n\nsir_model&lt;- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    N&lt;- S + I + R\n    lambda = beta * I/N    # force of infection\n    dS&lt;- - lambda * S \n    dI&lt;- lambda * S - gamma * I\n    dR&lt;- gamma * I\n    return(list(c(dS,dI,dR)))\n  })\n}\n\nOnce we have our SIR model function ready, we can calculate the output of the model, with the help of the function ode() from {deSolve} package.\n\noutput&lt;- as.data.frame(ode(y = state_values,\n                           times = times,\n                           func = sir_model,\n                           parms = parameters))\noutput %&gt;% head\n\n#&gt;   time        S        I         R\n#&gt; 1    0 99999.00 1.000000 0.0000000\n#&gt; 2    1 99998.43 1.284018 0.2840252\n#&gt; 3    2 99997.70 1.648696 0.6487171\n#&gt; 4    3 99996.77 2.116939 1.1169863\n#&gt; 5    4 99995.56 2.718152 1.7182450\n#&gt; 6    5 99994.02 3.490086 2.4902600\n\n\nIn addition to our builtin SIR model function we can have a look at:\n\n?deSolve::ode()\n\nIt solves Ordinary Differential Equations.\n\ndeSolve:::ode\n\n#&gt; function (y, times, func, parms, method = c(\"lsoda\", \"lsode\", \n#&gt;     \"lsodes\", \"lsodar\", \"vode\", \"daspk\", \"euler\", \"rk4\", \"ode23\", \n#&gt;     \"ode45\", \"radau\", \"bdf\", \"bdf_d\", \"adams\", \"impAdams\", \"impAdams_d\", \n#&gt;     \"iteration\"), ...) \n#&gt; {\n#&gt;     if (is.null(method)) \n#&gt;         method &lt;- \"lsoda\"\n#&gt;     if (is.list(method)) {\n#&gt;         if (!inherits(method, \"rkMethod\")) \n#&gt;             stop(\"'method' should be given as string or as a list of class 'rkMethod'\")\n#&gt;         out &lt;- rk(y, times, func, parms, method = method, ...)\n#&gt;     }\n#&gt;     else if (is.function(method)) \n#&gt;         out &lt;- method(y, times, func, parms, ...)\n#&gt;     else if (is.complex(y)) \n#&gt;         out &lt;- switch(match.arg(method), vode = zvode(y, times, \n#&gt;             func, parms, ...), bdf = zvode(y, times, func, parms, \n#&gt;             mf = 22, ...), bdf_d = zvode(y, times, func, parms, \n#&gt;             mf = 23, ...), adams = zvode(y, times, func, parms, \n#&gt;             mf = 10, ...), impAdams = zvode(y, times, func, parms, \n#&gt;             mf = 12, ...), impAdams_d = zvode(y, times, func, \n#&gt;             parms, mf = 13, ...))\n#&gt;     else out &lt;- switch(match.arg(method), lsoda = lsoda(y, times, \n#&gt;         func, parms, ...), vode = vode(y, times, func, parms, \n#&gt;         ...), lsode = lsode(y, times, func, parms, ...), lsodes = lsodes(y, \n#&gt;         times, func, parms, ...), lsodar = lsodar(y, times, func, \n#&gt;         parms, ...), daspk = daspk(y, times, func, parms, ...), \n#&gt;         euler = rk(y, times, func, parms, method = \"euler\", ...), \n#&gt;         rk4 = rk(y, times, func, parms, method = \"rk4\", ...), \n#&gt;         ode23 = rk(y, times, func, parms, method = \"ode23\", ...), \n#&gt;         ode45 = rk(y, times, func, parms, method = \"ode45\", ...), \n#&gt;         radau = radau(y, times, func, parms, ...), bdf = lsode(y, \n#&gt;             times, func, parms, mf = 22, ...), bdf_d = lsode(y, \n#&gt;             times, func, parms, mf = 23, ...), adams = lsode(y, \n#&gt;             times, func, parms, mf = 10, ...), impAdams = lsode(y, \n#&gt;             times, func, parms, mf = 12, ...), impAdams_d = lsode(y, \n#&gt;             times, func, parms, mf = 13, ...), iteration = iteration(y, \n#&gt;             times, func, parms, ...))\n#&gt;     return(out)\n#&gt; }\n#&gt; &lt;bytecode: 0x55b492ce7ff0&gt;\n#&gt; &lt;environment: namespace:deSolve&gt;\n\n\n\nmethods(\"ode\")\n\n#&gt; [1] ode.1D   ode.2D   ode.3D   ode.band\n#&gt; see '?methods' for accessing help and source code"
   },
   {
     "objectID": "slides/08.html#learning-objectives",
@@ -3426,7 +3727,7 @@
     "href": "slides/10.html#why-function-factories-work",
     "title": "Function factories",
     "section": "Why function factories work",
-    "text": "Why function factories work\nFunction factories are powered by three features of the R language:\n\nR has first-class functions\nR functions capture the environment in which they are created\nR functions create a new execution environment\n\n\n\n\nenv_print(square)\n\n#&gt; &lt;environment: 0x56445e4f9a38&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\nenv_print(cube)\n\n#&gt; &lt;environment: 0x56445e54fc68&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\n\nA language with first-class functions means the functions are objects that can be copied, bound, etc.\nWhen they are created, manufactured functions capture the environment of the function factory\nManufactured functions have separate environments"
+    "text": "Why function factories work\nFunction factories are powered by three features of the R language:\n\nR has first-class functions\nR functions capture the environment in which they are created\nR functions create a new execution environment\n\n\n\n\nenv_print(square)\n\n#&gt; &lt;environment: 0x56442f6175f0&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\nenv_print(cube)\n\n#&gt; &lt;environment: 0x56442f65d580&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\n\nA language with first-class functions means the functions are objects that can be copied, bound, etc.\nWhen they are created, manufactured functions capture the environment of the function factory\nManufactured functions have separate environments"
   },
   {
     "objectID": "slides/10.html#diagramming-function-factories",

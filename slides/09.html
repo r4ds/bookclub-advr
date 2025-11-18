@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.8.25">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
 
   <title>Advanced R Book Club – Functionals</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -268,11 +268,11 @@
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>randomise <span class="ot">&lt;-</span> <span class="cf">function</span>(f) <span class="fu">f</span>(<span class="fu">runif</span>(<span class="fl">1e3</span>))</span>
 <span id="cb1-2"><a></a><span class="fu">randomise</span>(mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.4992063</code></pre>
+<pre><code>#&gt; [1] 0.4924681</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">randomise</span>(sum)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 476.6927</code></pre>
+<pre><code>#&gt; [1] 506.548</code></pre>
 </div>
 </div>
 <p>Common examples:</p>
@@ -455,7 +455,7 @@
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">map2_dbl</span>(xs, ws, weighted.mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.3246127 0.3601246 0.4505961</code></pre>
+<pre><code>#&gt; [1] 0.6534310 0.4834761 0.1343670</code></pre>
 </div>
 </div>
 </section>
@@ -490,7 +490,7 @@
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="sc">~</span> <span class="fu">sample</span>(<span class="dv">100</span>, <span class="dv">5</span>))</span>
 <span id="cb37-2"><a></a><span class="fu">imap_chr</span>(x, <span class="sc">~</span> <span class="fu">paste0</span>(<span class="st">"The max of element "</span>, .y, <span class="st">" is "</span>, <span class="fu">max</span>(.x)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "The max of element 1 is 99" "The max of element 2 is 97"</code></pre>
+<pre><code>#&gt; [1] "The max of element 1 is 68"  "The max of element 2 is 100"</code></pre>
 </div>
 </div>
 </section>
@@ -511,10 +511,10 @@
 <span id="cb39-7"><a></a><span class="fu">pmap</span>(params, runif)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [[1]]
-#&gt; [1] 0.5444131
+#&gt; [1] 0.07899593
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 48.07406 40.90175</code></pre>
+#&gt; [1] 25.17984 77.95591</code></pre>
 </div>
 </div>
 </section>

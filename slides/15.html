@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.8.25">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
 
   <title>Advanced R Book Club – S4</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -199,349 +199,1055 @@
 </div>
 
 </section>
-<section id="introduction" class="slide level2">
-<h2>Introduction</h2>
-<p>Object consists of:</p>
+<section id="learning-objectives" class="slide level2">
+<h2>Learning Objectives</h2>
 <ul>
-<li>Slots. Like fields in R6.</li>
-<li>Methods. Accessed through generics. Dispatched to particular methods.</li>
-</ul>
-<p>Uses functions to define classes and their methods:</p>
-<ul>
-<li><code>setClass()</code>. Define class and its components.</li>
-<li><code>setGenerics()</code>. Define generic functions. Used to dispatch.</li>
-<li><code>setMethods()</code>. Define methods</li>
+<li>Identify the main components of S4 objects, including the new <strong>slot</strong> component</li>
+<li>Learn best practices for creating new S4 classes and creating/modifying/accessing their objects</li>
+<li>“Understand” multiple inheritance, multiple dispatch, and appreciate their risks and complexity</li>
 </ul>
 </section>
-<section id="basics-overview" class="slide level2">
-<h2>Basics overview</h2>
-<h3 id="set-class">Set class</h3>
-<p>Define the class:</p>
+<section id="not-learning-objectives" class="slide level2">
+<h2>Not Learning Objectives</h2>
+<ul>
+<li>How to most effectively deploy S4
+<ul>
+<li>No single reference.</li>
+<li>Existing references often conflict.</li>
+</ul></li>
+</ul>
+</section>
+<section>
+<section id="basics" class="title-slide slide level1 center">
+<h1>Basics</h1>
+
+</section>
+<section id="all-functions-related-to-s4-live-in-the-methods-package" class="slide level2">
+<h2>All functions related to S4 live in the <code>{methods}</code> package</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">setClass</span>(<span class="st">"Person"</span>, </span>
-<span id="cb1-2"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
-<span id="cb1-3"><a></a>    <span class="at">name =</span> <span class="st">"character"</span>, </span>
-<span id="cb1-4"><a></a>    <span class="at">age =</span> <span class="st">"numeric"</span></span>
-<span id="cb1-5"><a></a>  )</span>
-<span id="cb1-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(methods)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Create an instance of the class</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>john <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> <span class="st">"John Smith"</span>, <span class="at">age =</span> <span class="cn">NA_real_</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<h3 id="set-generics">Set generics</h3>
-<p>Define generic functions for setting and getting the age slot</p>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>Best practice to explicitly call <code>library(methods)</code> since it is not loaded by default in non-interactive environments (i.e.&nbsp;<code>Rscript</code>)</p>
+</div>
+</div>
+</div>
+</section>
+<section id="setclass-defines-an-s4-class-and-its-slots-new-creates-a-new-object" class="slide level2">
+<h2><code>setClass()</code> defines an S4 class and its slots; <code>new()</code> creates a new object</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># get the value</span></span>
-<span id="cb3-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"age"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"age"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">setClass</span>(<span class="st">"Person"</span>, </span>
+<span id="cb2-2"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb2-3"><a></a>    <span class="at">name =</span> <span class="st">"character"</span>, </span>
+<span id="cb2-4"><a></a>    <span class="at">age =</span> <span class="st">"numeric"</span></span>
+<span id="cb2-5"><a></a>  )</span>
+<span id="cb2-6"><a></a>)</span>
+<span id="cb2-7"><a></a></span>
+<span id="cb2-8"><a></a>john <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> <span class="st">"John Smith"</span>, <span class="at">age =</span> <span class="cn">NA_real_</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="access-slots-with-or-slot-but-dont-use-it-outside-of-your-own-methods" class="slide level2">
+<h2>Access slots with <code>@</code> or <code>slot()</code>, but don’t use it outside of your own methods</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>john<span class="sc">@</span>name</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "age"</code></pre>
+<pre><code>#&gt; [1] "John Smith"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="co"># set the value</span></span>
-<span id="cb5-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"age&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"age&lt;-"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">slot</span>(john, <span class="st">"age"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "age&lt;-"</code></pre>
+<pre><code>#&gt; [1] NA</code></pre>
 </div>
 </div>
-<h3 id="set-methods">Set methods</h3>
-<p>Define methods for the generics:</p>
+</section>
+<section id="supply-accessor-functions-for-others-to-use-with-your-class" class="slide level2">
+<h2>Supply <em>accessor</em> functions for others to use with your class</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="co"># get the value</span></span>
-<span id="cb7-2"><a></a><span class="fu">setMethod</span>(<span class="st">"age"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>age)</span>
-<span id="cb7-3"><a></a><span class="co"># set the value</span></span>
-<span id="cb7-4"><a></a><span class="fu">setMethod</span>(<span class="st">"age&lt;-"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, value) {</span>
-<span id="cb7-5"><a></a>  x<span class="sc">@</span>age <span class="ot">&lt;-</span> value</span>
-<span id="cb7-6"><a></a>  x</span>
-<span id="cb7-7"><a></a>})</span>
-<span id="cb7-8"><a></a></span>
-<span id="cb7-9"><a></a><span class="co"># set the value</span></span>
-<span id="cb7-10"><a></a><span class="fu">age</span>(john) <span class="ot">&lt;-</span> <span class="dv">50</span></span>
-<span id="cb7-11"><a></a><span class="co"># get the value</span></span>
-<span id="cb7-12"><a></a><span class="fu">age</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"age"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"age"</span>))</span>
+<span id="cb7-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"age&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"age&lt;-"</span>))</span>
+<span id="cb7-3"><a></a></span>
+<span id="cb7-4"><a></a><span class="fu">setMethod</span>(<span class="st">"age"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>age)</span>
+<span id="cb7-5"><a></a><span class="fu">setMethod</span>(<span class="st">"age&lt;-"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, value) {</span>
+<span id="cb7-6"><a></a>  x<span class="sc">@</span>age <span class="ot">&lt;-</span> value</span>
+<span id="cb7-7"><a></a>  x</span>
+<span id="cb7-8"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">age</span>(john) <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb8-2"><a></a><span class="fu">age</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 50</code></pre>
 </div>
 </div>
-<p>To give a flavor, there is only one method per slot. In more realistic cases, there might be several methods.</p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>Look for accessor functions when working with classes maintained by others</p>
+</div>
+</div>
+</div>
 </section>
-<section id="details-on-defining-the-class" class="slide level2 scrollable">
-<h2>Details on defining the class</h2>
-<h3 id="inheritance">Inheritance</h3>
+<section id="sloop-can-help-you-identify-s4-objects-and-generics" class="slide level2">
+<h2><code>{sloop}</code> can help you identify S4 objects and generics</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">setClass</span>(<span class="st">"Employee"</span>, </span>
-<span id="cb9-2"><a></a>  <span class="at">contains =</span> <span class="st">"Person"</span>, </span>
-<span id="cb9-3"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
-<span id="cb9-4"><a></a>    <span class="at">boss =</span> <span class="st">"Person"</span></span>
-<span id="cb9-5"><a></a>  ),</span>
-<span id="cb9-6"><a></a>  <span class="at">prototype =</span> <span class="fu">list</span>(</span>
-<span id="cb9-7"><a></a>    <span class="at">boss =</span> <span class="fu">new</span>(<span class="st">"Person"</span>)</span>
-<span id="cb9-8"><a></a>  )</span>
-<span id="cb9-9"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<h3 id="instantiation">Instantiation</h3>
-<p>Create an instance of the class at two levels:</p>
-<ul>
-<li>For developer (you): <code>methods::new()</code></li>
-<li>For user: constructor function</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="co"># how user constructs an instance</span></span>
-<span id="cb10-2"><a></a>Person <span class="ot">&lt;-</span> <span class="cf">function</span>(name, <span class="at">age =</span> <span class="cn">NA</span>) {</span>
-<span id="cb10-3"><a></a>  age <span class="ot">&lt;-</span> <span class="fu">as.double</span>(age)</span>
-<span id="cb10-4"><a></a>  </span>
-<span id="cb10-5"><a></a>  <span class="co"># how the developer constructs an instance</span></span>
-<span id="cb10-6"><a></a>  <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> name, <span class="at">age =</span> age)</span>
-<span id="cb10-7"><a></a>}</span>
-<span id="cb10-8"><a></a></span>
-<span id="cb10-9"><a></a><span class="fu">Person</span>(<span class="st">"Someone"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>sloop<span class="sc">::</span><span class="fu">otype</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; An object of class "Person"
-#&gt; Slot "name":
-#&gt; [1] "Someone"
-#&gt; 
-#&gt; Slot "age":
-#&gt; [1] NA</code></pre>
+<pre><code>#&gt; [1] "S4"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>sloop<span class="sc">::</span><span class="fu">ftype</span>(age)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "S4"      "generic"</code></pre>
 </div>
 </div>
-<h3 id="validation">Validation</h3>
-<p>S4 objects</p>
+</section></section>
+<section>
+<section id="classes" class="title-slide slide level1 center">
+<h1>Classes</h1>
+
+</section>
+<section id="setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored." class="slide level2" data-transition="none-out">
+<h2><code>setClass()</code> has 4 arguments you should use. The rest should be ignored.</h2>
 <ul>
-<li>Check class of slot at creation</li>
+<li><code>Class</code> sets the class name.
+<ul>
+<li>By convention use <code>UpperCamelCase</code></li>
+</ul></li>
+<li><code>slots</code> sets the available slots (fields) using a named character vector of classes</li>
+<li><code>prototype</code> list default values for each slot
+<ul>
+<li>Always provide <code>prototype</code>, even though its optional</li>
+</ul></li>
+<li><code>contains</code> specifies classes to inherit slots from</li>
 </ul>
+</section>
+<section id="setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.-1" class="slide level2" data-transition="none">
+<h2><code>setClass()</code> has 4 arguments you should use. The rest should be ignored.</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">Person</span>(mtcars)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">setClass</span>(<span class="st">"Person"</span>, </span>
+<span id="cb14-2"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb14-3"><a></a>    <span class="at">name =</span> <span class="st">"character"</span>, </span>
+<span id="cb14-4"><a></a>    <span class="at">age =</span> <span class="st">"numeric"</span></span>
+<span id="cb14-5"><a></a>  ), </span>
+<span id="cb14-6"><a></a>  <span class="at">prototype =</span> <span class="fu">list</span>(</span>
+<span id="cb14-7"><a></a>    <span class="at">name =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb14-8"><a></a>    <span class="at">age =</span> <span class="cn">NA_real_</span></span>
+<span id="cb14-9"><a></a>  )</span>
+<span id="cb14-10"><a></a>)</span>
+<span id="cb14-11"><a></a></span>
+<span id="cb14-12"><a></a>me <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> <span class="st">"Hadley"</span>)</span>
+<span id="cb14-13"><a></a><span class="fu">str</span>(me)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Formal class 'Person' [package ".GlobalEnv"] with 2 slots
+#&gt;   ..@ name: chr "Hadley"
+#&gt;   ..@ age : num NA</code></pre>
+</div>
+</div>
+</section>
+<section id="setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.-2" class="slide level2" data-transition="none">
+<h2><code>setClass()</code> has 4 arguments you should use. The rest should be ignored.</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">setClass</span>(<span class="st">"Employee"</span>, </span>
+<span id="cb16-2"><a></a>  <span class="at">contains =</span> <span class="st">"Person"</span>, </span>
+<span id="cb16-3"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb16-4"><a></a>    <span class="at">boss =</span> <span class="st">"Person"</span></span>
+<span id="cb16-5"><a></a>  ),</span>
+<span id="cb16-6"><a></a>  <span class="at">prototype =</span> <span class="fu">list</span>(</span>
+<span id="cb16-7"><a></a>    <span class="at">boss =</span> <span class="fu">new</span>(<span class="st">"Person"</span>)</span>
+<span id="cb16-8"><a></a>  )</span>
+<span id="cb16-9"><a></a>)</span>
+<span id="cb16-10"><a></a></span>
+<span id="cb16-11"><a></a><span class="fu">str</span>(<span class="fu">new</span>(<span class="st">"Employee"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Formal class 'Employee' [package ".GlobalEnv"] with 3 slots
+#&gt;   ..@ boss:Formal class 'Person' [package ".GlobalEnv"] with 2 slots
+#&gt;   .. .. ..@ name: chr NA
+#&gt;   .. .. ..@ age : num NA
+#&gt;   ..@ name: chr NA
+#&gt;   ..@ age : num NA</code></pre>
+</div>
+</div>
+</section>
+<section id="setclass-has-4-arguments-you-should-use.-the-rest-should-be-ignored.-3" class="slide level2" data-transition="none-in">
+<h2><code>setClass()</code> has 4 arguments you should use. The rest should be ignored.</h2>
+<div class="callout callout-caution callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Caution</strong></p>
+</div>
+<div class="callout-content">
+<p>Use <code>setClass()</code> with care. It’s possible to create invalid objects if you redefine a class after already having instantiated an object.</p>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">setClass</span>(<span class="st">"A"</span>, <span class="at">slots =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="st">"numeric"</span>))</span>
+<span id="cb18-2"><a></a>a <span class="ot">&lt;-</span> <span class="fu">new</span>(<span class="st">"A"</span>, <span class="at">x =</span> <span class="dv">10</span>)</span>
+<span id="cb18-3"><a></a></span>
+<span id="cb18-4"><a></a><span class="fu">setClass</span>(<span class="st">"A"</span>, <span class="at">slots =</span> <span class="fu">c</span>(<span class="at">a_different_slot =</span> <span class="st">"numeric"</span>))</span>
+<span id="cb18-5"><a></a>a</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; An object of class "A"
+#&gt; Slot "a_different_slot":</code></pre>
+</div>
 <div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in validObject(.Object): invalid class "Person" object: invalid object for slot "name" in class "Person": got class "data.frame", should be or extend class "character"</code></pre>
+<pre><code>#&gt; Error in slot(object, what): no slot of name "a_different_slot" for this object of class "A"</code></pre>
 </div>
 </div>
-<ul>
-<li>Do <strong>not</strong> check other things</li>
-</ul>
+</section>
+<section id="use-is-to-determine-an-objects-classes-or-test-for-a-specific-class" class="slide level2">
+<h2>Use <code>is()</code> to determine an objects classes or test for a specific class</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>, <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">37</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">is</span>(<span class="fu">new</span>(<span class="st">"Person"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Person"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a><span class="fu">is</span>(<span class="fu">new</span>(<span class="st">"Employee"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Employee" "Person"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="fu">is</span>(john, <span class="st">"Person"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="user-facing-classes-should-be-paired-with-a-helper-function-to-create-new-objects" class="slide level2">
+<h2>User-facing classes should be paired with a <strong>helper</strong> function to create new objects</h2>
+<div class="columns">
+<div class="column">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>Person <span class="ot">&lt;-</span> <span class="cf">function</span>(name, <span class="at">age =</span> <span class="cn">NA</span>) {</span>
+<span id="cb27-2"><a></a>  age <span class="ot">&lt;-</span> <span class="fu">as.double</span>(age)</span>
+<span id="cb27-3"><a></a>  </span>
+<span id="cb27-4"><a></a>  <span class="fu">new</span>(<span class="st">"Person"</span>, <span class="at">name =</span> name, <span class="at">age =</span> age)</span>
+<span id="cb27-5"><a></a>}</span>
+<span id="cb27-6"><a></a></span>
+<span id="cb27-7"><a></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; An object of class "Person"
 #&gt; Slot "name":
 #&gt; [1] "Hadley"
 #&gt; 
 #&gt; Slot "age":
-#&gt; [1] 30 37</code></pre>
+#&gt; [1] NA</code></pre>
 </div>
 </div>
-<p>That’s where validation comes in–at two stages:</p>
-<ol type="1">
-<li>At creation</li>
-<li>At modification</li>
-</ol>
-<h4 id="at-creation">At creation</h4>
+</div><div class="column">
+<ul>
+<li>Use the same name as the class.</li>
+<li>Craft user interface with carefully chosen defaults and useful conversions.</li>
+<li>Craft error messages tailored towards an end-user.</li>
+<li>Finish by calling <code>methods::new()</code>.</li>
+</ul>
+</div></div>
+</section>
+<section id="create-a-validator-to-enforce-rules-around-slot-values" class="slide level2">
+<h2>Create a <strong>validator</strong> to enforce rules around slot values</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<ul>
+<li>S4 automatically checks slots for the correct class</li>
+<li>Use <code>setValidity()</code> to enforce more complex rules</li>
+<li>Check validity with <code>validObject()</code></li>
+</ul>
+</div><div class="column" style="width:60%;">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">setValidity</span>(<span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
-<span id="cb16-2"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(object<span class="sc">@</span>name) <span class="sc">!=</span> <span class="fu">length</span>(object<span class="sc">@</span>age)) {</span>
-<span id="cb16-3"><a></a>    <span class="st">"@name and @age must be same length"</span></span>
-<span id="cb16-4"><a></a>  } <span class="cf">else</span> {</span>
-<span id="cb16-5"><a></a>    <span class="cn">TRUE</span></span>
-<span id="cb16-6"><a></a>  }</span>
-<span id="cb16-7"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="fu">setValidity</span>(<span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
+<span id="cb29-2"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(object<span class="sc">@</span>name) <span class="sc">!=</span> <span class="fu">length</span>(object<span class="sc">@</span>age)) {</span>
+<span id="cb29-3"><a></a>    <span class="st">"@name and @age must be same length"</span></span>
+<span id="cb29-4"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb29-5"><a></a>    <span class="cn">TRUE</span></span>
+<span id="cb29-6"><a></a>  }</span>
+<span id="cb29-7"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>, <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">37</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in validObject(.Object): invalid class "Person" object: @name and @age must be same length</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">validObject</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+</div></div>
+<div class="callout callout-caution callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Caution</strong></p>
+</div>
+<div class="callout-content">
+<p>Validity is only called automatically by <code>new()</code>. Slots can be modified with invalid values.</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="generics-methods" class="title-slide slide level1 center">
+<h1>Generics &amp; Methods</h1>
+
+</section>
+<section id="create-an-s4-generic-with-setgeneric-and-standardgeneric" class="slide level2">
+<h2>Create an S4 generic with <code>setGeneric()</code> and <code>standardGeneric()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"myGeneric"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"myGeneric"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>By convention use <code>lowerCamelCase</code></li>
+</ul>
+<div class="callout callout-caution callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Caution</strong></p>
+</div>
+<div class="callout-content">
+<p>Using <code>{}</code> in <code>function()</code> definition triggers a expensive special case and should be avoided.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="co"># Don't do this!</span></span>
+<span id="cb35-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"myGeneric"</span>, <span class="cf">function</span>(x) {</span>
+<span id="cb35-3"><a></a>  <span class="fu">standardGeneric</span>(<span class="st">"myGeneric"</span>)</span>
+<span id="cb35-4"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="use-the-signature-argument-of-setgeneric-to-help-control-dispatch" class="slide level2">
+<h2>Use the <code>signature</code> argument of <code>setGeneric()</code> to help control dispatch</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"myGeneric"</span>, </span>
+<span id="cb36-2"><a></a>  <span class="cf">function</span>(x, ..., <span class="at">verbose =</span> <span class="cn">TRUE</span>) <span class="fu">standardGeneric</span>(<span class="st">"myGeneric"</span>),</span>
+<span id="cb36-3"><a></a>  <span class="at">signature =</span> <span class="st">"x"</span></span>
+<span id="cb36-4"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>Without <code>signature</code> all arguments (except for <code>...</code>) are considered during dispatch</li>
+<li>Helpful for adding arguments like <code>verbose = TRUE</code> and <code>quiet = FALSE</code></li>
+</ul>
+</section>
+<section id="define-methods-using-setmethod" class="slide level2">
+<h2>Define methods using <code>setMethod()</code></h2>
+<ul>
+<li>Only use the following 3 arguments (never use others)
+<ul>
+<li><code>f</code>: the name of the generic</li>
+<li><code>signature</code>: class or classes to use for dispatch</li>
+<li><code>definition</code>: the function definition for the method</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="fu">setMethod</span>(<span class="st">"myGeneric"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) {</span>
+<span id="cb37-2"><a></a>  <span class="co"># method implementation</span></span>
+<span id="cb37-3"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="the-show-method-controls-how-the-object-is-printed." class="slide level2">
+<h2>The <code>show()</code> method controls how the object is printed.</h2>
+<ul>
+<li>It is the most commonly defined S4 method</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="co"># Determine arguments required</span></span>
+<span id="cb38-2"><a></a><span class="fu">args</span>(<span class="fu">getGeneric</span>(<span class="st">"show"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; function (object) 
+#&gt; NULL</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
+<span id="cb40-2"><a></a>  <span class="fu">cat</span>(<span class="fu">is</span>(object)[[<span class="dv">1</span>]], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb40-3"><a></a>      <span class="st">"  Name: "</span>, object<span class="sc">@</span>name, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb40-4"><a></a>      <span class="st">"  Age:  "</span>, object<span class="sc">@</span>age, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb40-5"><a></a>      <span class="at">sep =</span> <span class="st">""</span></span>
+<span id="cb40-6"><a></a>  )</span>
+<span id="cb40-7"><a></a>})</span>
+<span id="cb40-8"><a></a>john</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Person
+#&gt;   Name: John Smith
+#&gt;   Age:  50</code></pre>
+</div>
+</div>
+</section>
+<section id="all-user-accessible-slots-should-be-accompanied-by-a-pair-of-accessors" class="slide level2" data-transition="none-out">
+<h2>All user-accessible slots should be accompanied by a pair of <em>accessors</em></h2>
+<p>One for reading…</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"name"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"name"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "name"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>name)</span>
+<span id="cb44-2"><a></a></span>
+<span id="cb44-3"><a></a><span class="fu">name</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "John Smith"</code></pre>
+</div>
+</div>
+</section>
+<section id="all-user-accessible-slots-should-be-accompanied-by-a-pair-of-accessors-1" class="slide level2" data-transition="none-in">
+<h2>All user-accessible slots should be accompanied by a pair of <em>accessors</em></h2>
+<p>…and one for writing.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"name&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"name&lt;-"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "name&lt;-"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name&lt;-"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, value) {</span>
+<span id="cb48-2"><a></a>  x<span class="sc">@</span>name <span class="ot">&lt;-</span> value</span>
+<span id="cb48-3"><a></a>  <span class="fu">validObject</span>(x)</span>
+<span id="cb48-4"><a></a>  x</span>
+<span id="cb48-5"><a></a>})</span>
+<span id="cb48-6"><a></a></span>
+<span id="cb48-7"><a></a><span class="fu">name</span>(john) <span class="ot">&lt;-</span> <span class="st">"Jon Smythe"</span></span>
+<span id="cb48-8"><a></a><span class="fu">name</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Jon Smythe"</code></pre>
+</div>
+</div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>Always include <code>validObject()</code> in the setter function.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="use-methods-and-selectmethods-to-investigate-available-methods-for-a-generic-or-class" class="slide level2">
+<h2>Use <code>methods()</code> and <code>selectMethods()</code> to investigate available methods for a generic or class</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="fu">methods</span>(<span class="st">"age"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] age,Person-method
+#&gt; see '?methods' for accessing help and source code</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a><span class="fu">methods</span>(<span class="at">class =</span> <span class="st">"Person"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] age    age&lt;-  name   name&lt;- show  
+#&gt; see '?methods' for accessing help and source code</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a><span class="fu">selectMethod</span>(<span class="st">"age"</span>, <span class="st">"Person"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Method Definition:
+#&gt; 
+#&gt; function (x) 
+#&gt; x@age
+#&gt; 
+#&gt; Signatures:
+#&gt;         x       
+#&gt; target  "Person"
+#&gt; defined "Person"</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="method-dispatch" class="title-slide slide level1 center">
+<h1>Method Dispatch</h1>
+
+</section>
+<section id="s4-dispatch-is-complicated" class="slide level2">
+<h2>S4 dispatch is <strong>complicated</strong>!</h2>
+<ul>
+<li>Multiple inheritance, i.e.&nbsp;a class can have multiple parents</li>
+<li>Multiple dispatch, i.e.&nbsp;a generic can use multiple arguments to pick a method.</li>
+</ul>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>Keep method dispatch as simple as possible by avoiding multiple inheritance, and reserving multiple dispatch only for where it is absolutely necessary.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="it-can-help-to-visualize-dispatch-as-a-graph" class="slide level2">
+<h2>It can help to visualize dispatch as a graph</h2>
+
+<img data-src="https://adv-r.hadley.nz/diagrams/s4/emoji.png" class="r-stretch"></section>
+<section id="single-dispatch-is-straight-forward" class="slide level2">
+<h2>Single dispatch is straight forward</h2>
+
+<img data-src="https://adv-r.hadley.nz/diagrams/s4/single.png" class="r-stretch"></section>
+<section id="pseudo-classes-any-and-missing-can-help-define-useful-behaviors" class="slide level2">
+<h2>Pseudo-classes <code>ANY</code> and <code>MISSING</code> can help define useful behaviors</h2>
+<ul>
+<li><code>ANY</code> matches any class and is always at the end of a method graph</li>
+</ul>
+
+<img data-src="https://adv-r.hadley.nz/diagrams/s4/single-any.png" class="r-stretch"><ul>
+<li><code>MISSING</code> matches whenever an argument is missing
+<ul>
+<li>Useful for functions like <code>+</code> and <code>-</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="multiple-inheritance-is-tricky" class="slide level2">
+<h2>Multiple inheritance is tricky</h2>
+
+<img data-src="https://adv-r.hadley.nz/diagrams/s4/multiple.png" class="r-stretch"><p>Class with the shortest distance to the specified class gets dispatched.</p>
+</section>
+<section id="multiple-inheritance-can-lead-to-ambigious-method-dispatch" class="slide level2">
+<h2>Multiple inheritance can lead to ambigious method dispatch</h2>
+<div class="columns">
+<div class="column">
+<p><img data-src="https://adv-r.hadley.nz/diagrams/s4/multiple-ambig.png"></p>
+</div><div class="column">
+<ul>
+<li>Methods of equal distance cause ambiguous method dispatch and generate a warning</li>
+<li>Always resolve ambiguity by providing a more precise method</li>
+</ul>
+</div></div>
+</section>
+<section id="use-multiple-inheritance-with-extreme-care" class="slide level2">
+<h2>Use multiple inheritance with <em>extreme care</em></h2>
+<p>It is hard to prevent ambiguity, ensure every terminal method has an implementation, and minimize the number of defined methods.</p>
+
+<img data-src="https://adv-r.hadley.nz/diagrams/s4/multiple-all.png" class="r-stretch quarto-figure-center"><p class="caption">Only one of the above calls is free from problems.</p></section>
+<section id="multiple-dispatch-is-less-tricky-to-work-with-than-multiple-inheritance" class="slide level2">
+<h2>Multiple dispatch is less tricky to work with than multiple inheritance</h2>
+<ul>
+<li>Fewer terminal class combinations allow you to define a single method and have default behavior</li>
+</ul>
+
+<img data-src="https://adv-r.hadley.nz/diagrams/s4/single-single-ambig.png" class="r-stretch quarto-figure-center"><p class="caption">Classes are separated by a comma</p></section>
+<section id="multiple-dispatch-with-multiple-inheritance-is-complex" class="slide level2">
+<h2>Multiple dispatch with multiple inheritance is complex 😵‍💫</h2>
+
+<img data-src="https://adv-r.hadley.nz/diagrams/s4/multiple-multiple.png" class="r-stretch quarto-figure-center"><p class="caption">Two classes each with multiple inheritance</p></section></section>
+<section>
+<section id="mixing-s4-s3" class="title-slide slide level1 center">
+<h1>Mixing S4 &amp; S3</h1>
+
+</section>
+<section id="s3-must-first-be-registered-with-setoldclass-before-inclusion-in-s4" class="slide level2" data-transition="none-out">
+<h2>S3 must first be registered with <code>setOldClass()</code> before inclusion in S4</h2>
+<p>Can be as simple as</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a><span class="fu">setOldClass</span>(<span class="st">"factor"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="s3-must-first-be-registered-with-setoldclass-before-inclusion-in-s4-1" class="slide level2" data-transition="none-in">
+<h2>S3 must first be registered with <code>setOldClass()</code> before inclusion in S4</h2>
+<p>But better to specify a full S4 definition</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a></a><span class="fu">setClass</span>(<span class="st">"factor"</span>,</span>
+<span id="cb57-2"><a></a>  <span class="at">contains =</span> <span class="st">"integer"</span>,</span>
+<span id="cb57-3"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb57-4"><a></a>    <span class="at">levels =</span> <span class="st">"character"</span></span>
+<span id="cb57-5"><a></a>  ),</span>
+<span id="cb57-6"><a></a>  <span class="at">prototype =</span> <span class="fu">structure</span>(</span>
+<span id="cb57-7"><a></a>    <span class="fu">integer</span>(),</span>
+<span id="cb57-8"><a></a>    <span class="at">levels =</span> <span class="fu">character</span>()</span>
+<span id="cb57-9"><a></a>  )</span>
+<span id="cb57-10"><a></a>)</span>
+<span id="cb57-11"><a></a><span class="fu">setOldClass</span>(<span class="st">"factor"</span>, <span class="at">S4Class =</span> <span class="st">"factor"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-caution callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Caution</strong></p>
+</div>
+<div class="callout-content">
+<p>These definitions should be provided by the creator of the S3 class. Don’t trying building an S4 class on top of an S3 class provided by a package. Instead request that the package maintainer add this call to their package.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="s4-classes-recieve-as-special-.data-slot-when-inheriting-from-s3-or-base-types" class="slide level2">
+<h2>S4 classes recieve as special <code>.Data</code> slot when inheriting from S3 or base types</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a>RangedNumeric <span class="ot">&lt;-</span> <span class="fu">setClass</span>(</span>
+<span id="cb58-2"><a></a>  <span class="st">"RangedNumeric"</span>,</span>
+<span id="cb58-3"><a></a>  <span class="at">contains =</span> <span class="st">"numeric"</span>,</span>
+<span id="cb58-4"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(<span class="at">min =</span> <span class="st">"numeric"</span>, <span class="at">max =</span> <span class="st">"numeric"</span>),</span>
+<span id="cb58-5"><a></a>  <span class="at">prototype =</span> <span class="fu">structure</span>(<span class="fu">numeric</span>(), <span class="at">min =</span> <span class="cn">NA_real_</span>, <span class="at">max =</span> <span class="cn">NA_real_</span>)</span>
+<span id="cb58-6"><a></a>)</span>
+<span id="cb58-7"><a></a>rn <span class="ot">&lt;-</span> <span class="fu">RangedNumeric</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">min =</span> <span class="dv">1</span>, <span class="at">max =</span> <span class="dv">10</span>)</span>
+<span id="cb58-8"><a></a>rn<span class="sc">@</span>min</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a>rn<span class="sc">@</span>.Data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
+</div>
+</div>
+</section>
+<section id="s3-generics-are-easily-converted-to-s4-generics" class="slide level2">
+<h2>S3 generics are easily converted to S4 generics</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"mean"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a><span class="fu">selectMethod</span>(<span class="st">"mean"</span>, <span class="st">"ANY"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Method Definition (Class "derivedDefaultMethod"):
+#&gt; 
+#&gt; function (x, ...) 
+#&gt; UseMethod("mean")
+#&gt; &lt;bytecode: 0x55711698d668&gt;
+#&gt; &lt;environment: namespace:base&gt;
+#&gt; 
+#&gt; Signatures:
+#&gt;         x    
+#&gt; target  "ANY"
+#&gt; defined "ANY"</code></pre>
+</div>
+</div>
+<div class="callout callout-caution callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Caution</strong></p>
+</div>
+<div class="callout-content">
+<p>It is OK to convert an existing S3 generic to S4, but you should avoid converting regular functions to S4 generics</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="exercises" class="title-slide slide level1 center" data-visibility="uncounted">
+<h1>Exercises</h1>
+
+</section>
+<section id="lubridateperiod-returns-an-s4-class.-what-slots-does-it-have-what-class-is-each-slot-what-accessors-does-it-provide" class="slide level2" data-visibility="uncounted">
+<h2><code>lubridate::period()</code> returns an S4 class. What slots does it have? What class is each slot? What accessors does it provide?</h2>
+<div class="fragment fade-in">
+<p>Objects of the S4 <code>Period</code> class have six slots named <code>year</code>, <code>month</code>, <code>day</code>, <code>hour</code>, <code>minute</code>, and <code>.Data</code> (which contains the number of seconds). All slots are of type double. Most fields can be retrieved by an identically named accessor (e.g.&nbsp;<code>lubridate::year()</code> will return the field), use <code>second()</code> to get the <code>.Data</code> slot.</p>
+<p>As a short example, we create a period of 1 second, 2 minutes, 3 hours, 4 days and 5 weeks.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a></a>example_12345 <span class="ot">&lt;-</span> lubridate<span class="sc">::</span><span class="fu">period</span>(</span>
+<span id="cb65-2"><a></a>  <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>), </span>
+<span id="cb65-3"><a></a>  <span class="fu">c</span>(<span class="st">"second"</span>, <span class="st">"minute"</span>, <span class="st">"hour"</span>, <span class="st">"day"</span>, <span class="st">"week"</span>)</span>
+<span id="cb65-4"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This should add up to a period of 39 days, 3 hours, 2 minutes and 1 second.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a></a>example_12345</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "39d 3H 2M 1S"</code></pre>
+</div>
+</div>
+<p>When we inspect <code>example_12345</code>, we see the fields and infer that the seconds are stored in the <code>.Data</code> field.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a><span class="fu">str</span>(example_12345)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Formal class 'Period' [package "lubridate"] with 6 slots
+#&gt;   ..@ .Data : num 1
+#&gt;   ..@ year  : num 0
+#&gt;   ..@ month : num 0
+#&gt;   ..@ day   : num 39
+#&gt;   ..@ hour  : num 3
+#&gt;   ..@ minute: num 2</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="what-other-ways-can-you-find-help-for-a-method-read-and-summarise-the-details." class="slide level2" data-visibility="uncounted">
+<h2>What other ways can you find help for a method? Read <code>?"?"</code> and summarise the details.</h2>
+<div class="fragment fade-in">
+<p>Besides adding <code>?</code> in front of a function call (i.e.&nbsp;<code>?method()</code>), we may find:</p>
+<ul>
+<li>general documentation for a generic via <code>?genericName</code></li>
+<li>general documentation for the methods of a generic via <code>methods?genericName</code></li>
+<li>documentation for a specific method via <code>ClassName?methodName</code>.</li>
+</ul>
+</div>
+</section>
+<section id="extend-the-person-class-with-fields-to-match-utilsperson.-think-about-what-slots-you-will-need-what-class-each-slot-should-have-and-what-youll-need-to-check-in-your-validity-method." class="slide level2" data-visibility="uncounted">
+<h2>Extend the Person class with fields to match <code>utils::person()</code>. Think about what slots you will need, what class each slot should have, and what you’ll need to check in your validity method.</h2>
+<div class="fragment fade-in">
+<p>The Person class from <em>Advanced R</em> contains the slots <code>name</code> and <code>age</code>. The person class from the <code>{utils}</code> package contains the slots <code>given</code> (vector of given names), <code>family</code>, <code>role</code>, <code>email</code> and <code>comment</code> (see <code>?utils::person</code>).</p>
+<p>All slots from <code>utils::person()</code> besides <code>role</code> must be of type character and length 1. The entries in the <code>role</code> slot must match one of the following abbreviations “aut”, “com”, “cph”, “cre”, “ctb”, “ctr”, “dtc”, “fnd”, “rev”, “ths”, “trl”. Therefore, <code>role</code> might be of different length than the other slots and we’ll add a corresponding constraint within the validator.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a></a><span class="co"># Definition of the Person class</span></span>
+<span id="cb70-2"><a></a><span class="fu">setClass</span>(<span class="st">"Person"</span>,</span>
+<span id="cb70-3"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb70-4"><a></a>    <span class="at">age =</span> <span class="st">"numeric"</span>,</span>
+<span id="cb70-5"><a></a>    <span class="at">given =</span> <span class="st">"character"</span>,</span>
+<span id="cb70-6"><a></a>    <span class="at">family =</span> <span class="st">"character"</span>,</span>
+<span id="cb70-7"><a></a>    <span class="at">role =</span> <span class="st">"character"</span>,</span>
+<span id="cb70-8"><a></a>    <span class="at">email =</span> <span class="st">"character"</span>,</span>
+<span id="cb70-9"><a></a>    <span class="at">comment =</span> <span class="st">"character"</span></span>
+<span id="cb70-10"><a></a>  ),</span>
+<span id="cb70-11"><a></a>  <span class="at">prototype =</span> <span class="fu">list</span>(</span>
+<span id="cb70-12"><a></a>    <span class="at">age =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb70-13"><a></a>    <span class="at">given =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb70-14"><a></a>    <span class="at">family =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb70-15"><a></a>    <span class="at">role =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb70-16"><a></a>    <span class="at">email =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb70-17"><a></a>    <span class="at">comment =</span> <span class="cn">NA_character_</span></span>
+<span id="cb70-18"><a></a>  )</span>
+<span id="cb70-19"><a></a>)</span>
+<span id="cb70-20"><a></a></span>
+<span id="cb70-21"><a></a><span class="co"># Helper to create instances of the Person class</span></span>
+<span id="cb70-22"><a></a>Person <span class="ot">&lt;-</span> <span class="cf">function</span>(given, family,</span>
+<span id="cb70-23"><a></a>                   <span class="at">age =</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb70-24"><a></a>                   <span class="at">role =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb70-25"><a></a>                   <span class="at">email =</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb70-26"><a></a>                   <span class="at">comment =</span> <span class="cn">NA_character_</span>) {</span>
+<span id="cb70-27"><a></a>  age <span class="ot">&lt;-</span> <span class="fu">as.double</span>(age)</span>
+<span id="cb70-28"><a></a></span>
+<span id="cb70-29"><a></a>  <span class="fu">new</span>(<span class="st">"Person"</span>,</span>
+<span id="cb70-30"><a></a>    <span class="at">age =</span> age,</span>
+<span id="cb70-31"><a></a>    <span class="at">given =</span> given,</span>
+<span id="cb70-32"><a></a>    <span class="at">family =</span> family,</span>
+<span id="cb70-33"><a></a>    <span class="at">role =</span> role,</span>
+<span id="cb70-34"><a></a>    <span class="at">email =</span> email,</span>
+<span id="cb70-35"><a></a>    <span class="at">comment =</span> comment</span>
+<span id="cb70-36"><a></a>  )</span>
+<span id="cb70-37"><a></a>}</span>
+<span id="cb70-38"><a></a></span>
+<span id="cb70-39"><a></a><span class="co"># Validator to ensure that each slot is of length one</span></span>
+<span id="cb70-40"><a></a><span class="fu">setValidity</span>(<span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
+<span id="cb70-41"><a></a>  invalids <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb70-42"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(object<span class="sc">@</span>age)     <span class="sc">!=</span> <span class="dv">1</span> <span class="sc">||</span></span>
+<span id="cb70-43"><a></a>      <span class="fu">length</span>(object<span class="sc">@</span>given)   <span class="sc">!=</span> <span class="dv">1</span> <span class="sc">||</span></span>
+<span id="cb70-44"><a></a>      <span class="fu">length</span>(object<span class="sc">@</span>family)  <span class="sc">!=</span> <span class="dv">1</span> <span class="sc">||</span></span>
+<span id="cb70-45"><a></a>      <span class="fu">length</span>(object<span class="sc">@</span>email)   <span class="sc">!=</span> <span class="dv">1</span> <span class="sc">||</span></span>
+<span id="cb70-46"><a></a>      <span class="fu">length</span>(object<span class="sc">@</span>comment) <span class="sc">!=</span> <span class="dv">1</span>) {</span>
+<span id="cb70-47"><a></a>    invalids <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"@name, @age, @given, @family, @email, "</span>,</span>
+<span id="cb70-48"><a></a>                       <span class="st">"@comment must be of length 1"</span>)</span>
+<span id="cb70-49"><a></a>  } </span>
+<span id="cb70-50"><a></a>  </span>
+<span id="cb70-51"><a></a>  known_roles <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb70-52"><a></a>    <span class="cn">NA_character_</span>, <span class="st">"aut"</span>, <span class="st">"com"</span>, <span class="st">"cph"</span>, <span class="st">"cre"</span>, <span class="st">"ctb"</span>,</span>
+<span id="cb70-53"><a></a>    <span class="st">"ctr"</span>, <span class="st">"dtc"</span>, <span class="st">"fnd"</span>, <span class="st">"rev"</span>, <span class="st">"ths"</span>, <span class="st">"trl"</span></span>
+<span id="cb70-54"><a></a>  )</span>
+<span id="cb70-55"><a></a>  </span>
+<span id="cb70-56"><a></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">all</span>(object<span class="sc">@</span>role <span class="sc">%in%</span> known_roles)) {</span>
+<span id="cb70-57"><a></a>    <span class="fu">paste</span>(</span>
+<span id="cb70-58"><a></a>      <span class="st">"@role(s) must be one of"</span>, </span>
+<span id="cb70-59"><a></a>      <span class="fu">paste</span>(known_roles, <span class="at">collapse =</span> <span class="st">", "</span>)</span>
+<span id="cb70-60"><a></a>    )</span>
+<span id="cb70-61"><a></a>  }</span>
+<span id="cb70-62"><a></a>  </span>
+<span id="cb70-63"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(invalids)) <span class="fu">return</span>(invalids)  </span>
+<span id="cb70-64"><a></a>  <span class="cn">TRUE</span></span>
+<span id="cb70-65"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Class "Person" [in ".GlobalEnv"]
 #&gt; 
 #&gt; Slots:
-#&gt;                           
-#&gt; Name:       name       age
-#&gt; Class: character   numeric</code></pre>
+#&gt;                                                                   
+#&gt; Name:        age     given    family      role     email   comment
+#&gt; Class:   numeric character character character character character</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">Person</span>(<span class="st">"Hadley"</span>, <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">37</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in validObject(.Object): invalid class "Person" object: @name and @age must be same length</code></pre>
-</div>
-</div>
-<h4 id="at-modification">At modification</h4>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># get value</span></span>
-<span id="cb20-2"><a></a><span class="fu">setGeneric</span>(<span class="st">"name"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"name"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "name"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>name)</span>
-<span id="cb22-2"><a></a></span>
-<span id="cb22-3"><a></a><span class="co"># set value--and assess whether resulting object is valid</span></span>
-<span id="cb22-4"><a></a><span class="fu">setGeneric</span>(<span class="st">"name&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"name&lt;-"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "name&lt;-"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name&lt;-"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, value) {</span>
-<span id="cb24-2"><a></a>  x<span class="sc">@</span>name <span class="ot">&lt;-</span> value</span>
-<span id="cb24-3"><a></a>  <span class="fu">validObject</span>(x)</span>
-<span id="cb24-4"><a></a>  x</span>
-<span id="cb24-5"><a></a>})</span>
-<span id="cb24-6"><a></a></span>
-<span id="cb24-7"><a></a><span class="co"># normal name; no problem</span></span>
-<span id="cb24-8"><a></a><span class="fu">name</span>(john) <span class="ot">&lt;-</span> <span class="st">"Jon Smythe"</span></span>
-<span id="cb24-9"><a></a><span class="fu">name</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "Jon Smythe"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="co"># invalid name; error thrown</span></span>
-<span id="cb26-2"><a></a><span class="fu">name</span>(john) <span class="ot">&lt;-</span> letters</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-error">
-<pre><code>#&gt; Error in validObject(x): invalid class "Person" object: @name and @age must be same length</code></pre>
 </div>
 </div>
 </section>
-<section id="details-on-generics-and-methods" class="slide level2">
-<h2>Details on generics and methods</h2>
-<h3 id="dictate-dispatch-via-signature">Dictate dispatch via signature</h3>
-<p>Specify function arguments to be used in determining method.</p>
+<section id="what-happens-if-you-define-a-new-s4-class-that-doesnt-have-any-slots-hint-read-about-virtual-classes-in-setclass." class="slide level2" data-visibility="uncounted">
+<h2>What happens if you define a new S4 class that doesn’t have any slots? (Hint: read about virtual classes in <code>?setClass</code>.)</h2>
+<div class="fragment fade-in">
+<p>It depends on the other arguments. If we inherit from another class, we get the same slots. But something interesting happens if we don’t inherit from an existing class. We get a virtual class. A virtual class can’t be instantiated:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"myGeneric"</span>, </span>
-<span id="cb28-2"><a></a>  <span class="cf">function</span>(x, ..., <span class="at">verbose =</span> <span class="cn">TRUE</span>) <span class="fu">standardGeneric</span>(<span class="st">"myGeneric"</span>),</span>
-<span id="cb28-3"><a></a>  <span class="at">signature =</span> <span class="st">"x"</span></span>
-<span id="cb28-4"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a></a><span class="fu">setClass</span>(<span class="st">"Human"</span>)</span>
+<span id="cb72-2"><a></a><span class="fu">new</span>(<span class="st">"Human"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in new("Human"): trying to generate an object from a virtual class ("Human")</code></pre>
+</div>
+</div>
+<p>But can be inherited from:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a></a><span class="fu">setClass</span>(<span class="st">"Programmer"</span>, <span class="at">contains =</span> <span class="st">"Human"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="imagine-you-were-going-to-reimplement-factors-dates-and-data-frames-in-s4.-sketch-out-the-setclass-calls-that-you-would-use-to-define-the-classes.-think-about-appropriate-slots-and-prototype." class="slide level2" data-visibility="uncounted">
+<h2>Imagine you were going to reimplement factors, dates, and data frames in S4. Sketch out the <code>setClass()</code> calls that you would use to define the classes. Think about appropriate <code>slots</code> and <code>prototype</code>.</h2>
+<div class="fragment fade-in">
+<p>For all these classes we need one slot for the data and one slot per attribute. Keep in mind, that inheritance matters for ordered factors and dates. For data frames, special checks like equal lengths of the underlying list’s elements should be done within a validator.</p>
+<p>For simplicity we don’t introduce an explicit subclass for ordered factors. Instead, we introduce <code>ordered</code> as a slot.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a><span class="fu">setClass</span>(<span class="st">"Factor"</span>,</span>
+<span id="cb75-2"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb75-3"><a></a>    <span class="at">data =</span> <span class="st">"integer"</span>,</span>
+<span id="cb75-4"><a></a>    <span class="at">levels =</span> <span class="st">"character"</span>,</span>
+<span id="cb75-5"><a></a>    <span class="at">ordered =</span> <span class="st">"logical"</span></span>
+<span id="cb75-6"><a></a>  ),</span>
+<span id="cb75-7"><a></a>  <span class="at">prototype =</span> <span class="fu">list</span>(</span>
+<span id="cb75-8"><a></a>    <span class="at">data =</span> <span class="fu">integer</span>(),</span>
+<span id="cb75-9"><a></a>    <span class="at">levels =</span> <span class="fu">character</span>(),</span>
+<span id="cb75-10"><a></a>    <span class="at">ordered =</span> <span class="cn">FALSE</span></span>
+<span id="cb75-11"><a></a>  )</span>
+<span id="cb75-12"><a></a>)</span>
+<span id="cb75-13"><a></a></span>
+<span id="cb75-14"><a></a></span>
+<span id="cb75-15"><a></a><span class="fu">new</span>(<span class="st">"Factor"</span>, <span class="at">data =</span> <span class="fu">c</span>(<span class="dv">1</span>L, <span class="dv">2</span>L), <span class="at">levels =</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "myGeneric"</code></pre>
+<pre><code>#&gt; An object of class "Factor"
+#&gt; Slot "data":
+#&gt; [1] 1 2
+#&gt; 
+#&gt; Slot "levels":
+#&gt; [1] "a" "b" "c"
+#&gt; 
+#&gt; Slot "ordered":
+#&gt; [1] FALSE</code></pre>
 </div>
 </div>
-<h3 id="define-generics">Define generics</h3>
-<p>General form:</p>
+<p>The <code>Date2</code> class stores its dates as integers, similarly to base R which uses doubles. Dates don’t have any other attributes.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">setMethod</span>(<span class="st">"myGeneric"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) {</span>
-<span id="cb30-2"><a></a>  <span class="co"># method implementation</span></span>
-<span id="cb30-3"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a><span class="fu">setClass</span>(<span class="st">"Date2"</span>,</span>
+<span id="cb77-2"><a></a>  <span class="at">slots =</span> <span class="fu">list</span>(</span>
+<span id="cb77-3"><a></a>    <span class="at">data =</span> <span class="st">"integer"</span></span>
+<span id="cb77-4"><a></a>  ),</span>
+<span id="cb77-5"><a></a>  <span class="at">prototype =</span> <span class="fu">list</span>(</span>
+<span id="cb77-6"><a></a>    <span class="at">data =</span> <span class="fu">integer</span>()</span>
+<span id="cb77-7"><a></a>  )</span>
+<span id="cb77-8"><a></a>)</span>
+<span id="cb77-9"><a></a></span>
+<span id="cb77-10"><a></a><span class="fu">new</span>(<span class="st">"Date2"</span>, <span class="at">data =</span> <span class="dv">1</span>L)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; An object of class "Date2"
+#&gt; Slot "data":
+#&gt; [1] 1</code></pre>
 </div>
-<p>Example to print object:</p>
+</div>
+<p>Our <code>DataFrame</code> class consists of a list and a slot for <code>row.names</code>. Most of the logic (e.g.&nbsp;checking that all elements of the list are a vector, and that they all have the same length) would need to be part of a validator.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
-<span id="cb31-2"><a></a>  <span class="fu">cat</span>(<span class="fu">is</span>(object)[[<span class="dv">1</span>]], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb31-3"><a></a>      <span class="st">"  Name: "</span>, object<span class="sc">@</span>name, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb31-4"><a></a>      <span class="st">"  Age:  "</span>, object<span class="sc">@</span>age, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb31-5"><a></a>      <span class="at">sep =</span> <span class="st">""</span></span>
-<span id="cb31-6"><a></a>  )</span>
-<span id="cb31-7"><a></a>})</span>
-<span id="cb31-8"><a></a>john</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a><span class="fu">setClass</span>(<span class="st">"DataFrame"</span>,</span>
+<span id="cb79-2"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb79-3"><a></a>    <span class="at">data =</span> <span class="st">"list"</span>,</span>
+<span id="cb79-4"><a></a>    <span class="at">row.names =</span> <span class="st">"character"</span></span>
+<span id="cb79-5"><a></a>  ),</span>
+<span id="cb79-6"><a></a>  <span class="at">prototype =</span> <span class="fu">list</span>(</span>
+<span id="cb79-7"><a></a>    <span class="at">data =</span> <span class="fu">list</span>(),</span>
+<span id="cb79-8"><a></a>    <span class="at">row.names =</span> <span class="fu">character</span>(<span class="dv">0</span>)</span>
+<span id="cb79-9"><a></a>  )</span>
+<span id="cb79-10"><a></a>)</span>
+<span id="cb79-11"><a></a></span>
+<span id="cb79-12"><a></a><span class="fu">new</span>(<span class="st">"DataFrame"</span>, <span class="at">data =</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; An object of class "DataFrame"
+#&gt; Slot "data":
+#&gt; $a
+#&gt; [1] 1
+#&gt; 
+#&gt; $b
+#&gt; [1] 2
+#&gt; 
+#&gt; 
+#&gt; Slot "row.names":
+#&gt; character(0)</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="add-age-accessors-for-the-person-class." class="slide level2" data-visibility="uncounted">
+<h2>Add <code>age()</code> accessors for the <code>Person</code> class.</h2>
+<div class="fragment fade-in">
+<p>We implement the accessors via an <code>age()</code> generic, with a method for the <code>Person</code> class and a corresponding replacement function <code>age&lt;-</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"age"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"age"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "age"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a><span class="fu">setMethod</span>(<span class="st">"age"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>age)</span>
+<span id="cb83-2"><a></a></span>
+<span id="cb83-3"><a></a><span class="fu">setGeneric</span>(<span class="st">"age&lt;-"</span>, <span class="cf">function</span>(x, value) <span class="fu">standardGeneric</span>(<span class="st">"age&lt;-"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "age&lt;-"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a><span class="fu">setMethod</span>(<span class="st">"age&lt;-"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, value) {</span>
+<span id="cb85-2"><a></a>  x<span class="sc">@</span>age <span class="ot">&lt;-</span> value</span>
+<span id="cb85-3"><a></a>  <span class="fu">validObject</span>(x)</span>
+<span id="cb85-4"><a></a>  x</span>
+<span id="cb85-5"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</section>
+<section id="in-the-definition-of-the-generic-why-is-it-necessary-to-repeat-the-name-of-the-generic-twice" class="slide level2" data-visibility="uncounted">
+<h2>In the definition of the generic, why is it necessary to repeat the name of the generic twice?</h2>
+<div class="fragment fade-in">
+<p>Within <code>setGeneric()</code> the <code>name</code> (1st argument) is needed as the name of the generic. Then, the name also explicitly incorporates method dispatch via <code>standardGeneric()</code> within the generic’s body (<code>def</code> parameter of <code>setGeneric()</code>). This behaviour is similar to <code>UseMethod()</code> in S3.</p>
+</div>
+</section>
+<section id="why-does-the-show-method-defined-in-section-15.4.3-use-isobject1-hint-try-printing-the-employee-subclass." class="slide level2" data-visibility="uncounted">
+<h2>Why does the <code>show()</code> method defined in section <a href="https://adv-r.hadley.nz/s4.html#show-method">15.4.3</a> use <code>is(object)[[1]]</code>? (Hint: try printing the employee subclass.)</h2>
+<div class="fragment fade-in">
+<p><code>is(object)</code> returns the class of the object. <code>is(object)</code> also contains the superclass, for subclasses like <code>Employee</code>. In order to always return the most specific class (the subclass), <code>show()</code> returns the first element of <code>is(object)</code>.</p>
+</div>
+</section>
+<section id="what-happens-if-you-define-a-method-with-different-argument-names-to-the-generic" class="slide level2" data-visibility="uncounted">
+<h2>What happens if you define a method with different argument names to the generic?</h2>
+<div class="fragment fade-in">
+<p>It depends. We first create the object <code>hadley</code> of class <code>Person</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a></a>.Person <span class="ot">&lt;-</span> <span class="fu">setClass</span>(</span>
+<span id="cb86-2"><a></a>  <span class="st">"Person"</span>,</span>
+<span id="cb86-3"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(<span class="at">name =</span> <span class="st">"character"</span>, <span class="at">age =</span> <span class="st">"numeric"</span>)</span>
+<span id="cb86-4"><a></a>)</span>
+<span id="cb86-5"><a></a></span>
+<span id="cb86-6"><a></a>hadley <span class="ot">&lt;-</span> <span class="fu">.Person</span>(<span class="at">name =</span> <span class="st">"Hadley"</span>)</span>
+<span id="cb86-7"><a></a>hadley</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; Person
-#&gt;   Name: Jon Smythe
-#&gt;   Age:  50</code></pre>
+#&gt;   Name: Hadley
+#&gt;   Age:</code></pre>
 </div>
 </div>
-<p>Example to access slot:</p>
+<p>Now let’s see which arguments can be supplied to the <code>show()</code> generic.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">setGeneric</span>(<span class="st">"name"</span>, <span class="cf">function</span>(x) <span class="fu">standardGeneric</span>(<span class="st">"name"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a></a><span class="fu">formals</span>(<span class="st">"show"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "name"</code></pre>
+<pre><code>#&gt; $object</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">setMethod</span>(<span class="st">"name"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) x<span class="sc">@</span>name)</span>
-<span id="cb35-2"><a></a></span>
-<span id="cb35-3"><a></a><span class="fu">name</span>(john)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Usually, we would use this argument when defining a new method.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(object) {</span>
+<span id="cb90-2"><a></a>  <span class="fu">cat</span>(object<span class="sc">@</span>name, <span class="st">"creates hard exercises"</span>)</span>
+<span id="cb90-3"><a></a>})</span>
+<span id="cb90-4"><a></a></span>
+<span id="cb90-5"><a></a>hadley</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "Jon Smythe"</code></pre>
+<pre><code>#&gt; Hadley creates hard exercises</code></pre>
 </div>
 </div>
-<p>This is how end users should access slots.</p>
+<p>When we supply another name as a first element of our method (e.g.&nbsp;<code>x</code> instead of <code>object</code>), this element will be matched to the correct <code>object</code> argument and we receive a warning. Our method will work, though:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) {</span>
+<span id="cb92-2"><a></a>  <span class="fu">cat</span>(x<span class="sc">@</span>name, <span class="st">"creates hard exercises"</span>)</span>
+<span id="cb92-3"><a></a>})</span>
+<span id="cb92-4"><a></a></span>
+<span id="cb92-5"><a></a>hadley</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Hadley creates hard exercises</code></pre>
+</div>
+</div>
+<p>If we add more arguments to our method than our generic can handle, we will get an error.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x, y) {</span>
+<span id="cb94-2"><a></a>  <span class="fu">cat</span>(x<span class="sc">@</span>name, <span class="st">"is"</span>, x<span class="sc">@</span>age, <span class="st">"years old"</span>)</span>
+<span id="cb94-3"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in conformMethod(signature, mnames, fnames, f, fdef, definition): in method for 'show' with signature 'object="Person"': formal arguments (object = "Person") omitted in the method definition cannot be in the signature</code></pre>
+</div>
+</div>
+<p>If we do this with arguments added to the correctly written <code>object</code> argument, we will receive an informative error message. It states that we could add other argument names for generics, which can take the <code>...</code> argument.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(object, y) {</span>
+<span id="cb96-2"><a></a>  <span class="fu">cat</span>(object<span class="sc">@</span>name, <span class="st">"is"</span>, object<span class="sc">@</span>age, <span class="st">"years old"</span>)</span>
+<span id="cb96-3"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in rematchDefinition(definition, fdef, mnames, fnames, signature): methods can add arguments to the generic 'show' only if '...' is an argument to the generic</code></pre>
+</div>
+</div>
+</div>
 </section>
-<section id="example-lubridateperiod" class="slide level2">
-<h2>Example: <code>lubridate::period()</code></h2>
-<h3 id="define-the-class">Define the class</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a><span class="fu">setClass</span>(<span class="st">"Period"</span>,</span>
-<span id="cb37-2"><a></a>  <span class="co"># inherits from these classes</span></span>
-<span id="cb37-3"><a></a>  <span class="at">contains =</span> <span class="fu">c</span>(<span class="st">"Timespan"</span>, <span class="st">"numeric"</span>),</span>
-<span id="cb37-4"><a></a>  <span class="co"># has slots for time components</span></span>
-<span id="cb37-5"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
-<span id="cb37-6"><a></a>    <span class="at">year =</span> <span class="st">"numeric"</span>, </span>
-<span id="cb37-7"><a></a>    <span class="at">month =</span> <span class="st">"numeric"</span>, </span>
-<span id="cb37-8"><a></a>    <span class="at">day =</span> <span class="st">"numeric"</span>,</span>
-<span id="cb37-9"><a></a>    <span class="at">hour =</span> <span class="st">"numeric"</span>, </span>
-<span id="cb37-10"><a></a>    <span class="at">minute =</span> <span class="st">"numeric"</span></span>
-<span id="cb37-11"><a></a>  ),</span>
-<span id="cb37-12"><a></a>  <span class="co"># defines prototype as period of zero duration for all slots</span></span>
-<span id="cb37-13"><a></a>  <span class="at">prototype =</span> <span class="fu">prototype</span>(<span class="at">year =</span> <span class="dv">0</span>, <span class="at">month =</span> <span class="dv">0</span>, <span class="at">day =</span> <span class="dv">0</span>, <span class="at">hour =</span> <span class="dv">0</span>, <span class="at">minute =</span> <span class="dv">0</span>),</span>
-<span id="cb37-14"><a></a>  <span class="co"># check validity with `check_period` function; see section below</span></span>
-<span id="cb37-15"><a></a>  <span class="at">validity =</span> check_period</span>
-<span id="cb37-16"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="draw-the-method-graph-for-f-." class="slide level2" data-visibility="uncounted">
+<h2>Draw the method graph for <code>f(</code>😅, 😽<code>)</code>.</h2>
+<div class="fragment fade-in">
+<p>Look at the graph and repeat after me: “I will keep my class structure simple and use multiple inheritance sparingly”.</p>
+<p><img data-src="https://advanced-r-solutions.rbind.io/images/s4/method_dispatch1.png"></p>
 </div>
-<p>See source code <a href="https://github.com/tidyverse/lubridate/blob/0bb49b21c88736240219dc67e7ed0eb3df15d9b1/R/periods.r#L90">here</a></p>
-<h3 id="validate-object">Validate object</h3>
-<p>Check whether object is valid–notably if all arugments have the same length and are integers.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>check_period <span class="ot">&lt;-</span> <span class="cf">function</span>(object) {</span>
-<span id="cb38-2"><a></a>  <span class="co"># start with an empty vector of error messages</span></span>
-<span id="cb38-3"><a></a>  errors <span class="ot">&lt;-</span> <span class="fu">character</span>()</span>
-<span id="cb38-4"><a></a></span>
-<span id="cb38-5"><a></a>  <span class="co"># check length of object's data</span></span>
-<span id="cb38-6"><a></a>  <span class="fu">length</span>(object<span class="sc">@</span>.Data) <span class="ot">-&gt;</span> n</span>
-<span id="cb38-7"><a></a>  <span class="co"># check length of each slot</span></span>
-<span id="cb38-8"><a></a>  lengths <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb38-9"><a></a>    <span class="fu">length</span>(object<span class="sc">@</span>year), </span>
-<span id="cb38-10"><a></a>    <span class="fu">length</span>(object<span class="sc">@</span>month),</span>
-<span id="cb38-11"><a></a>    <span class="fu">length</span>(object<span class="sc">@</span>day), </span>
-<span id="cb38-12"><a></a>    <span class="fu">length</span>(object<span class="sc">@</span>hour), </span>
-<span id="cb38-13"><a></a>    <span class="fu">length</span>(object<span class="sc">@</span>minute)</span>
-<span id="cb38-14"><a></a>  )</span>
-<span id="cb38-15"><a></a></span>
-<span id="cb38-16"><a></a>  <span class="co"># if length of any slot is different than overall length, compose error message</span></span>
-<span id="cb38-17"><a></a>  <span class="cf">if</span> (<span class="fu">any</span>(lengths <span class="sc">!=</span> n)) {</span>
-<span id="cb38-18"><a></a>    msg <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">"Inconsistent lengths: year = "</span>, lengths[<span class="dv">1</span>],</span>
-<span id="cb38-19"><a></a>      <span class="st">", month = "</span>, lengths[<span class="dv">2</span>],</span>
-<span id="cb38-20"><a></a>      <span class="st">", day = "</span>, lengths[<span class="dv">3</span>],</span>
-<span id="cb38-21"><a></a>      <span class="st">", hour = "</span>, lengths[<span class="dv">4</span>],</span>
-<span id="cb38-22"><a></a>      <span class="st">", minute = "</span>, lengths[<span class="dv">5</span>],</span>
-<span id="cb38-23"><a></a>      <span class="st">", second = "</span>, n,</span>
-<span id="cb38-24"><a></a>      <span class="at">sep =</span> <span class="st">""</span></span>
-<span id="cb38-25"><a></a>    )</span>
-<span id="cb38-26"><a></a>    <span class="co"># add just-composed error to vector of error messages</span></span>
-<span id="cb38-27"><a></a>    errors <span class="ot">&lt;-</span> <span class="fu">c</span>(errors, msg)</span>
-<span id="cb38-28"><a></a>  }</span>
-<span id="cb38-29"><a></a></span>
-<span id="cb38-30"><a></a>  values <span class="ot">&lt;-</span> <span class="fu">c</span>(object<span class="sc">@</span>year, object<span class="sc">@</span>month, object<span class="sc">@</span>day, object<span class="sc">@</span>hour, object<span class="sc">@</span>minute)</span>
-<span id="cb38-31"><a></a>  values <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(values)</span>
-<span id="cb38-32"><a></a>  <span class="cf">if</span> (<span class="fu">sum</span>(values <span class="sc">-</span> <span class="fu">trunc</span>(values))) {</span>
-<span id="cb38-33"><a></a>    msg <span class="ot">&lt;-</span> <span class="st">"periods must have integer values"</span></span>
-<span id="cb38-34"><a></a>    errors <span class="ot">&lt;-</span> <span class="fu">c</span>(errors, msg)</span>
-<span id="cb38-35"><a></a>  }</span>
-<span id="cb38-36"><a></a></span>
-<span id="cb38-37"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(errors) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb38-38"><a></a>    <span class="cn">TRUE</span></span>
-<span id="cb38-39"><a></a>  } <span class="cf">else</span> {</span>
-<span id="cb38-40"><a></a>    errors</span>
-<span id="cb38-41"><a></a>  }</span>
-<span id="cb38-42"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="draw-the-method-graph-for-f-.-1" class="slide level2" data-visibility="uncounted">
+<h2>Draw the method graph for <code>f(</code>😃, 😉, 😙<code>)</code>.</h2>
+<div class="fragment fade-in">
+<p>We see that the method graph below looks simpler than the one above. Relatively speaking, multiple dispatch seems to introduce less complexity than multiple inheritance. Use it with care, though!</p>
+<p><img data-src="https://advanced-r-solutions.rbind.io/images/s4/method_dispatch2.png"></p>
 </div>
-<p>See source code <a href="https://github.com/tidyverse/lubridate/blob/0bb49b21c88736240219dc67e7ed0eb3df15d9b1/R/periods.r#L6">here</a>.</p>
-<h3 id="set-methods-1">Set methods</h3>
-<p>Show period:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a><span class="co">#' @export</span></span>
-<span id="cb39-2"><a></a><span class="fu">setMethod</span>(<span class="st">"show"</span>, <span class="fu">signature</span>(<span class="at">object =</span> <span class="st">"Period"</span>), <span class="cf">function</span>(object) {</span>
-<span id="cb39-3"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(object<span class="sc">@</span>.Data) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb39-4"><a></a>    <span class="fu">cat</span>(<span class="st">"&lt;Period[0]&gt;</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb39-5"><a></a>  } <span class="cf">else</span> {</span>
-<span id="cb39-6"><a></a>    <span class="fu">print</span>(<span class="fu">format</span>(object))</span>
-<span id="cb39-7"><a></a>  }</span>
-<span id="cb39-8"><a></a>})</span>
-<span id="cb39-9"><a></a></span>
-<span id="cb39-10"><a></a><span class="co">#' @export</span></span>
-<span id="cb39-11"><a></a>format.Period <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
-<span id="cb39-12"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb39-13"><a></a>    <span class="fu">return</span>(<span class="fu">character</span>())</span>
-<span id="cb39-14"><a></a>  }</span>
-<span id="cb39-15"><a></a></span>
-<span id="cb39-16"><a></a>  show <span class="ot">&lt;-</span> <span class="fu">paste</span>(</span>
-<span id="cb39-17"><a></a>    x<span class="sc">@</span>year, <span class="st">"y "</span>, x<span class="sc">@</span>month, <span class="st">"m "</span>, x<span class="sc">@</span>day, <span class="st">"d "</span>,</span>
-<span id="cb39-18"><a></a>    x<span class="sc">@</span>hour, <span class="st">"H "</span>, x<span class="sc">@</span>minute, <span class="st">"M "</span>, x<span class="sc">@</span>.Data, <span class="st">"S"</span>,</span>
-<span id="cb39-19"><a></a>    <span class="at">sep =</span> <span class="st">""</span></span>
-<span id="cb39-20"><a></a>  )</span>
-<span id="cb39-21"><a></a>  start <span class="ot">&lt;-</span> <span class="fu">regexpr</span>(<span class="st">"[-1-9]|(0</span><span class="sc">\\</span><span class="st">.)"</span>, show)</span>
-<span id="cb39-22"><a></a>  show <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(start <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">substr</span>(show, start, <span class="fu">nchar</span>(show)), <span class="st">"0S"</span>)</span>
-<span id="cb39-23"><a></a></span>
-<span id="cb39-24"><a></a>  show[<span class="fu">is.na</span>(x)] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb39-25"><a></a>  show</span>
-<span id="cb39-26"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="take-the-last-example-which-shows-multiple-dispatch-over-two-classes-that-use-multiple-inheritance.-what-happens-if-you-define-a-method-for-all-terminal-classes-why-does-method-dispatch-not-save-us-much-work-here" class="slide level2" data-visibility="uncounted">
+<h2>Take the last example which shows multiple dispatch over two classes that use multiple inheritance. What happens if you define a method for all terminal classes? Why does method dispatch not save us much work here?</h2>
+<div class="fragment fade-in">
+<p>We will introduce ambiguity, since one class has distance 2 to all terminal nodes and the other four have distance 1 to two terminal nodes each. To resolve this ambiguity we have to define five more methods, one per class combination.</p>
 </div>
-<p>See source code <a href="https://github.com/tidyverse/lubridate/blob/0bb49b21c88736240219dc67e7ed0eb3df15d9b1/R/periods.r#L195">here</a></p>
+</section>
+<section id="what-would-a-full-setoldclass-definition-look-like-for-an-ordered-factor-i.e.-add-slots-and-prototype-to-the-definition-above" class="slide level2" data-visibility="uncounted">
+<h2>What would a full <code>setOldClass()</code> definition look like for an ordered factor (i.e.&nbsp;add <code>slots</code> and <code>prototype</code> to the definition above)?</h2>
+<div class="fragment fade-in">
+<p>The purpose of <code>setOldClass()</code> lies in registering an S3 class as a “formally defined class”, so that it can be used within the S4 object-oriented programming system. When using it, we may provide the argument <code>S4Class</code>, which will inherit the slots and their default values (prototype) to the registered class.</p>
+<p>Let’s build an S4 <code>OrderedFactor</code> on top of the S3 factor in such a way.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a></a><span class="fu">setOldClass</span>(<span class="st">"factor"</span>)    <span class="co"># use build-in definition for brevity</span></span>
+<span id="cb98-2"><a></a></span>
+<span id="cb98-3"><a></a>OrderedFactor <span class="ot">&lt;-</span> <span class="fu">setClass</span>(</span>
+<span id="cb98-4"><a></a>  <span class="st">"OrderedFactor"</span>,</span>
+<span id="cb98-5"><a></a>  <span class="at">contains =</span> <span class="st">"factor"</span>,   <span class="co"># inherit from registered S3 class</span></span>
+<span id="cb98-6"><a></a>  <span class="at">slots =</span> <span class="fu">c</span>(</span>
+<span id="cb98-7"><a></a>    <span class="at">levels =</span> <span class="st">"character"</span>,</span>
+<span id="cb98-8"><a></a>    <span class="at">ordered =</span> <span class="st">"logical"</span>  <span class="co"># add logical order slot</span></span>
+<span id="cb98-9"><a></a>  ),</span>
+<span id="cb98-10"><a></a>  <span class="at">prototype =</span> <span class="fu">structure</span>(</span>
+<span id="cb98-11"><a></a>    <span class="fu">integer</span>(),</span>
+<span id="cb98-12"><a></a>    <span class="at">levels =</span> <span class="fu">character</span>(),</span>
+<span id="cb98-13"><a></a>    <span class="at">ordered =</span> <span class="fu">logical</span>()  <span class="co"># add default value</span></span>
+<span id="cb98-14"><a></a>  )</span>
+<span id="cb98-15"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We can now register the (S3) ordered-class, while providing an “S4 template”. We can also use the S4-class to create new object directly.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a></a><span class="fu">setOldClass</span>(<span class="st">"ordered"</span>, <span class="at">S4Class =</span> <span class="st">"OrderedFactor"</span>)</span>
+<span id="cb99-2"><a></a></span>
+<span id="cb99-3"><a></a>x <span class="ot">&lt;-</span> <span class="fu">OrderedFactor</span>(</span>
+<span id="cb99-4"><a></a>  <span class="fu">c</span>(<span class="dv">1</span>L, <span class="dv">2</span>L, <span class="dv">2</span>L),</span>
+<span id="cb99-5"><a></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>),</span>
+<span id="cb99-6"><a></a>  <span class="at">ordered =</span> <span class="cn">TRUE</span></span>
+<span id="cb99-7"><a></a>)</span>
+<span id="cb99-8"><a></a><span class="fu">str</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Formal class 'OrderedFactor' [package ".GlobalEnv"] with 4 slots
+#&gt;   ..@ .Data   : int [1:3] 1 2 2
+#&gt;   ..@ levels  : chr [1:3] "a" "b" "c"
+#&gt;   ..@ ordered : logi TRUE
+#&gt;   ..@ .S3Class: chr "factor"</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="define-a-length-method-for-the-person-class." class="slide level2" data-visibility="uncounted">
+<h2>Define a <code>length</code> method for the <code>Person</code> class.</h2>
+<div class="fragment fade-in">
+<p>We keep things simple and will just return <code>"180cm"</code> when the <code>length()</code> method is called on a <code>Person</code> object. The method can be defined either as an S3 or S4 method.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb101"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a></a>length.Person <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="st">"180cm"</span>  <span class="co"># S3</span></span>
+<span id="cb101-2"><a></a><span class="fu">setMethod</span>(<span class="st">"length"</span>, <span class="st">"Person"</span>, <span class="cf">function</span>(x) <span class="st">"180cm"</span>)  <span class="co"># S4</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
 
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -757,6 +1463,44 @@
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
