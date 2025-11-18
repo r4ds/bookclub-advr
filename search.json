@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Welcome",
     "section": "",
-    "text": "This is a companion for Advanced R by Hadley Wickham (Chapman & Hall, copyright 2019, 9780815384571).\nEach chapter title to the left is a link to a slide deck.\n\nThese slides are being developed by this club.\nEach deck will open in its own tab.\nYou may want to type “s” at the start of each deck to open the speaker notes.\nJoin the Data Science Learning Community to participate in the discussion!\n\nWe follow the Data Science Learning Community Code of Conduct.",
+    "text": "This is a companion for Advanced R by Hadley Wickham (Chapman & Hall, copyright 2019, 9780815384571). If you’d like to buy a physical copy of the book, please consider using this affiliate link to support the Data Science Learning Community.\nEach chapter title to the left is a link to a slide deck.\n\nThese slides are being developed by this club.\nEach deck will open in its own tab.\nYou may want to type “s” at the start of each deck to open the speaker notes.\nJoin the Data Science Learning Community to participate in the discussion!\n\nWe follow the Data Science Learning Community Code of Conduct.",
     "crumbs": [
       "Welcome"
     ]
@@ -14,7 +14,7 @@
     "href": "24.html",
     "title": "24. Improving performance",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Techniques",
       "24. Improving performance"
@@ -36,7 +36,7 @@
     "href": "22.html",
     "title": "22. Debugging",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Techniques",
       "22. Debugging"
@@ -58,7 +58,7 @@
     "href": "20.html",
     "title": "20. Evaluation",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Metaprogramming",
       "20. Evaluation"
@@ -80,7 +80,7 @@
     "href": "18.html",
     "title": "18. Expressions",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Metaprogramming",
       "18. Expressions"
@@ -102,7 +102,7 @@
     "href": "16.html",
     "title": "16. OOP Trade-offs",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Object-oriented programming",
       "16. OOP Trade-offs"
@@ -124,7 +124,7 @@
     "href": "14.html",
     "title": "14. R6",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Object-oriented programming",
       "14. R6"
@@ -146,7 +146,7 @@
     "href": "12.html",
     "title": "12. OOP Introduction & Base types",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Object-oriented programming",
       "12. OOP Introduction & Base types"
@@ -168,7 +168,7 @@
     "href": "10.html",
     "title": "10. Function factories",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Functional programming",
       "10. Function factories"
@@ -190,7 +190,7 @@
     "href": "08.html",
     "title": "8. Conditions",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Foundations",
       "8. Conditions"
@@ -212,7 +212,7 @@
     "href": "06.html",
     "title": "6. Functions",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Foundations",
       "6. Functions"
@@ -234,7 +234,7 @@
     "href": "04.html",
     "title": "4. Subsetting",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Foundations",
       "4. Subsetting"
@@ -256,7 +256,7 @@
     "href": "02.html",
     "title": "2. Names and values",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Foundations",
       "2. Names and values"
@@ -1195,7 +1195,7 @@
     "href": "slides/15.html#s3-generics-are-easily-converted-to-s4-generics",
     "title": "S4",
     "section": "S3 generics are easily converted to S4 generics",
-    "text": "S3 generics are easily converted to S4 generics\n\nsetGeneric(\"mean\")\n\n\nselectMethod(\"mean\", \"ANY\")\n\n#&gt; Method Definition (Class \"derivedDefaultMethod\"):\n#&gt; \n#&gt; function (x, ...) \n#&gt; UseMethod(\"mean\")\n#&gt; &lt;bytecode: 0x556a95f1cda8&gt;\n#&gt; &lt;environment: namespace:base&gt;\n#&gt; \n#&gt; Signatures:\n#&gt;         x    \n#&gt; target  \"ANY\"\n#&gt; defined \"ANY\"\n\n\n\n\n\n\n\n\nCaution\n\n\nIt is OK to convert an existing S3 generic to S4, but you should avoid converting regular functions to S4 generics"
+    "text": "S3 generics are easily converted to S4 generics\n\nsetGeneric(\"mean\")\n\n\nselectMethod(\"mean\", \"ANY\")\n\n#&gt; Method Definition (Class \"derivedDefaultMethod\"):\n#&gt; \n#&gt; function (x, ...) \n#&gt; UseMethod(\"mean\")\n#&gt; &lt;bytecode: 0x0000026b8c8872d8&gt;\n#&gt; &lt;environment: namespace:base&gt;\n#&gt; \n#&gt; Signatures:\n#&gt;         x    \n#&gt; target  \"ANY\"\n#&gt; defined \"ANY\"\n\n\n\n\n\n\n\n\nCaution\n\n\nIt is OK to convert an existing S3 generic to S4, but you should avoid converting regular functions to S4 generics"
   },
   {
     "objectID": "slides/15.html#lubridateperiod-returns-an-s4-class.-what-slots-does-it-have-what-class-is-each-slot-what-accessors-does-it-provide",
@@ -1335,7 +1335,7 @@
     "href": "slides/13.html#print.factor-is-a-print-method-for-factors",
     "title": "S3",
     "section": "print.factor() is a print() method for factors",
-    "text": "print.factor() is a print() method for factors\nMethod: A function customized for a particular class.\n\nprint.factor # or sloop::s3_get_method(\"print.factor\")\n\n#&gt; function (x, quote = FALSE, max.levels = NULL, width = getOption(\"width\"), \n#&gt;     ...) \n#&gt; {\n#&gt;     ord &lt;- is.ordered(x)\n#&gt;     if (length(x) == 0L) \n#&gt;         cat(if (ord) \n#&gt;             \"ordered\"\n#&gt;         else \"factor\", \"()\\n\", sep = \"\")\n#&gt;     else {\n#&gt;         xx &lt;- character(length(x))\n#&gt;         xx[] &lt;- as.character(x)\n#&gt;         keepAttrs &lt;- setdiff(names(attributes(x)), c(\"levels\", \n#&gt;             \"class\"))\n#&gt;         attributes(xx)[keepAttrs] &lt;- attributes(x)[keepAttrs]\n#&gt;         print(xx, quote = quote, ...)\n#&gt;     }\n#&gt;     maxl &lt;- max.levels %||% TRUE\n#&gt;     if (maxl) {\n#&gt;         n &lt;- length(lev &lt;- encodeString(levels(x), quote = ifelse(quote, \n#&gt;             \"\\\"\", \"\")))\n#&gt;         colsep &lt;- if (ord) \n#&gt;             \" &lt; \"\n#&gt;         else \" \"\n#&gt;         T0 &lt;- \"Levels: \"\n#&gt;         if (is.logical(maxl)) \n#&gt;             maxl &lt;- {\n#&gt;                 width &lt;- width - (nchar(T0, \"w\") + 3L + 1L + \n#&gt;                   3L)\n#&gt;                 lenl &lt;- cumsum(nchar(lev, \"w\") + nchar(colsep, \n#&gt;                   \"w\"))\n#&gt;                 if (n &lt;= 1L || lenl[n] &lt;= width) \n#&gt;                   n\n#&gt;                 else max(1L, which.max(lenl &gt; width) - 1L)\n#&gt;             }\n#&gt;         drop &lt;- n &gt; maxl\n#&gt;         cat(if (drop) \n#&gt;             paste(format(n), \"\"), T0, paste(if (drop) \n#&gt;             c(lev[1L:max(1, maxl - 1)], \"...\", if (maxl &gt; 1) lev[n])\n#&gt;         else lev, collapse = colsep), \"\\n\", sep = \"\")\n#&gt;     }\n#&gt;     if (!isTRUE(val &lt;- .valid.factor(x))) \n#&gt;         warning(val)\n#&gt;     invisible(x)\n#&gt; }\n#&gt; &lt;bytecode: 0x56188effa9b8&gt;\n#&gt; &lt;environment: namespace:base&gt;"
+    "text": "print.factor() is a print() method for factors\nMethod: A function customized for a particular class.\n\nprint.factor # or sloop::s3_get_method(\"print.factor\")\n\n#&gt; function (x, quote = FALSE, max.levels = NULL, width = getOption(\"width\"), \n#&gt;     ...) \n#&gt; {\n#&gt;     ord &lt;- is.ordered(x)\n#&gt;     if (length(x) == 0L) \n#&gt;         cat(if (ord) \n#&gt;             \"ordered\"\n#&gt;         else \"factor\", \"()\\n\", sep = \"\")\n#&gt;     else {\n#&gt;         xx &lt;- character(length(x))\n#&gt;         xx[] &lt;- as.character(x)\n#&gt;         keepAttrs &lt;- setdiff(names(attributes(x)), c(\"levels\", \n#&gt;             \"class\"))\n#&gt;         attributes(xx)[keepAttrs] &lt;- attributes(x)[keepAttrs]\n#&gt;         print(xx, quote = quote, ...)\n#&gt;     }\n#&gt;     maxl &lt;- max.levels %||% TRUE\n#&gt;     if (maxl) {\n#&gt;         n &lt;- length(lev &lt;- encodeString(levels(x), quote = ifelse(quote, \n#&gt;             \"\\\"\", \"\")))\n#&gt;         colsep &lt;- if (ord) \n#&gt;             \" &lt; \"\n#&gt;         else \" \"\n#&gt;         T0 &lt;- \"Levels: \"\n#&gt;         if (is.logical(maxl)) \n#&gt;             maxl &lt;- {\n#&gt;                 width &lt;- width - (nchar(T0, \"w\") + 3L + 1L + \n#&gt;                   3L)\n#&gt;                 lenl &lt;- cumsum(nchar(lev, \"w\") + nchar(colsep, \n#&gt;                   \"w\"))\n#&gt;                 if (n &lt;= 1L || lenl[n] &lt;= width) \n#&gt;                   n\n#&gt;                 else max(1L, which.max(lenl &gt; width) - 1L)\n#&gt;             }\n#&gt;         drop &lt;- n &gt; maxl\n#&gt;         cat(if (drop) \n#&gt;             paste(format(n), \"\"), T0, paste(if (drop) \n#&gt;             c(lev[1L:max(1, maxl - 1)], \"...\", if (maxl &gt; 1) lev[n])\n#&gt;         else lev, collapse = colsep), \"\\n\", sep = \"\")\n#&gt;     }\n#&gt;     if (!isTRUE(val &lt;- .valid.factor(x))) \n#&gt;         warning(val)\n#&gt;     invisible(x)\n#&gt; }\n#&gt; &lt;bytecode: 0x0000019c3ab66c40&gt;\n#&gt; &lt;environment: namespace:base&gt;"
   },
   {
     "objectID": "slides/13.html#assign-an-s3-class-to-a-new-object-with-structure-or-class-",
@@ -1384,7 +1384,7 @@
     "href": "slides/13.html#summary-is-an-s3-generic-that-behaves-based-on-an-objects-class",
     "title": "S3",
     "section": "summary() is an S3 generic that behaves based on an object’s class",
-    "text": "summary() is an S3 generic that behaves based on an object’s class\n\nsloop::is_s3_generic(\"summary\")\n\n#&gt; [1] TRUE\n\nsummary\n\n#&gt; function (object, ...) \n#&gt; UseMethod(\"summary\")\n#&gt; &lt;bytecode: 0x561889927c88&gt;\n#&gt; &lt;environment: namespace:base&gt;\n\nsloop::s3_methods_generic(\n  \"summary\"\n) |&gt; \n  knitr::kable()\n\n\n\n\ngeneric\nclass\nvisible\nsource\n\n\n\n\nsummary\naov\nTRUE\nstats\n\n\nsummary\naovlist\nFALSE\nregistered S3method\n\n\nsummary\naspell\nFALSE\nregistered S3method\n\n\nsummary\ncheck_packages_in_dir\nFALSE\nregistered S3method\n\n\nsummary\nconnection\nTRUE\nbase\n\n\nsummary\ndata.frame\nTRUE\nbase\n\n\nsummary\nDate\nTRUE\nbase\n\n\nsummary\ndefault\nTRUE\nbase\n\n\nsummary\ndifftime\nTRUE\nbase\n\n\nsummary\necdf\nFALSE\nregistered S3method\n\n\nsummary\nfactor\nTRUE\nbase\n\n\nsummary\nglm\nTRUE\nstats\n\n\nsummary\ninfl\nFALSE\nregistered S3method\n\n\nsummary\nlm\nTRUE\nstats\n\n\nsummary\nloess\nFALSE\nregistered S3method\n\n\nsummary\nmanova\nTRUE\nstats\n\n\nsummary\nmatrix\nTRUE\nbase\n\n\nsummary\nmlm\nFALSE\nregistered S3method\n\n\nsummary\nnls\nFALSE\nregistered S3method\n\n\nsummary\npackageStatus\nFALSE\nregistered S3method\n\n\nsummary\nPOSIXct\nTRUE\nbase\n\n\nsummary\nPOSIXlt\nTRUE\nbase\n\n\nsummary\nppr\nFALSE\nregistered S3method\n\n\nsummary\nprcomp\nFALSE\nregistered S3method\n\n\nsummary\nprincomp\nFALSE\nregistered S3method\n\n\nsummary\nproc_time\nTRUE\nbase\n\n\nsummary\nrlang_error\nFALSE\nregistered S3method\n\n\nsummary\nrlang_message\nFALSE\nregistered S3method\n\n\nsummary\nrlang_trace\nFALSE\nregistered S3method\n\n\nsummary\nrlang_warning\nFALSE\nregistered S3method\n\n\nsummary\nrlang:::list_of_conditions\nFALSE\nregistered S3method\n\n\nsummary\nsrcfile\nTRUE\nbase\n\n\nsummary\nsrcref\nTRUE\nbase\n\n\nsummary\nstepfun\nTRUE\nstats\n\n\nsummary\nstl\nFALSE\nregistered S3method\n\n\nsummary\ntable\nTRUE\nbase\n\n\nsummary\ntukeysmooth\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_sclr\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_vctr\nFALSE\nregistered S3method\n\n\nsummary\nwarnings\nTRUE\nbase"
+    "text": "summary() is an S3 generic that behaves based on an object’s class\n\nsloop::is_s3_generic(\"summary\")\n\n#&gt; [1] TRUE\n\nsummary\n\n#&gt; function (object, ...) \n#&gt; UseMethod(\"summary\")\n#&gt; &lt;bytecode: 0x0000019c332392a0&gt;\n#&gt; &lt;environment: namespace:base&gt;\n\nsloop::s3_methods_generic(\n  \"summary\"\n) |&gt; \n  knitr::kable()\n\n\n\n\ngeneric\nclass\nvisible\nsource\n\n\n\n\nsummary\naov\nTRUE\nstats\n\n\nsummary\naovlist\nFALSE\nregistered S3method\n\n\nsummary\naspell\nFALSE\nregistered S3method\n\n\nsummary\ncheck_packages_in_dir\nFALSE\nregistered S3method\n\n\nsummary\nconnection\nTRUE\nbase\n\n\nsummary\ndata.frame\nTRUE\nbase\n\n\nsummary\nDate\nTRUE\nbase\n\n\nsummary\ndefault\nTRUE\nbase\n\n\nsummary\ndifftime\nTRUE\nbase\n\n\nsummary\necdf\nFALSE\nregistered S3method\n\n\nsummary\nfactor\nTRUE\nbase\n\n\nsummary\nglm\nTRUE\nstats\n\n\nsummary\ninfl\nFALSE\nregistered S3method\n\n\nsummary\nlm\nTRUE\nstats\n\n\nsummary\nloess\nFALSE\nregistered S3method\n\n\nsummary\nmanova\nTRUE\nstats\n\n\nsummary\nmatrix\nTRUE\nbase\n\n\nsummary\nmlm\nFALSE\nregistered S3method\n\n\nsummary\nnls\nFALSE\nregistered S3method\n\n\nsummary\npackageStatus\nFALSE\nregistered S3method\n\n\nsummary\nPOSIXct\nTRUE\nbase\n\n\nsummary\nPOSIXlt\nTRUE\nbase\n\n\nsummary\nppr\nFALSE\nregistered S3method\n\n\nsummary\nprcomp\nFALSE\nregistered S3method\n\n\nsummary\nprincomp\nFALSE\nregistered S3method\n\n\nsummary\nproc_time\nTRUE\nbase\n\n\nsummary\nrlang:::list_of_conditions\nFALSE\nregistered S3method\n\n\nsummary\nrlang_error\nFALSE\nregistered S3method\n\n\nsummary\nrlang_message\nFALSE\nregistered S3method\n\n\nsummary\nrlang_trace\nFALSE\nregistered S3method\n\n\nsummary\nrlang_warning\nFALSE\nregistered S3method\n\n\nsummary\nsrcfile\nTRUE\nbase\n\n\nsummary\nsrcref\nTRUE\nbase\n\n\nsummary\nstepfun\nTRUE\nstats\n\n\nsummary\nstl\nFALSE\nregistered S3method\n\n\nsummary\ntable\nTRUE\nbase\n\n\nsummary\ntukeysmooth\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_sclr\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_vctr\nFALSE\nregistered S3method\n\n\nsummary\nwarnings\nTRUE\nbase"
   },
   {
     "objectID": "slides/13.html#summary-is-an-interface-to-different-methods",
@@ -1426,7 +1426,7 @@
     "href": "slides/13.html#s3-classes-can-conceal-data-elements-from-length-for-concise-representation",
     "title": "S3",
     "section": "S3 classes can conceal data elements from length() for concise representation",
-    "text": "S3 classes can conceal data elements from length() for concise representation\n\nRecord style objects use a list of equal-length vectors to represent individual components of the object.\nThe best example of this is POSIXlt, which underneath the hood is a list of 11 date-time components like year, month, and day.\nRecord style classes override length() and subsetting methods to conceal this implementation detail.\n\n\nx &lt;- as.POSIXlt(ISOdatetime(2020, 1, 1, 0, 0, 1:3))\nx\n\n#&gt; [1] \"2020-01-01 00:00:01 UTC\" \"2020-01-01 00:00:02 UTC\"\n#&gt; [3] \"2020-01-01 00:00:03 UTC\"\n\nlength(x)\n\n#&gt; [1] 3\n\nlength(unclass(x))\n\n#&gt; [1] 11\n\nx[[1]] # the first date time\n\n#&gt; [1] \"2020-01-01 00:00:01 UTC\"\n\nunclass(x)[[1]] # the first component, the number of seconds\n\n#&gt; [1] 1 2 3"
+    "text": "S3 classes can conceal data elements from length() for concise representation\n\nRecord style objects use a list of equal-length vectors to represent individual components of the object.\nThe best example of this is POSIXlt, which underneath the hood is a list of 11 date-time components like year, month, and day.\nRecord style classes override length() and subsetting methods to conceal this implementation detail.\n\n\nx &lt;- as.POSIXlt(ISOdatetime(2020, 1, 1, 0, 0, 1:3))\nx\n\n#&gt; [1] \"2020-01-01 00:00:01 CST\" \"2020-01-01 00:00:02 CST\"\n#&gt; [3] \"2020-01-01 00:00:03 CST\"\n\nlength(x)\n\n#&gt; [1] 3\n\nlength(unclass(x))\n\n#&gt; [1] 11\n\nx[[1]] # the first date time\n\n#&gt; [1] \"2020-01-01 00:00:01 CST\"\n\nunclass(x)[[1]] # the first component, the number of seconds\n\n#&gt; [1] 1 2 3"
   },
   {
     "objectID": "slides/13.html#nextmethoddelegates-dispatch-behavior-for-classes-without-explicit-generics",
@@ -1573,7 +1573,7 @@
     "href": "slides/09.html#a-functional-takes-a-function-as-input-and-returns-a-vector-as-output",
     "title": "Functionals",
     "section": "A functional takes a function as input and returns a vector as output",
-    "text": "A functional takes a function as input and returns a vector as output\n\nrandomise &lt;- function(f) f(runif(1e3))\nrandomise(mean)\n\n#&gt; [1] 0.4972772\n\nrandomise(sum)\n\n#&gt; [1] 503.4316\n\n\nCommon examples:\n\nlapply(), apply(), and tapply() in base R\npurrr::map()\nMathematical functionals like integrate() or optim()"
+    "text": "A functional takes a function as input and returns a vector as output\n\nrandomise &lt;- function(f) f(runif(1e3))\nrandomise(mean)\n\n#&gt; [1] 0.4903279\n\nrandomise(sum)\n\n#&gt; [1] 500.9905\n\n\nCommon examples:\n\nlapply(), apply(), and tapply() in base R\npurrr::map()\nMathematical functionals like integrate() or optim()"
   },
   {
     "objectID": "slides/09.html#functionals-are-better-than-for-loops",
@@ -1636,7 +1636,7 @@
     "href": "slides/09.html#purrrmap2-iterates-over-two-vectors-in-parallel",
     "title": "Functionals",
     "section": "purrr::map2() iterates over two vectors in parallel",
-    "text": "purrr::map2() iterates over two vectors in parallel\nFind a weighted mean from 2 lists: observations (xs) & weights (ws).\n\nxs &lt;- map(1:3, ~ runif(5))\nws &lt;- map(1:3, ~ rpois(5, 5) + 1)\n\nmap() passes the whole ws list to each call:\n\nmap_dbl(xs, weighted.mean, w = ws)\n\n#&gt; Error in `map_dbl()`:\n#&gt; ℹ In index: 1.\n#&gt; Caused by error in `weighted.mean.default()`:\n#&gt; ! 'x' and 'w' must have the same length\n\n\nmap2() iterates over xs and ws in parallel:\n\nmap2_dbl(xs, ws, weighted.mean)\n\n#&gt; [1] 0.7194070 0.6624688 0.7677069"
+    "text": "purrr::map2() iterates over two vectors in parallel\nFind a weighted mean from 2 lists: observations (xs) & weights (ws).\n\nxs &lt;- map(1:3, ~ runif(5))\nws &lt;- map(1:3, ~ rpois(5, 5) + 1)\n\nmap() passes the whole ws list to each call:\n\nmap_dbl(xs, weighted.mean, w = ws)\n\n#&gt; Error in `map_dbl()`:\n#&gt; ℹ In index: 1.\n#&gt; Caused by error in `weighted.mean.default()`:\n#&gt; ! 'x' and 'w' must have the same length\n\n\nmap2() iterates over xs and ws in parallel:\n\nmap2_dbl(xs, ws, weighted.mean)\n\n#&gt; [1] 0.5589596 0.4285742 0.6900269"
   },
   {
     "objectID": "slides/09.html#purrrwalk-is-for-functions-called-for-their-side-effects",
@@ -1650,14 +1650,14 @@
     "href": "slides/09.html#purrrimap-iterates-over-values-and-indices",
     "title": "Functionals",
     "section": "purrr::imap() iterates over values and indices",
-    "text": "purrr::imap() iterates over values and indices\nNamed input == map2(.x, names(.x), .f)\n\nimap_chr(iris[, 1:2], ~ paste0(\"The first value of '\", .y, \"' is \", .x[[1]]))\n\n#&gt;                               Sepal.Length \n#&gt; \"The first value of 'Sepal.Length' is 5.1\" \n#&gt;                                Sepal.Width \n#&gt;  \"The first value of 'Sepal.Width' is 3.5\"\n\n\nUnnamed input == map2(.x, seq_along(.x), .f)\n\nx &lt;- map(1:2, ~ sample(100, 5))\nimap_chr(x, ~ paste0(\"The max of element \", .y, \" is \", max(.x)))\n\n#&gt; [1] \"The max of element 1 is 57\" \"The max of element 2 is 99\""
+    "text": "purrr::imap() iterates over values and indices\nNamed input == map2(.x, names(.x), .f)\n\nimap_chr(iris[, 1:2], ~ paste0(\"The first value of '\", .y, \"' is \", .x[[1]]))\n\n#&gt;                               Sepal.Length \n#&gt; \"The first value of 'Sepal.Length' is 5.1\" \n#&gt;                                Sepal.Width \n#&gt;  \"The first value of 'Sepal.Width' is 3.5\"\n\n\nUnnamed input == map2(.x, seq_along(.x), .f)\n\nx &lt;- map(1:2, ~ sample(100, 5))\nimap_chr(x, ~ paste0(\"The max of element \", .y, \" is \", max(.x)))\n\n#&gt; [1] \"The max of element 1 is 70\" \"The max of element 2 is 82\""
   },
   {
     "objectID": "slides/09.html#purrrpmap-iterates-over-multiple-arguments-in-a-list",
     "href": "slides/09.html#purrrpmap-iterates-over-multiple-arguments-in-a-list",
     "title": "Functionals",
     "section": "purrr::pmap() iterates over multiple arguments in a list",
-    "text": "purrr::pmap() iterates over multiple arguments in a list\npmap() applies function to list of arguments\n\nmap2(x, y, f) is equivalent to pmap(list(x, y), f).\nA data frame is a list, works great with pmap().\n\n\nparams &lt;- tibble::tribble(\n  ~n, ~min, ~max,\n  1L, 0, 1,\n  2L, 10, 100,\n)\n\npmap(params, runif)\n\n#&gt; [[1]]\n#&gt; [1] 0.8628607\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 29.15801 59.34010"
+    "text": "purrr::pmap() iterates over multiple arguments in a list\npmap() applies function to list of arguments\n\nmap2(x, y, f) is equivalent to pmap(list(x, y), f).\nA data frame is a list, works great with pmap().\n\n\nparams &lt;- tibble::tribble(\n  ~n, ~min, ~max,\n  1L, 0, 1,\n  2L, 10, 100,\n)\n\npmap(params, runif)\n\n#&gt; [[1]]\n#&gt; [1] 0.324684\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 86.14710 73.00569"
   },
   {
     "objectID": "slides/09.html#purrrreduce-combines-vector-elements-with-a-binary-function",
@@ -1741,7 +1741,7 @@
     "href": "slides/07.html#inspect-environments-with-rlang",
     "title": "Environments",
     "section": "Inspect environments with {rlang}",
-    "text": "Inspect environments with {rlang}\n\nrlang::env_print(e1)\n\n#&gt; &lt;environment: 0x556284cef508&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • a: &lt;lgl&gt;\n#&gt; • b: &lt;chr&gt;\n#&gt; • c: &lt;dbl&gt;\n#&gt; • d: &lt;int&gt;\n\n\n\nrlang::env_names(e1)\n\n#&gt; [1] \"a\" \"b\" \"c\" \"d\"\n\n\n\nrlang::env_has(e1, \"a\")\n\n#&gt;    a \n#&gt; TRUE\n\n\n\nrlang::env_get(e1, \"a\")\n\n#&gt; [1] FALSE\n\n\n\nrlang::env_parent(e1)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n\nbase::print() displays the memory address and is not as helpful as rlang::env_print()"
+    "text": "Inspect environments with {rlang}\n\nrlang::env_print(e1)\n\n#&gt; &lt;environment: 0x00000242caa09348&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • a: &lt;lgl&gt;\n#&gt; • b: &lt;chr&gt;\n#&gt; • c: &lt;dbl&gt;\n#&gt; • d: &lt;int&gt;\n\n\n\nrlang::env_names(e1)\n\n#&gt; [1] \"a\" \"b\" \"c\" \"d\"\n\n\n\nrlang::env_has(e1, \"a\")\n\n#&gt;    a \n#&gt; TRUE\n\n\n\nrlang::env_get(e1, \"a\")\n\n#&gt; [1] FALSE\n\n\n\nrlang::env_parent(e1)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n\nbase::print() displays the memory address and is not as helpful as rlang::env_print()"
   },
   {
     "objectID": "slides/07.html#by-default-the-current-environment-is-your-global-environment",
@@ -1755,7 +1755,7 @@
     "href": "slides/07.html#every-environment-has-a-parent-environment",
     "title": "Environments",
     "section": "Every environment has a parent environment",
-    "text": "Every environment has a parent environment\n\nAllows for lexical scoping\n\n\ne2a &lt;- rlang::env(d = 4, e = 5)\n\ne2b &lt;- rlang::env(e2a, a = 1, b = 2, c = 3)\n\nrlang::env_parent(e2b)\n\n#&gt; &lt;environment: 0x556288ca3240&gt;\n\nrlang::env_parents(e2b)\n\n#&gt; [[1]]   &lt;env: 0x556288ca3240&gt;\n#&gt; [[2]] $ &lt;env: global&gt;\n\n\n\n\nLexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)\nLexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time"
+    "text": "Every environment has a parent environment\n\nAllows for lexical scoping\n\n\ne2a &lt;- rlang::env(d = 4, e = 5)\n\ne2b &lt;- rlang::env(e2a, a = 1, b = 2, c = 3)\n\nrlang::env_parent(e2b)\n\n#&gt; &lt;environment: 0x00000242cc7ab7e0&gt;\n\nrlang::env_parents(e2b)\n\n#&gt; [[1]]   &lt;env: 0x00000242cc7ab7e0&gt;\n#&gt; [[2]] $ &lt;env: global&gt;\n\n\n\n\nLexical scoping means if a name is not found in an environment, then R will look in its parent (and so on)\nLexical scoping is in contrast to dynamic scoping, where the variable is retrieved as it is defined at run time"
   },
   {
     "objectID": "slides/07.html#only-the-empty-environment-does-not-have-a-parent",
@@ -1769,7 +1769,7 @@
     "href": "slides/07.html#all-environments-eventually-terminate-with-the-empty-environment",
     "title": "Environments",
     "section": "All environments eventually terminate with the empty environment",
-    "text": "All environments eventually terminate with the empty environment\n\nrlang::env_parents(e2b, last = rlang::empty_env())\n\n#&gt;  [[1]]   &lt;env: 0x556288ca3240&gt;\n#&gt;  [[2]] $ &lt;env: global&gt;\n#&gt;  [[3]] $ &lt;env: package:stats&gt;\n#&gt;  [[4]] $ &lt;env: package:graphics&gt;\n#&gt;  [[5]] $ &lt;env: package:grDevices&gt;\n#&gt;  [[6]] $ &lt;env: package:utils&gt;\n#&gt;  [[7]] $ &lt;env: package:datasets&gt;\n#&gt;  [[8]] $ &lt;env: package:methods&gt;\n#&gt;  [[9]] $ &lt;env: Autoloads&gt;\n#&gt; [[10]] $ &lt;env: package:base&gt;\n#&gt; [[11]] $ &lt;env: empty&gt;\n\n\n\nThe empty enviornment typically isn’t shown but can be displayed by setting the last parameter of rlang::env_parents()"
+    "text": "All environments eventually terminate with the empty environment\n\nrlang::env_parents(e2b, last = rlang::empty_env())\n\n#&gt;  [[1]]   &lt;env: 0x00000242cc7ab7e0&gt;\n#&gt;  [[2]] $ &lt;env: global&gt;\n#&gt;  [[3]] $ &lt;env: package:stats&gt;\n#&gt;  [[4]] $ &lt;env: package:graphics&gt;\n#&gt;  [[5]] $ &lt;env: package:grDevices&gt;\n#&gt;  [[6]] $ &lt;env: package:utils&gt;\n#&gt;  [[7]] $ &lt;env: package:datasets&gt;\n#&gt;  [[8]] $ &lt;env: package:methods&gt;\n#&gt;  [[9]] $ &lt;env: Autoloads&gt;\n#&gt; [[10]] $ &lt;env: package:base&gt;\n#&gt; [[11]] $ &lt;env: empty&gt;\n\n\n\nThe empty enviornment typically isn’t shown but can be displayed by setting the last parameter of rlang::env_parents()"
   },
   {
     "objectID": "slides/07.html#be-wary-of-using--",
@@ -2168,7 +2168,7 @@
     "href": "slides/03.html#session-info",
     "title": "Vectors",
     "section": "Session Info",
-    "text": "Session Info\n\nlibrary(\"dplyr\")\nlibrary(\"gt\")\nlibrary(\"palmerpenguins\")\n\n\n\nSession Info\n\n\nutils::sessionInfo()\n\n#&gt; R version 4.5.2 (2025-10-31)\n#&gt; Platform: x86_64-pc-linux-gnu\n#&gt; Running under: Ubuntu 24.04.3 LTS\n#&gt; \n#&gt; Matrix products: default\n#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 \n#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0\n#&gt; \n#&gt; locale:\n#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       \n#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   \n#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          \n#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   \n#&gt; \n#&gt; time zone: UTC\n#&gt; tzcode source: system (glibc)\n#&gt; \n#&gt; attached base packages:\n#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     \n#&gt; \n#&gt; other attached packages:\n#&gt; [1] palmerpenguins_0.1.1 gt_1.1.0             dplyr_1.1.4         \n#&gt; \n#&gt; loaded via a namespace (and not attached):\n#&gt;  [1] digest_0.6.38     R6_2.6.1          fastmap_1.2.0     tidyselect_1.2.1 \n#&gt;  [5] xfun_0.54         magrittr_2.0.4    glue_1.8.0        tibble_3.3.0     \n#&gt;  [9] knitr_1.50        pkgconfig_2.0.3   htmltools_0.5.8.1 rmarkdown_2.30   \n#&gt; [13] generics_0.1.4    lifecycle_1.0.4   xml2_1.4.1        cli_3.6.5        \n#&gt; [17] vctrs_0.6.5       compiler_4.5.2    tools_4.5.2       pillar_1.11.1    \n#&gt; [21] evaluate_1.0.5    yaml_2.3.10       fs_1.6.6          rlang_1.1.6      \n#&gt; [25] jsonlite_2.0.0"
+    "text": "Session Info\n\nlibrary(\"dplyr\")\nlibrary(\"gt\")\nlibrary(\"palmerpenguins\")\n\n\n\nSession Info\n\n\nutils::sessionInfo()\n\n#&gt; R version 4.5.1 (2025-06-13 ucrt)\n#&gt; Platform: x86_64-w64-mingw32/x64\n#&gt; Running under: Windows 11 x64 (build 26200)\n#&gt; \n#&gt; Matrix products: default\n#&gt;   LAPACK version 3.12.1\n#&gt; \n#&gt; locale:\n#&gt; [1] LC_COLLATE=English_United States.utf8 \n#&gt; [2] LC_CTYPE=English_United States.utf8   \n#&gt; [3] LC_MONETARY=English_United States.utf8\n#&gt; [4] LC_NUMERIC=C                          \n#&gt; [5] LC_TIME=English_United States.utf8    \n#&gt; \n#&gt; time zone: America/Chicago\n#&gt; tzcode source: internal\n#&gt; \n#&gt; attached base packages:\n#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     \n#&gt; \n#&gt; other attached packages:\n#&gt; [1] palmerpenguins_0.1.1 gt_1.1.0             dplyr_1.1.4         \n#&gt; \n#&gt; loaded via a namespace (and not attached):\n#&gt;  [1] digest_0.6.37     R6_2.6.1          fastmap_1.2.0     tidyselect_1.2.1 \n#&gt;  [5] xfun_0.54         magrittr_2.0.4    glue_1.8.0        tibble_3.3.0     \n#&gt;  [9] knitr_1.50        pkgconfig_2.0.3   htmltools_0.5.8.1 rmarkdown_2.30   \n#&gt; [13] generics_0.1.4    lifecycle_1.0.4   xml2_1.4.1        cli_3.6.5        \n#&gt; [17] vctrs_0.6.5       compiler_4.5.1    tools_4.5.1       pillar_1.11.1    \n#&gt; [21] evaluate_1.0.5    yaml_2.3.10       fs_1.6.6          rlang_1.1.6.9000 \n#&gt; [25] jsonlite_2.0.0    keyring_1.4.1"
   },
   {
     "objectID": "slides/03.html#aperitif",
@@ -2588,7 +2588,7 @@
     "href": "slides/03.html#dates-times-posixct",
     "title": "Vectors",
     "section": "Dates-times: POSIXct",
-    "text": "Dates-times: POSIXct\nWe’ll focus on POSIXct because:\n\nSimplest\nBuilt on an atomic (double) vector\nMost appropriate for use in a data frame\n\nLet’s now build and deconstruct a Date-time\n\n# Build\nnote_date_time &lt;- as.POSIXct(\n  x = Sys.time(), # time\n  tz = \"America/New_York\" # time zone, used only for formatting\n)\n\n# Inspect\nnote_date_time\n\n#&gt; [1] \"2025-11-18 07:00:22 EST\"\n\n# - type\ntypeof(note_date_time)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(note_date_time)\n\n#&gt; $class\n#&gt; [1] \"POSIXct\" \"POSIXt\" \n#&gt; \n#&gt; $tzone\n#&gt; [1] \"America/New_York\"\n\nstructure(note_date_time, tzone = \"Europe/Paris\")\n\n#&gt; [1] \"2025-11-18 13:00:22 CET\"\n\n\n\ndate_time &lt;- as.POSIXct(\"2024-02-22 12:34:56\", tz = \"EST\")\nunclass(date_time)\n\n#&gt; [1] 1708623296\n#&gt; attr(,\"tzone\")\n#&gt; [1] \"EST\""
+    "text": "Dates-times: POSIXct\nWe’ll focus on POSIXct because:\n\nSimplest\nBuilt on an atomic (double) vector\nMost appropriate for use in a data frame\n\nLet’s now build and deconstruct a Date-time\n\n# Build\nnote_date_time &lt;- as.POSIXct(\n  x = Sys.time(), # time\n  tz = \"America/New_York\" # time zone, used only for formatting\n)\n\n# Inspect\nnote_date_time\n\n#&gt; [1] \"2025-11-18 07:44:07 EST\"\n\n# - type\ntypeof(note_date_time)\n\n#&gt; [1] \"double\"\n\n# - attributes\nattributes(note_date_time)\n\n#&gt; $class\n#&gt; [1] \"POSIXct\" \"POSIXt\" \n#&gt; \n#&gt; $tzone\n#&gt; [1] \"America/New_York\"\n\nstructure(note_date_time, tzone = \"Europe/Paris\")\n\n#&gt; [1] \"2025-11-18 13:44:07 CET\"\n\n\n\ndate_time &lt;- as.POSIXct(\"2024-02-22 12:34:56\", tz = \"EST\")\nunclass(date_time)\n\n#&gt; [1] 1708623296\n#&gt; attr(,\"tzone\")\n#&gt; [1] \"EST\""
   },
   {
     "objectID": "slides/03.html#durations",
@@ -3482,7 +3482,7 @@
     "href": "slides/06.html#function-composition",
     "title": "Functions",
     "section": "Function composition",
-    "text": "Function composition\n\nx &lt;- runif(100)\n# Nested function calls\nsquare &lt;- function(x) x^2\ndeviation &lt;- function(x) x - mean(x)\nsqrt(mean(square(deviation(x))))\n\n#&gt; [1] 0.2940626\n\n\n\n# intermediate result\nout &lt;- deviation(x)\nout &lt;- square(out)\nout &lt;- mean(out)\nout &lt;- sqrt(out)\nout\n\n#&gt; [1] 0.2940626\n\n\n\n# Pipe workflow\nx |&gt; \n  deviation() |&gt;\n  square() |&gt;\n  mean() |&gt;\n  sqrt()\n\n#&gt; [1] 0.2940626"
+    "text": "Function composition\n\nx &lt;- runif(100)\n# Nested function calls\nsquare &lt;- function(x) x^2\ndeviation &lt;- function(x) x - mean(x)\nsqrt(mean(square(deviation(x))))\n\n#&gt; [1] 0.2905932\n\n\n\n# intermediate result\nout &lt;- deviation(x)\nout &lt;- square(out)\nout &lt;- mean(out)\nout &lt;- sqrt(out)\nout\n\n#&gt; [1] 0.2905932\n\n\n\n# Pipe workflow\nx |&gt; \n  deviation() |&gt;\n  square() |&gt;\n  mean() |&gt;\n  sqrt()\n\n#&gt; [1] 0.2905932"
   },
   {
     "objectID": "slides/06.html#more-about-functions-insights",
@@ -3503,7 +3503,7 @@
     "href": "slides/06.html#case-study-sir-model-function",
     "title": "Functions",
     "section": "Case Study: SIR model function",
-    "text": "Case Study: SIR model function\nThis is an interesting example taken from a course on Coursera: Infectious disease modelling-ICL\nThe purpose of this example is to show how to make a model passing through making a function.\nFirst we need to load some useful libraries:\n\nlibrary(deSolve)\nlibrary(reshape2)\n\nThen set the model inputs:\n\npopulation size (N)\nnumber of susceptable (S)\ninfected (I)\nrecovered (R)\n\nAnd add the model parameters:\n\ninfection rate (\\(\\beta\\))\nrecovery rate (\\(\\gamma\\))\n\n\nN&lt;- 100000                  # population\n\nstate_values&lt;- c(S = N -1,   # susceptible\n                 I = 1,      # infected\n                 R = 0)      # recovered\n\nparameters&lt;- c(beta = 1/2,  # infection rate days^-1\n               gamma = 1/4) # recovery rate days^-1\n\nThen we set the time as an important factor, which defines the length of time we are looking at this model run. It is intended as the time range in which the infections spread out, let’s say that we are aiming to investigate an infection period of 100 days.\n\ntimes&lt;- seq(0, 100, by = 1)\n\nFinally, we set up the SIR model, the susceptable, infected and recovered model. How do we do that is passing the paramenters through a function of the time, and state.\nWithin the model function we calculate one more paramenter, the force of infection: \\(\\lambda\\)\n\nsir_model&lt;- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    N&lt;- S + I + R\n    lambda = beta * I/N    # force of infection\n    dS&lt;- - lambda * S \n    dI&lt;- lambda * S - gamma * I\n    dR&lt;- gamma * I\n    return(list(c(dS,dI,dR)))\n  })\n}\n\nOnce we have our SIR model function ready, we can calculate the output of the model, with the help of the function ode() from {deSolve} package.\n\noutput&lt;- as.data.frame(ode(y = state_values,\n                           times = times,\n                           func = sir_model,\n                           parms = parameters))\noutput %&gt;% head\n\n#&gt;   time        S        I         R\n#&gt; 1    0 99999.00 1.000000 0.0000000\n#&gt; 2    1 99998.43 1.284018 0.2840252\n#&gt; 3    2 99997.70 1.648696 0.6487171\n#&gt; 4    3 99996.77 2.116939 1.1169863\n#&gt; 5    4 99995.56 2.718152 1.7182450\n#&gt; 6    5 99994.02 3.490086 2.4902600\n\n\nIn addition to our builtin SIR model function we can have a look at:\n\n?deSolve::ode()\n\nIt solves Ordinary Differential Equations.\n\ndeSolve:::ode\n\n#&gt; function (y, times, func, parms, method = c(\"lsoda\", \"lsode\", \n#&gt;     \"lsodes\", \"lsodar\", \"vode\", \"daspk\", \"euler\", \"rk4\", \"ode23\", \n#&gt;     \"ode45\", \"radau\", \"bdf\", \"bdf_d\", \"adams\", \"impAdams\", \"impAdams_d\", \n#&gt;     \"iteration\"), ...) \n#&gt; {\n#&gt;     if (is.null(method)) \n#&gt;         method &lt;- \"lsoda\"\n#&gt;     if (is.list(method)) {\n#&gt;         if (!inherits(method, \"rkMethod\")) \n#&gt;             stop(\"'method' should be given as string or as a list of class 'rkMethod'\")\n#&gt;         out &lt;- rk(y, times, func, parms, method = method, ...)\n#&gt;     }\n#&gt;     else if (is.function(method)) \n#&gt;         out &lt;- method(y, times, func, parms, ...)\n#&gt;     else if (is.complex(y)) \n#&gt;         out &lt;- switch(match.arg(method), vode = zvode(y, times, \n#&gt;             func, parms, ...), bdf = zvode(y, times, func, parms, \n#&gt;             mf = 22, ...), bdf_d = zvode(y, times, func, parms, \n#&gt;             mf = 23, ...), adams = zvode(y, times, func, parms, \n#&gt;             mf = 10, ...), impAdams = zvode(y, times, func, parms, \n#&gt;             mf = 12, ...), impAdams_d = zvode(y, times, func, \n#&gt;             parms, mf = 13, ...))\n#&gt;     else out &lt;- switch(match.arg(method), lsoda = lsoda(y, times, \n#&gt;         func, parms, ...), vode = vode(y, times, func, parms, \n#&gt;         ...), lsode = lsode(y, times, func, parms, ...), lsodes = lsodes(y, \n#&gt;         times, func, parms, ...), lsodar = lsodar(y, times, func, \n#&gt;         parms, ...), daspk = daspk(y, times, func, parms, ...), \n#&gt;         euler = rk(y, times, func, parms, method = \"euler\", ...), \n#&gt;         rk4 = rk(y, times, func, parms, method = \"rk4\", ...), \n#&gt;         ode23 = rk(y, times, func, parms, method = \"ode23\", ...), \n#&gt;         ode45 = rk(y, times, func, parms, method = \"ode45\", ...), \n#&gt;         radau = radau(y, times, func, parms, ...), bdf = lsode(y, \n#&gt;             times, func, parms, mf = 22, ...), bdf_d = lsode(y, \n#&gt;             times, func, parms, mf = 23, ...), adams = lsode(y, \n#&gt;             times, func, parms, mf = 10, ...), impAdams = lsode(y, \n#&gt;             times, func, parms, mf = 12, ...), impAdams_d = lsode(y, \n#&gt;             times, func, parms, mf = 13, ...), iteration = iteration(y, \n#&gt;             times, func, parms, ...))\n#&gt;     return(out)\n#&gt; }\n#&gt; &lt;bytecode: 0x55ddcd86ab28&gt;\n#&gt; &lt;environment: namespace:deSolve&gt;\n\n\n\nmethods(\"ode\")\n\n#&gt; [1] ode.1D   ode.2D   ode.3D   ode.band\n#&gt; see '?methods' for accessing help and source code"
+    "text": "Case Study: SIR model function\nThis is an interesting example taken from a course on Coursera: Infectious disease modelling-ICL\nThe purpose of this example is to show how to make a model passing through making a function.\nFirst we need to load some useful libraries:\n\nlibrary(deSolve)\nlibrary(reshape2)\n\nThen set the model inputs:\n\npopulation size (N)\nnumber of susceptable (S)\ninfected (I)\nrecovered (R)\n\nAnd add the model parameters:\n\ninfection rate (\\(\\beta\\))\nrecovery rate (\\(\\gamma\\))\n\n\nN&lt;- 100000                  # population\n\nstate_values&lt;- c(S = N -1,   # susceptible\n                 I = 1,      # infected\n                 R = 0)      # recovered\n\nparameters&lt;- c(beta = 1/2,  # infection rate days^-1\n               gamma = 1/4) # recovery rate days^-1\n\nThen we set the time as an important factor, which defines the length of time we are looking at this model run. It is intended as the time range in which the infections spread out, let’s say that we are aiming to investigate an infection period of 100 days.\n\ntimes&lt;- seq(0, 100, by = 1)\n\nFinally, we set up the SIR model, the susceptable, infected and recovered model. How do we do that is passing the paramenters through a function of the time, and state.\nWithin the model function we calculate one more paramenter, the force of infection: \\(\\lambda\\)\n\nsir_model&lt;- function(time, state, parameters){\n  with(as.list(c(state, parameters)),{\n    N&lt;- S + I + R\n    lambda = beta * I/N    # force of infection\n    dS&lt;- - lambda * S \n    dI&lt;- lambda * S - gamma * I\n    dR&lt;- gamma * I\n    return(list(c(dS,dI,dR)))\n  })\n}\n\nOnce we have our SIR model function ready, we can calculate the output of the model, with the help of the function ode() from {deSolve} package.\n\noutput&lt;- as.data.frame(ode(y = state_values,\n                           times = times,\n                           func = sir_model,\n                           parms = parameters))\noutput %&gt;% head\n\n#&gt;   time        S        I         R\n#&gt; 1    0 99999.00 1.000000 0.0000000\n#&gt; 2    1 99998.43 1.284018 0.2840252\n#&gt; 3    2 99997.70 1.648696 0.6487171\n#&gt; 4    3 99996.77 2.116939 1.1169863\n#&gt; 5    4 99995.56 2.718152 1.7182450\n#&gt; 6    5 99994.02 3.490086 2.4902600\n\n\nIn addition to our builtin SIR model function we can have a look at:\n\n?deSolve::ode()\n\nIt solves Ordinary Differential Equations.\n\ndeSolve:::ode\n\n#&gt; function (y, times, func, parms, method = c(\"lsoda\", \"lsode\", \n#&gt;     \"lsodes\", \"lsodar\", \"vode\", \"daspk\", \"euler\", \"rk4\", \"ode23\", \n#&gt;     \"ode45\", \"radau\", \"bdf\", \"bdf_d\", \"adams\", \"impAdams\", \"impAdams_d\", \n#&gt;     \"iteration\"), ...) \n#&gt; {\n#&gt;     if (is.null(method)) \n#&gt;         method &lt;- \"lsoda\"\n#&gt;     if (is.list(method)) {\n#&gt;         if (!inherits(method, \"rkMethod\")) \n#&gt;             stop(\"'method' should be given as string or as a list of class 'rkMethod'\")\n#&gt;         out &lt;- rk(y, times, func, parms, method = method, ...)\n#&gt;     }\n#&gt;     else if (is.function(method)) \n#&gt;         out &lt;- method(y, times, func, parms, ...)\n#&gt;     else if (is.complex(y)) \n#&gt;         out &lt;- switch(match.arg(method), vode = zvode(y, times, \n#&gt;             func, parms, ...), bdf = zvode(y, times, func, parms, \n#&gt;             mf = 22, ...), bdf_d = zvode(y, times, func, parms, \n#&gt;             mf = 23, ...), adams = zvode(y, times, func, parms, \n#&gt;             mf = 10, ...), impAdams = zvode(y, times, func, parms, \n#&gt;             mf = 12, ...), impAdams_d = zvode(y, times, func, \n#&gt;             parms, mf = 13, ...))\n#&gt;     else out &lt;- switch(match.arg(method), lsoda = lsoda(y, times, \n#&gt;         func, parms, ...), vode = vode(y, times, func, parms, \n#&gt;         ...), lsode = lsode(y, times, func, parms, ...), lsodes = lsodes(y, \n#&gt;         times, func, parms, ...), lsodar = lsodar(y, times, func, \n#&gt;         parms, ...), daspk = daspk(y, times, func, parms, ...), \n#&gt;         euler = rk(y, times, func, parms, method = \"euler\", ...), \n#&gt;         rk4 = rk(y, times, func, parms, method = \"rk4\", ...), \n#&gt;         ode23 = rk(y, times, func, parms, method = \"ode23\", ...), \n#&gt;         ode45 = rk(y, times, func, parms, method = \"ode45\", ...), \n#&gt;         radau = radau(y, times, func, parms, ...), bdf = lsode(y, \n#&gt;             times, func, parms, mf = 22, ...), bdf_d = lsode(y, \n#&gt;             times, func, parms, mf = 23, ...), adams = lsode(y, \n#&gt;             times, func, parms, mf = 10, ...), impAdams = lsode(y, \n#&gt;             times, func, parms, mf = 12, ...), impAdams_d = lsode(y, \n#&gt;             times, func, parms, mf = 13, ...), iteration = iteration(y, \n#&gt;             times, func, parms, ...))\n#&gt;     return(out)\n#&gt; }\n#&gt; &lt;bytecode: 0x0000021ebc6bc708&gt;\n#&gt; &lt;environment: namespace:deSolve&gt;\n\n\n\nmethods(\"ode\")\n\n#&gt; [1] ode.1D   ode.2D   ode.3D   ode.band\n#&gt; see '?methods' for accessing help and source code"
   },
   {
     "objectID": "slides/08.html#learning-objectives",
@@ -3727,7 +3727,7 @@
     "href": "slides/10.html#why-function-factories-work",
     "title": "Function factories",
     "section": "Why function factories work",
-    "text": "Why function factories work\nFunction factories are powered by three features of the R language:\n\nR has first-class functions\nR functions capture the environment in which they are created\nR functions create a new execution environment\n\n\n\n\nenv_print(square)\n\n#&gt; &lt;environment: 0x55b037894d30&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\nenv_print(cube)\n\n#&gt; &lt;environment: 0x55b0378dacc0&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\n\nA language with first-class functions means the functions are objects that can be copied, bound, etc.\nWhen they are created, manufactured functions capture the environment of the function factory\nManufactured functions have separate environments"
+    "text": "Why function factories work\nFunction factories are powered by three features of the R language:\n\nR has first-class functions\nR functions capture the environment in which they are created\nR functions create a new execution environment\n\n\n\n\nenv_print(square)\n\n#&gt; &lt;environment: 0x000001df5ee07af0&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\nenv_print(cube)\n\n#&gt; &lt;environment: 0x000001df5efbc190&gt;\n#&gt; Parent: &lt;environment: global&gt;\n#&gt; Bindings:\n#&gt; • exp: &lt;dbl&gt;\n\n\n\n\n\nA language with first-class functions means the functions are objects that can be copied, bound, etc.\nWhen they are created, manufactured functions capture the environment of the function factory\nManufactured functions have separate environments"
   },
   {
     "objectID": "slides/10.html#diagramming-function-factories",
@@ -4777,7 +4777,7 @@
     "href": "01.html",
     "title": "1. Introduction",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Getting Started",
       "1. Introduction"
@@ -4799,7 +4799,7 @@
     "href": "03.html",
     "title": "3. Vectors",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Foundations",
       "3. Vectors"
@@ -4821,7 +4821,7 @@
     "href": "05.html",
     "title": "5. Control flow",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Foundations",
       "5. Control flow"
@@ -4843,7 +4843,7 @@
     "href": "07.html",
     "title": "7. Environments",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Foundations",
       "7. Environments"
@@ -4865,7 +4865,7 @@
     "href": "09.html",
     "title": "9. Functionals",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Functional programming",
       "9. Functionals"
@@ -4887,7 +4887,7 @@
     "href": "11.html",
     "title": "11. Function operators",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Functional programming",
       "11. Function operators"
@@ -4909,7 +4909,7 @@
     "href": "13.html",
     "title": "13. S3",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Object-oriented programming",
       "13. S3"
@@ -4931,7 +4931,7 @@
     "href": "15.html",
     "title": "15. S4",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Object-oriented programming",
       "15. S4"
@@ -4953,7 +4953,7 @@
     "href": "17.html",
     "title": "17. Metaprogramming big picture",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Metaprogramming",
       "17. Metaprogramming big picture"
@@ -4975,7 +4975,7 @@
     "href": "19.html",
     "title": "19. Quasiquotation",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Metaprogramming",
       "19. Quasiquotation"
@@ -4997,7 +4997,7 @@
     "href": "21.html",
     "title": "21. Translating R code",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Metaprogramming",
       "21. Translating R code"
@@ -5019,7 +5019,7 @@
     "href": "23.html",
     "title": "23. Measuring performance",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Techniques",
       "23. Measuring performance"
@@ -5041,7 +5041,7 @@
     "href": "25.html",
     "title": "25. Rewriting R code in C++",
     "section": "",
-    "text": "&lt;– This file is generated automatically. Do not edit. –&gt; &lt;– Edit files in /slides and /videos. –&gt; :::{#slides} :::",
+    "text": "No matching items",
     "crumbs": [
       "Techniques",
       "25. Rewriting R code in C++"

@@ -333,7 +333,7 @@
 #&gt;         warning(val)
 #&gt;     invisible(x)
 #&gt; }
-#&gt; &lt;bytecode: 0x56188effa9b8&gt;
+#&gt; &lt;bytecode: 0x0000019c3ab66c40&gt;
 #&gt; &lt;environment: namespace:base&gt;</code></pre>
 </div>
 </div>
@@ -463,7 +463,7 @@
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (object, ...) 
 #&gt; UseMethod("summary")
-#&gt; &lt;bytecode: 0x561889927c88&gt;
+#&gt; &lt;bytecode: 0x0000019c332392a0&gt;
 #&gt; &lt;environment: namespace:base&gt;</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>sloop<span class="sc">::</span><span class="fu">s3_methods_generic</span>(</span>
@@ -639,31 +639,31 @@
 </tr>
 <tr class="odd">
 <td style="text-align: left;">summary</td>
-<td style="text-align: left;">rlang_error</td>
+<td style="text-align: left;">rlang:::list_of_conditions</td>
 <td style="text-align: left;">FALSE</td>
 <td style="text-align: left;">registered S3method</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">summary</td>
+<td style="text-align: left;">rlang_error</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">registered S3method</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">summary</td>
 <td style="text-align: left;">rlang_message</td>
 <td style="text-align: left;">FALSE</td>
 <td style="text-align: left;">registered S3method</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">summary</td>
 <td style="text-align: left;">rlang_trace</td>
 <td style="text-align: left;">FALSE</td>
 <td style="text-align: left;">registered S3method</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">summary</td>
-<td style="text-align: left;">rlang_warning</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: left;">registered S3method</td>
-</tr>
 <tr class="odd">
 <td style="text-align: left;">summary</td>
-<td style="text-align: left;">rlang:::list_of_conditions</td>
+<td style="text-align: left;">rlang_warning</td>
 <td style="text-align: left;">FALSE</td>
 <td style="text-align: left;">registered S3method</td>
 </tr>
@@ -966,8 +966,8 @@
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">as.POSIXlt</span>(<span class="fu">ISOdatetime</span>(<span class="dv">2020</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>))</span>
 <span id="cb69-2"><a></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "2020-01-01 00:00:01 UTC" "2020-01-01 00:00:02 UTC"
-#&gt; [3] "2020-01-01 00:00:03 UTC"</code></pre>
+<pre><code>#&gt; [1] "2020-01-01 00:00:01 CST" "2020-01-01 00:00:02 CST"
+#&gt; [3] "2020-01-01 00:00:03 CST"</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a><span class="fu">length</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -979,7 +979,7 @@
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a>x[[<span class="dv">1</span>]] <span class="co"># the first date time</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "2020-01-01 00:00:01 UTC"</code></pre>
+<pre><code>#&gt; [1] "2020-01-01 00:00:01 CST"</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a><span class="fu">unclass</span>(x)[[<span class="dv">1</span>]] <span class="co"># the first component, the number of seconds</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">

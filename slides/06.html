@@ -221,8 +221,8 @@
 <p>Functions have three parts, <code>formals()</code>, <code>body()</code>, and <code>environment()</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="htmlwidget-e4474b222a06d58b88fd" style="width:100%;height:100%;" class="DiagrammeR html-widget"></div>
-<script type="application/json" data-for="htmlwidget-e4474b222a06d58b88fd">{"x":{"diagram":"\n   graph LR\n     A{formals}-->B(body)\n     B-->C(environment)\nstyle A fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-1dff5ba369341e98689a" style="width:100%;height:100%;" class="DiagrammeR html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1dff5ba369341e98689a">{"x":{"diagram":"\n   graph LR\n     A{formals}-->B(body)\n     B-->C(environment)\nstyle A fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -365,7 +365,7 @@
 <span id="cb23-4"><a></a>deviation <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="sc">-</span> <span class="fu">mean</span>(x)</span>
 <span id="cb23-5"><a></a><span class="fu">sqrt</span>(<span class="fu">mean</span>(<span class="fu">square</span>(<span class="fu">deviation</span>(x))))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.2940626</code></pre>
+<pre><code>#&gt; [1] 0.2905932</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -376,7 +376,7 @@
 <span id="cb25-5"><a></a>out <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(out)</span>
 <span id="cb25-6"><a></a>out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.2940626</code></pre>
+<pre><code>#&gt; [1] 0.2905932</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -387,7 +387,7 @@
 <span id="cb27-5"><a></a>  <span class="fu">mean</span>() <span class="sc">|&gt;</span></span>
 <span id="cb27-6"><a></a>  <span class="fu">sqrt</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 0.2940626</code></pre>
+<pre><code>#&gt; [1] 0.2905932</code></pre>
 </div>
 </div>
 </section>
@@ -617,7 +617,7 @@
 <p>Everything that exists is an object. Everything that happens is a function call. — John Chambers</p>
 </blockquote>
 
-<img data-src="images/06_forms.png" class="r-stretch"></section>
+<img data-src="images/06_forms.png" width="584" class="r-stretch"></section>
 <section id="case-study-sir-model-function" class="slide level2">
 <h2>Case Study: SIR model function</h2>
 <p>This is an interesting example taken from a course on Coursera: <a href="https://www.coursera.org/specializations/infectious-disease-modelling">Infectious disease modelling-ICL</a></p>
@@ -732,7 +732,7 @@
 #&gt;             times, func, parms, ...))
 #&gt;     return(out)
 #&gt; }
-#&gt; &lt;bytecode: 0x55ddcd86ab28&gt;
+#&gt; &lt;bytecode: 0x0000021ebc6bc708&gt;
 #&gt; &lt;environment: namespace:deSolve&gt;</code></pre>
 </div>
 </div>
@@ -793,7 +793,7 @@
 #&gt; {
 #&gt;     UseMethod("melt", data)
 #&gt; }
-#&gt; &lt;bytecode: 0x55ddcca7d050&gt;
+#&gt; &lt;bytecode: 0x0000021ebb4c0c10&gt;
 #&gt; &lt;environment: namespace:reshape2&gt;</code></pre>
 </div>
 </div>
@@ -852,7 +852,7 @@
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a><span class="fu">methods</span>(<span class="at">class=</span><span class="st">"table"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt;  [1] [             aperm         as_tibble     as.data.frame Axis         
+<pre><code>#&gt;  [1] [             aperm         as.data.frame as_tibble     Axis         
 #&gt;  [6] coerce        initialize    lines         melt          plot         
 #&gt; [11] points        print         show          slotsFromS3   summary      
 #&gt; [16] tail         
@@ -886,11 +886,10 @@
 #&gt;     measure.attributes &lt;- args$measure.attributes
 #&gt;     factorsAsStrings &lt;- args$factorsAsStrings
 #&gt;     valueAsFactor &lt;- "factor" %in% measure.attributes$class
-#&gt;     df &lt;- melt_dataframe(data, as.integer(id.ind - 1L), as.integer(measure.ind - 
-#&gt;         1L), as.character(variable.name), as.character(value.name), 
-#&gt;         as.logical(factorsAsStrings), as.logical(valueAsFactor))
-#&gt;     if (!is.null(measure.attributes)) 
-#&gt;         attributes(df[[value.name]]) &lt;- measure.attributes
+#&gt;     df &lt;- melt_dataframe(data, as.integer(id.ind - 1), as.integer(measure.ind - 
+#&gt;         1), as.character(variable.name), as.character(value.name), 
+#&gt;         as.pairlist(measure.attributes), as.logical(factorsAsStrings), 
+#&gt;         as.logical(valueAsFactor))
 #&gt;     if (na.rm) {
 #&gt;         return(df[!is.na(df[[value.name]]), ])
 #&gt;     }
@@ -898,7 +897,7 @@
 #&gt;         return(df)
 #&gt;     }
 #&gt; }
-#&gt; &lt;bytecode: 0x55ddc43915b0&gt;
+#&gt; &lt;bytecode: 0x0000021eb6346070&gt;
 #&gt; &lt;environment: namespace:reshape2&gt;</code></pre>
 </div>
 </div>

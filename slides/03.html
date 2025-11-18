@@ -223,22 +223,22 @@ Session Info
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>utils<span class="sc">::</span><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; R version 4.5.2 (2025-10-31)
-#&gt; Platform: x86_64-pc-linux-gnu
-#&gt; Running under: Ubuntu 24.04.3 LTS
+<pre><code>#&gt; R version 4.5.1 (2025-06-13 ucrt)
+#&gt; Platform: x86_64-w64-mingw32/x64
+#&gt; Running under: Windows 11 x64 (build 26200)
 #&gt; 
 #&gt; Matrix products: default
-#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#&gt;   LAPACK version 3.12.1
 #&gt; 
 #&gt; locale:
-#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#&gt; [1] LC_COLLATE=English_United States.utf8 
+#&gt; [2] LC_CTYPE=English_United States.utf8   
+#&gt; [3] LC_MONETARY=English_United States.utf8
+#&gt; [4] LC_NUMERIC=C                          
+#&gt; [5] LC_TIME=English_United States.utf8    
 #&gt; 
-#&gt; time zone: UTC
-#&gt; tzcode source: system (glibc)
+#&gt; time zone: America/Chicago
+#&gt; tzcode source: internal
 #&gt; 
 #&gt; attached base packages:
 #&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
@@ -247,13 +247,13 @@ Session Info
 #&gt; [1] palmerpenguins_0.1.1 gt_1.1.0             dplyr_1.1.4         
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;  [1] digest_0.6.38     R6_2.6.1          fastmap_1.2.0     tidyselect_1.2.1 
+#&gt;  [1] digest_0.6.37     R6_2.6.1          fastmap_1.2.0     tidyselect_1.2.1 
 #&gt;  [5] xfun_0.54         magrittr_2.0.4    glue_1.8.0        tibble_3.3.0     
 #&gt;  [9] knitr_1.50        pkgconfig_2.0.3   htmltools_0.5.8.1 rmarkdown_2.30   
 #&gt; [13] generics_0.1.4    lifecycle_1.0.4   xml2_1.4.1        cli_3.6.5        
-#&gt; [17] vctrs_0.6.5       compiler_4.5.2    tools_4.5.2       pillar_1.11.1    
-#&gt; [21] evaluate_1.0.5    yaml_2.3.10       fs_1.6.6          rlang_1.1.6      
-#&gt; [25] jsonlite_2.0.0</code></pre>
+#&gt; [17] vctrs_0.6.5       compiler_4.5.1    tools_4.5.1       pillar_1.11.1    
+#&gt; [21] evaluate_1.0.5    yaml_2.3.10       fs_1.6.6          rlang_1.1.6.9000 
+#&gt; [25] jsonlite_2.0.0    keyring_1.4.1</code></pre>
 </div>
 </div>
 </details>
@@ -416,23 +416,23 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
 <p>We can determine the type of a vector with <code>typeof()</code> and its length with <code>length()</code></p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="mfzdgusqrq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#mfzdgusqrq table {
+<div id="deopahgkzo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#deopahgkzo table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#mfzdgusqrq thead, #mfzdgusqrq tbody, #mfzdgusqrq tfoot, #mfzdgusqrq tr, #mfzdgusqrq td, #mfzdgusqrq th {
+#deopahgkzo thead, #deopahgkzo tbody, #deopahgkzo tfoot, #deopahgkzo tr, #deopahgkzo td, #deopahgkzo th {
   border-style: none;
 }
 
-#mfzdgusqrq p {
+#deopahgkzo p {
   margin: 0;
   padding: 0;
 }
 
-#mfzdgusqrq .gt_table {
+#deopahgkzo .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -458,12 +458,12 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-left-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_caption {
+#deopahgkzo .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#mfzdgusqrq .gt_title {
+#deopahgkzo .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -475,7 +475,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-bottom-width: 0;
 }
 
-#mfzdgusqrq .gt_subtitle {
+#deopahgkzo .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -487,7 +487,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-top-width: 0;
 }
 
-#mfzdgusqrq .gt_heading {
+#deopahgkzo .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -499,13 +499,13 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-right-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_bottom_border {
+#deopahgkzo .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_col_headings {
+#deopahgkzo .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -520,7 +520,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-right-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_col_heading {
+#deopahgkzo .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -540,7 +540,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   overflow-x: hidden;
 }
 
-#mfzdgusqrq .gt_column_spanner_outer {
+#deopahgkzo .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -552,15 +552,15 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   padding-right: 4px;
 }
 
-#mfzdgusqrq .gt_column_spanner_outer:first-child {
+#deopahgkzo .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mfzdgusqrq .gt_column_spanner_outer:last-child {
+#deopahgkzo .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mfzdgusqrq .gt_column_spanner {
+#deopahgkzo .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -572,11 +572,11 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   width: 100%;
 }
 
-#mfzdgusqrq .gt_spanner_row {
+#deopahgkzo .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#mfzdgusqrq .gt_group_heading {
+#deopahgkzo .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -602,7 +602,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   text-align: left;
 }
 
-#mfzdgusqrq .gt_empty_group_heading {
+#deopahgkzo .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -617,15 +617,15 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   vertical-align: middle;
 }
 
-#mfzdgusqrq .gt_from_md > :first-child {
+#deopahgkzo .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mfzdgusqrq .gt_from_md > :last-child {
+#deopahgkzo .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mfzdgusqrq .gt_row {
+#deopahgkzo .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -644,7 +644,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   overflow-x: hidden;
 }
 
-#mfzdgusqrq .gt_stub {
+#deopahgkzo .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -657,7 +657,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   padding-right: 5px;
 }
 
-#mfzdgusqrq .gt_stub_row_group {
+#deopahgkzo .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -671,15 +671,15 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   vertical-align: top;
 }
 
-#mfzdgusqrq .gt_row_group_first td {
+#deopahgkzo .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#mfzdgusqrq .gt_row_group_first th {
+#deopahgkzo .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#mfzdgusqrq .gt_summary_row {
+#deopahgkzo .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -689,16 +689,16 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   padding-right: 5px;
 }
 
-#mfzdgusqrq .gt_first_summary_row {
+#deopahgkzo .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_first_summary_row.thick {
+#deopahgkzo .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#mfzdgusqrq .gt_last_summary_row {
+#deopahgkzo .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -708,7 +708,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-bottom-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_grand_summary_row {
+#deopahgkzo .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -718,7 +718,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   padding-right: 5px;
 }
 
-#mfzdgusqrq .gt_first_grand_summary_row {
+#deopahgkzo .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -728,7 +728,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-top-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_last_grand_summary_row_top {
+#deopahgkzo .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -738,11 +738,11 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-bottom-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_striped {
+#deopahgkzo .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mfzdgusqrq .gt_table_body {
+#deopahgkzo .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -751,7 +751,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-bottom-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_footnotes {
+#deopahgkzo .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -765,7 +765,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-right-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_footnote {
+#deopahgkzo .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -774,7 +774,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   padding-right: 5px;
 }
 
-#mfzdgusqrq .gt_sourcenotes {
+#deopahgkzo .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -788,7 +788,7 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   border-right-color: #D3D3D3;
 }
 
-#mfzdgusqrq .gt_sourcenote {
+#deopahgkzo .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -796,72 +796,72 @@ Wickham notes that the use of <code>L</code> dates back to the <strong>C</strong
   padding-right: 5px;
 }
 
-#mfzdgusqrq .gt_left {
+#deopahgkzo .gt_left {
   text-align: left;
 }
 
-#mfzdgusqrq .gt_center {
+#deopahgkzo .gt_center {
   text-align: center;
 }
 
-#mfzdgusqrq .gt_right {
+#deopahgkzo .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mfzdgusqrq .gt_font_normal {
+#deopahgkzo .gt_font_normal {
   font-weight: normal;
 }
 
-#mfzdgusqrq .gt_font_bold {
+#deopahgkzo .gt_font_bold {
   font-weight: bold;
 }
 
-#mfzdgusqrq .gt_font_italic {
+#deopahgkzo .gt_font_italic {
   font-style: italic;
 }
 
-#mfzdgusqrq .gt_super {
+#deopahgkzo .gt_super {
   font-size: 65%;
 }
 
-#mfzdgusqrq .gt_footnote_marks {
+#deopahgkzo .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#mfzdgusqrq .gt_asterisk {
+#deopahgkzo .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#mfzdgusqrq .gt_indent_1 {
+#deopahgkzo .gt_indent_1 {
   text-indent: 5px;
 }
 
-#mfzdgusqrq .gt_indent_2 {
+#deopahgkzo .gt_indent_2 {
   text-indent: 10px;
 }
 
-#mfzdgusqrq .gt_indent_3 {
+#deopahgkzo .gt_indent_3 {
   text-indent: 15px;
 }
 
-#mfzdgusqrq .gt_indent_4 {
+#deopahgkzo .gt_indent_4 {
   text-indent: 20px;
 }
 
-#mfzdgusqrq .gt_indent_5 {
+#deopahgkzo .gt_indent_5 {
   text-indent: 25px;
 }
 
-#mfzdgusqrq .katex-display {
+#deopahgkzo .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#mfzdgusqrq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#deopahgkzo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1105,23 +1105,23 @@ Use `as.*()`
 -->
 <div class="cell">
 <div class="cell-output-display">
-<div id="xksnewpndy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#xksnewpndy table {
+<div id="bkanukboyu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bkanukboyu table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#xksnewpndy thead, #xksnewpndy tbody, #xksnewpndy tfoot, #xksnewpndy tr, #xksnewpndy td, #xksnewpndy th {
+#bkanukboyu thead, #bkanukboyu tbody, #bkanukboyu tfoot, #bkanukboyu tr, #bkanukboyu td, #bkanukboyu th {
   border-style: none;
 }
 
-#xksnewpndy p {
+#bkanukboyu p {
   margin: 0;
   padding: 0;
 }
 
-#xksnewpndy .gt_table {
+#bkanukboyu .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1147,12 +1147,12 @@ Use `as.*()`
   border-left-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_caption {
+#bkanukboyu .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#xksnewpndy .gt_title {
+#bkanukboyu .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1164,7 +1164,7 @@ Use `as.*()`
   border-bottom-width: 0;
 }
 
-#xksnewpndy .gt_subtitle {
+#bkanukboyu .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1176,7 +1176,7 @@ Use `as.*()`
   border-top-width: 0;
 }
 
-#xksnewpndy .gt_heading {
+#bkanukboyu .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1188,13 +1188,13 @@ Use `as.*()`
   border-right-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_bottom_border {
+#bkanukboyu .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_col_headings {
+#bkanukboyu .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1209,7 +1209,7 @@ Use `as.*()`
   border-right-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_col_heading {
+#bkanukboyu .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1229,7 +1229,7 @@ Use `as.*()`
   overflow-x: hidden;
 }
 
-#xksnewpndy .gt_column_spanner_outer {
+#bkanukboyu .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1241,15 +1241,15 @@ Use `as.*()`
   padding-right: 4px;
 }
 
-#xksnewpndy .gt_column_spanner_outer:first-child {
+#bkanukboyu .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#xksnewpndy .gt_column_spanner_outer:last-child {
+#bkanukboyu .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#xksnewpndy .gt_column_spanner {
+#bkanukboyu .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1261,11 +1261,11 @@ Use `as.*()`
   width: 100%;
 }
 
-#xksnewpndy .gt_spanner_row {
+#bkanukboyu .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#xksnewpndy .gt_group_heading {
+#bkanukboyu .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1291,7 +1291,7 @@ Use `as.*()`
   text-align: left;
 }
 
-#xksnewpndy .gt_empty_group_heading {
+#bkanukboyu .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1306,15 +1306,15 @@ Use `as.*()`
   vertical-align: middle;
 }
 
-#xksnewpndy .gt_from_md > :first-child {
+#bkanukboyu .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#xksnewpndy .gt_from_md > :last-child {
+#bkanukboyu .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#xksnewpndy .gt_row {
+#bkanukboyu .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1333,7 +1333,7 @@ Use `as.*()`
   overflow-x: hidden;
 }
 
-#xksnewpndy .gt_stub {
+#bkanukboyu .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1346,7 +1346,7 @@ Use `as.*()`
   padding-right: 5px;
 }
 
-#xksnewpndy .gt_stub_row_group {
+#bkanukboyu .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1360,15 +1360,15 @@ Use `as.*()`
   vertical-align: top;
 }
 
-#xksnewpndy .gt_row_group_first td {
+#bkanukboyu .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#xksnewpndy .gt_row_group_first th {
+#bkanukboyu .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#xksnewpndy .gt_summary_row {
+#bkanukboyu .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1378,16 +1378,16 @@ Use `as.*()`
   padding-right: 5px;
 }
 
-#xksnewpndy .gt_first_summary_row {
+#bkanukboyu .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_first_summary_row.thick {
+#bkanukboyu .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#xksnewpndy .gt_last_summary_row {
+#bkanukboyu .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1397,7 +1397,7 @@ Use `as.*()`
   border-bottom-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_grand_summary_row {
+#bkanukboyu .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1407,7 +1407,7 @@ Use `as.*()`
   padding-right: 5px;
 }
 
-#xksnewpndy .gt_first_grand_summary_row {
+#bkanukboyu .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1417,7 +1417,7 @@ Use `as.*()`
   border-top-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_last_grand_summary_row_top {
+#bkanukboyu .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1427,11 +1427,11 @@ Use `as.*()`
   border-bottom-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_striped {
+#bkanukboyu .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#xksnewpndy .gt_table_body {
+#bkanukboyu .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1440,7 +1440,7 @@ Use `as.*()`
   border-bottom-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_footnotes {
+#bkanukboyu .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1454,7 +1454,7 @@ Use `as.*()`
   border-right-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_footnote {
+#bkanukboyu .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1463,7 +1463,7 @@ Use `as.*()`
   padding-right: 5px;
 }
 
-#xksnewpndy .gt_sourcenotes {
+#bkanukboyu .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1477,7 +1477,7 @@ Use `as.*()`
   border-right-color: #D3D3D3;
 }
 
-#xksnewpndy .gt_sourcenote {
+#bkanukboyu .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1485,72 +1485,72 @@ Use `as.*()`
   padding-right: 5px;
 }
 
-#xksnewpndy .gt_left {
+#bkanukboyu .gt_left {
   text-align: left;
 }
 
-#xksnewpndy .gt_center {
+#bkanukboyu .gt_center {
   text-align: center;
 }
 
-#xksnewpndy .gt_right {
+#bkanukboyu .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#xksnewpndy .gt_font_normal {
+#bkanukboyu .gt_font_normal {
   font-weight: normal;
 }
 
-#xksnewpndy .gt_font_bold {
+#bkanukboyu .gt_font_bold {
   font-weight: bold;
 }
 
-#xksnewpndy .gt_font_italic {
+#bkanukboyu .gt_font_italic {
   font-style: italic;
 }
 
-#xksnewpndy .gt_super {
+#bkanukboyu .gt_super {
   font-size: 65%;
 }
 
-#xksnewpndy .gt_footnote_marks {
+#bkanukboyu .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#xksnewpndy .gt_asterisk {
+#bkanukboyu .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#xksnewpndy .gt_indent_1 {
+#bkanukboyu .gt_indent_1 {
   text-indent: 5px;
 }
 
-#xksnewpndy .gt_indent_2 {
+#bkanukboyu .gt_indent_2 {
   text-indent: 10px;
 }
 
-#xksnewpndy .gt_indent_3 {
+#bkanukboyu .gt_indent_3 {
   text-indent: 15px;
 }
 
-#xksnewpndy .gt_indent_4 {
+#bkanukboyu .gt_indent_4 {
   text-indent: 20px;
 }
 
-#xksnewpndy .gt_indent_5 {
+#bkanukboyu .gt_indent_5 {
   text-indent: 25px;
 }
 
-#xksnewpndy .katex-display {
+#bkanukboyu .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#xksnewpndy div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#bkanukboyu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2278,7 +2278,7 @@ https://www.howtopronounce.com/posixct
 <span id="cb109-7"><a></a><span class="co"># Inspect</span></span>
 <span id="cb109-8"><a></a>note_date_time</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "2025-11-18 07:00:22 EST"</code></pre>
+<pre><code>#&gt; [1] "2025-11-18 07:44:07 EST"</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a></a><span class="co"># - type</span></span>
 <span id="cb111-2"><a></a><span class="fu">typeof</span>(note_date_time)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2296,7 +2296,7 @@ https://www.howtopronounce.com/posixct
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb115"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a></a><span class="fu">structure</span>(note_date_time, <span class="at">tzone =</span> <span class="st">"Europe/Paris"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "2025-11-18 13:00:22 CET"</code></pre>
+<pre><code>#&gt; [1] "2025-11-18 13:44:07 CET"</code></pre>
 </div>
 </div>
 <div class="cell">
