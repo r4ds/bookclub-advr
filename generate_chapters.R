@@ -43,6 +43,8 @@ purrr::iwalk(
       "---",
       yaml::as.yaml(header),
       "---",
+      "<-- This file is generated automatically. Do not edit. -->",
+      "<-- Edit files in /slides and /videos. -->",
       qmd_body,
       sep = "\n"
     )
