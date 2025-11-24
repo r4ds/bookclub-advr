@@ -1,0 +1,43 @@
+---
+title: Cohort 10
+---
+
+{{< video https://www.youtube.com/embed/bKG4W36paVI >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:18:41	Eamon Caddigan:	I’m poking around and it looks like  formals()  returns a  pairlist , which is a data type we haven’t talked about (but my hunch is that it’s the R equivalent to a  (cons)  pair
+00:18:49	Martin Venegas:	I think "[" is a special
+00:20:27	Stephan Koenig:	New syntax for anonymous functions is  \(<variables>)
+00:20:34	Martin Venegas:	really useful syntax when working with purrr
+00:23:04	Martin Venegas:	there is any functional difference by using |> instead of %>%?
+00:27:12	Stephan Koenig:	Here a good blog post: https://ivelasq.rbind.io/blog/understanding-the-r-pipe/
+00:28:06	Martin Venegas:	Reacted to "Here a good blog pos..." with ❤️
+00:28:18	Martin Venegas:	thanks!
+00:30:13	Eamon Caddigan:	TIL: NULL is an empty pairlist (sorry this is a total digression)
+00:31:06	Martin Venegas:	I really like the pipe = "and then", it allows you to read a code like it was a sort of essay
+00:31:15	Ella Kaye:	Reacted to "I really like the pi..." with 👍
+00:32:14	Eamon Caddigan:	Reacted to "I really like the pi..." with 💯
+00:37:00	Jon Harmon (jonthegeek):	Replying to "I really like the pi..."
+
+In this talk from posit::conf(2019) https://www.youtube.com/watch?v=CgR5mSAGxtA , I think Felienne Hermans (the speaker) mentioned the "know how to 'pronounce' code" thing. It might have just been in her book. Either way, I find it suuuuper helpful.
+00:37:14	Martin Venegas:	Reacted to "In this talk from po..." with ❤️
+00:37:24	Stephan Koenig:	Reacted to "In this talk from po..." with ❤️
+00:37:30	Stephan Koenig:	Reacted to "I really like the pi..." with 💯
+00:42:17	Jon Harmon (jonthegeek):	https://rstudio.github.io/promises/articles/promises_02_intro.html#:~:text=Oh%2C%20I%E2%80%99ve%20heard%20of%20promises%20in%20R!%20From%20the%20NSE%20chapter%20in%20Hadley%E2%80%99s%20Advanced%20R%20book!
+00:47:22	Eamon Caddigan:	I think I do prefer the “default to NULL and then handle NULL in the function body” pattern
+00:49:28	Jon Harmon (jonthegeek):	I like it to be explicit what  NULL  means, so I usually avoid that. I prefer a function that tells you what the handling will be.
+00:49:56	Jon Harmon (jonthegeek):	Hadley's in-progress book with all kinds of "rules" like these about how to not be annoying: https://design.tidyverse.org/
+00:51:09	Derek Sollberger:	...  comes up again later in the chapter about data types
+00:53:15	Eamon Caddigan:	Reacted to " ...  comes up again..." with 👀
+00:57:16	Ella Kaye:	@Olivier Leroy , you’ve gone on mute
+00:57:39	Jon Harmon (jonthegeek):	Ok, I was about to say something, but I'm connected weird so I thought it was me!
+00:57:44	Martin Venegas:	same1
+00:57:56	Martin Venegas:	Reacted to "@Olivier Leroy , you..." with ❤️
+01:02:56	Jon Harmon (jonthegeek):	dots <- list(...)
+01:06:07	Eamon Caddigan:	It looks like …length() and …names() don’t evaluate  ... , so they are themselves the special things. 😃
+01:06:10	Martin Venegas:	thanks! very useful
+```
+</details>

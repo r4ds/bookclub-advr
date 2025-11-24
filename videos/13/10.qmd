@@ -1,0 +1,50 @@
+---
+title: Cohort 10
+---
+
+{{< video https://www.youtube.com/embed/ACWWhZjMu-I >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:16:40	Stas Kolenikov (NORC):	print  is probably the next (fourth) thing you want to write for your S3 class after the constructor, the validator and the helper
+00:21:56	Stas Kolenikov (NORC):	is it a good practice to validate every input of a class object in the class methods? Given how easy it is to fake an S3 class, that seems prudent, but it is also expensive.
+00:23:36	Stas Kolenikov (NORC):	Replying to "is it a good practic..."
+
+(I don't think Hadley talks about it in the S3 chapter... although he did say that his objective was to provide the mechanics rather than all of the details about the coding style(s) )
+00:27:21	Jon Harmon (jonthegeek):	Replying to "is it a good practic..."
+
+I don't think it's 100% necessary to protect against people faking things. I usually check that the thing coming in has the class I expect, but I generally don't confirm every attribute or whatever. If someone sends in a thing that isn't really that class but just has the class added, they shouldn't be surprised when they get a weird error message.
+00:27:29	Stas Kolenikov (NORC):	Quote: you should only ever write a method if you own the generic or the class
+00:29:03	Stas Kolenikov (NORC):	Replying to "is it a good practic..."
+
+well I occasionally hack the guts of Thomas Lumley's  survey.design  objects. I just hope his validators are strong enough ;)
+00:29:06	Jon Harmon (jonthegeek):	Replying to " print  is probably ..."
+
+For vctrs objects they recommend  format()  and then they have  print()  and  str()  methods that you can inherit that use  format()  under the hood: https://vctrs.r-lib.org/articles/s3-vector.html#format-method
+00:30:08	Stas Kolenikov (NORC):	Reacted to "For vctrs objects th..." with 👍
+00:34:49	Stas Kolenikov (NORC):	I feel like  NextMethod()  is most useful when you are developing a hierarchy of classes. You have the basic class that you have  print()  for, and two or three more advanced classes that can just pass the job of printing to the underlying superclass.
+00:37:59	Stas Kolenikov (NORC):	is there a convention that  length()  always returns an integer of length 1? I wrote  length.myclass()  that returns a table describing lengths of the class components... not sure if it is going to break stuff anywhere
+00:38:57	Jon Harmon (jonthegeek):	Replying to "is there a conventio..."
+
+I think that would probably break a lot of things.  length()  gets used in  if()  a lot, for example, so, if the return of  length()  itself has  length()  other than 1, that'll get messy.
+00:39:22	Stas Kolenikov (NORC):	also IMO  str()  should have a default  str(... max.level=1)  -- I rarely want to see anything deeper but ymmv
+00:39:32	Jon Harmon (jonthegeek):	Reacted to "also IMO  str()  sho..." with ☝️
+00:39:51	Jon Harmon (jonthegeek):	Replying to "also IMO  str()  sho..."
+
+I often want 2 but I probably want 1 first.
+00:40:48	Stas Kolenikov (NORC):	Replying to "is there a conventio..."
+
+yeah I think I am getting error messages from  base  that refer to  length(x)
+00:43:05	Stas Kolenikov (NORC):	Replying to "also IMO  str()  sho..."
+
+ .Rprofile :
+
+str1 <- function(..., max.level=1) str(..., max.level=max.level)
+00:43:22	Jon Harmon (jonthegeek):	Reacted to " .Rprofile :
+
+str1 <..." with 👏
+01:02:08	Jon Harmon (jonthegeek):	https://cran.r-project.org/package=vctrs
+```
+</details>

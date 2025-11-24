@@ -1,0 +1,51 @@
+---
+title: Cohort 10
+---
+
+{{< video https://www.youtube.com/embed/9XAjSeAauzw >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:14:58	Stas Kolenikov (NORC):	"Of course someone has to write for loops. It doesn’t have to be you." - Jenny Bryan
+00:18:10	Stas Kolenikov (NORC):	whether  map  is more readable than a  for()  loop is debatable (at least for me). A  map  inside a long  %>%  pipeline may make it hard to understand what exactly the input is to it. I always require my staff to comment all  map s to explain what it is looping over.
+00:19:55	Martin Venegas:	Replying to "whether  map  is mor..."
+
+That's a good point. In my experiencie I try to use map with created objects and not connecting it in a pipeline
+00:25:46	Stas Kolenikov (NORC):	In the middle of 9.2.1, Hadley gives an example to break the length of input == length of output when a function returns too much and  purrr::map()  fails to comprehend it
+00:31:09	Stas Kolenikov (NORC):	Reminder: a data frame is a list of vectors, that's why  map(.x = data.frame, ...)  works over columns
+00:31:56	Stephan Koenig:	Reacted to "Reminder: a data fra..." with 🙏
+00:31:57	Martin Venegas:	Reacted to "Reminder: a data fra..." with 👌
+00:33:04	Martin Venegas:	You can use the twiddle with any named function
+00:34:29	Stas Kolenikov (NORC):	lambda functions are used when there is no canned function like  base::mean()
+00:37:08	Stas Kolenikov (NORC):	here  x  is picked up from some parent / global environment
+00:47:56	Stephan Koenig:	I think the purrr documentation now discourages the use of the twiddle/formula notation. They now encourage the use of the new anonymous functions eg  \(x) mean(x) See also cheatsheat https://github.com/rstudio/cheatsheets/blob/main/purrr.pdf
+00:48:19	Stas Kolenikov (NORC):	Reacted to "I think the purrr do..." with ‼️
+00:48:24	Martin Venegas:	Reacted to "I think the purrr do..." with 😯
+00:49:28	Stephan Koenig:	Replying to "I think the purrr do..."
+
+you can see it also in the docs with  ?purrr::map  under  .f
+00:50:10	Stas Kolenikov (NORC):	Ha! Here's the example of  map  in a long pipe. So what is the list that  map_dbl(2)  applies to?? Each  map  has to be commented. I can't clearly see what each line is doing (sorry, Hadley, that's on me)
+00:50:53	Stas Kolenikov (NORC):	Replying to "Ha! Here's the examp..."
+
+of course  lappply()  way is considerably uglier... and I would have used a for loop.
+00:56:00	Jacob Schwan:	Replying to "whether  map  is mor..."
+
+Interesting. My feelings are in the opposite direction. I feel like inputs and outputs are more strictly defined for a  map()  than a  for()  loop. That makes it easier for me to intuit what the output of a  map()  function will be.
+00:56:47	Stas Kolenikov (NORC):	Replying to "whether  map  is mor..."
+
+well you must have learned  map  before  for . I learned  for  about 40 years ago ;)
+01:00:23	Jacob Schwan:	Replying to "whether  map  is mor..."
+
+Yeah, I guess that is true. I was taught  for  loops briefly and almost immediately afterward taught to use  map()  instead, whenever possible.  I was also taught  %>%  chains pretty early and use them probably to excess.
+01:02:41	Stas Kolenikov (NORC):	map 's obligation is to create a list of returned values, that's what it is. With functions that are run primarily for their side effects, the returned values are not needed. (E.g.  ggplot  returns a  ggplot  object, and you don't need to see all of them.)
+01:07:25	Martin Venegas:	that's good to know, I've been using the map2 alternative
+01:07:31	Martin Venegas:	and imap is more elegant
+01:11:14	Martin Venegas:	that's an interesting example
+01:12:16	Jacob Schwan:	Reacted to "that's an interestin..." with 💯
+01:16:36	Martin Venegas:	a lot of useful information! thank u
+01:16:46	Jacob Schwan:	this was a very long chapter
+01:16:50	Stephan Koenig:	Yes, thank you!
+```
+</details>

@@ -1,0 +1,51 @@
+---
+title: Cohort 10
+---
+
+{{< video https://www.youtube.com/embed/F4WFZQzMu58 >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:24:16	Olivier Leroy:	current env will change if you are using browser()() to debug
+00:26:25	jim rothstein:	Question:   where does the value of "d" live?  in environment, in RAM?
+00:27:06	Olivier Leroy:	ram I think
+00:27:39	jim rothstein:	OK,   so "d" is reference to memory location
+00:29:40	Olivier Leroy:	the memory location will be illustrated by obj_addr(d) (executqtes in correct env)
+00:33:10	jim rothstein:	@Olivier Leroy Thx ... need to check later.
+00:34:15	Olivier Leroy:	Reacted to "@Olivier Leroy Thx ...." with 👍
+00:40:45	jim rothstein:	`<<-`  If such a
+     variable is found (and its binding is not locked) then its value
+     is redefined, otherwise assignment takes place in the global
+00:41:47	jim rothstein:	x <<- 2    1st tries to find x in ANY parent
+00:41:54	Jon Harmon (jonthegeek):	[main 12:35:50] > testing <- function() {
+    a <<- "I'm in the global environment now!"
+  }
+[main 12:36:57] > a
+Error: object 'a' not found
+
+[main 12:36:57] > testing()
+[main 12:36:58] > a
+[1] "I'm in the global environment now!"
+00:49:37	Olivier Leroy:	the art of R is giving an exampl;e of  <<-  in a event scheduler
+00:50:21	jim rothstein:	fibinocci numbers
+00:50:55	Olivier Leroy:	I needed the 4 first chapter of little schemer to sart getting it
+00:51:16	Martín Venegas:	finding a variable inside a really nested list maybe?
+00:52:21	jim rothstein:	@Martín Venegas  - think so
+00:53:02	Martín Venegas:	Reacted to @Martín Venegas  - t... with "👌"
+00:54:30	Martín Venegas:	so the order in package loads matters
+00:55:02	Jon Harmon (jonthegeek):	Replying to "so the order in pack..."
+
+Yes! If two packages have a function with the same name, you'll get the most-recently-loaded version.
+00:55:18	Retselisitsoe Monyake:	Reacted to "Yes! If two packag..." with 👍
+00:55:22	Martín Venegas:	Reacted to Yes! If two packages... with "❤️"
+00:55:24	jim rothstein:	Reacted to "Yes! If two packag..." with 👍
+00:56:31	jim rothstein:	Can you go through this diagram?    all the pieces??
+01:01:13	Olivier Leroy:	I need to go thanks Josh!
+01:02:13	Martín Venegas:	thats good to know
+01:04:05	Stephan Koenig:	Thanks, got to go to a different meeting!
+01:04:31	Nicholas Giangreco:	Thank you Josh! I need to reread this. Chapter - very interesting!
+
+```
+</details>

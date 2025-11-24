@@ -1,0 +1,51 @@
+---
+title: Cohort 10
+---
+
+{{< video https://www.youtube.com/embed/5T3HMhZB9Fc >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:17:51	Stanislav Kolenikov:	TIL:  lobstr::obj_size()  -- I have been working with some  rpart  objects that show up as having size of 500Kb in RStudio environment pane / evaluated by  object.size() , but actually eating up 10Gb as shown by the RStudio memory tracker. I suspect they are hauling the environment with them (which is a data frame with 10M rows so I can see how it can take a Gb or two) without really showing it properly.
+00:26:55	Jon Harmon (jonthegeek):	force <- function (x) x
+00:27:27	Stas Kolenikov (NORC):	arg_match() ?
+00:30:37	Stas Kolenikov (NORC):	this is probably a @Jon question -- is there a way to implement  <<-  with  assign(..., envir=whatever)  ?
+00:30:54	Stas Kolenikov (NORC):	Replying to "this is probably a @..."
+
+maybe in this simple example of the stateful functions snippet
+00:41:01	Jon Harmon (jonthegeek):	Replying to "this is probably a @..."
+
+Kinda this?
+testing <- function() {
+  env <- rlang::caller_env()
+  i <- unlist(unname(mget("i", envir = env, ifnotfound = 0L)))
+  print(assign("i", i + 1L, pos = env))
+}
+testing()
+
+I had to make sure it has a value before I start. There are probably other/cleaner ways to do that step.
+00:41:58	Stas Kolenikov (NORC):	Reacted to "Kinda this?
+testing ..." with 👍
+00:42:22	Stas Kolenikov (NORC):	Replying to "this is probably a @..."
+
+probably. I will check if that works in my context. Thanks!!
+00:43:50	Stas Kolenikov (NORC):	Replying to "this is probably a @..."
+
+I think I needed this superassignment to happen from one function I owed to another function I owed so I can make sure the variable is defined in the parent.
+00:43:59	Jon Harmon (jonthegeek):	Replying to "this is probably a @..."
+
+In general,  rlang::caller_env()  is super useful. It's really just  base::parent.frame(n + 1)  (where  n  is the number of callers to go back, default 1), but it's easier to remember IMO.
+00:44:27	Stas Kolenikov (NORC):	Reacted to "In general,  rlang::..." with ‼️
+00:45:41	Stas Kolenikov (NORC):	Replying to "this is probably a @..."
+
+right, I was trying to figure out in the debug window -- what is it that I need to hook to the  pos  argument?? It is not explicitly there in the environment's objects so I did not have that language to express my problem.
+00:48:06	Victor Ordu:	We have the  ecdf()  function in Base R
+00:48:58	Stas Kolenikov (NORC):	I wonder if that mechanics is used somewhere in  glm()  for real, as it takes functions (for links/families) as inputs
+00:49:32	Stas Kolenikov (NORC):	maybe the multiple imputation package  mice  as they have to use functions as arguments (or attributes of data frame columns)
+00:49:56	Stas Kolenikov (NORC):	maybe some machine learning aggregators .. ? I am less familiar with those
+00:55:48	Martin Venegas:	that's good to know
+01:00:54	Stas Kolenikov (NORC):	well it looks like there are edge cases where you want to do an expensive computation and keep it in  the factory environment, and then use factoried functions to use that
+```
+</details>

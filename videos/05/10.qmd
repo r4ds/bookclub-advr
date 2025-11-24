@@ -1,0 +1,47 @@
+---
+title: Cohort 10
+---
+
+{{< video https://www.youtube.com/embed/FDAdRxst15Q >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:07:36	Olivier Leroy:	r$> (if (FALSE) "bob")
+NULL
+00:07:48	Olivier Leroy:	(dangerous still)
+00:08:42	Eamon Caddigan:	I was really surprised he didn’t suggest  isTRUE  to prevent `if` gotchas. I bet there’s a good reason and I haven’t figured out why.
+00:10:29	Eamon Caddigan:	Weird  case_when  thing I found: since it (reasonably) insists that all the outputs have the same type, you’ll need to specify the type of  NA , e.g., with  NA_character_  (at least this was true for earlier versions of dplyr, I haven’t poked at that in a while).
+00:10:37	Olivier Leroy:	Reacted to "I was really surpris..." with 👍
+00:10:53	Stephan Koenig:	Usually case_when I order from more specific first to general last.
+00:11:02	Olivier Leroy:	Reacted to "Usually case_when I ..." with 👍
+00:11:04	Nicholas Giangreco:	Reacted to "Usually case_when I ..." with 👍
+00:11:57	Olivier Leroy:	is quaro "Caution" svg is VLC Icon?
+00:12:04	Olivier Leroy:	quarto
+00:13:03	Jon Harmon (jonthegeek):	Replying to "Weird  case_when  th..."
+
+I'm PRETTY sure this isn't required anymore. That's how I learned about NA types, though 😄
+00:14:13	Eamon Caddigan:	Reacted to "I'm PRETTY sure this..." with ➕
+00:19:19	Olivier Leroy:	for some reasons I always have an hard time remember seq_along ...
+00:19:29	Retselisitsoe Monyake:	Reacted to "for some reasons I a..." with 😅
+00:25:37	Olivier Leroy:	r$> ifelse(c(TRUE, FALSE), 1, "no")
+[1] "1" "no"
+00:26:12	Olivier Leroy:	(doing the wrong stuff)
+00:26:48	Jon Harmon (jonthegeek):	Yeah, it coerces to the "lowest" common form (character can't go to numeric, but numeric can go to character).
+00:27:39	Martin:	numeric() = NULL?
+00:27:39	Olivier Leroy:	convert and recycle
+00:27:56	Olivier Leroy:	I think numeric 0
+00:28:10	Olivier Leroy:	r$> numeric()
+numeric(0)
+00:28:18	Martin:	nice
+00:28:46	Eamon Caddigan:	Thanks Jacob this was great!
+00:29:06	Stephan Koenig:	You can also test with the %||% Operator to check if something is NULL I believe (R 4.4)
+00:29:12	Olivier Leroy:	Reacted to "Thanks Jacob this wa..." with 👋
+00:29:17	Martin:	Reacted to "You can also test wi..." with ❤️
+00:29:57	Jon Harmon (jonthegeek):	Reacted to "You can also test wi..." with ☝️
+00:37:11	Martin Venegas:	thank u!
+00:37:39	Nicholas Giangreco:	Reacted to "You can also test wi..." with ❤️
+00:40:27	Martin Venegas:	that's good to know
+```
+</details>

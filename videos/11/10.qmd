@@ -1,0 +1,63 @@
+---
+title: Cohort 10
+---
+
+{{< video https://www.youtube.com/embed/fTsquqgEeZw >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:12:36	Stas Kolenikov (NORC):	this code for  splat()  relies on finding  args  in the caller environment -- is that by design? It is implicitly paired with  do.call()  syntax that way
+00:14:34	Jon Harmon (jonthegeek):	Replying to "this code relies on ..."
+
+It's getting args passed into it via  lapply()  in the example. You could call  splat(mean)(mean_args[[1]]) , for example.
+00:15:00	Jon Harmon (jonthegeek):	Replying to "this code for  splat..."
+
+It's equivalent to this:
+purrr::map(
+  mean_args,
+  ~ do.call(mean, .x)
+)
+00:22:11	Stas Kolenikov (NORC):	Replying to "this code for  splat..."
+
+I confused myself.  args  is declared as the input of the function  f  although it limits that argument to be a single piece... unlike  ...  that would allow arbitrary number of inputs. I am just thinking of how this code would break -- e.g. if  args  is not a list (because  do.call()  needs a list in its second argument)
+00:31:13	Stas Kolenikov (NORC):	I've encountered some functions in some CRAN packages that throw a warning for every individual entry of the input vector they don't like, so you feed them a vector of length 10K with 200 bad entries, and it throws 200 warnings. So I wrap them in  purrr::quietly()
+00:32:28	Stas Kolenikov (NORC):	Replying to "I've encountered som..."
+
+(yeah you can do  stopifnot(all(object$warning) == "shutup")
+00:34:13	Jon Harmon (jonthegeek):	function(...) f(g(...))
+00:34:20	Jon Harmon (jonthegeek):	function (..., .dir = c("backward", "forward")) 
+{
+  .dir <- arg_match0(.dir, c("backward", "forward"))
+  fns <- map(list2(...), rlang::as_closure, env = caller_env())
+  if (!length(fns)) {
+    return(compose(function(x, ...) x))
+  }
+  if (.dir == "backward") {
+    n <- length(fns)
+    first_fn <- fns[[n]]
+    fns <- rev(fns[-n])
+  }
+  else {
+    first_fn <- fns[[1]]
+    fns <- fns[-1]
+  }
+  composed <- function() {
+    env <- env(caller_env(), `_fn` = first_fn)
+    first_call <- sys.call()
+    first_call[[1]] <- quote(`_fn`)
+    env$`_out` <- .Call(purrr_eval, first_call, env)
+    call <- quote(`_fn`(`_out`))
+    for (fn in fns) {
+      env$`_fn` <- fn
+      env$`_out` <- .Call(purrr_eval, call, env)
+    }
+    env$`_out`
+  }
+  formals(composed) <- formals(first_fn)
+  structure(composed, class = c("purrr_function_compose", 
+    "function"), first_fn = first_fn, fns = fns)
+}
+```
+</details>
