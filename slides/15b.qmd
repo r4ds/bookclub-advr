@@ -7,8 +7,8 @@ title: S7
 
 - Recognize the challenges with S3 and S4 that motivated development of S7
 - Create S7 classes
+- Define custom validators for S7 classes and properties
 - Create S7 generics and methods
-- Define custom constructors for S7 classes
 - Use S7 with S3 and/or S4
 
 ```{r}
@@ -213,11 +213,7 @@ c2@area == 9*pi
 
 ## `constructor` argument customizes object creation
 
-- Not going into detail yet.
-
-## `parent` argument specifies the parent
-
-- Not going into detail yet.
+- (it might be nice to have a slide on this but we don't yet)
 
 # Generics and methods
 
