@@ -4162,7 +4162,7 @@
     "href": "slides/15b.html#learning-objectives",
     "title": "S7",
     "section": "Learning objectives",
-    "text": "Learning objectives\n\nRecognize the challenges with S3 and S4 that motivated development of S7\nCreate S7 classes\nCreate S7 generics and methods\nDefine custom constructors for S7 classes\nUse S7 with S3 and/or S4\n\n\nlibrary(S7)"
+    "text": "Learning objectives\n\nRecognize the challenges with S3 and S4 that motivated development of S7\nCreate S7 classes\nDefine custom validators for S7 classes and properties\nCreate S7 generics and methods\nUse S7 with S3 and/or S4\n\n\nlibrary(S7)"
   },
   {
     "objectID": "slides/15b.html#s7-resolves-challenges-with-s3",
@@ -4246,14 +4246,7 @@
     "href": "slides/15b.html#constructor-argument-customizes-object-creation",
     "title": "S7",
     "section": "constructor argument customizes object creation",
-    "text": "constructor argument customizes object creation\n\nNot going into detail yet."
-  },
-  {
-    "objectID": "slides/15b.html#parent-argument-specifies-the-parent",
-    "href": "slides/15b.html#parent-argument-specifies-the-parent",
-    "title": "S7",
-    "section": "parent argument specifies the parent",
-    "text": "parent argument specifies the parent\n\nNot going into detail yet."
+    "text": "constructor argument customizes object creation\n\n(it might be nice to have a slide on this but we don’t yet)"
   },
   {
     "objectID": "slides/15b.html#define-s7-generics-methods-with-s7new_generic-and-s7new_method",
