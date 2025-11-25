@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
+
+  <title>Advanced R Book Club – S7</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5079db4132f0eaf0a29ac93fceccb8c9.css">
+  <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-dark">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">S7</h1>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="learning-objectives" class="slide level2">
+<h2>Learning objectives</h2>
+<ul>
+<li>Recognize the challenges with S3 and S4 that motivated development of S7</li>
+<li>Create S7 classes</li>
+<li>Create S7 generics and methods</li>
+<li>Define custom constructors for S7 classes</li>
+<li>Use S7 with S3 and/or S4</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(S7)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section>
+<section id="motivation-for-s7" class="title-slide slide level1 center">
+<h1>Motivation for S7</h1>
+
+</section>
+<section id="s7-resolves-challenges-with-s3" class="slide level2">
+<h2>S7 resolves challenges with S3</h2>
+<ul>
+<li>S3 has no formal class definitions</li>
+<li>S3 methods are difficult to find</li>
+<li>S3 properties are in attributes, but <code>attr()</code> does fuzzy matching</li>
+<li>S3 method dispatch via <code>UseMethod()</code> is fuzzy</li>
+</ul>
+<blockquote>
+<p>“Now for some obscure details that need to appear somewhere” —<code>?UseMethod</code></p>
+</blockquote>
+<ul>
+<li><code>NextMethod()</code> depends on what’s loaded</li>
+<li>Conversion between S3 classes is fuzzy (<em>vs</em> <code>S7::convert()</code> generic)</li>
+</ul>
+</section>
+<section id="s7-resolves-challenges-with-s4" class="slide level2">
+<h2>S7 resolves challenges with S4</h2>
+<ul>
+<li>S4’s multiple inheritance causes more problems than it solves</li>
+<li>S4’s method dispatch is smart but hard to predict (S7 is explicit)</li>
+<li>S4 is clean break from S3, made it hard to switch from S3 to S4</li>
+<li>S4 pretends users can’t use <code>@</code> to access slots, but they do it anyway</li>
+</ul>
+</section>
+<section id="s7-extends-s3-and-replaces-s4" class="slide level2">
+<h2>S7 extends S3 and replaces S4</h2>
+<ul>
+<li>Name comes from S3 + S4 = S7, but…
+<ul>
+<li>S7 objects <em>are</em> S3 objects</li>
+<li>S7 objects <em>are not</em> S4 objects</li>
+<li>But there’s some overlap (see last section)</li>
+</ul></li>
+</ul>
+</section></section>
+<section>
+<section id="classes-and-objects-and-properties" class="title-slide slide level1 center">
+<h1>Classes and objects (and properties)</h1>
+<aside class="notes">
+<p>This section combines the <a href="https://rconsortium.github.io/S7/articles/S7.html#classes-and-objects">1st section of S7 basics</a> with the <a href="https://rconsortium.github.io/S7/articles/classes-objects.html">Classes and objects vignette</a></p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="define-s7-classes-with-s7new_class" class="slide level2">
+<h2>Define S7 classes with <code>S7::new_class()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>class_person <span class="ot">&lt;-</span> <span class="fu">new_class</span>(</span>
+<span id="cb2-2"><a></a>  <span class="st">"Person"</span>,</span>
+<span id="cb2-3"><a></a>  <span class="at">properties =</span> <span class="fu">list</span>(<span class="at">name =</span> class_character, <span class="at">age =</span> class_numeric)</span>
+<span id="cb2-4"><a></a>)</span>
+<span id="cb2-5"><a></a>me <span class="ot">&lt;-</span> <span class="fu">class_person</span>(<span class="at">name =</span> <span class="st">"Jon"</span>, <span class="at">age =</span> <span class="dv">50</span>)</span>
+<span id="cb2-6"><a></a>me</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;Person&gt;
+#&gt;  @ name: chr "Jon"
+#&gt;  @ age : num 50</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a><span class="fu">S7_inherits</span>(me, class_person)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">class</span>(me)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Person"    "S7_object"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">inherits</span>(me, <span class="st">"Person"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<aside class="notes">
+<ul>
+<li>Vignette shows same name for the class object and the 1st arg, but in practice I find it safer to differentiate them (in case you use the class as a property of another class).
+<ul>
+<li>Notice that you use <code>class_character</code>, not <code>character</code>; I think that’s connected to the issues I had with name matching</li>
+</ul></li>
+<li>Equivalent to constructor + validator + helper from S3 chapter
+<ul>
+<li>We’ll see this more explicitly later</li>
+</ul></li>
+<li>Equivalent to <code>setClass()</code> + <code>new()</code> + <code>setValidity()</code> from S4 chapter</li>
+<li>S3 methods will dispatch properly for this object.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="access-s7-object-properties-with" class="slide level2">
+<h2>Access S7 object properties with <code>@</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>me<span class="sc">@</span>name</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Jon"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>me<span class="sc">@</span>age</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 50</code></pre>
+</div>
+</div>
+<aside class="notes">
+<ul>
+<li>Like S3 attributes, but <code>attr()</code> is fuzzy, and S3 attributes are less formally defined.</li>
+<li>Like S4 slots, but S4 users are discouraged from using <code>@</code> directly, and S4 <code>@</code> doesn’t trigger validation (see next).</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="s7-objects-are-validated-during-construction-and-on-property-assignment" class="slide level2">
+<h2>S7 objects are validated during construction and on property assignment</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>me<span class="sc">@</span>age <span class="ot">&lt;-</span> <span class="st">"fifty"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error: &lt;Person&gt;@age must be &lt;integer&gt; or &lt;double&gt;, not &lt;character&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>us <span class="ot">&lt;-</span> <span class="fu">class_person</span>(<span class="at">name =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">age =</span> <span class="fu">c</span>(<span class="st">"fifty"</span>, <span class="st">"forty-nine"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error: &lt;Person&gt; object properties are invalid:
+#&gt; - @name must be &lt;character&gt;, not &lt;integer&gt;
+#&gt; - @age must be &lt;integer&gt; or &lt;double&gt;, not &lt;character&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="validator-argument-customizes-validation" class="slide level2">
+<h2><code>validator</code> argument customizes validation</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>class_person <span class="ot">&lt;-</span> <span class="fu">new_class</span>(</span>
+<span id="cb18-2"><a></a>  <span class="st">"Person"</span>,</span>
+<span id="cb18-3"><a></a>  <span class="at">properties =</span> <span class="fu">list</span>(<span class="at">name =</span> class_character, <span class="at">age =</span> class_numeric),</span>
+<span id="cb18-4"><a></a>  <span class="at">validator =</span> <span class="cf">function</span>(self) {</span>
+<span id="cb18-5"><a></a>    <span class="cf">if</span> (<span class="fu">length</span>(self<span class="sc">@</span>name) <span class="sc">!=</span> <span class="fu">length</span>(self<span class="sc">@</span>age)) {</span>
+<span id="cb18-6"><a></a>      <span class="st">"@name and @age must be the same length"</span></span>
+<span id="cb18-7"><a></a>    }</span>
+<span id="cb18-8"><a></a>  }</span>
+<span id="cb18-9"><a></a>)</span>
+<span id="cb18-10"><a></a>us <span class="ot">&lt;-</span> <span class="fu">class_person</span>(<span class="at">name =</span> <span class="fu">c</span>(<span class="st">"Jon"</span>, <span class="st">"Leyla"</span>), <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="sc">-</span><span class="dv">5</span>, <span class="dv">49</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error: &lt;Person&gt; object is invalid:
+#&gt; - @name and @age must be the same length</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>me <span class="ot">&lt;-</span> <span class="fu">class_person</span>(<span class="st">"Jon"</span>, <span class="dv">50</span>)</span>
+<span id="cb20-2"><a></a>me<span class="sc">@</span>age <span class="ot">&lt;-</span> <span class="dv">50</span><span class="sc">:</span><span class="dv">60</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error: &lt;Person&gt; object is invalid:
+#&gt; - @name and @age must be the same length</code></pre>
+</div>
+</div>
+<aside class="notes">
+<p>Can return more than one string.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="set-properties-all-at-once-to-avoid-intermediate-invalid-states" class="slide level2">
+<h2>Set properties all at once to avoid intermediate invalid states</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>us <span class="ot">&lt;-</span> me</span>
+<span id="cb22-2"><a></a>us<span class="sc">@</span>name <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Jon"</span>, <span class="st">"Leyla"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error: &lt;Person&gt; object is invalid:
+#&gt; - @name and @age must be the same length</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="co"># Quick S3 method to demonstrate</span></span>
+<span id="cb24-2"><a></a>c.Person <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb24-3"><a></a>  <span class="fu">props</span>(x) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">name =</span> <span class="fu">c</span>(x<span class="sc">@</span>name, y<span class="sc">@</span>name), <span class="at">age =</span> <span class="fu">c</span>(x<span class="sc">@</span>age, y<span class="sc">@</span>age))</span>
+<span id="cb24-4"><a></a>  x</span>
+<span id="cb24-5"><a></a>}</span>
+<span id="cb24-6"><a></a>us <span class="ot">&lt;-</span> <span class="fu">c</span>(me, <span class="fu">class_person</span>(<span class="st">"Leyla"</span>, <span class="dv">49</span>))</span>
+<span id="cb24-7"><a></a>us</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;Person&gt;
+#&gt;  @ name: chr [1:2] "Jon" "Leyla"
+#&gt;  @ age : num [1:2] 50 49</code></pre>
+</div>
+</div>
+<aside class="notes">
+<p>This is also a preview of why S7 is easier to adopt in an S3 world</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="s7new_property-defines-custom-property-types" class="slide level2">
+<h2><code>S7::new_property()</code> defines custom property types</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>prop_positive <span class="ot">&lt;-</span> <span class="fu">new_property</span>(</span>
+<span id="cb26-2"><a></a>  <span class="at">class =</span> class_numeric,</span>
+<span id="cb26-3"><a></a>  <span class="at">validator =</span> <span class="cf">function</span>(value) {</span>
+<span id="cb26-4"><a></a>    <span class="cf">if</span> (<span class="fu">any</span>(value <span class="sc">&lt;=</span> <span class="dv">0</span>)) <span class="st">"must be positive"</span></span>
+<span id="cb26-5"><a></a>  }</span>
+<span id="cb26-6"><a></a>)</span>
+<span id="cb26-7"><a></a>class_person <span class="ot">&lt;-</span> <span class="fu">new_class</span>(</span>
+<span id="cb26-8"><a></a>  <span class="st">"Person"</span>,</span>
+<span id="cb26-9"><a></a>  <span class="at">properties =</span> <span class="fu">list</span>(<span class="at">name =</span> class_character, <span class="at">age =</span> prop_positive),</span>
+<span id="cb26-10"><a></a>  <span class="at">validator =</span> <span class="cf">function</span>(self) {</span>
+<span id="cb26-11"><a></a>    <span class="cf">if</span> (<span class="fu">length</span>(self<span class="sc">@</span>name) <span class="sc">!=</span> <span class="fu">length</span>(self<span class="sc">@</span>age)) {</span>
+<span id="cb26-12"><a></a>      <span class="st">"@name and @age must be the same length"</span></span>
+<span id="cb26-13"><a></a>    }</span>
+<span id="cb26-14"><a></a>  }</span>
+<span id="cb26-15"><a></a>)</span>
+<span id="cb26-16"><a></a>us <span class="ot">&lt;-</span> <span class="fu">class_person</span>(<span class="at">name =</span> <span class="fu">c</span>(<span class="st">"Jon"</span>, <span class="st">"Leyla"</span>), <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="sc">-</span><span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error: &lt;Person&gt; object properties are invalid:
+#&gt; - @age must be positive</code></pre>
+</div>
+</div>
+<aside class="notes">
+<p>Can also use this to set default values</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="properties-can-be-computed" class="slide level2">
+<h2>Properties can be computed</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>class_circle <span class="ot">&lt;-</span> <span class="fu">new_class</span>(</span>
+<span id="cb28-2"><a></a>  <span class="st">"Circle"</span>,</span>
+<span id="cb28-3"><a></a>  <span class="at">properties =</span> <span class="fu">list</span>(</span>
+<span id="cb28-4"><a></a>    <span class="at">radius =</span> class_numeric,</span>
+<span id="cb28-5"><a></a>    <span class="at">area =</span> <span class="fu">new_property</span>(</span>
+<span id="cb28-6"><a></a>      <span class="at">class =</span> class_numeric,</span>
+<span id="cb28-7"><a></a>      <span class="at">getter =</span> <span class="cf">function</span>(self) {</span>
+<span id="cb28-8"><a></a>        pi <span class="sc">*</span> self<span class="sc">@</span>radius<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb28-9"><a></a>      }</span>
+<span id="cb28-10"><a></a>    )</span>
+<span id="cb28-11"><a></a>  )</span>
+<span id="cb28-12"><a></a>)</span>
+<span id="cb28-13"><a></a>c1 <span class="ot">&lt;-</span> <span class="fu">class_circle</span>(<span class="at">radius =</span> <span class="dv">1</span>)</span>
+<span id="cb28-14"><a></a>c1<span class="sc">@</span>area <span class="sc">==</span> pi</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>c1<span class="sc">@</span>radius <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb30-2"><a></a>c1<span class="sc">@</span>area <span class="sc">==</span> <span class="dv">4</span><span class="sc">*</span>pi</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="properties-can-be-fully-dynamic" class="slide level2">
+<h2>Properties can be fully dynamic</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>class_circle2 <span class="ot">&lt;-</span> <span class="fu">new_class</span>(</span>
+<span id="cb32-2"><a></a>  <span class="st">"Circle"</span>,</span>
+<span id="cb32-3"><a></a>  <span class="at">properties =</span> <span class="fu">list</span>(</span>
+<span id="cb32-4"><a></a>    <span class="at">radius =</span> class_numeric,</span>
+<span id="cb32-5"><a></a>    <span class="at">area =</span> <span class="fu">new_property</span>(</span>
+<span id="cb32-6"><a></a>      <span class="at">class =</span> class_numeric,</span>
+<span id="cb32-7"><a></a>      <span class="at">getter =</span> <span class="cf">function</span>(self) pi <span class="sc">*</span> self<span class="sc">@</span>radius<span class="sc">^</span><span class="dv">2</span>,</span>
+<span id="cb32-8"><a></a>      <span class="at">setter =</span> <span class="cf">function</span>(self, value) {</span>
+<span id="cb32-9"><a></a>        <span class="cf">if</span> (<span class="sc">!</span><span class="fu">length</span>(value)) <span class="fu">return</span>(self)</span>
+<span id="cb32-10"><a></a>        self<span class="sc">@</span>radius <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(value <span class="sc">/</span> pi)</span>
+<span id="cb32-11"><a></a>        self</span>
+<span id="cb32-12"><a></a>      }</span>
+<span id="cb32-13"><a></a>    )</span>
+<span id="cb32-14"><a></a>  )</span>
+<span id="cb32-15"><a></a>)</span>
+<span id="cb32-16"><a></a>c2 <span class="ot">&lt;-</span> <span class="fu">class_circle2</span>(<span class="at">radius =</span> <span class="dv">1</span>)</span>
+<span id="cb32-17"><a></a>c2<span class="sc">@</span>area</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 3.141593</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>c2<span class="sc">@</span>area <span class="ot">&lt;-</span> <span class="dv">4</span><span class="sc">*</span>pi</span>
+<span id="cb34-2"><a></a>c2<span class="sc">@</span>radius</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 2</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>c2<span class="sc">@</span>radius <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb36-2"><a></a>c2<span class="sc">@</span>area <span class="sc">==</span> <span class="dv">9</span><span class="sc">*</span>pi</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+<aside class="notes">
+<ul>
+<li>This starts to feel kinda encapsulated like we’ll see in R6</li>
+<li>Still works with S3-style multimethods, though</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="constructor-argument-customizes-object-creation" class="slide level2">
+<h2><code>constructor</code> argument customizes object creation</h2>
+<ul>
+<li>Not going into detail yet.</li>
+</ul>
+</section>
+<section id="parent-argument-specifies-the-parent" class="slide level2">
+<h2><code>parent</code> argument specifies the parent</h2>
+<ul>
+<li>Not going into detail yet.</li>
+</ul>
+</section></section>
+<section>
+<section id="generics-and-methods" class="title-slide slide level1 center">
+<h1>Generics and methods</h1>
+<aside class="notes">
+<p>This section combines the <a href="https://rconsortium.github.io/S7/articles/S7.html#generics-and-methods">2nd and 3rd section of S7 basics</a> with the <a href="https://rconsortium.github.io/S7/articles/generics-methods.html#generic-method-compatibility">Generics and methods vignette</a></p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="define-s7-generics-methods-with-s7new_generic-and-s7new_method" class="slide level2">
+<h2>Define S7 generics &amp; methods with <code>S7::new_generic()</code> and <code>S7::new_method()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>are_old <span class="ot">&lt;-</span> <span class="fu">new_generic</span>(<span class="st">"are_old"</span>, <span class="st">"x"</span>)</span>
+<span id="cb38-2"><a></a><span class="fu">method</span>(are_old, class_person) <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb38-3"><a></a>  x<span class="sc">@</span>age <span class="sc">&gt;=</span> <span class="dv">40</span> <span class="sc">&amp;</span> x<span class="sc">@</span>name <span class="sc">!=</span> <span class="st">"Leyla"</span></span>
+<span id="cb38-4"><a></a>}</span>
+<span id="cb38-5"><a></a>us</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;Person&gt;
+#&gt;  @ name: chr [1:2] "Jon" "Leyla"
+#&gt;  @ age : num [1:2] 50 49</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a><span class="fu">are_old</span>(us)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1]  TRUE FALSE</code></pre>
+</div>
+</div>
+</section>
+<section id="s7-method-dispatch-is-similar-to-s3" class="slide level2">
+<h2>S7 method dispatch is similar to S3</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>class_geek <span class="ot">&lt;-</span> <span class="fu">new_class</span>(</span>
+<span id="cb42-2"><a></a>  <span class="st">"Geek"</span>,</span>
+<span id="cb42-3"><a></a>  <span class="at">parent =</span> class_person</span>
+<span id="cb42-4"><a></a>)</span>
+<span id="cb42-5"><a></a>me <span class="ot">&lt;-</span> <span class="fu">class_geek</span>(<span class="st">"Jon"</span>, <span class="dv">50</span>)</span>
+<span id="cb42-6"><a></a><span class="fu">are_old</span>(me) <span class="co"># Dispatches on "Person"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="s7-method-chaining-is-explicit" class="slide level2">
+<h2>S7 method chaining is explicit</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">method</span>(are_old, class_geek) <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb44-2"><a></a>  <span class="fu">cat</span>(<span class="st">"Checking if geeks are old...</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb44-3"><a></a>  <span class="fu">are_old</span>(<span class="fu">super</span>(x, class_person)) <span class="co"># Must specify which parent class to use</span></span>
+<span id="cb44-4"><a></a>}</span>
+<span id="cb44-5"><a></a><span class="fu">are_old</span>(me)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Checking if geeks are old...</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="s7-generics-allow-for-multiple-dispatch" class="slide level2">
+<h2>S7 generics allow for multiple dispatch</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>combine <span class="ot">&lt;-</span> <span class="fu">new_generic</span>(<span class="st">"combine"</span>, <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>))</span>
+<span id="cb47-2"><a></a><span class="fu">method</span>(combine, <span class="fu">list</span>(class_person, class_person)) <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb47-3"><a></a>  <span class="fu">class_person</span>(</span>
+<span id="cb47-4"><a></a>    <span class="at">name =</span> <span class="fu">c</span>(x<span class="sc">@</span>name, y<span class="sc">@</span>name),</span>
+<span id="cb47-5"><a></a>    <span class="at">age =</span> <span class="fu">c</span>(x<span class="sc">@</span>age, y<span class="sc">@</span>age)</span>
+<span id="cb47-6"><a></a>  )</span>
+<span id="cb47-7"><a></a>}</span>
+<span id="cb47-8"><a></a>hw <span class="ot">&lt;-</span> <span class="fu">class_geek</span>(<span class="st">"Hadley"</span>, <span class="dv">46</span>)</span>
+<span id="cb47-9"><a></a><span class="fu">combine</span>(us, hw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;Person&gt;
+#&gt;  @ name: chr [1:3] "Jon" "Leyla" "Hadley"
+#&gt;  @ age : num [1:3] 50 49 46</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a><span class="fu">combine</span>(me, hw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;Person&gt;
+#&gt;  @ name: chr [1:2] "Jon" "Hadley"
+#&gt;  @ age : num [1:2] 50 46</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a></a><span class="fu">method</span>(combine, <span class="fu">list</span>(class_geek, class_geek)) <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb51-2"><a></a>  combined_person <span class="ot">&lt;-</span> <span class="fu">combine</span>(</span>
+<span id="cb51-3"><a></a>    <span class="fu">super</span>(x, class_person),</span>
+<span id="cb51-4"><a></a>    <span class="fu">super</span>(y, class_person)</span>
+<span id="cb51-5"><a></a>  )</span>
+<span id="cb51-6"><a></a>  <span class="fu">class_geek</span>(</span>
+<span id="cb51-7"><a></a>    <span class="at">name =</span> combined_person<span class="sc">@</span>name,</span>
+<span id="cb51-8"><a></a>    <span class="at">age =</span> combined_person<span class="sc">@</span>age</span>
+<span id="cb51-9"><a></a>  )</span>
+<span id="cb51-10"><a></a>}</span>
+<span id="cb51-11"><a></a><span class="fu">combine</span>(me, hw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;Geek&gt;
+#&gt;  @ name: chr [1:2] "Jon" "Hadley"
+#&gt;  @ age : num [1:2] 50 46</code></pre>
+</div>
+</div>
+<ul>
+<li><code>class_any</code> matches any class</li>
+<li><code>class_missing</code> for missing arguments</li>
+</ul>
+</section></section>
+<section>
+<section id="compatibility" class="title-slide slide level1 center">
+<h1>Compatibility</h1>
+
+</section>
+<section id="compatibility-with-s3" class="slide level2">
+<h2>Compatibility with S3</h2>
+<ul>
+<li><code>class()</code> for S3 classes, <code>S7_class()</code> for S7 class constructor</li>
+<li>S7 properties are attributes (so old code that expects those will work)</li>
+<li>S7 can register methods for:
+<ul>
+<li>S7 class + S3 generic</li>
+<li>S3 class + S7 generic</li>
+</ul></li>
+<li>S7 classes can inherit from S3 classes</li>
+<li>S3 classes can inherit from S7 classes</li>
+</ul>
+</section>
+<section id="compatibility-with-s4" class="slide level2">
+<h2>Compatibility with S4</h2>
+<ul>
+<li>S7 classes cannot inherit from S4 classes</li>
+<li>S4 classes can inherit from S7 classes</li>
+<li>S7 can register methods for:
+<ul>
+<li>S7 class + S4 generic</li>
+<li>S4 class + S7 generic</li>
+</ul></li>
+<li>Out of scope: Both support class unions</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>I didn’t try any S4 + S7 code, and there’s a typo (I think) in that second bullet on the site (it says “S4 classes can inherit from S3 classes”)</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p><a href="../" target="advr_club-index">DSLC.io/advr</a> | <a href="https://DSLC.io" target="_blank">DSLC.io</a></p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/r4ds\.github\.io\/bookclub-advr\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+                // target, if specified
+                link.setAttribute("target", "_blank");
+                if (link.getAttribute("rel") === null) {
+                  link.setAttribute("rel", "noopener");
+                }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

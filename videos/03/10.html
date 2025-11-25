@@ -418,6 +418,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../15b.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">15b. S7</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../14.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">14. R6</span></a>
   </div>
@@ -540,8 +546,7 @@ ul.task-list li input[type="checkbox"] {
 <summary>
 Meeting chat log
 </summary>
-<pre><code>00:10:11    Jon Harmon (jonthegeek):    start
-00:16:09    Stephan Koenig: You can reassign `T` and `F` to other objects. so `TRUE` and `FALSE` more robust
+<pre><code>00:16:09    Stephan Koenig: You can reassign `T` and `F` to other objects. so `TRUE` and `FALSE` more robust
 00:16:25    Eamon Caddigan: Replying to "You can reassign `T`..."
 
 Oh, TIL!
@@ -556,7 +561,7 @@ Makes less sense when "NA" is "North America" --- Data Mishaps Night
 00:22:33    Jon Harmon (jonthegeek):    https://DSLC.io/advr
 00:32:31    Nicholas Giangreco: attr(a, “bob”) &lt;- bob
 00:35:53    Jon Harmon (jonthegeek):    lobstr::obj_addr()
-00:40:17    Eamon Caddigan: ```
+00:40:17    Eamon Caddigan: 
 bob &lt;- "bob"
 alice &lt;- "alice"
 attr(alice, "friend") &lt;- bob
@@ -570,21 +575,68 @@ str(alice)
 ref(bob)
 #&gt; [1:0x1098bebc8] &lt;chr&gt; 
 ref(attr(alice, "friend"))
-#&gt; [1:0x109883960] &lt;chr&gt; </code></pre>
-<p>00:41:18 Eamon Caddigan: Replying to “attr(a, “bob”) &lt;- bo…”</p>
-<p>Does this get at what you were asking about? It looks like bob is getting a new address when it gets modified, so Alice’s friend points to the original bob . 00:42:39 Stephan Koenig: I never understood the difference between an ordered factor and a regular one. Even the regular factor has an order to the levels, no? 00:43:38 Jon Harmon (jonthegeek): If you don’t give it a tz, it leaves the tz as “” then assumes local when you use it, most of the time, if I recall correctly. That’s one of the many things lubridate fixes 00:45:32 Jon Harmon (jonthegeek): Replying to “I never understood t…”</p>
-<p>Looks like the concept of “ordered” is largely leftover from S. Oh, and they say some other things might treat them differently. 00:45:54 Stephan Koenig: Reacted to “Looks like the conce…” with 🙏 00:45:58 Nicholas Giangreco: Replying to “I never understood t…”</p>
-<p>An ordered factor has an extra class of “ordered” 00:46:21 Stephan Koenig: Reacted to “An ordered factor ha…” with 👍 00:46:37 Ella Kaye (she/her): Replying to “I never understood t…”</p>
-<p>It’s relevant in some modelling contexts. I know I made use of them in my MSc, to represent student grade levels, but that was a while ago now and I can’t remember exactly what modelling I did. 00:48:00 Eamon Caddigan: Replying to “I never understood t…”</p>
-<p>The default contrasts for ordered factors are polynomial, and they’re dummy-coded for non-ordered factors. 00:48:10 Eamon Caddigan: Reacted to “It’s relevant in som…” with 💯 00:48:17 Stephan Koenig: Reacted to “It’s relevant in som…” with 🙏 00:48:22 Stephan Koenig: Reacted to “The default contras…” with 🙏 00:51:26 Eamon Caddigan: If you find yourself writing a big loop and storing things in a list, you’ll want to preallocate an empty list, imho. Use vector(mode=“list”, length=<length>) 00:51:42 Nicholas Giangreco: Reacted to “If you find yourself…” with 👍 00:51:52 Retselisitsoe Monyake: Reacted to “If you find yourse…” with 👍 00:53:03 Stephan Koenig: Replying to “If you find yourself…”</length></p>
-<p>Why does that make a difference? I thought a list just contains pointers anyway. 00:53:07 Jon Harmon (jonthegeek): Replying to “If you find yourself…”</p>
-<p>Yes, but within the last couple years they made this much less important, if I recall correctly. 00:54:16 Sarah Rathwell: Replying to “If you find yourself…”</p>
-<p>Is there a reason to use that over list() ? I know the vector call version pre-specifies length but if you do know the desired length beforehand are the two methods different 00:54:53 Stephan Koenig: tibble recycles the length of one 00:55:08 Jon Harmon (jonthegeek): Replying to “If you find yourself…”</p>
-<p>Use vector() when you know you want a list with a certain length but you don’t know what goes in it. If you’re building a list with specified values, list() is fine. 00:56:53 Eamon Caddigan: Reacted to “Use vector() when yo…” with 💯 00:56:53 Jon Harmon (jonthegeek): data.frame(x = 1:4, y = 1:2) tibble(x = 1:4, y = 1:2) 00:59:34 Stephan Koenig: Data frames do partial matching. 01:00:49 Stephan Koenig: What is the <code>I</code> function? 01:01:05 Eamon Caddigan: Replying to “If you find yourself…”</p>
-<p>I’d defer to our other experts on R internals, but I believe that lists are “generic vectors” (of pointers to objects), but they’re not (e.g.) linked lists. So if you’re appending to them repeatedly eventually the whole vector of pointers is going to be copied to a new region of memory. 01:01:26 Stephan Koenig: Reacted to “I’d defer to our oth…” with 🙏 01:02:11 Eamon Caddigan: Replying to “If you think of NA a…”</p>
-<p>I was recently burned by (not knowing about the default values of) the na argument to readr::read_csv . 01:02:30 Jon Harmon (jonthegeek): testing &lt;- data.frame() nrow(testing)</p>
-<p>testing &lt;- NULL nrow(testing) NROW(testing) # Yell at R to give you an answer. 01:03:18 Eamon Caddigan: Reacted to “testing &lt;- data.fram…” with 😂 01:03:21 Nicholas Giangreco: Reacted to “testing &lt;- data.fram…” with ❗ 01:05:15 Jacob Schwan: Reacted to “testing &lt;- data.fram…” with 😂 01:07:35 Stephan Koenig: Thank you, Olivier! 01:07:39 Sally Chang: Thank you, Olivier. That was A LOT of material 01:07:46 Eamon Caddigan: Thanks Olivier! 01:07:54 tataphani: Replying to “I never understood t…”</p>
-end 01:07:55 Jacob Schwan: Thanks Olivier! 01:07:58 Olivier: end 01:08:02 Retselisitsoe Monyake: Thank you ```
+#&gt; [1:0x109883960] &lt;chr&gt; 
+00:41:18    Eamon Caddigan: Replying to "attr(a, “bob”) &lt;- bo..."
+
+Does this get at what you were asking about? It looks like  bob  is getting a new address when it gets modified, so Alice’s friend points to the original  bob .
+00:42:39    Stephan Koenig: I never understood the difference between an ordered factor and a regular one. Even the regular factor has an order to the levels, no?
+00:43:38    Jon Harmon (jonthegeek):    If you don't give it a tz, it leaves the tz as "" then assumes local when you use it, most of the time, if I recall correctly. That's one of the many things lubridate fixes
+00:45:32    Jon Harmon (jonthegeek):    Replying to "I never understood t..."
+
+Looks like the concept of "ordered" is largely leftover from S. Oh, and they say some other things might treat them differently.
+00:45:54    Stephan Koenig: Reacted to "Looks like the conce..." with 🙏
+00:45:58    Nicholas Giangreco: Replying to "I never understood t..."
+
+An ordered factor has an extra class of “ordered”
+00:46:21    Stephan Koenig: Reacted to "An ordered factor ha..." with 👍
+00:46:37    Ella Kaye (she/her):    Replying to "I never understood t..."
+
+It’s relevant in some modelling contexts. I know I made use of them in my MSc, to represent student grade levels, but that was a while ago now and I can’t remember exactly what modelling I did.
+00:48:00    Eamon Caddigan: Replying to "I never understood t..."
+
+The default  contrasts  for ordered factors are polynomial, and they’re dummy-coded for non-ordered factors.
+00:48:10    Eamon Caddigan: Reacted to "It’s relevant in som..." with 💯
+00:48:17    Stephan Koenig: Reacted to "It’s relevant in som..." with 🙏
+00:48:22    Stephan Koenig: Reacted to "The default  contras..." with 🙏
+00:51:26    Eamon Caddigan: If you find yourself writing a big loop and storing things in a list, you’ll want to preallocate an empty list, imho. Use  vector(mode=“list”, length=&lt;length&gt;)
+00:51:42    Nicholas Giangreco: Reacted to "If you find yourself..." with 👍
+00:51:52    Retselisitsoe Monyake:  Reacted to "If you find yourse..." with 👍
+00:53:03    Stephan Koenig: Replying to "If you find yourself..."
+
+Why does that make a difference? I thought a list just contains pointers anyway.
+00:53:07    Jon Harmon (jonthegeek):    Replying to "If you find yourself..."
+
+Yes, but within the last couple years they made this much less important, if I recall correctly.
+00:54:16    Sarah Rathwell: Replying to "If you find yourself..."
+
+Is there a reason to use that over list() ? I know the vector call version pre-specifies length but if you do know the desired length beforehand are the two methods different
+00:54:53    Stephan Koenig: tibble recycles the length of one
+00:55:08    Jon Harmon (jonthegeek):    Replying to "If you find yourself..."
+
+Use vector() when you know you want a list with a certain length but you don't know what goes in it. If you're building a list with specified values, list() is fine.
+00:56:53    Eamon Caddigan: Reacted to "Use vector() when yo..." with 💯
+00:56:53    Jon Harmon (jonthegeek):    data.frame(x = 1:4, y = 1:2)
+tibble(x = 1:4, y = 1:2)
+00:59:34    Stephan Koenig: Data frames do partial matching.
+01:00:49    Stephan Koenig: What is the `I` function?
+01:01:05    Eamon Caddigan: Replying to "If you find yourself..."
+
+I’d defer to our other experts on R internals, but I believe that lists are “generic vectors” (of pointers to objects), but they’re not (e.g.) linked lists. So if you’re appending to them repeatedly eventually the whole vector of pointers is going to be copied to a new region of memory.
+01:01:26    Stephan Koenig: Reacted to "I’d defer to our oth..." with 🙏
+01:02:11    Eamon Caddigan: Replying to "If you think of NA a..."
+
+I was recently burned by (not knowing about the default values of) the  na  argument to  readr::read_csv .
+01:02:30    Jon Harmon (jonthegeek):    testing &lt;- data.frame()
+nrow(testing)
+
+testing &lt;- NULL
+nrow(testing)
+NROW(testing) # Yell at R to give you an answer.
+01:03:18    Eamon Caddigan: Reacted to "testing &lt;- data.fram..." with 😂
+01:03:21    Nicholas Giangreco: Reacted to "testing &lt;- data.fram..." with ❗
+01:05:15    Jacob Schwan:   Reacted to "testing &lt;- data.fram..." with 😂
+01:07:35    Stephan Koenig: Thank you, Olivier!
+01:07:39    Sally Chang:    Thank you, Olivier. That was A LOT of material</code></pre>
 </details>
 
 
