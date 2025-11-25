@@ -1,0 +1,65 @@
+---
+title: Cohort 10
+---
+
+{{< video https://www.youtube.com/embed/XHCA-6m-VjY >}}
+
+<details>
+
+<summary>Meeting chat log</summary>
+```
+00:20:28	Jon Harmon (jonthegeek):	rlang::global_handle()  in your .Rprofile turns on all the pretty error handling stuff. I don't think that existed when this book came out.
+00:20:47	Jacob Schwan:	Reacted to " rlang::global_handl..." with ❤️
+00:20:51	Martin Venegas:	Reacted to " rlang::global_handl..." with ❤️
+00:22:03	Olivier Leroy:	wow I did not that
+00:22:09	Olivier Leroy:	know*
+00:22:29	Olivier Leroy:	cat() is sending to stdout? at least?
+00:24:26	jim rothstein:	Reacted to " rlang::global_handl…" with ❤️
+00:26:16	Olivier Leroy:	make sense in API call function, you try to get something and send the error  in the return
+00:43:32	Olivier Leroy:	definitely underused :P
+00:43:46	Jon Harmon (jonthegeek):	This code could really use some abstractions to make it clearer what's happening IMO, but it's an interesting example of using tryCatch (and try_fetch)/withCallingHandlers: https://github.com/r-lib/httr2/blob/bb6a48ef8f554aab1b3aa956de1d68c59249c7c1/R/req-perform-iterative.R#L156 
+
+I usually include a special  .pkg_abort()  function in my packages to setup up pretty/classed errors: https://github.com/shinyworks/chains/blob/main/R/aaa-conditions.R#L57 
+Fancier: https://github.com/api2r/stbl/blob/main/R/aaa-conditions.R#L20
+00:45:30	Olivier Leroy:	that is fine if we have more time, it was really clear presentation!
+00:45:53	jim rothstein:	Very clear
+00:46:19	Jacob Schwan:	Nice set of examples @Eamon Caddigan!
+00:47:06	Jon Harmon (jonthegeek):	> print.condition
+function (x, ...) 
+{
+    msg <- conditionMessage(x)
+    call <- conditionCall(x)
+    cl <- class(x)[1L]
+    if (!is.null(call)) 
+        cat("<", cl, " in ", deparse(call), ": ", msg, ">\n", 
+            sep = "")
+    else cat("<", cl, ": ", msg, ">\n", sep = "")
+    invisible(x)
+}
+<bytecode: 0x00000144db0ce570>
+<environment: namespace:base>
+00:47:35	Martin Venegas:	Reacted to "> print.condition
+fu..." with 😯
+00:47:39	Olivier Leroy:	Reacted to "> print.condition
+fu..." with 😯
+00:51:43	Olivier Leroy:	expect_condition I think
+00:52:47	Martin Venegas:	user experience hat
+00:52:49	Martin Venegas:	like that
+00:53:06	Martin Venegas:	🎩
+00:53:16	Jon Harmon (jonthegeek):	Oops it only prints the class when you look at the trace (and you don't get that option by default in base):
+[main 12:42:55] > rlang::abort("This is my rlang error")
+Error:
+! This is my rlang error
+Run `rlang::last_trace()` to see where the error occurred.
+[main 12:42:55] > rlang::last_trace()
+<error/rlang_error>
+Error:
+! This is my rlang error
+---
+Backtrace:
+    ▆
+ 1. └─rlang::abort("This is my rlang error")
+00:57:07	Olivier Leroy:	would the potential class of error be described at the function doc at the @returns ?
+01:05:30	Martin Venegas:	thanks Eamon!
+```
+</details>

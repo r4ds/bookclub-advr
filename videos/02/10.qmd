@@ -10,7 +10,6 @@ title: Cohort 10
 ```
 00:07:45	Stephan Koenig:	Isn’t it just F from revealjs?
 00:08:06	Gabby Palomo:	Reacted to "Isn’t it just F from..." with 👍
-00:08:11	Jon Harmon (jonthegeek):	start
 00:09:01	Jon Harmon (jonthegeek):	https://adv-r.hadley.nz/names-values.html 
 https://DSLC.io/advr 
 https://r4ds.github.io/bookclub-advr/slides/02.html#/learning-objectives
@@ -92,7 +91,6 @@ obj_size(y)
 Not as far as I know, or at least not easily. We might learn how to do that toward the end when we learn about the C interface.
 00:57:39	Stephan Koenig:	Reacted to "Not as far as I know…" with 👍
 01:00:54	Eamon Caddigan:	“Cons cells”? I low-key love when R shows its Lispyness.
-01:01:53	Jon Harmon (jonthegeek):	stop
 01:02:09	Zachary Morford:	Thank you all! I have to run but I'll be there next week.
 01:02:16	Stephan Koenig:	Thanks, Nick!
 01:02:58	Jon Harmon (jonthegeek):	https://github.com/r4ds/bookclub-advr?tab=readme-ov-file#how-to-present

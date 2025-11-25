@@ -55,6 +55,7 @@ website:
       - 12.qmd
       - 13.qmd
       - 15.qmd
+      - 15b.qmd
       - 14.qmd
       - 16.qmd
     - section: Metaprogramming

@@ -3,13 +3,13 @@ engine: knitr
 title: S4
 ---
 
-## Learning Objectives
+## Learning objectives
 
 - Identify the main components of S4 objects, including the new **slot** component
 - Learn best practices for creating new S4 classes and creating/modifying/accessing their objects
 - "Understand" multiple inheritance, multiple dispatch, and appreciate their risks and complexity 
 
-## Not Learning Objectives
+## Not learning objectives
 
 - How to most effectively deploy S4
   - No single reference.
@@ -355,7 +355,7 @@ Keep method dispatch as simple as possible by avoiding multiple inheritance, and
 
 Class with the shortest distance to the specified class gets dispatched.
 
-## Multiple inheritance can lead to ambigious method dispatch
+## Multiple inheritance can lead to ambiguous method dispatch
 
 ::::{.columns}
 :::{.column}
@@ -421,7 +421,7 @@ setOldClass("factor", S4Class = "factor")
 These definitions should be provided by the creator of the S3 class. Don't trying building an S4 class on top of an S3 class provided by a package. Instead request that the package maintainer add this call to their package.
 :::
 
-## S4 classes recieve as special `.Data` slot when inheriting from S3 or base types
+## S4 classes receive as special `.Data` slot when inheriting from S3 or base types
 
 ```{r}
 RangedNumeric <- setClass(

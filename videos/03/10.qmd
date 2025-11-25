@@ -8,7 +8,6 @@ title: Cohort 10
 
 <summary>Meeting chat log</summary>
 ```
-00:10:11	Jon Harmon (jonthegeek):	start
 00:16:09	Stephan Koenig:	You can reassign `T` and `F` to other objects. so `TRUE` and `FALSE` more robust
 00:16:25	Eamon Caddigan:	Replying to "You can reassign `T`..."
 
@@ -24,7 +23,7 @@ Makes less sense when "NA" is "North America" --- Data Mishaps Night
 00:22:33	Jon Harmon (jonthegeek):	https://DSLC.io/advr
 00:32:31	Nicholas Giangreco:	attr(a, “bob”) <- bob
 00:35:53	Jon Harmon (jonthegeek):	lobstr::obj_addr()
-00:40:17	Eamon Caddigan:	```
+00:40:17	Eamon Caddigan:	
 bob <- "bob"
 alice <- "alice"
 attr(alice, "friend") <- bob
@@ -39,7 +38,6 @@ ref(bob)
 #> [1:0x1098bebc8] <chr> 
 ref(attr(alice, "friend"))
 #> [1:0x109883960] <chr> 
-```
 00:41:18	Eamon Caddigan:	Replying to "attr(a, “bob”) <- bo..."
 
 Does this get at what you were asking about? It looks like  bob  is getting a new address when it gets modified, so Alice’s friend points to the original  bob .
@@ -101,12 +99,5 @@ NROW(testing) # Yell at R to give you an answer.
 01:05:15	Jacob Schwan:	Reacted to "testing <- data.fram..." with 😂
 01:07:35	Stephan Koenig:	Thank you, Olivier!
 01:07:39	Sally Chang:	Thank you, Olivier. That was A LOT of material
-01:07:46	Eamon Caddigan:	Thanks Olivier!
-01:07:54	tataphani:	Replying to "I never understood t..."
-
-end
-01:07:55	Jacob Schwan:	Thanks Olivier!
-01:07:58	Olivier:	end
-01:08:02	Retselisitsoe Monyake:	Thank you
 ```
 </details>

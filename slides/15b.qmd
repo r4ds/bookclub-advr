@@ -1,0 +1,312 @@
+---
+engine: knitr
+title: S7
+---
+
+## Learning objectives
+
+- Recognize the challenges with S3 and S4 that motivated development of S7
+- Create S7 classes
+- Create S7 generics and methods
+- Define custom constructors for S7 classes
+- Use S7 with S3 and/or S4
+
+```{r}
+library(S7)
+```
+
+# Motivation for S7
+
+## S7 resolves challenges with S3
+
+- S3 has no formal class definitions
+- S3 methods are difficult to find
+- S3 properties are in attributes, but `attr()` does fuzzy matching
+- S3 method dispatch via `UseMethod()` is fuzzy
+
+> "Now for some obscure details that need to appear somewhere" —`?UseMethod`
+
+- `NextMethod()` depends on what's loaded
+- Conversion between S3 classes is fuzzy (*vs* `S7::convert()` generic)
+
+## S7 resolves challenges with S4
+
+- S4's multiple inheritance causes more problems than it solves
+- S4's method dispatch is smart but hard to predict (S7 is explicit)
+- S4 is clean break from S3, made it hard to switch from S3 to S4
+- S4 pretends users can't use `@` to access slots, but they do it anyway
+
+## S7 extends S3 and replaces S4
+
+- Name comes from S3 + S4 = S7, but...
+  - S7 objects *are* S3 objects
+  - S7 objects *are not* S4 objects
+  - But there's some overlap (see last section)
+
+# Classes and objects (and properties)
+
+::: notes
+This section combines the [1st section of S7 basics](https://rconsortium.github.io/S7/articles/S7.html#classes-and-objects) with the [Classes and objects vignette](https://rconsortium.github.io/S7/articles/classes-objects.html) 
+:::
+
+## Define S7 classes with `S7::new_class()`
+
+```{r}
+class_person <- new_class(
+  "Person",
+  properties = list(name = class_character, age = class_numeric)
+)
+me <- class_person(name = "Jon", age = 50)
+me
+S7_inherits(me, class_person)
+class(me)
+inherits(me, "Person")
+```
+
+::: notes
+- Vignette shows same name for the class object and the 1st arg, but in practice I find it safer to differentiate them (in case you use the class as a property of another class).
+  - Notice that you use `class_character`, not `character`; I think that's connected to the issues I had with name matching
+- Equivalent to constructor + validator + helper from S3 chapter
+  - We'll see this more explicitly later
+- Equivalent to `setClass()` + `new()` + `setValidity()` from S4 chapter
+- S3 methods will dispatch properly for this object.
+:::
+
+## Access S7 object properties with `@`
+
+```{r}
+me@name
+me@age
+```
+
+::: notes
+- Like S3 attributes, but `attr()` is fuzzy, and S3 attributes are less formally defined.
+- Like S4 slots, but S4 users are discouraged from using `@` directly, and S4 `@` doesn't trigger validation (see next).
+:::
+
+## S7 objects are validated during construction and on property assignment
+
+```{r}
+#| error: true
+me@age <- "fifty"
+us <- class_person(name = 1:2, age = c("fifty", "forty-nine"))
+```
+
+## `validator` argument customizes validation
+
+```{r}
+#| error: true
+class_person <- new_class(
+  "Person",
+  properties = list(name = class_character, age = class_numeric),
+  validator = function(self) {
+    if (length(self@name) != length(self@age)) {
+      "@name and @age must be the same length"
+    }
+  }
+)
+us <- class_person(name = c("Jon", "Leyla"), age = c(50, -5, 49))
+me <- class_person("Jon", 50)
+me@age <- 50:60
+```
+
+::: notes
+Can return more than one string.
+:::
+
+## Set properties all at once to avoid intermediate invalid states
+
+```{r}
+#| error: true
+us <- me
+us@name <- c("Jon", "Leyla")
+# Quick S3 method to demonstrate
+c.Person <- function(x, y) {
+  props(x) <- list(name = c(x@name, y@name), age = c(x@age, y@age))
+  x
+}
+us <- c(me, class_person("Leyla", 49))
+us
+```
+
+::: notes
+This is also a preview of why S7 is easier to adopt in an S3 world
+:::
+
+## `S7::new_property()` defines custom property types
+
+```{r}
+#| error: true
+prop_positive <- new_property(
+  class = class_numeric,
+  validator = function(value) {
+    if (any(value <= 0)) "must be positive"
+  }
+)
+class_person <- new_class(
+  "Person",
+  properties = list(name = class_character, age = prop_positive),
+  validator = function(self) {
+    if (length(self@name) != length(self@age)) {
+      "@name and @age must be the same length"
+    }
+  }
+)
+us <- class_person(name = c("Jon", "Leyla"), age = c(50, -5))
+```
+
+::: notes
+Can also use this to set default values
+:::
+
+## Properties can be computed
+
+```{r}
+class_circle <- new_class(
+  "Circle",
+  properties = list(
+    radius = class_numeric,
+    area = new_property(
+      class = class_numeric,
+      getter = function(self) {
+        pi * self@radius^2
+      }
+    )
+  )
+)
+c1 <- class_circle(radius = 1)
+c1@area == pi
+c1@radius <- 2
+c1@area == 4*pi
+```
+
+## Properties can be fully dynamic
+
+```{r}
+class_circle2 <- new_class(
+  "Circle",
+  properties = list(
+    radius = class_numeric,
+    area = new_property(
+      class = class_numeric,
+      getter = function(self) pi * self@radius^2,
+      setter = function(self, value) {
+        if (!length(value)) return(self)
+        self@radius <- sqrt(value / pi)
+        self
+      }
+    )
+  )
+)
+c2 <- class_circle2(radius = 1)
+c2@area
+c2@area <- 4*pi
+c2@radius
+c2@radius <- 3
+c2@area == 9*pi
+```
+
+::: notes
+- This starts to feel kinda encapsulated like we'll see in R6
+- Still works with S3-style multimethods, though
+:::
+
+## `constructor` argument customizes object creation
+
+- Not going into detail yet.
+
+## `parent` argument specifies the parent
+
+- Not going into detail yet.
+
+# Generics and methods
+
+::: notes
+This section combines the [2nd and 3rd section of S7 basics](https://rconsortium.github.io/S7/articles/S7.html#generics-and-methods) with the [Generics and methods vignette](https://rconsortium.github.io/S7/articles/generics-methods.html#generic-method-compatibility) 
+:::
+
+## Define S7 generics & methods with `S7::new_generic()` and `S7::new_method()`
+
+```{r}
+are_old <- new_generic("are_old", "x")
+method(are_old, class_person) <- function(x) {
+  x@age >= 40 & x@name != "Leyla"
+}
+us
+are_old(us)
+```
+
+## S7 method dispatch is similar to S3
+
+```{r}
+class_geek <- new_class(
+  "Geek",
+  parent = class_person
+)
+me <- class_geek("Jon", 50)
+are_old(me) # Dispatches on "Person"
+```
+
+## S7 method chaining is explicit
+
+```{r}
+method(are_old, class_geek) <- function(x) {
+  cat("Checking if geeks are old...\n")
+  are_old(super(x, class_person)) # Must specify which parent class to use
+}
+are_old(me)
+```
+
+## S7 generics allow for multiple dispatch
+
+```{r}
+combine <- new_generic("combine", c("x", "y"))
+method(combine, list(class_person, class_person)) <- function(x, y) {
+  class_person(
+    name = c(x@name, y@name),
+    age = c(x@age, y@age)
+  )
+}
+hw <- class_geek("Hadley", 46)
+combine(us, hw)
+combine(me, hw)
+method(combine, list(class_geek, class_geek)) <- function(x, y) {
+  combined_person <- combine(
+    super(x, class_person),
+    super(y, class_person)
+  )
+  class_geek(
+    name = combined_person@name,
+    age = combined_person@age
+  )
+}
+combine(me, hw)
+```
+
+- `class_any` matches any class
+- `class_missing` for missing arguments
+
+# Compatibility
+
+## Compatibility with S3
+
+- `class()` for S3 classes, `S7_class()` for S7 class constructor
+- S7 properties are attributes (so old code that expects those will work)
+- S7 can register methods for:
+  - S7 class + S3 generic
+  - S3 class + S7 generic
+- S7 classes can inherit from S3 classes
+- S3 classes can inherit from S7 classes
+
+## Compatibility with S4
+
+- S7 classes cannot inherit from S4 classes
+- S4 classes can inherit from S7 classes
+- S7 can register methods for:
+  - S7 class + S4 generic
+  - S4 class + S7 generic
+- Out of scope: Both support class unions
+
+::: notes
+- I didn't try any S4 + S7 code, and there's a typo (I think) in that second bullet on the site (it says "S4 classes can inherit from S3 classes")
+:::

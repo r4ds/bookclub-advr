@@ -8,28 +8,7 @@ title: Cohort 10
 
 <summary>Meeting chat log</summary>
 ```
-00:05:19	Olivier:	Hey! (grabbing some water)
-00:09:39	Jon Harmon (jonthegeek):	https://DSLC.io/advr 
-https://docs.google.com/spreadsheets/d/1PgK1ZgOzKqIyxwS6iU_KF5LqBHrb0yx4GN0crVUAaUE/edit?usp=sharing
-00:09:52	Jon Harmon (jonthegeek):	start
-00:11:29	Jon Harmon (jonthegeek):	https://DSCL.video/advr
-00:13:30	Jon Harmon (jonthegeek):	https://DSLC.io/advr
-https://docs.google.com/spreadsheets/d/1PgK1ZgOzKqIyxwS6iU_KF5LqBHrb0yx4GN0crVUAaUE/edit?usp=sharing
-https://DSCL.video/advr
-00:16:59	Olivier:	chat team!
-00:17:13	Eamon Caddigan:	Reacted to "chat team!" with 🔥
-00:17:14	Gabby Palomo:	Reacted to "chat team!" with 😂
-00:17:50	Nicholas Giangreco:	What’s the GitHub link to the qmds?
-00:17:56	Gabby Palomo:	Replying to "chat team!"
-
-I just wished the emoji reactions wouldn’t translate to words when the chat is posted on Slack
-00:18:35	Olivier:	Reacted to "I just wished the em..." with 👾
-00:19:33	Eamon Caddigan:	Replying to "What’s the GitHub li..."
-
-https://github.com/r4ds/bookclub-advr
-00:20:22	Derek Sollberger:	Reacted to "I just wished the em..." with 🌭
 00:24:52	Jon Harmon (jonthegeek):	Not a recommendation: https://www.amazon.com/New-Language-Programming-Environment-Wadsworth/dp/053409192X
-00:25:06	Nicholas Giangreco:	Reacted to "https://github.com/r..." with 👍
 00:30:00	Ella Kaye (she/her):	This is starting to sound like the 10-year R book club!
 00:30:18	Gabby Palomo:	Reacted to "This is starting to ..." with 😂
 00:30:24	Sally Chang:	Reacted to "This is starting to ..." with 😂

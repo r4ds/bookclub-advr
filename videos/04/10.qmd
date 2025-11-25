@@ -8,9 +8,6 @@ title: Cohort 10
 
 <summary>Meeting chat log</summary>
 ```
-00:05:24	Olivier Leroy:	my windows manager handle the zoom chat terribly!
-00:06:14	Jon Harmon (jonthegeek):	start
-00:06:24	Olivier Leroy:	the same, I still not have added a volume button and neither a battery status ..
 00:09:11	Olivier Leroy:	I do not want to play with that for indexing
 00:11:42	Olivier Leroy:	if you are using a counter to index stuff maybe
 00:11:56	Derek Sollberger:	truncate to zero + R doesn't start at zero: ignore
@@ -29,7 +26,5 @@ title: Cohort 10
 00:41:44	Olivier Leroy:	it is good if you want to join a data frame that was a summary and want to join it back to the "original" data frame
 00:45:39	Olivier Leroy:	is it how start_with_() is implemented? (unsure of the function name)
 00:55:31	Ella Kaye:	I won’t be here next week, I’m afraid, but looking forward to catching up on the recording, and should be back the following week.
-00:55:40	Jon Harmon (jonthegeek):	stop
-00:55:43	Stephan Koenig:	Thanks!
 ```
 </details>
