@@ -1,0 +1,286 @@
+---
+engine: knitr
+title: R6
+---
+
+## Learning objectives:
+
+- Create R6 classes
+- Recognize main R6 properties
+- Assign R6 methods and fields
+- Compare different R6 fields
+- Show R6 inheritance pattern
+- Implement R6 finalizers
+
+```{r}
+library(R6)
+```
+
+# R6 classes
+
+## `R6Class` creates the R6 reference object
+
+-   *Empty* is an environment
+
+```{r}
+Empty <- R6Class("Empty")
+Empty
+```
+
+## Every R6 object has an S3 class that reflects its hierarchy of R6 classes.
+
+```{r}
+e <- Empty$new()
+class(e)
+```
+
+# R6 properties 
+
+## R6 objects have methods, not generics
+
+-   *add* is a method of the Accumulator object.
+-   Can't use *sum* and *add* outside this class
+
+```{r}
+Accumulator <- R6Class("Accumulator", list(
+  sum = 0,
+  add = function(x = 1) {
+    self$sum <- self$sum + x
+    invisible(self)
+  }
+))
+```
+
+## R6 objects have reference semantics
+
+-   Use the `$clone()` method to copy the object
+
+```{r}
+x <- Accumulator$new()
+x$add(4)
+x$sum
+y <- Accumulator$new()
+y$sum
+z <- x$clone()
+z$sum
+```
+
+## R6 methods can be chained resembling `|>` syntax
+
+-   All side-effect R6 methods should return `self` invisibly.
+-   This allows for method chaining.
+
+```{r}
+x$add(10)$add(10)$sum
+
+x$
+  add(10)$
+  add(10)$
+  sum
+
+```
+
+# R6 methods and fields
+
+## `$print()` modifies the default printing method
+
+```{r}
+PrettyAccumulator <- R6Class("Accumulator", list(
+  sum = 0,
+  add = function(x = 1) {
+    self$sum <- self$sum + x
+    invisible(self)
+  },
+  print = function(...) {
+    cat("Pretty Accumulator Object\n")
+    cat("  Current sum: ", self$sum,"\n")
+    invisible(self)
+  }
+))
+p <- PrettyAccumulator$new()
+p$
+  add(2)$
+  add(2)$
+  print()
+```
+
+## `$initialize()` overides the default behaviour of `$new()`
+
+```{r}
+#| error: TRUE
+Person <- R6Class("Person",list(
+  name = NULL,
+  initialize = function(name) {
+    stopifnot(is.character(name))
+    stopifnot(length(name)==1)
+    self$name <- name
+    invisible(self)
+  },
+  print = function(...) {
+    cat("Person\n")
+    cat("   name: ",self$name,"\n")
+    invisible(self)
+  }
+))
+Person$new("Nick")
+Person$new(42)
+```
+
+## `$set()` assigns methods after creating R6 objects
+
+::: {.callout-note}
+Keep in mind methods added with `$set()` are only available with new objects.
+:::
+
+```{r}
+Accumulator <- R6Class("Accumulator")
+Accumulator$set("public", "sum", 0)
+Accumulator$set("public", "add", function(x = 1) {
+  self$sum <- self$sum + x
+  invisible(self)
+})
+```
+
+# Private vs. public vs. active R6 fields
+
+## Accessing private R6 fields yield NULL
+
+```{r}
+#| error: TRUE
+Transaction <- R6Class("Transaction", 
+  public = list(
+    last_transaction = 0,
+    initialize = function(owner) {
+      private$owner <- owner
+      invisible(self)
+    },
+    deposit = function(amount) {
+      private$balance <- private$balance + amount
+      self$last_transaction <- amount
+      invisible(self)
+    },
+    withdraw = function(amount) {
+      private$balance <- private$balance - amount
+      self$last_transaction <- -amount
+      invisible(self)
+    },
+    print = function(...) {
+      cat("Transactions by ",private$owner,"\n")
+      cat("  Last transaction: ",self$last_transaction,"\n")
+      cat("  Balance: ",private$balance,"\n")
+    }
+  ),
+  private = list(
+    owner = NULL,
+    balance = 0
+  )
+)
+t <- Transaction$new("Nick")
+t$owner
+```
+
+## Public methods like `$print()` can reveal private fields
+
+```{r}
+t$balance
+t$deposit(20)$withdraw(13)$withdraw(2)
+t$last_transaction
+t
+```
+
+## Active fields hide complex method calls
+
+```{r}
+Rando <- R6::R6Class("Rando", active = list(
+  random = function(value) {
+    if (missing(value)) {
+      runif(1)  
+    } else {
+      stop("Can't set `$random`", call. = FALSE)
+    }
+  }
+))
+x <- Rando$new()
+x$random
+x$random
+x$random
+```
+
+## Active fields hide complexity like validating user input
+
+```{r}
+#| error: TRUE
+Person <- R6Class("Person", 
+  private = list(
+    .age = NA,
+    .name = NULL
+  ),
+  active = list(
+    age = function(value) {
+      if (missing(value)) {
+        private$.age
+      } else {
+        stop("`$age` is read only", call. = FALSE)
+      }
+    },
+    name = function(value) {
+      if (missing(value)) {
+        private$.name
+      } else {
+        stopifnot(is.character(value), length(value) == 1)
+        private$.name <- value
+        self
+      }
+    }
+  ),
+  public = list(
+    initialize = function(name, age = NA) {
+      private$.name <- name
+      private$.age <- age
+    }
+  )
+)
+
+nick <- Person$new("Nick", age = 33)
+nick$name
+nick$name <- 10
+nick$age <- 20
+```
+
+# R6 object inheritance
+
+## `inherit` allows providing behavior from existing R6 classes
+
+-   The *add* method was modified for a more verbose behavior
+-   `super$add()` is the `add` method call from the inherited object
+
+```{r}
+AccumulatorChatty <- R6Class("AccumulatorChatty", 
+  inherit = Accumulator,
+  public = list(
+    add = function(x = 1) {
+      cat("Adding ", x, "\n", sep = "")
+      super$add(x = x)
+    }
+  )
+)
+
+x2 <- AccumulatorChatty$new()
+x2$add(10)$add(1)$sum
+```
+
+# R6 finalizers for clean up duty
+
+## `$finalize()` deletes/unlinks anything created by the R6 object
+
+```{r}
+A <- R6Class("A", private = list(
+  finalize = function() {
+    print("Finalizer has been called!")
+  }
+))
+
+obj <- A$new()
+
+rm(obj); gc()
+```
