@@ -3,57 +3,35 @@ engine: knitr
 title: R6
 ---
 
-# Encapsulation and mutability are the main differentiators of R6 classes 
-
 ## Learning objectives:
 
-```{r include=FALSE}
-library(ids)
-```
-
 - Create R6 classes
+- Review main R6 properties
 - Assign methods and fields in R6 classes
 - Compare public and private R6 fields
 - Implement R6 finalizers
-
-## A review of OOP
-
-![](images/14-four-pillars.png)
-
-* **A PIE**
-
-## Introducing R6 
-
-![](images/14-r6-logo.png)
-
-* R6 classes are not built into base.
-  * It is a separate [package](https://r6.r-lib.org/).
-  * You have to install and attach to use.
-  * If R6 objects are used in a package, it needs to be specified as a dependency in the `DESCRIPTION` file.
-
-```{r eval=FALSE}
-install.packages("R6")
-```
 
 ```{r}
 library(R6)
 ```
 
-* R6 classes have two special properties:
-  1. Uses an encapsulated OOP paradigm.
-     * Methods belong to objects, not generics.
-     * They follow the form `object$method()` for calling fields and methods.
-  2. R6 objects are mutable.
-     * Modified in place.
-     * They follow reference semantics.
-* R6 is similar to OOP in other languages.
-* However, its use can lead ton non-idiomatic R code.
-  * Tradeoffs - follows an OOP paradigm but sacrafice what users are use to. 
-  * [Microsoft365R](https://github.com/Azure/Microsoft365R).
+# R6 classes
 
-## Constructing an R6 class, the basics
+## `R6Class` creates the R6 reference object
 
-* Really simple to do, just use the `R6::R6Class()` function.
+*Empty* is an environment
+
+```{r}
+Empty <- R6Class("Empty")
+Empty
+```
+
+# R6 properties 
+
+## R6 objects have methods, not generics
+
+-   *sum* and *add* are methods of the Accumulator object.
+-   Can't use *sum* and *add* outside these classes
 
 ```{r}
 Accumulator <- R6Class("Accumulator", list(
@@ -65,26 +43,16 @@ Accumulator <- R6Class("Accumulator", list(
 ))
 ```
 
-* Two important arguments:
-  1. `classname` - A string used to name the class (not needed but suggested)
-  2. `public` - A list of methods (functions) and fields (anything else)
-* Suggested style conventions to follow:
-  * Class name should follow `UpperCamelCase`.
-  * Methods and fields should use `snake_case`.
-  * Always assign the result of a `R6Class()` into a variable with the same name as the class.
-* You can use `self$` to access methods and fields of the current object.
+## R6 objects are moified in place
 
-## Constructing an R6 object
-
-* Just use `$new()`
+-   The *add* method update the object's sum field  in the environment
 
 ```{r}
 x <- Accumulator$new()
-```
-
-```{r}
 x$add(4)
 x$sum
+y <- Accumulator$new()
+y$sum
 ```
 
 ## R6 objects and method chaining
