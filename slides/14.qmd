@@ -3,17 +3,18 @@ engine: knitr
 title: R6
 ---
 
+# Encapsulation and mutability are the main differentiators of R6 classes 
+
 ## Learning objectives:
 
 ```{r include=FALSE}
 library(ids)
 ```
 
-- Discuss how to construct a R6 class.
-- Overview the different mechanisms of a R6 class (e.g. initialization, print, public, private, and active fields and methods).
-- Observe various examples using R6's mechanisms to create R6 classes, objects, fields, and methods.
-- Observe the consequences of R6's reference semantics.
-- Review the book's arguments on the use of R6 over reference classes.
+- Create R6 classes
+- Assign methods and fields in R6 classes
+- Compare public and private R6 fields
+- Implement R6 finalizers
 
 ## A review of OOP
 
