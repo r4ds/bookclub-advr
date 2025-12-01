@@ -3994,168 +3994,105 @@
     "href": "slides/14.html#learning-objectives",
     "title": "R6",
     "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nDiscuss how to construct a R6 class.\nOverview the different mechanisms of a R6 class (e.g. initialization, print, public, private, and active fields and methods).\nObserve various examples using R6’s mechanisms to create R6 classes, objects, fields, and methods.\nObserve the consequences of R6’s reference semantics.\nReview the book’s arguments on the use of R6 over reference classes."
+    "text": "Learning objectives:\n\nCreate R6 classes\nRecognize main R6 properties\nAssign R6 methods and fields\nCompare different R6 fields\nShow R6 inheritance pattern\nImplement R6 finalizers\n\n\nlibrary(R6)"
   },
   {
-    "objectID": "slides/14.html#a-review-of-oop",
-    "href": "slides/14.html#a-review-of-oop",
+    "objectID": "slides/14.html#r6class-creates-the-r6-reference-object",
+    "href": "slides/14.html#r6class-creates-the-r6-reference-object",
     "title": "R6",
-    "section": "A review of OOP",
-    "text": "A review of OOP\n\n\nA PIE"
+    "section": "R6Class creates the R6 reference object",
+    "text": "R6Class creates the R6 reference object\n\nEmpty is an environment\n\n\nEmpty &lt;- R6Class(\"Empty\")\nEmpty\n\n#&gt; &lt;Empty&gt; object generator\n#&gt;   Public:\n#&gt;     clone: function (deep = FALSE) \n#&gt;   Parent env: &lt;environment: R_GlobalEnv&gt;\n#&gt;   Locked objects: TRUE\n#&gt;   Locked class: FALSE\n#&gt;   Portable: TRUE"
   },
   {
-    "objectID": "slides/14.html#introducing-r6",
-    "href": "slides/14.html#introducing-r6",
+    "objectID": "slides/14.html#every-r6-object-has-an-s3-class-that-reflects-its-hierarchy-of-r6-classes.",
+    "href": "slides/14.html#every-r6-object-has-an-s3-class-that-reflects-its-hierarchy-of-r6-classes.",
     "title": "R6",
-    "section": "Introducing R6",
-    "text": "Introducing R6\n\n\nR6 classes are not built into base.\n\nIt is a separate package.\nYou have to install and attach to use.\nIf R6 objects are used in a package, it needs to be specified as a dependency in the DESCRIPTION file.\n\n\n\ninstall.packages(\"R6\")\n\n\nlibrary(R6)\n\n\nR6 classes have two special properties:\n\nUses an encapsulated OOP paradigm.\n\nMethods belong to objects, not generics.\nThey follow the form object$method() for calling fields and methods.\n\nR6 objects are mutable.\n\nModified in place.\nThey follow reference semantics.\n\n\nR6 is similar to OOP in other languages.\nHowever, its use can lead ton non-idiomatic R code.\n\nTradeoffs - follows an OOP paradigm but sacrafice what users are use to.\nMicrosoft365R."
+    "section": "Every R6 object has an S3 class that reflects its hierarchy of R6 classes.",
+    "text": "Every R6 object has an S3 class that reflects its hierarchy of R6 classes.\n\ne &lt;- Empty$new()\nclass(e)\n\n#&gt; [1] \"Empty\" \"R6\""
   },
   {
-    "objectID": "slides/14.html#constructing-an-r6-class-the-basics",
-    "href": "slides/14.html#constructing-an-r6-class-the-basics",
+    "objectID": "slides/14.html#r6-objects-have-methods-not-generics",
+    "href": "slides/14.html#r6-objects-have-methods-not-generics",
     "title": "R6",
-    "section": "Constructing an R6 class, the basics",
-    "text": "Constructing an R6 class, the basics\n\nReally simple to do, just use the R6::R6Class() function.\n\n\nAccumulator &lt;- R6Class(\"Accumulator\", list(\n  sum = 0,\n  add = function(x = 1) {\n    self$sum &lt;- self$sum + x\n    invisible(self)\n  }\n))\n\n\nTwo important arguments:\n\nclassname - A string used to name the class (not needed but suggested)\npublic - A list of methods (functions) and fields (anything else)\n\nSuggested style conventions to follow:\n\nClass name should follow UpperCamelCase.\nMethods and fields should use snake_case.\nAlways assign the result of a R6Class() into a variable with the same name as the class.\n\nYou can use self$ to access methods and fields of the current object."
+    "section": "R6 objects have methods, not generics",
+    "text": "R6 objects have methods, not generics\n\nadd is a method of the Accumulator object.\nCan’t use sum and add outside this class\n\n\nAccumulator &lt;- R6Class(\"Accumulator\", list(\n  sum = 0,\n  add = function(x = 1) {\n    self$sum &lt;- self$sum + x\n    invisible(self)\n  }\n))"
   },
   {
-    "objectID": "slides/14.html#constructing-an-r6-object",
-    "href": "slides/14.html#constructing-an-r6-object",
+    "objectID": "slides/14.html#r6-objects-have-reference-semantics",
+    "href": "slides/14.html#r6-objects-have-reference-semantics",
     "title": "R6",
-    "section": "Constructing an R6 object",
-    "text": "Constructing an R6 object\n\nJust use $new()\n\n\nx &lt;- Accumulator$new()\n\n\nx$add(4)\nx$sum\n\n#&gt; [1] 4"
+    "section": "R6 objects have reference semantics",
+    "text": "R6 objects have reference semantics\n\nUse the $clone() method to copy the object\n\n\nx &lt;- Accumulator$new()\nx$add(4)\nx$sum\n\n#&gt; [1] 4\n\ny &lt;- Accumulator$new()\ny$sum\n\n#&gt; [1] 0\n\nz &lt;- x$clone()\nz$sum\n\n#&gt; [1] 4"
   },
   {
-    "objectID": "slides/14.html#r6-objects-and-method-chaining",
-    "href": "slides/14.html#r6-objects-and-method-chaining",
+    "objectID": "slides/14.html#r6-methods-can-be-chained-resembling-syntax",
+    "href": "slides/14.html#r6-methods-can-be-chained-resembling-syntax",
     "title": "R6",
-    "section": "R6 objects and method chaining",
-    "text": "R6 objects and method chaining\n\nAll side-effect R6 methods should return self invisibly.\nThis allows for method chaining.\n\n\nx$add(10)$add(10)$sum\n# [1] 24\n\n\nTo improve readability:\n\n\n# Method chaining\nx$\n  add(10)$\n  add(10)$\n  sum\n# [1] 44"
+    "section": "R6 methods can be chained resembling |> syntax",
+    "text": "R6 methods can be chained resembling |&gt; syntax\n\nAll side-effect R6 methods should return self invisibly.\nThis allows for method chaining.\n\n\nx$add(10)$add(10)$sum\n\n#&gt; [1] 24\n\nx$\n  add(10)$\n  add(10)$\n  sum\n\n#&gt; [1] 44"
   },
   {
-    "objectID": "slides/14.html#r6-useful-methods",
-    "href": "slides/14.html#r6-useful-methods",
+    "objectID": "slides/14.html#print-modifies-the-default-printing-method",
+    "href": "slides/14.html#print-modifies-the-default-printing-method",
     "title": "R6",
-    "section": "R6 useful methods",
-    "text": "R6 useful methods\n\n$print() - Modifies the default printing method.\n\n$print() should always return invisible(self).\n\n$initialize() - Overides the default behaviour of $new().\n\nAlso provides a space to validate inputs."
+    "section": "$print() modifies the default printing method",
+    "text": "$print() modifies the default printing method\n\nPrettyAccumulator &lt;- R6Class(\"Accumulator\", list(\n  sum = 0,\n  add = function(x = 1) {\n    self$sum &lt;- self$sum + x\n    invisible(self)\n  },\n  print = function(...) {\n    cat(\"Pretty Accumulator Object\\n\")\n    cat(\"  Current sum: \", self$sum,\"\\n\")\n    invisible(self)\n  }\n))\np &lt;- PrettyAccumulator$new()\np$\n  add(2)$\n  add(2)$\n  print()\n\n#&gt; Pretty Accumulator Object\n#&gt;   Current sum:  4"
   },
   {
-    "objectID": "slides/14.html#constructing-a-bank-account-class",
-    "href": "slides/14.html#constructing-a-bank-account-class",
+    "objectID": "slides/14.html#initialize-overides-the-default-behaviour-of-new",
+    "href": "slides/14.html#initialize-overides-the-default-behaviour-of-new",
     "title": "R6",
-    "section": "Constructing a bank account class",
-    "text": "Constructing a bank account class\n\nBankAccount &lt;- R6Class(\"BankAccount\", list(\n  owner = NULL,\n  type = NULL,\n  balance = 0,\n  initialize = function(owner, type) {\n    stopifnot(is.character(owner), length(owner) == 1)\n    stopifnot(is.character(type), length(type) == 1)\n  },\n  deposit = function(amount) {\n    self$balance &lt;- self$balance + amount\n    invisible(self)\n  },\n  withdraw = function(amount) {\n    self$balance &lt;- self$balance - amount\n    invisible(self)\n  }\n))"
+    "section": "$initialize() overides the default behaviour of $new()",
+    "text": "$initialize() overides the default behaviour of $new()\n\nPerson &lt;- R6Class(\"Person\",list(\n  name = NULL,\n  initialize = function(name) {\n    stopifnot(is.character(name))\n    stopifnot(length(name)==1)\n    self$name &lt;- name\n    invisible(self)\n  },\n  print = function(...) {\n    cat(\"Person\\n\")\n    cat(\"   name: \",self$name,\"\\n\")\n    invisible(self)\n  }\n))\nPerson$new(\"Nick\")\n\n#&gt; Person\n#&gt;    name:  Nick\n\nPerson$new(42)\n\n#&gt; Error in initialize(...): is.character(name) is not TRUE"
   },
   {
-    "objectID": "slides/14.html#simple-transactions",
-    "href": "slides/14.html#simple-transactions",
+    "objectID": "slides/14.html#set-assigns-methods-after-creating-r6-objects",
+    "href": "slides/14.html#set-assigns-methods-after-creating-r6-objects",
     "title": "R6",
-    "section": "Simple transactions",
-    "text": "Simple transactions\n\ncollinsavings &lt;- BankAccount$new(\"Collin\", type = \"Savings\")\ncollinsavings$deposit(10)\ncollinsavings\n\n#&gt; &lt;BankAccount&gt;\n#&gt;   Public:\n#&gt;     balance: 10\n#&gt;     clone: function (deep = FALSE) \n#&gt;     deposit: function (amount) \n#&gt;     initialize: function (owner, type) \n#&gt;     owner: NULL\n#&gt;     type: NULL\n#&gt;     withdraw: function (amount)\n\n\n\ncollinsavings$withdraw(10)\ncollinsavings\n\n#&gt; &lt;BankAccount&gt;\n#&gt;   Public:\n#&gt;     balance: 0\n#&gt;     clone: function (deep = FALSE) \n#&gt;     deposit: function (amount) \n#&gt;     initialize: function (owner, type) \n#&gt;     owner: NULL\n#&gt;     type: NULL\n#&gt;     withdraw: function (amount)"
+    "section": "$set() assigns methods after creating R6 objects",
+    "text": "$set() assigns methods after creating R6 objects\n\n\n\n\n\n\nNote\n\n\nKeep in mind methods added with $set() are only available with new objects.\n\n\n\n\nAccumulator &lt;- R6Class(\"Accumulator\")\nAccumulator$set(\"public\", \"sum\", 0)\nAccumulator$set(\"public\", \"add\", function(x = 1) {\n  self$sum &lt;- self$sum + x\n  invisible(self)\n})"
   },
   {
-    "objectID": "slides/14.html#modifying-the-print-method",
-    "href": "slides/14.html#modifying-the-print-method",
+    "objectID": "slides/14.html#accessing-private-r6-fields-yield-null",
+    "href": "slides/14.html#accessing-private-r6-fields-yield-null",
     "title": "R6",
-    "section": "Modifying the $print() method",
-    "text": "Modifying the $print() method\n\nBankAccount &lt;- R6Class(\"BankAccount\", list(\n  owner = NULL,\n  type = NULL,\n  balance = 0,\n  initialize = function(owner, type) {\n    stopifnot(is.character(owner), length(owner) == 1)\n    stopifnot(is.character(type), length(type) == 1)\n\n    self$owner &lt;- owner\n    self$type &lt;- type\n  },\n  deposit = function(amount) {\n    self$balance &lt;- self$balance + amount\n    invisible(self)\n  },\n  withdraw = function(amount) {\n    self$balance &lt;- self$balance - amount\n    invisible(self)\n  },\n  print = function(...) {\n    cat(\"Account owner: \", self$owner, \"\\n\", sep = \"\")\n    cat(\"Account type: \", self$type, \"\\n\", sep = \"\")\n    cat(\"  Balance: \", self$balance, \"\\n\", sep = \"\")\n    invisible(self)\n  }\n))\n\n\nImportant point: Methods are bound to individual objects.\n\nReference semantics vs. copy-on-modify.\n\n\n\ncollinsavings\n\nhadleychecking &lt;- BankAccount$new(\"Hadley\", type = \"Checking\")\n\nhadleychecking"
+    "section": "Accessing private R6 fields yield NULL",
+    "text": "Accessing private R6 fields yield NULL\n\nTransaction &lt;- R6Class(\"Transaction\", \n  public = list(\n    last_transaction = 0,\n    initialize = function(owner) {\n      private$owner &lt;- owner\n      invisible(self)\n    },\n    deposit = function(amount) {\n      private$balance &lt;- private$balance + amount\n      self$last_transaction &lt;- amount\n      invisible(self)\n    },\n    withdraw = function(amount) {\n      private$balance &lt;- private$balance - amount\n      self$last_transaction &lt;- -amount\n      invisible(self)\n    },\n    print = function(...) {\n      cat(\"Transactions by \",private$owner,\"\\n\")\n      cat(\"  Last transaction: \",self$last_transaction,\"\\n\")\n      cat(\"  Balance: \",private$balance,\"\\n\")\n    }\n  ),\n  private = list(\n    owner = NULL,\n    balance = 0\n  )\n)\nt &lt;- Transaction$new(\"Nick\")\nt$owner\n\n#&gt; NULL"
   },
   {
-    "objectID": "slides/14.html#how-does-this-work",
-    "href": "slides/14.html#how-does-this-work",
+    "objectID": "slides/14.html#public-methods-like-print-can-reveal-private-fields",
+    "href": "slides/14.html#public-methods-like-print-can-reveal-private-fields",
     "title": "R6",
-    "section": "How does this work?",
-    "text": "How does this work?\n\nWinston Chang’s 2017 useR talk\nR6 objects are just environments with a particular structure."
+    "section": "Public methods like $print() can reveal private fields",
+    "text": "Public methods like $print() can reveal private fields\n\nt$balance\n\n#&gt; NULL\n\nt$deposit(20)$withdraw(13)$withdraw(2)\nt$last_transaction\n\n#&gt; [1] -2\n\nt\n\n#&gt; Transactions by  Nick \n#&gt;   Last transaction:  -2 \n#&gt;   Balance:  5"
   },
   {
-    "objectID": "slides/14.html#adding-methods-after-class-creation",
-    "href": "slides/14.html#adding-methods-after-class-creation",
+    "objectID": "slides/14.html#active-fields-hide-complex-method-calls",
+    "href": "slides/14.html#active-fields-hide-complex-method-calls",
     "title": "R6",
-    "section": "Adding methods after class creation",
-    "text": "Adding methods after class creation\n\nUse $set() to add methods after creation.\nKeep in mind methods added with $set() are only available with new objects.\n\n\nAccumulator &lt;- R6Class(\"Accumulator\")\nAccumlator$set(\"public\", \"sum\", 0)\nAccumulator$set(\"public\", \"add\", function(x = 1) {\n  self$sum &lt;- self$sum + x\n  invisible(self)\n})"
+    "section": "Active fields hide complex method calls",
+    "text": "Active fields hide complex method calls\n\nRando &lt;- R6::R6Class(\"Rando\", active = list(\n  random = function(value) {\n    if (missing(value)) {\n      runif(1)  \n    } else {\n      stop(\"Can't set `$random`\", call. = FALSE)\n    }\n  }\n))\nx &lt;- Rando$new()\nx$random\n\n#&gt; [1] 0.4715425\n\nx$random\n\n#&gt; [1] 0.1138315\n\nx$random\n\n#&gt; [1] 0.1306242"
   },
   {
-    "objectID": "slides/14.html#inheritance",
-    "href": "slides/14.html#inheritance",
+    "objectID": "slides/14.html#active-fields-hide-complexity-like-validating-user-input",
+    "href": "slides/14.html#active-fields-hide-complexity-like-validating-user-input",
     "title": "R6",
-    "section": "Inheritance",
-    "text": "Inheritance\n\nTo inherit behaviour from an existing class, provide the class object via the inherit argument.\nThis example also provides a good example on how to debug an R6 class.\n\n\nBankAccountOverDraft &lt;- R6Class(\"BankAccountOverDraft\",\n  inherit = BankAccount,\n  public = list(\n    withdraw = function(amount) {\n      if ((self$balance - amount) &lt; 0) {\n        stop(\"Overdraft\")\n      }\n      # self$balance() &lt;- self$withdraw()\n      self$balance &lt;- self$balance - amount\n      invisible(self)\n    }\n  )\n)\n\nFuture instances debugging\n\nBankAccountOverDraft$debug(\"withdraw\")\nx &lt;- BankAccountOverDraft$new(\"x\", type = \"Savings\")\nx$withdraw(20)\n\n# Turn debugging off\nBankAccountOverDraft$undebug(\"withdraw\")\n\nIndividual object debugging\n\nUse the debug() function.\n\n\nx &lt;- BankAccountOverDraft$new(\"x\", type = \"Savings\")\n# Turn on debugging\ndebug(x$withdraw)\nx$withdraw(10)\n\n# Turn off debugging\nundebug(x$withdraw)\nx$withdraw(5)\n\nTest out our debugged class\n\ncollinsavings &lt;- BankAccountOverDraft$new(\"Collin\", type = \"Savings\")\ncollinsavings\ncollinsavings$withdraw(10)\ncollinsavings\ncollinsavings$deposit(5)\ncollinsavings\ncollinsavings$withdraw(5)"
+    "section": "Active fields hide complexity like validating user input",
+    "text": "Active fields hide complexity like validating user input\n\nPerson &lt;- R6Class(\"Person\", \n  private = list(\n    .age = NA,\n    .name = NULL\n  ),\n  active = list(\n    age = function(value) {\n      if (missing(value)) {\n        private$.age\n      } else {\n        stop(\"`$age` is read only\", call. = FALSE)\n      }\n    },\n    name = function(value) {\n      if (missing(value)) {\n        private$.name\n      } else {\n        stopifnot(is.character(value), length(value) == 1)\n        private$.name &lt;- value\n        self\n      }\n    }\n  ),\n  public = list(\n    initialize = function(name, age = NA) {\n      private$.name &lt;- name\n      private$.age &lt;- age\n    }\n  )\n)\n\nnick &lt;- Person$new(\"Nick\", age = 33)\nnick$name\n\n#&gt; [1] \"Nick\"\n\nnick$name &lt;- 10\n\n#&gt; Error in (function (value) : is.character(value) is not TRUE\n\nnick$age &lt;- 20\n\n#&gt; Error: `$age` is read only"
   },
   {
-    "objectID": "slides/14.html#introspection",
-    "href": "slides/14.html#introspection",
+    "objectID": "slides/14.html#inherit-allows-providing-behavior-from-existing-r6-classes",
+    "href": "slides/14.html#inherit-allows-providing-behavior-from-existing-r6-classes",
     "title": "R6",
-    "section": "Introspection",
-    "text": "Introspection\n\nEvery R6 object has an S3 class that reflects its hierarchy of R6 classes.\nUse the class() function to determine class (and all classes it inherits from).\n\n\nclass(collinsavings)\n\n\nYou can also list all methods and fields of an R6 object with names().\n\n\nnames(collinsavings)"
+    "section": "inherit allows providing behavior from existing R6 classes",
+    "text": "inherit allows providing behavior from existing R6 classes\n\nThe add method was modified for a more verbose behavior\nsuper$add() is the add method call from the inherited object\n\n\nAccumulatorChatty &lt;- R6Class(\"AccumulatorChatty\", \n  inherit = Accumulator,\n  public = list(\n    add = function(x = 1) {\n      cat(\"Adding \", x, \"\\n\", sep = \"\")\n      super$add(x = x)\n    }\n  )\n)\n\nx2 &lt;- AccumulatorChatty$new()\nx2$add(10)$add(1)$sum\n\n#&gt; Adding 10\n#&gt; Adding 1\n\n\n#&gt; [1] 11"
   },
   {
-    "objectID": "slides/14.html#controlling-access",
-    "href": "slides/14.html#controlling-access",
+    "objectID": "slides/14.html#finalize-deletesunlinks-anything-created-by-the-r6-object",
+    "href": "slides/14.html#finalize-deletesunlinks-anything-created-by-the-r6-object",
     "title": "R6",
-    "section": "Controlling access",
-    "text": "Controlling access\n\nR6 provides two other arguments:\n\nprivate - create fields and methods only available from within the class.\nactive - allows you to use accessor functions to define dynamic or active fields."
-  },
-  {
-    "objectID": "slides/14.html#privacy",
-    "href": "slides/14.html#privacy",
-    "title": "R6",
-    "section": "Privacy",
-    "text": "Privacy\n\nPrivate fields and methods - elements that can only be accessed from within the class, not from the outside.\nWe need to know two things to use private elements:\n\nprivate’s interface is just like public’s interface.\n\nList of methods (functions) and fields (everything else).\n\nYou use private$ instead of self$\n\nYou cannot access private fields or methods outside of the class.\n\n\nWhy might you want to keep your methods and fields private?\n\nYou’ll want to be clear what is ok for others to access, especially if you have a complex system of classes.\nIt’s easier to refactor private fields and methods, as you know others are not relying on it."
-  },
-  {
-    "objectID": "slides/14.html#active-fields",
-    "href": "slides/14.html#active-fields",
-    "title": "R6",
-    "section": "Active fields",
-    "text": "Active fields\n\nActive fields allow you to define components that look like fields from the outside, but are defined with functions, like methods.\nImplemented using active bindings.\nEach active binding is a function that takes a single argument value.\nGreat when used in conjunction with private fields.\n\nThis allows for additional checks.\nFor example, we can use them to make a read-only field and to validate inputs."
-  },
-  {
-    "objectID": "slides/14.html#adding-a-read-only-bank-account-number",
-    "href": "slides/14.html#adding-a-read-only-bank-account-number",
-    "title": "R6",
-    "section": "Adding a read-only bank account number",
-    "text": "Adding a read-only bank account number\n\nBankAccount &lt;- R6Class(\"BankAccount\", public = list(\n  owner = NULL,\n  type = NULL,\n  balance = 0,\n  initialize = function(owner, type, acct_num = NULL) {\n    private$acct_num &lt;- acct_num\n    self$owner &lt;- owner\n    self$type &lt;- type\n  },\n  deposit = function(amount) {\n    self$balance &lt;- self$balance + amount\n    invisible(self)\n  },\n  withdraw = function(amount) {\n    self$balance &lt;- self$balance - amount\n    invisible(self)\n  },\n  print = function(...) {\n    cat(\"Account owner: \", self$owner, \"\\n\", sep = \"\")\n    cat(\"Account type: \", self$type, \"\\n\", sep = \"\")\n    cat(\"Account #: \", private$acct_num, \"\\n\", sep = \"\")\n    cat(\"  Balance: \", self$balance, \"\\n\", sep = \"\")\n    invisible(self)\n  }\n  ),\n  private = list(\n    acct_num = NULL\n  ),\n  active = list(\n    create_acct_num = function(value) {\n      if (is.null(private$acct_num)) {\n        private$acct_num &lt;- ids::uuid()\n      } else {\n        stop(\"`$acct_num` already assigned\")\n      }\n    }\n  )\n)\n\n\ncollinsavings &lt;- BankAccount$new(\"Collin\", type = \"Savings\")\ncollinsavings$create_acct_num\n# Stops because account number is assigned\ncollinsavings$create_acct_num()\ncollinsavings$print()"
-  },
-  {
-    "objectID": "slides/14.html#how-does-an-active-field-work",
-    "href": "slides/14.html#how-does-an-active-field-work",
-    "title": "R6",
-    "section": "How does an active field work?",
-    "text": "How does an active field work?\n\nNot sold on this, as I don’t know if active gets its own environment.\n\nAny ideas?"
-  },
-  {
-    "objectID": "slides/14.html#reference-semantics",
-    "href": "slides/14.html#reference-semantics",
-    "title": "R6",
-    "section": "Reference semantics",
-    "text": "Reference semantics\n\nBig difference to note about R6 objects in relation to other objects:\n\nR6 objects have reference semantics.\n\nThe primary consequence of reference semantics is that objects are not copied when modified.\nIf you want to copy an R6 object, you need to use $clone.\nThere are some other less obvious consequences:\n\nIt’s harder to reason about code that uses R6 objects, as you need more context.\nThink about when an R6 object is deleted, you can use $finalize() to clean up after yourself.\nIf one of the fields is an R6 object, you must create it inside $initialize(), not R6Class()"
-  },
-  {
-    "objectID": "slides/14.html#r6-makes-it-harder-to-reason-about-code",
-    "href": "slides/14.html#r6-makes-it-harder-to-reason-about-code",
-    "title": "R6",
-    "section": "R6 makes it harder to reason about code",
-    "text": "R6 makes it harder to reason about code\n\nReference semantics makes code harder to reason about.\n\n\nx &lt;- list(a = 1)\ny &lt;- list(b = 2)\n\n# Here we know the final line only modifies z\nz &lt;- f(x, y)\n\n# vs.\n\nx &lt;- List$new(a = 1)\ny &lt;- List$new(b = 2)\n\n# If x or y is a method, we don't know if it modifies\n# something other than z. Is this a limitation of\n# abstraction?\nz &lt;- f(x, y)\n\n\nI understand the basics, but not necessarily the tradeoffs.\n\nAnyone care to fill me in?\nIs this a limitation of abstraction?"
-  },
-  {
-    "objectID": "slides/14.html#better-sense-of-whats-going-on-by-looking-at-a-finalizer",
-    "href": "slides/14.html#better-sense-of-whats-going-on-by-looking-at-a-finalizer",
-    "title": "R6",
-    "section": "Better sense of what’s going on by looking at a finalizer",
-    "text": "Better sense of what’s going on by looking at a finalizer\n\nSince R6 objects are not copied-on-modified, so they are only deleted once.\nWe can use this characteristic to complement our $initialize() with a $finalize() method.\n\ni.e., to clean up after we delete an R6 object.\nThis could be a way to close a database connection.\n\n\n\nTemporaryFile &lt;- R6Class(\"TemporaryFile\", list(\n  path = NULL,\n  initialize = function() {\n    self$path &lt;- tempfile()\n  },\n  finalize = function() {\n    message(\"Cleaning up \", self$path)\n    unlink(self$path)\n  }\n))\n\n\ntf &lt;- TemporaryFile$new()\n# The finalizer will clean up, once the R6 object is deleted.\nrm(tf)"
-  },
-  {
-    "objectID": "slides/14.html#consequences-of-r6-fields",
-    "href": "slides/14.html#consequences-of-r6-fields",
-    "title": "R6",
-    "section": "Consequences of R6 fields",
-    "text": "Consequences of R6 fields\n\nIf you use an R6 class as the default value of a field, it will be shared across all instances of the object.\n\n\nTemporaryDatabase &lt;- R6Class(\"TemporaryDatabase\", list(\n  con = NULL,\n  file = TemporaryFile$new(),\n  initialize = function() {\n    self$con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = file$path)\n  },\n  finalize = function() {\n    DBI::dbDisconnect(self$con)\n  }\n))\n\ndb_a &lt;- TemporaryDatabase$new()\ndb_b &lt;- TemporaryDatabase$new()\n\ndb_a$file$path == db_b$file$path\n#&gt; [1] TRUE\n\n\nTo fix this, we need to move the class method call to $intialize()\n\n\nTemporaryDatabase &lt;- R6Class(\"TemporaryDatabase\", list(\n  con = NULL,\n  file = NULL,\n  initialize = function() {\n    self$file &lt;- TemporaryFile$new()\n    self$con &lt;- DBI::dbConnect(RSQLite::SQLite(), path = file$path)\n  },\n  finalize = function() {\n    DBI::dbDisconnect(self$con)\n  }\n))\n\ndb_a &lt;- TemporaryDatabase$new()\ndb_b &lt;- TemporaryDatabase$new()\n\ndb_a$file$path == db_b$file$path\n#&gt; [1] FALSE"
-  },
-  {
-    "objectID": "slides/14.html#why-use-r6",
-    "href": "slides/14.html#why-use-r6",
-    "title": "R6",
-    "section": "Why use R6?",
-    "text": "Why use R6?\n\nBook mentions R6 is similar to the built-in reference classes.\nThen why use R6?\nR6 is simpler.\n\nRC requires you to understand S4.\n\nComprehensive documentation.\nSimpler mechanisms for cross-package subclassing, which just works.\nR6 separates public and private fields in separate environments, RC stacks everything in the same environment.\nR6 is faster.\nRC is tied to R, so any bug fixes need a newer version of R.\n\nThis is especially important if you’re writing packages that need to work with multiple R versions.\n\nR6 and RC are similar, so if you need RC, it will only require a small amount of additional effort to learn RC."
+    "section": "$finalize() deletes/unlinks anything created by the R6 object",
+    "text": "$finalize() deletes/unlinks anything created by the R6 object\n\nA &lt;- R6Class(\"A\", private = list(\n  finalize = function() {\n    print(\"Finalizer has been called!\")\n  }\n))\n\nobj &lt;- A$new()\n\nrm(obj); gc()\n\n#&gt; [1] \"Finalizer has been called!\"\n\n\n#&gt;           used (Mb) gc trigger (Mb) max used (Mb)\n#&gt; Ncells  622966 33.3    1375035 73.5  1375035 73.5\n#&gt; Vcells 1162108  8.9    8388608 64.0  2090411 16.0"
   },
   {
     "objectID": "slides/15b.html#learning-objectives",

@@ -202,581 +202,400 @@
 <section id="learning-objectives" class="slide level2">
 <h2>Learning objectives:</h2>
 <ul>
-<li>Discuss how to construct a R6 class.</li>
-<li>Overview the different mechanisms of a R6 class (e.g.&nbsp;initialization, print, public, private, and active fields and methods).</li>
-<li>Observe various examples using R6’s mechanisms to create R6 classes, objects, fields, and methods.</li>
-<li>Observe the consequences of R6’s reference semantics.</li>
-<li>Review the book’s arguments on the use of R6 over reference classes.</li>
+<li>Create R6 classes</li>
+<li>Recognize main R6 properties</li>
+<li>Assign R6 methods and fields</li>
+<li>Compare different R6 fields</li>
+<li>Show R6 inheritance pattern</li>
+<li>Implement R6 finalizers</li>
 </ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(R6)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
-<section id="a-review-of-oop" class="slide level2">
-<h2>A review of OOP</h2>
+<section>
+<section id="r6-classes" class="title-slide slide level1 center">
+<h1>R6 classes</h1>
 
-<img data-src="images/14-four-pillars.png" class="r-stretch"><ul>
-<li><strong>A PIE</strong></li>
-</ul>
 </section>
-<section id="introducing-r6" class="slide level2 scrollable">
-<h2>Introducing R6</h2>
+<section id="r6class-creates-the-r6-reference-object" class="slide level2">
+<h2><code>R6Class</code> creates the R6 reference object</h2>
+<ul>
+<li><em>Empty</em> is an environment</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>Empty <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Empty"</span>)</span>
+<span id="cb2-2"><a></a>Empty</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;Empty&gt; object generator
+#&gt;   Public:
+#&gt;     clone: function (deep = FALSE) 
+#&gt;   Parent env: &lt;environment: R_GlobalEnv&gt;
+#&gt;   Locked objects: TRUE
+#&gt;   Locked class: FALSE
+#&gt;   Portable: TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="every-r6-object-has-an-s3-class-that-reflects-its-hierarchy-of-r6-classes." class="slide level2">
+<h2>Every R6 object has an S3 class that reflects its hierarchy of R6 classes.</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>e <span class="ot">&lt;-</span> Empty<span class="sc">$</span><span class="fu">new</span>()</span>
+<span id="cb4-2"><a></a><span class="fu">class</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Empty" "R6"</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="r6-properties" class="title-slide slide level1 center">
+<h1>R6 properties</h1>
 
-<img data-src="images/14-r6-logo.png" class="r-stretch"><ul>
-<li>R6 classes are not built into base.
-<ul>
-<li>It is a separate <a href="https://r6.r-lib.org/">package</a>.</li>
-<li>You have to install and attach to use.</li>
-<li>If R6 objects are used in a package, it needs to be specified as a dependency in the <code>DESCRIPTION</code> file.</li>
-</ul></li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">install.packages</span>(<span class="st">"R6"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">library</span>(R6)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<ul>
-<li>R6 classes have two special properties:
-<ol type="1">
-<li>Uses an encapsulated OOP paradigm.
-<ul>
-<li>Methods belong to objects, not generics.</li>
-<li>They follow the form <code>object$method()</code> for calling fields and methods.</li>
-</ul></li>
-<li>R6 objects are mutable.
-<ul>
-<li>Modified in place.</li>
-<li>They follow reference semantics.</li>
-</ul></li>
-</ol></li>
-<li>R6 is similar to OOP in other languages.</li>
-<li>However, its use can lead ton non-idiomatic R code.
-<ul>
-<li>Tradeoffs - follows an OOP paradigm but sacrafice what users are use to.</li>
-<li><a href="https://github.com/Azure/Microsoft365R">Microsoft365R</a>.</li>
-</ul></li>
-</ul>
 </section>
-<section id="constructing-an-r6-class-the-basics" class="slide level2 scrollable">
-<h2>Constructing an R6 class, the basics</h2>
+<section id="r6-objects-have-methods-not-generics" class="slide level2">
+<h2>R6 objects have methods, not generics</h2>
 <ul>
-<li>Really simple to do, just use the <code>R6::R6Class()</code> function.</li>
+<li><em>add</em> is a method of the Accumulator object.</li>
+<li>Can’t use <em>sum</em> and <em>add</em> outside this class</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>Accumulator <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Accumulator"</span>, <span class="fu">list</span>(</span>
-<span id="cb3-2"><a></a>  <span class="at">sum =</span> <span class="dv">0</span>,</span>
-<span id="cb3-3"><a></a>  <span class="at">add =</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) {</span>
-<span id="cb3-4"><a></a>    self<span class="sc">$</span>sum <span class="ot">&lt;-</span> self<span class="sc">$</span>sum <span class="sc">+</span> x</span>
-<span id="cb3-5"><a></a>    <span class="fu">invisible</span>(self)</span>
-<span id="cb3-6"><a></a>  }</span>
-<span id="cb3-7"><a></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>Accumulator <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Accumulator"</span>, <span class="fu">list</span>(</span>
+<span id="cb6-2"><a></a>  <span class="at">sum =</span> <span class="dv">0</span>,</span>
+<span id="cb6-3"><a></a>  <span class="at">add =</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) {</span>
+<span id="cb6-4"><a></a>    self<span class="sc">$</span>sum <span class="ot">&lt;-</span> self<span class="sc">$</span>sum <span class="sc">+</span> x</span>
+<span id="cb6-5"><a></a>    <span class="fu">invisible</span>(self)</span>
+<span id="cb6-6"><a></a>  }</span>
+<span id="cb6-7"><a></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<ul>
-<li>Two important arguments:
-<ol type="1">
-<li><code>classname</code> - A string used to name the class (not needed but suggested)</li>
-<li><code>public</code> - A list of methods (functions) and fields (anything else)</li>
-</ol></li>
-<li>Suggested style conventions to follow:
-<ul>
-<li>Class name should follow <code>UpperCamelCase</code>.</li>
-<li>Methods and fields should use <code>snake_case</code>.</li>
-<li>Always assign the result of a <code>R6Class()</code> into a variable with the same name as the class.</li>
-</ul></li>
-<li>You can use <code>self$</code> to access methods and fields of the current object.</li>
-</ul>
 </section>
-<section id="constructing-an-r6-object" class="slide level2">
-<h2>Constructing an R6 object</h2>
+<section id="r6-objects-have-reference-semantics" class="slide level2">
+<h2>R6 objects have reference semantics</h2>
 <ul>
-<li>Just use <code>$new()</code></li>
+<li>Use the <code>$clone()</code> method to copy the object</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>x <span class="ot">&lt;-</span> Accumulator<span class="sc">$</span><span class="fu">new</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>x <span class="ot">&lt;-</span> Accumulator<span class="sc">$</span><span class="fu">new</span>()</span>
+<span id="cb7-2"><a></a>x<span class="sc">$</span><span class="fu">add</span>(<span class="dv">4</span>)</span>
+<span id="cb7-3"><a></a>x<span class="sc">$</span>sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 4</code></pre>
 </div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>x<span class="sc">$</span><span class="fu">add</span>(<span class="dv">4</span>)</span>
-<span id="cb5-2"><a></a>x<span class="sc">$</span>sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>y <span class="ot">&lt;-</span> Accumulator<span class="sc">$</span><span class="fu">new</span>()</span>
+<span id="cb9-2"><a></a>y<span class="sc">$</span>sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 0</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>z <span class="ot">&lt;-</span> x<span class="sc">$</span><span class="fu">clone</span>()</span>
+<span id="cb11-2"><a></a>z<span class="sc">$</span>sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 4</code></pre>
 </div>
 </div>
 </section>
-<section id="r6-objects-and-method-chaining" class="slide level2">
-<h2>R6 objects and method chaining</h2>
+<section id="r6-methods-can-be-chained-resembling-syntax" class="slide level2">
+<h2>R6 methods can be chained resembling <code>|&gt;</code> syntax</h2>
 <ul>
 <li>All side-effect R6 methods should return <code>self</code> invisibly.</li>
 <li>This allows for method chaining.</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>x<span class="sc">$</span><span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span><span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span>sum</span>
-<span id="cb7-2"><a></a><span class="co"># [1] 24</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<ul>
-<li>To improve readability:</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="co"># Method chaining</span></span>
-<span id="cb8-2"><a></a>x<span class="sc">$</span></span>
-<span id="cb8-3"><a></a>  <span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span></span>
-<span id="cb8-4"><a></a>  <span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span></span>
-<span id="cb8-5"><a></a>  sum</span>
-<span id="cb8-6"><a></a><span class="co"># [1] 44</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="r6-useful-methods" class="slide level2">
-<h2>R6 useful methods</h2>
-<ul>
-<li><code>$print()</code> - Modifies the default printing method.
-<ul>
-<li><code>$print()</code> should always return <code>invisible(self)</code>.</li>
-</ul></li>
-<li><code>$initialize()</code> - Overides the default behaviour of <code>$new()</code>.
-<ul>
-<li>Also provides a space to validate inputs.</li>
-</ul></li>
-</ul>
-</section>
-<section id="constructing-a-bank-account-class" class="slide level2">
-<h2>Constructing a bank account class</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>BankAccount <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccount"</span>, <span class="fu">list</span>(</span>
-<span id="cb9-2"><a></a>  <span class="at">owner =</span> <span class="cn">NULL</span>,</span>
-<span id="cb9-3"><a></a>  <span class="at">type =</span> <span class="cn">NULL</span>,</span>
-<span id="cb9-4"><a></a>  <span class="at">balance =</span> <span class="dv">0</span>,</span>
-<span id="cb9-5"><a></a>  <span class="at">initialize =</span> <span class="cf">function</span>(owner, type) {</span>
-<span id="cb9-6"><a></a>    <span class="fu">stopifnot</span>(<span class="fu">is.character</span>(owner), <span class="fu">length</span>(owner) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb9-7"><a></a>    <span class="fu">stopifnot</span>(<span class="fu">is.character</span>(type), <span class="fu">length</span>(type) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb9-8"><a></a>  },</span>
-<span id="cb9-9"><a></a>  <span class="at">deposit =</span> <span class="cf">function</span>(amount) {</span>
-<span id="cb9-10"><a></a>    self<span class="sc">$</span>balance <span class="ot">&lt;-</span> self<span class="sc">$</span>balance <span class="sc">+</span> amount</span>
-<span id="cb9-11"><a></a>    <span class="fu">invisible</span>(self)</span>
-<span id="cb9-12"><a></a>  },</span>
-<span id="cb9-13"><a></a>  <span class="at">withdraw =</span> <span class="cf">function</span>(amount) {</span>
-<span id="cb9-14"><a></a>    self<span class="sc">$</span>balance <span class="ot">&lt;-</span> self<span class="sc">$</span>balance <span class="sc">-</span> amount</span>
-<span id="cb9-15"><a></a>    <span class="fu">invisible</span>(self)</span>
-<span id="cb9-16"><a></a>  }</span>
-<span id="cb9-17"><a></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="simple-transactions" class="slide level2">
-<h2>Simple transactions</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>collinsavings <span class="ot">&lt;-</span> BankAccount<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Collin"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
-<span id="cb10-2"><a></a>collinsavings<span class="sc">$</span><span class="fu">deposit</span>(<span class="dv">10</span>)</span>
-<span id="cb10-3"><a></a>collinsavings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>x<span class="sc">$</span><span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span><span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span>sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;BankAccount&gt;
-#&gt;   Public:
-#&gt;     balance: 10
-#&gt;     clone: function (deep = FALSE) 
-#&gt;     deposit: function (amount) 
-#&gt;     initialize: function (owner, type) 
-#&gt;     owner: NULL
-#&gt;     type: NULL
-#&gt;     withdraw: function (amount)</code></pre>
+<pre><code>#&gt; [1] 24</code></pre>
 </div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>collinsavings<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">10</span>)</span>
-<span id="cb12-2"><a></a>collinsavings</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>x<span class="sc">$</span></span>
+<span id="cb15-2"><a></a>  <span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span></span>
+<span id="cb15-3"><a></a>  <span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span></span>
+<span id="cb15-4"><a></a>  sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;BankAccount&gt;
-#&gt;   Public:
-#&gt;     balance: 0
-#&gt;     clone: function (deep = FALSE) 
-#&gt;     deposit: function (amount) 
-#&gt;     initialize: function (owner, type) 
-#&gt;     owner: NULL
-#&gt;     type: NULL
-#&gt;     withdraw: function (amount)</code></pre>
+<pre><code>#&gt; [1] 44</code></pre>
 </div>
 </div>
-</section>
-<section id="modifying-the-print-method" class="slide level2">
-<h2>Modifying the <code>$print()</code> method</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>BankAccount <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccount"</span>, <span class="fu">list</span>(</span>
-<span id="cb14-2"><a></a>  <span class="at">owner =</span> <span class="cn">NULL</span>,</span>
-<span id="cb14-3"><a></a>  <span class="at">type =</span> <span class="cn">NULL</span>,</span>
-<span id="cb14-4"><a></a>  <span class="at">balance =</span> <span class="dv">0</span>,</span>
-<span id="cb14-5"><a></a>  <span class="at">initialize =</span> <span class="cf">function</span>(owner, type) {</span>
-<span id="cb14-6"><a></a>    <span class="fu">stopifnot</span>(<span class="fu">is.character</span>(owner), <span class="fu">length</span>(owner) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb14-7"><a></a>    <span class="fu">stopifnot</span>(<span class="fu">is.character</span>(type), <span class="fu">length</span>(type) <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb14-8"><a></a></span>
-<span id="cb14-9"><a></a>    self<span class="sc">$</span>owner <span class="ot">&lt;-</span> owner</span>
-<span id="cb14-10"><a></a>    self<span class="sc">$</span>type <span class="ot">&lt;-</span> type</span>
-<span id="cb14-11"><a></a>  },</span>
-<span id="cb14-12"><a></a>  <span class="at">deposit =</span> <span class="cf">function</span>(amount) {</span>
-<span id="cb14-13"><a></a>    self<span class="sc">$</span>balance <span class="ot">&lt;-</span> self<span class="sc">$</span>balance <span class="sc">+</span> amount</span>
-<span id="cb14-14"><a></a>    <span class="fu">invisible</span>(self)</span>
-<span id="cb14-15"><a></a>  },</span>
-<span id="cb14-16"><a></a>  <span class="at">withdraw =</span> <span class="cf">function</span>(amount) {</span>
-<span id="cb14-17"><a></a>    self<span class="sc">$</span>balance <span class="ot">&lt;-</span> self<span class="sc">$</span>balance <span class="sc">-</span> amount</span>
-<span id="cb14-18"><a></a>    <span class="fu">invisible</span>(self)</span>
-<span id="cb14-19"><a></a>  },</span>
-<span id="cb14-20"><a></a>  <span class="at">print =</span> <span class="cf">function</span>(...) {</span>
-<span id="cb14-21"><a></a>    <span class="fu">cat</span>(<span class="st">"Account owner: "</span>, self<span class="sc">$</span>owner, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb14-22"><a></a>    <span class="fu">cat</span>(<span class="st">"Account type: "</span>, self<span class="sc">$</span>type, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb14-23"><a></a>    <span class="fu">cat</span>(<span class="st">"  Balance: "</span>, self<span class="sc">$</span>balance, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb14-24"><a></a>    <span class="fu">invisible</span>(self)</span>
-<span id="cb14-25"><a></a>  }</span>
-<span id="cb14-26"><a></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<ul>
-<li>Important point: Methods are bound to individual objects.
-<ul>
-<li>Reference semantics vs.&nbsp;copy-on-modify.</li>
-</ul></li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>collinsavings</span>
-<span id="cb15-2"><a></a></span>
-<span id="cb15-3"><a></a>hadleychecking <span class="ot">&lt;-</span> BankAccount<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Hadley"</span>, <span class="at">type =</span> <span class="st">"Checking"</span>)</span>
-<span id="cb15-4"><a></a></span>
-<span id="cb15-5"><a></a>hadleychecking</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="how-does-this-work" class="slide level2">
-<h2>How does this work?</h2>
-<ul>
-<li><p><a href="https://www.youtube.com/watch?v=3GEFd8rZQgY&amp;list=WL&amp;index=11">Winston Chang’s 2017 useR talk</a></p></li>
-<li><p><a href="https://youtu.be/3GEFd8rZQgY?t=759">R6 objects are just environments with a particular structure.</a></p></li>
-</ul>
-
-<img data-src="images/14-r6_environment.png" class="r-stretch"></section>
-<section id="adding-methods-after-class-creation" class="slide level2">
-<h2>Adding methods after class creation</h2>
-<ul>
-<li>Use <code>$set()</code> to add methods after creation.</li>
-<li>Keep in mind methods added with <code>$set()</code> are only available with new objects.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>Accumulator <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Accumulator"</span>)</span>
-<span id="cb16-2"><a></a>Accumlator<span class="sc">$</span><span class="fu">set</span>(<span class="st">"public"</span>, <span class="st">"sum"</span>, <span class="dv">0</span>)</span>
-<span id="cb16-3"><a></a>Accumulator<span class="sc">$</span><span class="fu">set</span>(<span class="st">"public"</span>, <span class="st">"add"</span>, <span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) {</span>
-<span id="cb16-4"><a></a>  self<span class="sc">$</span>sum <span class="ot">&lt;-</span> self<span class="sc">$</span>sum <span class="sc">+</span> x</span>
-<span id="cb16-5"><a></a>  <span class="fu">invisible</span>(self)</span>
-<span id="cb16-6"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="inheritance" class="slide level2">
-<h2>Inheritance</h2>
-<ul>
-<li>To inherit behaviour from an existing class, provide the class object via the <code>inherit</code> argument.</li>
-<li>This example also provides a good example on how to <a href="">debug</a> an R6 class.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>BankAccountOverDraft <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccountOverDraft"</span>,</span>
-<span id="cb17-2"><a></a>  <span class="at">inherit =</span> BankAccount,</span>
-<span id="cb17-3"><a></a>  <span class="at">public =</span> <span class="fu">list</span>(</span>
-<span id="cb17-4"><a></a>    <span class="at">withdraw =</span> <span class="cf">function</span>(amount) {</span>
-<span id="cb17-5"><a></a>      <span class="cf">if</span> ((self<span class="sc">$</span>balance <span class="sc">-</span> amount) <span class="sc">&lt;</span> <span class="dv">0</span>) {</span>
-<span id="cb17-6"><a></a>        <span class="fu">stop</span>(<span class="st">"Overdraft"</span>)</span>
-<span id="cb17-7"><a></a>      }</span>
-<span id="cb17-8"><a></a>      <span class="co"># self$balance() &lt;- self$withdraw()</span></span>
-<span id="cb17-9"><a></a>      self<span class="sc">$</span>balance <span class="ot">&lt;-</span> self<span class="sc">$</span>balance <span class="sc">-</span> amount</span>
-<span id="cb17-10"><a></a>      <span class="fu">invisible</span>(self)</span>
-<span id="cb17-11"><a></a>    }</span>
-<span id="cb17-12"><a></a>  )</span>
-<span id="cb17-13"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<h3 id="future-instances-debugging">Future instances debugging</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>BankAccountOverDraft<span class="sc">$</span><span class="fu">debug</span>(<span class="st">"withdraw"</span>)</span>
-<span id="cb18-2"><a></a>x <span class="ot">&lt;-</span> BankAccountOverDraft<span class="sc">$</span><span class="fu">new</span>(<span class="st">"x"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
-<span id="cb18-3"><a></a>x<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">20</span>)</span>
-<span id="cb18-4"><a></a></span>
-<span id="cb18-5"><a></a><span class="co"># Turn debugging off</span></span>
-<span id="cb18-6"><a></a>BankAccountOverDraft<span class="sc">$</span><span class="fu">undebug</span>(<span class="st">"withdraw"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<h3 id="individual-object-debugging">Individual object debugging</h3>
-<ul>
-<li>Use the <code>debug()</code> function.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>x <span class="ot">&lt;-</span> BankAccountOverDraft<span class="sc">$</span><span class="fu">new</span>(<span class="st">"x"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
-<span id="cb19-2"><a></a><span class="co"># Turn on debugging</span></span>
-<span id="cb19-3"><a></a><span class="fu">debug</span>(x<span class="sc">$</span>withdraw)</span>
-<span id="cb19-4"><a></a>x<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">10</span>)</span>
-<span id="cb19-5"><a></a></span>
-<span id="cb19-6"><a></a><span class="co"># Turn off debugging</span></span>
-<span id="cb19-7"><a></a><span class="fu">undebug</span>(x<span class="sc">$</span>withdraw)</span>
-<span id="cb19-8"><a></a>x<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<h3 id="test-out-our-debugged-class">Test out our debugged class</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>collinsavings <span class="ot">&lt;-</span> BankAccountOverDraft<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Collin"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
-<span id="cb20-2"><a></a>collinsavings</span>
-<span id="cb20-3"><a></a>collinsavings<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">10</span>)</span>
-<span id="cb20-4"><a></a>collinsavings</span>
-<span id="cb20-5"><a></a>collinsavings<span class="sc">$</span><span class="fu">deposit</span>(<span class="dv">5</span>)</span>
-<span id="cb20-6"><a></a>collinsavings</span>
-<span id="cb20-7"><a></a>collinsavings<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="introspection" class="slide level2">
-<h2>Introspection</h2>
-<ul>
-<li>Every R6 object has an S3 class that reflects its hierarchy of R6 classes.</li>
-<li>Use the <code>class()</code> function to determine class (and all classes it inherits from).</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a><span class="fu">class</span>(collinsavings)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<ul>
-<li>You can also list all methods and fields of an R6 object with <code>names()</code>.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">names</span>(collinsavings)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="controlling-access" class="slide level2">
-<h2>Controlling access</h2>
-<ul>
-<li>R6 provides two other arguments:
-<ul>
-<li><code>private</code> - create fields and methods only available from within the class.</li>
-<li><code>active</code> - allows you to use accessor functions to define dynamic or active fields.</li>
-</ul></li>
-</ul>
-</section>
-<section id="privacy" class="slide level2 scrollable">
-<h2>Privacy</h2>
-<ul>
-<li>Private fields and methods - elements that can only be accessed from within the class, not from the outside.</li>
-<li>We need to know two things to use private elements:
-<ol type="1">
-<li><code>private</code>’s interface is just like <code>public</code>’s interface.
-<ul>
-<li>List of methods (functions) and fields (everything else).</li>
-</ul></li>
-<li>You use <code>private$</code> instead of <code>self$</code>
-<ul>
-<li>You cannot access private fields or methods outside of the class.</li>
-</ul></li>
-</ol></li>
-<li>Why might you want to keep your methods and fields private?
-<ul>
-<li>You’ll want to be clear what is ok for others to access, especially if you have a complex system of classes.</li>
-<li>It’s easier to refactor private fields and methods, as you know others are not relying on it.</li>
-</ul></li>
-</ul>
-</section>
-<section id="active-fields" class="slide level2">
-<h2>Active fields</h2>
-<ul>
-<li>Active fields allow you to define components that look like fields from the outside, but are defined with functions, like methods.</li>
-<li>Implemented using active bindings.</li>
-<li>Each active binding is a function that takes a single argument <code>value</code>.</li>
-<li>Great when used in conjunction with private fields.
-<ul>
-<li>This allows for additional checks.</li>
-<li>For example, we can use them to make a read-only field and to validate inputs.</li>
-</ul></li>
-</ul>
-</section>
-<section id="adding-a-read-only-bank-account-number" class="slide level2">
-<h2>Adding a read-only bank account number</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>BankAccount <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"BankAccount"</span>, <span class="at">public =</span> <span class="fu">list</span>(</span>
-<span id="cb23-2"><a></a>  <span class="at">owner =</span> <span class="cn">NULL</span>,</span>
-<span id="cb23-3"><a></a>  <span class="at">type =</span> <span class="cn">NULL</span>,</span>
-<span id="cb23-4"><a></a>  <span class="at">balance =</span> <span class="dv">0</span>,</span>
-<span id="cb23-5"><a></a>  <span class="at">initialize =</span> <span class="cf">function</span>(owner, type, <span class="at">acct_num =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb23-6"><a></a>    private<span class="sc">$</span>acct_num <span class="ot">&lt;-</span> acct_num</span>
-<span id="cb23-7"><a></a>    self<span class="sc">$</span>owner <span class="ot">&lt;-</span> owner</span>
-<span id="cb23-8"><a></a>    self<span class="sc">$</span>type <span class="ot">&lt;-</span> type</span>
-<span id="cb23-9"><a></a>  },</span>
-<span id="cb23-10"><a></a>  <span class="at">deposit =</span> <span class="cf">function</span>(amount) {</span>
-<span id="cb23-11"><a></a>    self<span class="sc">$</span>balance <span class="ot">&lt;-</span> self<span class="sc">$</span>balance <span class="sc">+</span> amount</span>
-<span id="cb23-12"><a></a>    <span class="fu">invisible</span>(self)</span>
-<span id="cb23-13"><a></a>  },</span>
-<span id="cb23-14"><a></a>  <span class="at">withdraw =</span> <span class="cf">function</span>(amount) {</span>
-<span id="cb23-15"><a></a>    self<span class="sc">$</span>balance <span class="ot">&lt;-</span> self<span class="sc">$</span>balance <span class="sc">-</span> amount</span>
-<span id="cb23-16"><a></a>    <span class="fu">invisible</span>(self)</span>
-<span id="cb23-17"><a></a>  },</span>
-<span id="cb23-18"><a></a>  <span class="at">print =</span> <span class="cf">function</span>(...) {</span>
-<span id="cb23-19"><a></a>    <span class="fu">cat</span>(<span class="st">"Account owner: "</span>, self<span class="sc">$</span>owner, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb23-20"><a></a>    <span class="fu">cat</span>(<span class="st">"Account type: "</span>, self<span class="sc">$</span>type, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb23-21"><a></a>    <span class="fu">cat</span>(<span class="st">"Account #: "</span>, private<span class="sc">$</span>acct_num, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb23-22"><a></a>    <span class="fu">cat</span>(<span class="st">"  Balance: "</span>, self<span class="sc">$</span>balance, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb23-23"><a></a>    <span class="fu">invisible</span>(self)</span>
-<span id="cb23-24"><a></a>  }</span>
-<span id="cb23-25"><a></a>  ),</span>
-<span id="cb23-26"><a></a>  <span class="at">private =</span> <span class="fu">list</span>(</span>
-<span id="cb23-27"><a></a>    <span class="at">acct_num =</span> <span class="cn">NULL</span></span>
-<span id="cb23-28"><a></a>  ),</span>
-<span id="cb23-29"><a></a>  <span class="at">active =</span> <span class="fu">list</span>(</span>
-<span id="cb23-30"><a></a>    <span class="at">create_acct_num =</span> <span class="cf">function</span>(value) {</span>
-<span id="cb23-31"><a></a>      <span class="cf">if</span> (<span class="fu">is.null</span>(private<span class="sc">$</span>acct_num)) {</span>
-<span id="cb23-32"><a></a>        private<span class="sc">$</span>acct_num <span class="ot">&lt;-</span> ids<span class="sc">::</span><span class="fu">uuid</span>()</span>
-<span id="cb23-33"><a></a>      } <span class="cf">else</span> {</span>
-<span id="cb23-34"><a></a>        <span class="fu">stop</span>(<span class="st">"`$acct_num` already assigned"</span>)</span>
-<span id="cb23-35"><a></a>      }</span>
-<span id="cb23-36"><a></a>    }</span>
-<span id="cb23-37"><a></a>  )</span>
-<span id="cb23-38"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>collinsavings <span class="ot">&lt;-</span> BankAccount<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Collin"</span>, <span class="at">type =</span> <span class="st">"Savings"</span>)</span>
-<span id="cb24-2"><a></a>collinsavings<span class="sc">$</span>create_acct_num</span>
-<span id="cb24-3"><a></a><span class="co"># Stops because account number is assigned</span></span>
-<span id="cb24-4"><a></a>collinsavings<span class="sc">$</span><span class="fu">create_acct_num</span>()</span>
-<span id="cb24-5"><a></a>collinsavings<span class="sc">$</span><span class="fu">print</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="how-does-an-active-field-work" class="slide level2">
-<h2>How does an active field work?</h2>
-<ul>
-<li>Not sold on this, as I don’t know if <code>active</code> gets its own environment.
-<ul>
-<li>Any ideas?</li>
-</ul></li>
-</ul>
-
-<img data-src="images/14-r6_active_field.png" class="r-stretch"></section>
-<section id="reference-semantics" class="slide level2">
-<h2>Reference semantics</h2>
-<ul>
-<li>Big difference to note about R6 objects in relation to other objects:
-<ul>
-<li>R6 objects have reference semantics.</li>
-</ul></li>
-<li>The primary consequence of reference semantics is that objects are not copied when modified.</li>
-<li>If you want to copy an R6 object, you need to use <code>$clone</code>.</li>
-<li>There are some other less obvious consequences:
-<ul>
-<li>It’s harder to reason about code that uses R6 objects, as you need more context.</li>
-<li>Think about when an R6 object is deleted, you can use <code>$finalize()</code> to clean up after yourself.</li>
-<li>If one of the fields is an R6 object, you must create it inside <code>$initialize()</code>, not <code>R6Class()</code></li>
-</ul></li>
-</ul>
-</section>
-<section id="r6-makes-it-harder-to-reason-about-code" class="slide level2">
-<h2>R6 makes it harder to reason about code</h2>
-<ul>
-<li>Reference semantics makes code harder to reason about.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>)</span>
-<span id="cb25-2"><a></a>y <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">b =</span> <span class="dv">2</span>)</span>
-<span id="cb25-3"><a></a></span>
-<span id="cb25-4"><a></a><span class="co"># Here we know the final line only modifies z</span></span>
-<span id="cb25-5"><a></a>z <span class="ot">&lt;-</span> <span class="fu">f</span>(x, y)</span>
-<span id="cb25-6"><a></a></span>
-<span id="cb25-7"><a></a><span class="co"># vs.</span></span>
-<span id="cb25-8"><a></a></span>
-<span id="cb25-9"><a></a>x <span class="ot">&lt;-</span> List<span class="sc">$</span><span class="fu">new</span>(<span class="at">a =</span> <span class="dv">1</span>)</span>
-<span id="cb25-10"><a></a>y <span class="ot">&lt;-</span> List<span class="sc">$</span><span class="fu">new</span>(<span class="at">b =</span> <span class="dv">2</span>)</span>
-<span id="cb25-11"><a></a></span>
-<span id="cb25-12"><a></a><span class="co"># If x or y is a method, we don't know if it modifies</span></span>
-<span id="cb25-13"><a></a><span class="co"># something other than z. Is this a limitation of</span></span>
-<span id="cb25-14"><a></a><span class="co"># abstraction?</span></span>
-<span id="cb25-15"><a></a>z <span class="ot">&lt;-</span> <span class="fu">f</span>(x, y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<ul>
-<li>I understand the basics, but not necessarily the tradeoffs.
-<ul>
-<li>Anyone care to fill me in?</li>
-<li>Is this a limitation of abstraction?</li>
-</ul></li>
-</ul>
-</section>
-<section id="better-sense-of-whats-going-on-by-looking-at-a-finalizer" class="slide level2">
-<h2>Better sense of what’s going on by looking at a finalizer</h2>
-<ul>
-<li>Since R6 objects are not copied-on-modified, so they are only deleted once.</li>
-<li>We can use this characteristic to complement our <code>$initialize()</code> with a <code>$finalize()</code> method.
-<ul>
-<li>i.e., to clean up after we delete an R6 object.</li>
-<li>This could be a way to close a database connection.</li>
-</ul></li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>TemporaryFile <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"TemporaryFile"</span>, <span class="fu">list</span>(</span>
-<span id="cb26-2"><a></a>  <span class="at">path =</span> <span class="cn">NULL</span>,</span>
-<span id="cb26-3"><a></a>  <span class="at">initialize =</span> <span class="cf">function</span>() {</span>
-<span id="cb26-4"><a></a>    self<span class="sc">$</span>path <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
-<span id="cb26-5"><a></a>  },</span>
-<span id="cb26-6"><a></a>  <span class="at">finalize =</span> <span class="cf">function</span>() {</span>
-<span id="cb26-7"><a></a>    <span class="fu">message</span>(<span class="st">"Cleaning up "</span>, self<span class="sc">$</span>path)</span>
-<span id="cb26-8"><a></a>    <span class="fu">unlink</span>(self<span class="sc">$</span>path)</span>
-<span id="cb26-9"><a></a>  }</span>
-<span id="cb26-10"><a></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>tf <span class="ot">&lt;-</span> TemporaryFile<span class="sc">$</span><span class="fu">new</span>()</span>
-<span id="cb27-2"><a></a><span class="co"># The finalizer will clean up, once the R6 object is deleted.</span></span>
-<span id="cb27-3"><a></a><span class="fu">rm</span>(tf)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="consequences-of-r6-fields" class="slide level2">
-<h2>Consequences of R6 fields</h2>
-<ul>
-<li>If you use an R6 class as the default value of a field, it will be shared across all instances of the object.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>TemporaryDatabase <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"TemporaryDatabase"</span>, <span class="fu">list</span>(</span>
-<span id="cb28-2"><a></a>  <span class="at">con =</span> <span class="cn">NULL</span>,</span>
-<span id="cb28-3"><a></a>  <span class="at">file =</span> TemporaryFile<span class="sc">$</span><span class="fu">new</span>(),</span>
-<span id="cb28-4"><a></a>  <span class="at">initialize =</span> <span class="cf">function</span>() {</span>
-<span id="cb28-5"><a></a>    self<span class="sc">$</span>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="at">path =</span> file<span class="sc">$</span>path)</span>
-<span id="cb28-6"><a></a>  },</span>
-<span id="cb28-7"><a></a>  <span class="at">finalize =</span> <span class="cf">function</span>() {</span>
-<span id="cb28-8"><a></a>    DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(self<span class="sc">$</span>con)</span>
-<span id="cb28-9"><a></a>  }</span>
-<span id="cb28-10"><a></a>))</span>
-<span id="cb28-11"><a></a></span>
-<span id="cb28-12"><a></a>db_a <span class="ot">&lt;-</span> TemporaryDatabase<span class="sc">$</span><span class="fu">new</span>()</span>
-<span id="cb28-13"><a></a>db_b <span class="ot">&lt;-</span> TemporaryDatabase<span class="sc">$</span><span class="fu">new</span>()</span>
-<span id="cb28-14"><a></a></span>
-<span id="cb28-15"><a></a>db_a<span class="sc">$</span>file<span class="sc">$</span>path <span class="sc">==</span> db_b<span class="sc">$</span>file<span class="sc">$</span>path</span>
-<span id="cb28-16"><a></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<ul>
-<li>To fix this, we need to move the class method call to <code>$intialize()</code></li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a>TemporaryDatabase <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"TemporaryDatabase"</span>, <span class="fu">list</span>(</span>
-<span id="cb29-2"><a></a>  <span class="at">con =</span> <span class="cn">NULL</span>,</span>
-<span id="cb29-3"><a></a>  <span class="at">file =</span> <span class="cn">NULL</span>,</span>
-<span id="cb29-4"><a></a>  <span class="at">initialize =</span> <span class="cf">function</span>() {</span>
-<span id="cb29-5"><a></a>    self<span class="sc">$</span>file <span class="ot">&lt;-</span> TemporaryFile<span class="sc">$</span><span class="fu">new</span>()</span>
-<span id="cb29-6"><a></a>    self<span class="sc">$</span>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="at">path =</span> file<span class="sc">$</span>path)</span>
-<span id="cb29-7"><a></a>  },</span>
-<span id="cb29-8"><a></a>  <span class="at">finalize =</span> <span class="cf">function</span>() {</span>
-<span id="cb29-9"><a></a>    DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(self<span class="sc">$</span>con)</span>
-<span id="cb29-10"><a></a>  }</span>
-<span id="cb29-11"><a></a>))</span>
-<span id="cb29-12"><a></a></span>
-<span id="cb29-13"><a></a>db_a <span class="ot">&lt;-</span> TemporaryDatabase<span class="sc">$</span><span class="fu">new</span>()</span>
-<span id="cb29-14"><a></a>db_b <span class="ot">&lt;-</span> TemporaryDatabase<span class="sc">$</span><span class="fu">new</span>()</span>
-<span id="cb29-15"><a></a></span>
-<span id="cb29-16"><a></a>db_a<span class="sc">$</span>file<span class="sc">$</span>path <span class="sc">==</span> db_b<span class="sc">$</span>file<span class="sc">$</span>path</span>
-<span id="cb29-17"><a></a><span class="co">#&gt; [1] FALSE</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="why-use-r6" class="slide level2">
-<h2>Why use R6?</h2>
-<ul>
-<li>Book mentions R6 is similar to the built-in reference classes.</li>
-<li>Then why use R6?</li>
-<li>R6 is simpler.
-<ul>
-<li>RC requires you to understand S4.</li>
-</ul></li>
-<li><a href="https://r6.r-lib.org/articles/Introduction.html">Comprehensive documentation</a>.</li>
-<li>Simpler mechanisms for cross-package subclassing, which just works.</li>
-<li>R6 separates public and private fields in separate environments, RC stacks everything in the same environment.</li>
-<li><a href="https://r6.r-lib.org/articles/Performance.html">R6 is faster</a>.</li>
-<li>RC is tied to R, so any bug fixes need a newer version of R.
-<ul>
-<li>This is especially important if you’re writing packages that need to work with multiple R versions.</li>
-</ul></li>
-<li>R6 and RC are similar, so if you need RC, it will only require a small amount of additional effort to learn RC.</li>
-</ul>
-
+</section></section>
+<section>
+<section id="r6-methods-and-fields" class="title-slide slide level1 center">
+<h1>R6 methods and fields</h1>
 
 </section>
+<section id="print-modifies-the-default-printing-method" class="slide level2">
+<h2><code>$print()</code> modifies the default printing method</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>PrettyAccumulator <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Accumulator"</span>, <span class="fu">list</span>(</span>
+<span id="cb17-2"><a></a>  <span class="at">sum =</span> <span class="dv">0</span>,</span>
+<span id="cb17-3"><a></a>  <span class="at">add =</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) {</span>
+<span id="cb17-4"><a></a>    self<span class="sc">$</span>sum <span class="ot">&lt;-</span> self<span class="sc">$</span>sum <span class="sc">+</span> x</span>
+<span id="cb17-5"><a></a>    <span class="fu">invisible</span>(self)</span>
+<span id="cb17-6"><a></a>  },</span>
+<span id="cb17-7"><a></a>  <span class="at">print =</span> <span class="cf">function</span>(...) {</span>
+<span id="cb17-8"><a></a>    <span class="fu">cat</span>(<span class="st">"Pretty Accumulator Object</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb17-9"><a></a>    <span class="fu">cat</span>(<span class="st">"  Current sum: "</span>, self<span class="sc">$</span>sum,<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb17-10"><a></a>    <span class="fu">invisible</span>(self)</span>
+<span id="cb17-11"><a></a>  }</span>
+<span id="cb17-12"><a></a>))</span>
+<span id="cb17-13"><a></a>p <span class="ot">&lt;-</span> PrettyAccumulator<span class="sc">$</span><span class="fu">new</span>()</span>
+<span id="cb17-14"><a></a>p<span class="sc">$</span></span>
+<span id="cb17-15"><a></a>  <span class="fu">add</span>(<span class="dv">2</span>)<span class="sc">$</span></span>
+<span id="cb17-16"><a></a>  <span class="fu">add</span>(<span class="dv">2</span>)<span class="sc">$</span></span>
+<span id="cb17-17"><a></a>  <span class="fu">print</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Pretty Accumulator Object
+#&gt;   Current sum:  4</code></pre>
+</div>
+</div>
+</section>
+<section id="initialize-overides-the-default-behaviour-of-new" class="slide level2">
+<h2><code>$initialize()</code> overides the default behaviour of <code>$new()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>Person <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Person"</span>,<span class="fu">list</span>(</span>
+<span id="cb19-2"><a></a>  <span class="at">name =</span> <span class="cn">NULL</span>,</span>
+<span id="cb19-3"><a></a>  <span class="at">initialize =</span> <span class="cf">function</span>(name) {</span>
+<span id="cb19-4"><a></a>    <span class="fu">stopifnot</span>(<span class="fu">is.character</span>(name))</span>
+<span id="cb19-5"><a></a>    <span class="fu">stopifnot</span>(<span class="fu">length</span>(name)<span class="sc">==</span><span class="dv">1</span>)</span>
+<span id="cb19-6"><a></a>    self<span class="sc">$</span>name <span class="ot">&lt;-</span> name</span>
+<span id="cb19-7"><a></a>    <span class="fu">invisible</span>(self)</span>
+<span id="cb19-8"><a></a>  },</span>
+<span id="cb19-9"><a></a>  <span class="at">print =</span> <span class="cf">function</span>(...) {</span>
+<span id="cb19-10"><a></a>    <span class="fu">cat</span>(<span class="st">"Person</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb19-11"><a></a>    <span class="fu">cat</span>(<span class="st">"   name: "</span>,self<span class="sc">$</span>name,<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb19-12"><a></a>    <span class="fu">invisible</span>(self)</span>
+<span id="cb19-13"><a></a>  }</span>
+<span id="cb19-14"><a></a>))</span>
+<span id="cb19-15"><a></a>Person<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Nick"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Person
+#&gt;    name:  Nick</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>Person<span class="sc">$</span><span class="fu">new</span>(<span class="dv">42</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in initialize(...): is.character(name) is not TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="set-assigns-methods-after-creating-r6-objects" class="slide level2">
+<h2><code>$set()</code> assigns methods after creating R6 objects</h2>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>Keep in mind methods added with <code>$set()</code> are only available with new objects.</p>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>Accumulator <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Accumulator"</span>)</span>
+<span id="cb23-2"><a></a>Accumulator<span class="sc">$</span><span class="fu">set</span>(<span class="st">"public"</span>, <span class="st">"sum"</span>, <span class="dv">0</span>)</span>
+<span id="cb23-3"><a></a>Accumulator<span class="sc">$</span><span class="fu">set</span>(<span class="st">"public"</span>, <span class="st">"add"</span>, <span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) {</span>
+<span id="cb23-4"><a></a>  self<span class="sc">$</span>sum <span class="ot">&lt;-</span> self<span class="sc">$</span>sum <span class="sc">+</span> x</span>
+<span id="cb23-5"><a></a>  <span class="fu">invisible</span>(self)</span>
+<span id="cb23-6"><a></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section></section>
+<section>
+<section id="private-vs.-public-vs.-active-r6-fields" class="title-slide slide level1 center">
+<h1>Private vs.&nbsp;public vs.&nbsp;active R6 fields</h1>
+
+</section>
+<section id="accessing-private-r6-fields-yield-null" class="slide level2">
+<h2>Accessing private R6 fields yield NULL</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>Transaction <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Transaction"</span>, </span>
+<span id="cb24-2"><a></a>  <span class="at">public =</span> <span class="fu">list</span>(</span>
+<span id="cb24-3"><a></a>    <span class="at">last_transaction =</span> <span class="dv">0</span>,</span>
+<span id="cb24-4"><a></a>    <span class="at">initialize =</span> <span class="cf">function</span>(owner) {</span>
+<span id="cb24-5"><a></a>      private<span class="sc">$</span>owner <span class="ot">&lt;-</span> owner</span>
+<span id="cb24-6"><a></a>      <span class="fu">invisible</span>(self)</span>
+<span id="cb24-7"><a></a>    },</span>
+<span id="cb24-8"><a></a>    <span class="at">deposit =</span> <span class="cf">function</span>(amount) {</span>
+<span id="cb24-9"><a></a>      private<span class="sc">$</span>balance <span class="ot">&lt;-</span> private<span class="sc">$</span>balance <span class="sc">+</span> amount</span>
+<span id="cb24-10"><a></a>      self<span class="sc">$</span>last_transaction <span class="ot">&lt;-</span> amount</span>
+<span id="cb24-11"><a></a>      <span class="fu">invisible</span>(self)</span>
+<span id="cb24-12"><a></a>    },</span>
+<span id="cb24-13"><a></a>    <span class="at">withdraw =</span> <span class="cf">function</span>(amount) {</span>
+<span id="cb24-14"><a></a>      private<span class="sc">$</span>balance <span class="ot">&lt;-</span> private<span class="sc">$</span>balance <span class="sc">-</span> amount</span>
+<span id="cb24-15"><a></a>      self<span class="sc">$</span>last_transaction <span class="ot">&lt;-</span> <span class="sc">-</span>amount</span>
+<span id="cb24-16"><a></a>      <span class="fu">invisible</span>(self)</span>
+<span id="cb24-17"><a></a>    },</span>
+<span id="cb24-18"><a></a>    <span class="at">print =</span> <span class="cf">function</span>(...) {</span>
+<span id="cb24-19"><a></a>      <span class="fu">cat</span>(<span class="st">"Transactions by "</span>,private<span class="sc">$</span>owner,<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb24-20"><a></a>      <span class="fu">cat</span>(<span class="st">"  Last transaction: "</span>,self<span class="sc">$</span>last_transaction,<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb24-21"><a></a>      <span class="fu">cat</span>(<span class="st">"  Balance: "</span>,private<span class="sc">$</span>balance,<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb24-22"><a></a>    }</span>
+<span id="cb24-23"><a></a>  ),</span>
+<span id="cb24-24"><a></a>  <span class="at">private =</span> <span class="fu">list</span>(</span>
+<span id="cb24-25"><a></a>    <span class="at">owner =</span> <span class="cn">NULL</span>,</span>
+<span id="cb24-26"><a></a>    <span class="at">balance =</span> <span class="dv">0</span></span>
+<span id="cb24-27"><a></a>  )</span>
+<span id="cb24-28"><a></a>)</span>
+<span id="cb24-29"><a></a>t <span class="ot">&lt;-</span> Transaction<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Nick"</span>)</span>
+<span id="cb24-30"><a></a>t<span class="sc">$</span>owner</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; NULL</code></pre>
+</div>
+</div>
+</section>
+<section id="public-methods-like-print-can-reveal-private-fields" class="slide level2">
+<h2>Public methods like <code>$print()</code> can reveal private fields</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>t<span class="sc">$</span>balance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; NULL</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>t<span class="sc">$</span><span class="fu">deposit</span>(<span class="dv">20</span>)<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">13</span>)<span class="sc">$</span><span class="fu">withdraw</span>(<span class="dv">2</span>)</span>
+<span id="cb28-2"><a></a>t<span class="sc">$</span>last_transaction</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] -2</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>t</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Transactions by  Nick 
+#&gt;   Last transaction:  -2 
+#&gt;   Balance:  5</code></pre>
+</div>
+</div>
+</section>
+<section id="active-fields-hide-complex-method-calls" class="slide level2">
+<h2>Active fields hide complex method calls</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>Rando <span class="ot">&lt;-</span> R6<span class="sc">::</span><span class="fu">R6Class</span>(<span class="st">"Rando"</span>, <span class="at">active =</span> <span class="fu">list</span>(</span>
+<span id="cb32-2"><a></a>  <span class="at">random =</span> <span class="cf">function</span>(value) {</span>
+<span id="cb32-3"><a></a>    <span class="cf">if</span> (<span class="fu">missing</span>(value)) {</span>
+<span id="cb32-4"><a></a>      <span class="fu">runif</span>(<span class="dv">1</span>)  </span>
+<span id="cb32-5"><a></a>    } <span class="cf">else</span> {</span>
+<span id="cb32-6"><a></a>      <span class="fu">stop</span>(<span class="st">"Can't set `$random`"</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb32-7"><a></a>    }</span>
+<span id="cb32-8"><a></a>  }</span>
+<span id="cb32-9"><a></a>))</span>
+<span id="cb32-10"><a></a>x <span class="ot">&lt;-</span> Rando<span class="sc">$</span><span class="fu">new</span>()</span>
+<span id="cb32-11"><a></a>x<span class="sc">$</span>random</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 0.4715425</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>x<span class="sc">$</span>random</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 0.1138315</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>x<span class="sc">$</span>random</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 0.1306242</code></pre>
+</div>
+</div>
+</section>
+<section id="active-fields-hide-complexity-like-validating-user-input" class="slide level2">
+<h2>Active fields hide complexity like validating user input</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>Person <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"Person"</span>, </span>
+<span id="cb38-2"><a></a>  <span class="at">private =</span> <span class="fu">list</span>(</span>
+<span id="cb38-3"><a></a>    <span class="at">.age =</span> <span class="cn">NA</span>,</span>
+<span id="cb38-4"><a></a>    <span class="at">.name =</span> <span class="cn">NULL</span></span>
+<span id="cb38-5"><a></a>  ),</span>
+<span id="cb38-6"><a></a>  <span class="at">active =</span> <span class="fu">list</span>(</span>
+<span id="cb38-7"><a></a>    <span class="at">age =</span> <span class="cf">function</span>(value) {</span>
+<span id="cb38-8"><a></a>      <span class="cf">if</span> (<span class="fu">missing</span>(value)) {</span>
+<span id="cb38-9"><a></a>        private<span class="sc">$</span>.age</span>
+<span id="cb38-10"><a></a>      } <span class="cf">else</span> {</span>
+<span id="cb38-11"><a></a>        <span class="fu">stop</span>(<span class="st">"`$age` is read only"</span>, <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb38-12"><a></a>      }</span>
+<span id="cb38-13"><a></a>    },</span>
+<span id="cb38-14"><a></a>    <span class="at">name =</span> <span class="cf">function</span>(value) {</span>
+<span id="cb38-15"><a></a>      <span class="cf">if</span> (<span class="fu">missing</span>(value)) {</span>
+<span id="cb38-16"><a></a>        private<span class="sc">$</span>.name</span>
+<span id="cb38-17"><a></a>      } <span class="cf">else</span> {</span>
+<span id="cb38-18"><a></a>        <span class="fu">stopifnot</span>(<span class="fu">is.character</span>(value), <span class="fu">length</span>(value) <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb38-19"><a></a>        private<span class="sc">$</span>.name <span class="ot">&lt;-</span> value</span>
+<span id="cb38-20"><a></a>        self</span>
+<span id="cb38-21"><a></a>      }</span>
+<span id="cb38-22"><a></a>    }</span>
+<span id="cb38-23"><a></a>  ),</span>
+<span id="cb38-24"><a></a>  <span class="at">public =</span> <span class="fu">list</span>(</span>
+<span id="cb38-25"><a></a>    <span class="at">initialize =</span> <span class="cf">function</span>(name, <span class="at">age =</span> <span class="cn">NA</span>) {</span>
+<span id="cb38-26"><a></a>      private<span class="sc">$</span>.name <span class="ot">&lt;-</span> name</span>
+<span id="cb38-27"><a></a>      private<span class="sc">$</span>.age <span class="ot">&lt;-</span> age</span>
+<span id="cb38-28"><a></a>    }</span>
+<span id="cb38-29"><a></a>  )</span>
+<span id="cb38-30"><a></a>)</span>
+<span id="cb38-31"><a></a></span>
+<span id="cb38-32"><a></a>nick <span class="ot">&lt;-</span> Person<span class="sc">$</span><span class="fu">new</span>(<span class="st">"Nick"</span>, <span class="at">age =</span> <span class="dv">33</span>)</span>
+<span id="cb38-33"><a></a>nick<span class="sc">$</span>name</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Nick"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>nick<span class="sc">$</span>name <span class="ot">&lt;-</span> <span class="dv">10</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in (function (value) : is.character(value) is not TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>nick<span class="sc">$</span>age <span class="ot">&lt;-</span> <span class="dv">20</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error: `$age` is read only</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="r6-object-inheritance" class="title-slide slide level1 center">
+<h1>R6 object inheritance</h1>
+
+</section>
+<section id="inherit-allows-providing-behavior-from-existing-r6-classes" class="slide level2">
+<h2><code>inherit</code> allows providing behavior from existing R6 classes</h2>
+<ul>
+<li>The <em>add</em> method was modified for a more verbose behavior</li>
+<li><code>super$add()</code> is the <code>add</code> method call from the inherited object</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>AccumulatorChatty <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"AccumulatorChatty"</span>, </span>
+<span id="cb44-2"><a></a>  <span class="at">inherit =</span> Accumulator,</span>
+<span id="cb44-3"><a></a>  <span class="at">public =</span> <span class="fu">list</span>(</span>
+<span id="cb44-4"><a></a>    <span class="at">add =</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="dv">1</span>) {</span>
+<span id="cb44-5"><a></a>      <span class="fu">cat</span>(<span class="st">"Adding "</span>, x, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb44-6"><a></a>      super<span class="sc">$</span><span class="fu">add</span>(<span class="at">x =</span> x)</span>
+<span id="cb44-7"><a></a>    }</span>
+<span id="cb44-8"><a></a>  )</span>
+<span id="cb44-9"><a></a>)</span>
+<span id="cb44-10"><a></a></span>
+<span id="cb44-11"><a></a>x2 <span class="ot">&lt;-</span> AccumulatorChatty<span class="sc">$</span><span class="fu">new</span>()</span>
+<span id="cb44-12"><a></a>x2<span class="sc">$</span><span class="fu">add</span>(<span class="dv">10</span>)<span class="sc">$</span><span class="fu">add</span>(<span class="dv">1</span>)<span class="sc">$</span>sum</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; Adding 10
+#&gt; Adding 1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 11</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="r6-finalizers-for-clean-up-duty" class="title-slide slide level1 center">
+<h1>R6 finalizers for clean up duty</h1>
+
+</section>
+<section id="finalize-deletesunlinks-anything-created-by-the-r6-object" class="slide level2">
+<h2><code>$finalize()</code> deletes/unlinks anything created by the R6 object</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>A <span class="ot">&lt;-</span> <span class="fu">R6Class</span>(<span class="st">"A"</span>, <span class="at">private =</span> <span class="fu">list</span>(</span>
+<span id="cb47-2"><a></a>  <span class="at">finalize =</span> <span class="cf">function</span>() {</span>
+<span id="cb47-3"><a></a>    <span class="fu">print</span>(<span class="st">"Finalizer has been called!"</span>)</span>
+<span id="cb47-4"><a></a>  }</span>
+<span id="cb47-5"><a></a>))</span>
+<span id="cb47-6"><a></a></span>
+<span id="cb47-7"><a></a>obj <span class="ot">&lt;-</span> A<span class="sc">$</span><span class="fu">new</span>()</span>
+<span id="cb47-8"><a></a></span>
+<span id="cb47-9"><a></a><span class="fu">rm</span>(obj); <span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "Finalizer has been called!"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;           used (Mb) gc trigger (Mb) max used (Mb)
+#&gt; Ncells  622966 33.3    1375035 73.5  1375035 73.5
+#&gt; Vcells 1162108  8.9    8388608 64.0  2090411 16.0</code></pre>
+</div>
+</div>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -992,6 +811,44 @@
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
