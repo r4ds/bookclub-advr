@@ -202,285 +202,106 @@
 <section id="learning-objectives" class="slide level2">
 <h2>Learning objectives:</h2>
 <ul>
-<li><p>Understand the Trade-offs between S3, R6 and S4</p></li>
-<li><p>Brief intro to S7 (the object system formerly known as R7)</p></li>
+<li>Decide whether to use S3 or S4 (or maybe S7) for a project.</li>
+<li>Decide whether to use R6 or S3 (or maybe S7) for a project.</li>
 </ul>
 </section>
-<section id="introduction" class="slide level2 unnumbered">
-<h2>Introduction</h2>
+<section id="default-to-s3" class="slide level2">
+<h2>Default to S3<code>*</code></h2>
+<blockquote>
+<p>“I recommend that you default to S3.” - Hadley Wickham</p>
+</blockquote>
 <ul>
-<li><p>We have three OOP systems introduced so far (S3, S4, R6)</p></li>
-<li><p>At the current time (pre - S7?) Hadley recommends use S3 by default: It’s simple and widely used throughout base R and CRAN.</p></li>
-<li><p>If you have experience in other languages, <em>Resist</em> the temptation to use R6 even though it will feel more familiar!</p></li>
-</ul>
-</section>
-<section id="s4-versus-s3" class="slide level2 unnumbered">
-<h2>S4 versus S3</h2>
-<p><strong>Which functional object system to use, S3 or S4? </strong></p>
+<li>Simple &amp; widely used</li>
+<li>R6 leads to non-idiomatic R code
 <ul>
-<li><p><strong>S3</strong> is a simple and flexible system.</p>
-<ul>
-<li><p>Good for small teams who need flexibility and immediate payoffs.</p></li>
-<li><p>Commonly used throughout base R and CRAN</p></li>
-<li><p>Flexibility can cause problems, more complex systems might require formal conventions</p></li>
-</ul></li>
-<li><p><strong>S4</strong> is a more formal, strict system.</p>
-<ul>
-<li><p>Good for large projects and large teams</p></li>
-<li><p>Used by Bioconductor project</p></li>
-<li><p>Requires significant up front investment in design, but payoff is a robust system that enforces conventions.</p></li>
-<li><p>S4 documentation is challenging to use.</p></li>
+<li>More like other languages, so tempting for newcomers</li>
 </ul></li>
 </ul>
-</section>
-<section id="r6-versus-s3" class="slide level2 unnumbered">
-<h2>R6 versus S3</h2>
-<p><strong>R6</strong> is built on <strong>encapsulated objects</strong>, rather than generic functions.</p>
-<p><strong>Big differences: general trade-offs</strong></p>
+<p><code>*</code> <a href="https://bsky.app/profile/did:plc:peeplnvlwcohp4jly3fpwj46/post/3m73gizpiw22n">Or maybe S7?</a></p>
+<aside class="notes">
 <ul>
-<li><p>A generic is a regular function so it lives in the global namespace. An R6 method belongs to an object so it lives in a local namespace. This influences how we think about naming.</p></li>
-<li><p>R6’s reference semantics allow methods to simultaneously return a value and modify an object. This solves a painful problem called “threading state”.</p></li>
-<li><p>You invoke an R6 method using <code>$</code>, which is an infix operator. If you set up your methods correctly you can use chains of method calls as an alternative to the pipe.</p></li>
-</ul>
-</section>
-<section id="namespacing" class="slide level2 unnumbered">
-<h2>Namespacing</h2>
-<p><strong>Where methods are found?</strong></p>
+<li>“Functional OOP” aka “Generic function OOP” aka “Multimethod OOP”
 <ul>
-<li><p>in S3, <strong>Generic functions</strong> are <strong>global</strong> and live in the <strong>global namespace</strong></p>
-<ul>
-<li><p>Advantage: Uniform API: <code>summary</code>, <code>print</code>, <code>predict</code> etc.</p></li>
-<li><p>Disadvantage: Must be careful about creating new methods! Homonyms must be avoided, don’t define <code>plot(bank_heist)</code></p></li>
+<li>S3, S4, S7</li>
 </ul></li>
-<li><p>in R6, <strong>Encapsulated methods</strong> are <strong>local</strong>: objects with a <strong>scope</strong></p>
+<li>“Encapsulated OOP”
 <ul>
-<li><p>Advantage: No problems with homonyms: meaning of <code>bank_heist$plot()</code> is clear and unambiguous.</p></li>
-<li><p>Disadvantage: Lack of a uniform API, except by convention.</p></li>
+<li>R6</li>
 </ul></li>
 </ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
-<section id="threading-state" class="slide level2 unnumbered">
-<h2>Threading state</h2>
-<p>In S3 the challenge is to return a value and modify the object.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>new_stack <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">items =</span> <span class="fu">list</span>()) {</span>
-<span id="cb1-2"><a></a>  <span class="fu">structure</span>(<span class="fu">list</span>(<span class="at">items =</span> items), <span class="at">class =</span> <span class="st">"stack"</span>)</span>
-<span id="cb1-3"><a></a>}</span>
-<span id="cb1-4"><a></a></span>
-<span id="cb1-5"><a></a>push <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
-<span id="cb1-6"><a></a>  x<span class="sc">$</span>items <span class="ot">&lt;-</span> <span class="fu">c</span>(x<span class="sc">$</span>items, <span class="fu">list</span>(y))</span>
-<span id="cb1-7"><a></a>  x</span>
-<span id="cb1-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>No problem with that, but what about when we want to pop a value? We need to return two things.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>pop <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb2-2"><a></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x<span class="sc">$</span>items)</span>
-<span id="cb2-3"><a></a>  </span>
-<span id="cb2-4"><a></a>  item <span class="ot">&lt;-</span> x<span class="sc">$</span>items[[n]]</span>
-<span id="cb2-5"><a></a>  x<span class="sc">$</span>items <span class="ot">&lt;-</span> x<span class="sc">$</span>items[<span class="sc">-</span>n]</span>
-<span id="cb2-6"><a></a>  </span>
-<span id="cb2-7"><a></a>  <span class="fu">list</span>(<span class="at">item =</span> item, <span class="at">x =</span> x)</span>
-<span id="cb2-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>The usage is a bit awkward:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>s <span class="ot">&lt;-</span> <span class="fu">new_stack</span>()</span>
-<span id="cb3-2"><a></a>s <span class="ot">&lt;-</span> <span class="fu">push</span>(s, <span class="dv">10</span>)</span>
-<span id="cb3-3"><a></a>s <span class="ot">&lt;-</span> <span class="fu">push</span>(s, <span class="dv">20</span>)</span>
-<span id="cb3-4"><a></a></span>
-<span id="cb3-5"><a></a>out <span class="ot">&lt;-</span> <span class="fu">pop</span>(s)</span>
-<span id="cb3-6"><a></a><span class="co"># Update state:</span></span>
-<span id="cb3-7"><a></a>s <span class="ot">&lt;-</span> out<span class="sc">$</span>x</span>
-<span id="cb3-8"><a></a></span>
-<span id="cb3-9"><a></a><span class="fu">print</span>(out<span class="sc">$</span>item)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 20</code></pre>
-</div>
-</div>
-<p>In python and other languages we have structured binding to make this less awkward. R has the {zeallot} package. For more, see this vignette:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">vignette</span>(<span class="st">'unpacking-assignment'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>However, this is all easier in R6 due to the reference semantics!</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>Stack <span class="ot">&lt;-</span> R6<span class="sc">::</span><span class="fu">R6Class</span>(<span class="st">"Stack"</span>, <span class="fu">list</span>(</span>
-<span id="cb6-2"><a></a>  <span class="at">items =</span> <span class="fu">list</span>(),</span>
-<span id="cb6-3"><a></a>  <span class="at">push =</span> <span class="cf">function</span>(x) {</span>
-<span id="cb6-4"><a></a>    self<span class="sc">$</span>items <span class="ot">&lt;-</span> <span class="fu">c</span>(self<span class="sc">$</span>items, x)</span>
-<span id="cb6-5"><a></a>    <span class="fu">invisible</span>(self)</span>
-<span id="cb6-6"><a></a>  },</span>
-<span id="cb6-7"><a></a>  <span class="at">pop =</span> <span class="cf">function</span>() {</span>
-<span id="cb6-8"><a></a>    item <span class="ot">&lt;-</span> self<span class="sc">$</span>items[[self<span class="sc">$</span><span class="fu">length</span>()]]</span>
-<span id="cb6-9"><a></a>    self<span class="sc">$</span>items <span class="ot">&lt;-</span> self<span class="sc">$</span>items[<span class="sc">-</span>self<span class="sc">$</span><span class="fu">length</span>()]</span>
-<span id="cb6-10"><a></a>    item</span>
-<span id="cb6-11"><a></a>  },</span>
-<span id="cb6-12"><a></a>  <span class="at">length =</span> <span class="cf">function</span>() {</span>
-<span id="cb6-13"><a></a>    <span class="fu">length</span>(self<span class="sc">$</span>items)</span>
-<span id="cb6-14"><a></a>  }</span>
-<span id="cb6-15"><a></a>))</span>
-<span id="cb6-16"><a></a></span>
-<span id="cb6-17"><a></a>s <span class="ot">&lt;-</span> Stack<span class="sc">$</span><span class="fu">new</span>()</span>
-<span id="cb6-18"><a></a>s<span class="sc">$</span><span class="fu">push</span>(<span class="dv">10</span>)</span>
-<span id="cb6-19"><a></a>s<span class="sc">$</span><span class="fu">push</span>(<span class="dv">20</span>)</span>
-<span id="cb6-20"><a></a>s<span class="sc">$</span><span class="fu">pop</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 20</code></pre>
-</div>
-</div>
-</section>
-<section id="method-chaining" class="slide level2 unnumbered">
-<h2>Method chaining</h2>
-<p>Useful to compose functions from left-to-right.</p>
-<p>Use of the operators:</p>
+<section id="use-s4-for-large-team-projects" class="slide level2">
+<h2>Use S4 for large team projects<code>*</code></h2>
 <ul>
-<li><p>S3: <code>|&gt;</code> or <code>%&gt;%</code></p></li>
-<li><p>R6: <code>$</code></p></li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>s<span class="sc">$</span><span class="fu">push</span>(<span class="dv">44</span>)<span class="sc">$</span><span class="fu">push</span>(<span class="dv">32</span>)<span class="sc">$</span><span class="fu">pop</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 32</code></pre>
-</div>
-</div>
-</section>
-<section id="umm-what-about-s7" class="slide level2 unnumbered">
-<h2>Umm… what about S7 ?</h2>
-
-<img data-src="https://imgs.xkcd.com/comics/standards_2x.png" class="r-stretch quarto-figure-center"><p class="caption">https://xkcd.com/927/</p><h3 class="unnumbered" id="primary-references">Primary references:</h3>
+<li>S4 requires more up-front design than S3</li>
+<li>S4 is more formal, strict, and verbose</li>
+<li>Structure from S4 reduces risk from new team members</li>
+<li>Examples:
 <ul>
-<li><p>Docs: <a href="https://rconsortium.github.io/S7/" class="uri">https://rconsortium.github.io/S7/</a></p></li>
-<li><p>Talk by Hadley Wickham <a href="https://www.youtube.com/watch?v=P3FxCvSueag" class="uri">https://www.youtube.com/watch?v=P3FxCvSueag</a></p></li>
-</ul>
-</section>
-<section id="s7-briefly" class="slide level2 unnumbered">
-<h2>S7 briefly</h2>
-<ul>
-<li>S7 is a ‘better’ version of S3 with some of the ‘strictness’ of S4.</li>
-</ul>
-<pre><code>"A little bit more complex then S3, with almost all of the features, 
-all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
-<ul>
-<li><p>S3 + S4 = S7</p></li>
-<li><p>Compatible with S3: S7 objects are S3 objects! Can even extend an S3 object with S7</p></li>
-<li><p>Somewhat compatible with S4, see <a href="https://rconsortium.github.io/S7/articles/compatibility.html">compatability vignette</a> for details.</p></li>
-<li><p>Helpful error messages!</p></li>
-<li><p>Note that it was previously called R7, but it was changed to “S7” to better reflect that it is functional not encapsulated!</p></li>
-</ul>
-</section>
-<section id="abbreviated-introduction-based-on-the-vignette" class="slide level2 unnumbered">
-<h2>Abbreviated introduction based on the vignette</h2>
-<p>To install (it’s now on CRAN):</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">install.packages</span>(<span class="st">"S7"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">library</span>(S7)</span>
-<span id="cb12-2"><a></a>dog <span class="ot">&lt;-</span> <span class="fu">new_class</span>(<span class="st">"dog"</span>, <span class="at">properties =</span> <span class="fu">list</span>(</span>
-<span id="cb12-3"><a></a>  <span class="at">name =</span> class_character,</span>
-<span id="cb12-4"><a></a>  <span class="at">age =</span> class_numeric</span>
-<span id="cb12-5"><a></a>))</span>
-<span id="cb12-6"><a></a>dog</span>
-<span id="cb12-7"><a></a></span>
-<span id="cb12-8"><a></a></span>
-<span id="cb12-9"><a></a><span class="co">#&gt; &lt;S7_class&gt;</span></span>
-<span id="cb12-10"><a></a><span class="co">#&gt; @ name  :  dog</span></span>
-<span id="cb12-11"><a></a><span class="co">#&gt; @ parent: &lt;S7_object&gt;</span></span>
-<span id="cb12-12"><a></a><span class="co">#&gt; @ properties:</span></span>
-<span id="cb12-13"><a></a><span class="co">#&gt;  $ name: &lt;character&gt;          </span></span>
-<span id="cb12-14"><a></a><span class="co">#&gt;  $ age : &lt;integer&gt; or &lt;double&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Note the <code>class_character</code>, these are S7 classes corresponding to the base classes.</p>
-<p>Now to use it to create an object of class <em>dog</em>:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>lola <span class="ot">&lt;-</span> <span class="fu">dog</span>(<span class="at">name =</span> <span class="st">"Lola"</span>, <span class="at">age =</span> <span class="dv">11</span>)</span>
-<span id="cb13-2"><a></a>lola</span>
-<span id="cb13-3"><a></a></span>
-<span id="cb13-4"><a></a><span class="co">#&gt; &lt;dog&gt;</span></span>
-<span id="cb13-5"><a></a><span class="co">#&gt;  @ name: chr "Lola"</span></span>
-<span id="cb13-6"><a></a><span class="co">#&gt;  @ age : num 11</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Properties can be set/read with <code>@</code>, with automatic validation (‘safety rails’) based on the type!</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>lola<span class="sc">@</span>age <span class="ot">&lt;-</span> <span class="dv">12</span></span>
-<span id="cb14-2"><a></a>lola<span class="sc">@</span>age</span>
-<span id="cb14-3"><a></a></span>
-<span id="cb14-4"><a></a><span class="co">#&gt; 12</span></span>
-<span id="cb14-5"><a></a></span>
-<span id="cb14-6"><a></a>lola<span class="sc">@</span>age <span class="ot">&lt;-</span> <span class="st">"twelve"</span></span>
-<span id="cb14-7"><a></a></span>
-<span id="cb14-8"><a></a><span class="co">#&gt; Error: &lt;dog&gt;@age must be &lt;integer&gt; or &lt;double&gt;, not &lt;character&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Note the helpful error message!</p>
-<p>Like S3 (and S4) S7 has generics, implemented with <code>new_generic</code> and <code>method</code> for particular methods:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>speak <span class="ot">&lt;-</span> <span class="fu">new_generic</span>(<span class="st">"speak"</span>, <span class="st">"x"</span>)</span>
-<span id="cb15-2"><a></a></span>
-<span id="cb15-3"><a></a><span class="fu">method</span>(speak, dog) <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb15-4"><a></a>  <span class="st">"Woof"</span></span>
-<span id="cb15-5"><a></a>}</span>
-<span id="cb15-6"><a></a>  </span>
-<span id="cb15-7"><a></a><span class="fu">speak</span>(lola)</span>
-<span id="cb15-8"><a></a></span>
-<span id="cb15-9"><a></a><span class="co">#&gt; [1] "Woof"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>If we have another class, we can implement the generic for that too:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>cat <span class="ot">&lt;-</span> <span class="fu">new_class</span>(<span class="st">"cat"</span>, <span class="at">properties =</span> <span class="fu">list</span>(</span>
-<span id="cb16-2"><a></a>  <span class="at">name =</span> class_character,</span>
-<span id="cb16-3"><a></a>  <span class="at">age =</span> class_double</span>
-<span id="cb16-4"><a></a>))</span>
-<span id="cb16-5"><a></a><span class="fu">method</span>(speak, cat) <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb16-6"><a></a>  <span class="st">"Meow"</span></span>
-<span id="cb16-7"><a></a>}</span>
-<span id="cb16-8"><a></a></span>
-<span id="cb16-9"><a></a>fluffy <span class="ot">&lt;-</span> <span class="fu">cat</span>(<span class="at">name =</span> <span class="st">"Fluffy"</span>, <span class="at">age =</span> <span class="dv">5</span>)</span>
-<span id="cb16-10"><a></a><span class="fu">speak</span>(fluffy)</span>
-<span id="cb16-11"><a></a></span>
-<span id="cb16-12"><a></a><span class="co">#&gt; [1] "Meow"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Helpful messages:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>speak</span>
-<span id="cb17-2"><a></a></span>
-<span id="cb17-3"><a></a><span class="co">#&gt; &lt;S7_generic&gt; speak(x, ...) with 2 methods:</span></span>
-<span id="cb17-4"><a></a><span class="co">#&gt; 1: method(speak, cat)</span></span>
-<span id="cb17-5"><a></a><span class="co">#&gt; 2: method(speak, dog)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>“most usage of S7 with S3 will just work”</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">method</span>(print, cat) <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
-<span id="cb18-2"><a></a>  <span class="fu">print</span>(<span class="st">"I am a cat."</span>)</span>
-<span id="cb18-3"><a></a>}</span>
-<span id="cb18-4"><a></a></span>
-<span id="cb18-5"><a></a><span class="fu">print</span>(fluffy)</span>
-<span id="cb18-6"><a></a><span class="co">#&gt; "I am a cat"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p><em>For validators, inheritance, dynamic properties and more, see the <a href="https://rconsortium.github.io/S7/articles/S7.html">vignette!</a></em></p>
-</section>
-<section id="so-switch-to-s7" class="slide level2 unnumbered">
-<h2>So… switch to S7 ?</h2>
-<p><span class="math display">\[
-\huge
-\textbf{Soon}^{tm}
-\]</span></p>
-<ul>
-<li><p>Not yet… still in development! <img data-src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></p></li>
-<li><p>But consider trying it out:</p>
-<ul>
-<li><p>To stay ahead of the curve… S7 will be integrated into base R someday!</p></li>
-<li><p>To contribute feedback to the S7 team!</p></li>
-<li><p>To get “almost all” of the benefits of S4 without the complexity !</p></li>
+<li><a href="https://www.bioconductor.org/">Bioconductor</a> (~3-4k packages)</li>
+<li><a href="https://cran.r-project.org/package=Matrix">{Matrix}</a> (108 classes, 23 generic functions, and 1780 methods)</li>
 </ul></li>
-<li><p>In particular, if you have a new project that might require the complexity of S4, consider S7 instead!</p></li>
+<li>S4 lacks great docs (needs a book)</li>
+</ul>
+<p><code>*</code> Maybe use S7 instead?</p>
+</section>
+<section id="use-s3-for-standard-shared-methods" class="slide level2">
+<h2>Use S3 for standard, shared methods</h2>
+<ul>
+<li>S3 generics are global functions
+<ul>
+<li>Standard generics: <code>print()</code>, <code>summary()</code>, <code>plot()</code>, <code>predict()</code>, etc.</li>
+<li>Easy to create your own class &amp; methods</li>
+</ul></li>
+<li>R6 methods are local to the object
+<ul>
+<li>Can have different args than standard method</li>
+<li>Can mean something else entirely vs standard</li>
+</ul></li>
+<li>R6 objects are S3 objects, too!
+<ul>
+<li>Can define S3 methods for R6 classes</li>
+</ul></li>
 </ul>
 </section>
-<section id="oop-system-comparison" class="slide level2 unnumbered">
+<section id="use-r6-for-stateful-objects" class="slide level2">
+<h2>Use R6 for stateful objects</h2>
+<ul>
+<li>R6 methods can modify object state
+<ul>
+<li>No need to thread state through functions</li>
+</ul></li>
+<li>Chain R6 methods with <code>$</code></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="co"># Stack is an `R6::R6Class()` with `push()`, `pop()`, and `length()` methods</span></span>
+<span id="cb1-2"><a></a>s <span class="ot">&lt;-</span> Stack<span class="sc">$</span><span class="fu">new</span>()</span>
+<span id="cb1-3"><a></a>s<span class="sc">$</span></span>
+<span id="cb1-4"><a></a>  <span class="fu">push</span>(<span class="dv">10</span>)<span class="sc">$</span></span>
+<span id="cb1-5"><a></a>  <span class="fu">push</span>(<span class="dv">20</span>)<span class="sc">$</span></span>
+<span id="cb1-6"><a></a>  <span class="fu">pop</span>()</span>
+<span id="cb1-7"><a></a><span class="co">#&gt; [1] 20</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="oop-system-comparison" class="slide level2">
 <h2>OOP system comparison</h2>
+<div style="font-size: 0.5em;">
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th>Characteristic</th>
+<th></th>
 <th>S3</th>
 <th>S4</th>
 <th>S7</th>
@@ -496,7 +317,7 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 <td><a href="https://r6.r-lib.org/">R6</a></td>
 </tr>
 <tr class="even">
-<td><em>Programming type</em></td>
+<td><em>OOP type</em></td>
 <td>Functional</td>
 <td>Functional</td>
 <td>Functional</td>
@@ -519,15 +340,15 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 <tr class="odd">
 <td><em>Team size</em></td>
 <td>Small</td>
-<td>Small-large</td>
 <td>Large</td>
-<td>?</td>
+<td>Large</td>
+<td>Small-large</td>
 </tr>
 <tr class="even">
 <td><em>Namespace</em></td>
 <td>Global</td>
-<td>Global?</td>
-<td>Global?</td>
+<td>Global</td>
+<td>Global</td>
 <td>Local</td>
 </tr>
 <tr class="odd">
@@ -540,12 +361,12 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 <tr class="even">
 <td><em>Method chaining</em></td>
 <td><code>|&gt;</code></td>
-<td><code>|&gt;</code>?</td>
-<td><code>|&gt;</code>?</td>
+<td><code>|&gt;</code></td>
+<td><code>|&gt;</code></td>
 <td><code>$</code></td>
 </tr>
 <tr class="odd">
-<td><em>Get/set component</em></td>
+<td><em>Get/set</em></td>
 <td><code>$</code></td>
 <td><code>@</code></td>
 <td><code>@</code></td>
@@ -553,7 +374,7 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 </tr>
 <tr class="even">
 <td><em>Create class</em></td>
-<td><code>class()</code> or <code>structure()</code> with <code>class</code> argument</td>
+<td><code>function()</code></td>
 <td><code>setClass()</code></td>
 <td><code>new_class()</code></td>
 <td><code>R6Class()</code></td>
@@ -561,8 +382,8 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 <tr class="odd">
 <td><em>Create validator</em></td>
 <td><code>function()</code></td>
-<td><code>setValidity()</code> or <code>validator</code> argument in <code>setClass()</code></td>
-<td><code>validator</code> argument in <code>new_class()</code></td>
+<td><code>setValidity() | setClass(validator = f())</code></td>
+<td><code>new_class(validator = f())</code></td>
 <td><code>$validate()</code></td>
 </tr>
 <tr class="even">
@@ -570,20 +391,20 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 <td><code>UseMethod()</code></td>
 <td><code>setGeneric()</code></td>
 <td><code>new_generic()</code></td>
-<td>NA</td>
+<td><code>NA</code></td>
 </tr>
 <tr class="odd">
 <td><em>Create method</em></td>
-<td><code>function()</code> assigned to <code>generic.method</code></td>
+<td><code>g.y &lt;- function()</code></td>
 <td><code>setMethod()</code></td>
 <td><code>method()</code></td>
 <td><code>R6Class()</code></td>
 </tr>
 <tr class="even">
 <td><em>Create object</em></td>
-<td><code>class()</code> or <code>structure()</code> with <code>class</code> argument or constructor function</td>
+<td><code>class(x) &lt;- "y"</code></td>
 <td><code>new()</code></td>
-<td>Use registered method function</td>
+<td><code>x &lt;- class_y()</code></td>
 <td><code>$new()</code></td>
 </tr>
 <tr class="odd">
@@ -591,7 +412,7 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 <td>attributes</td>
 <td>slots</td>
 <td>properties</td>
-<td></td>
+<td>fields &amp; methods</td>
 </tr>
 <tr class="even">
 <td></td>
@@ -602,6 +423,7 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
 </tr>
 </tbody>
 </table>
+</div>
 
 
 </section>
@@ -820,6 +642,44 @@ all of the payoff of S4" - rstudio conf 2022, Hadley Wickham</code></pre>
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")

@@ -909,84 +909,42 @@
     "href": "slides/16.html#learning-objectives",
     "title": "Trade-offs",
     "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nUnderstand the Trade-offs between S3, R6 and S4\nBrief intro to S7 (the object system formerly known as R7)"
+    "text": "Learning objectives:\n\nDecide whether to use S3 or S4 (or maybe S7) for a project.\nDecide whether to use R6 or S3 (or maybe S7) for a project."
   },
   {
-    "objectID": "slides/16.html#introduction",
-    "href": "slides/16.html#introduction",
+    "objectID": "slides/16.html#default-to-s3",
+    "href": "slides/16.html#default-to-s3",
     "title": "Trade-offs",
-    "section": "Introduction",
-    "text": "Introduction\n\nWe have three OOP systems introduced so far (S3, S4, R6)\nAt the current time (pre - S7?) Hadley recommends use S3 by default: It’s simple and widely used throughout base R and CRAN.\nIf you have experience in other languages, Resist the temptation to use R6 even though it will feel more familiar!"
+    "section": "Default to S3*",
+    "text": "Default to S3*\n\n“I recommend that you default to S3.” - Hadley Wickham\n\n\nSimple & widely used\nR6 leads to non-idiomatic R code\n\nMore like other languages, so tempting for newcomers\n\n\n* Or maybe S7?\n\n\n“Functional OOP” aka “Generic function OOP” aka “Multimethod OOP”\n\nS3, S4, S7\n\n“Encapsulated OOP”\n\nR6"
   },
   {
-    "objectID": "slides/16.html#s4-versus-s3",
-    "href": "slides/16.html#s4-versus-s3",
+    "objectID": "slides/16.html#use-s4-for-large-team-projects",
+    "href": "slides/16.html#use-s4-for-large-team-projects",
     "title": "Trade-offs",
-    "section": "S4 versus S3",
-    "text": "S4 versus S3\nWhich functional object system to use, S3 or S4? \n\nS3 is a simple and flexible system.\n\nGood for small teams who need flexibility and immediate payoffs.\nCommonly used throughout base R and CRAN\nFlexibility can cause problems, more complex systems might require formal conventions\n\nS4 is a more formal, strict system.\n\nGood for large projects and large teams\nUsed by Bioconductor project\nRequires significant up front investment in design, but payoff is a robust system that enforces conventions.\nS4 documentation is challenging to use."
+    "section": "Use S4 for large team projects*",
+    "text": "Use S4 for large team projects*\n\nS4 requires more up-front design than S3\nS4 is more formal, strict, and verbose\nStructure from S4 reduces risk from new team members\nExamples:\n\nBioconductor (~3-4k packages)\n{Matrix} (108 classes, 23 generic functions, and 1780 methods)\n\nS4 lacks great docs (needs a book)\n\n* Maybe use S7 instead?"
   },
   {
-    "objectID": "slides/16.html#r6-versus-s3",
-    "href": "slides/16.html#r6-versus-s3",
+    "objectID": "slides/16.html#use-s3-for-standard-shared-methods",
+    "href": "slides/16.html#use-s3-for-standard-shared-methods",
     "title": "Trade-offs",
-    "section": "R6 versus S3",
-    "text": "R6 versus S3\nR6 is built on encapsulated objects, rather than generic functions.\nBig differences: general trade-offs\n\nA generic is a regular function so it lives in the global namespace. An R6 method belongs to an object so it lives in a local namespace. This influences how we think about naming.\nR6’s reference semantics allow methods to simultaneously return a value and modify an object. This solves a painful problem called “threading state”.\nYou invoke an R6 method using $, which is an infix operator. If you set up your methods correctly you can use chains of method calls as an alternative to the pipe."
+    "section": "Use S3 for standard, shared methods",
+    "text": "Use S3 for standard, shared methods\n\nS3 generics are global functions\n\nStandard generics: print(), summary(), plot(), predict(), etc.\nEasy to create your own class & methods\n\nR6 methods are local to the object\n\nCan have different args than standard method\nCan mean something else entirely vs standard\n\nR6 objects are S3 objects, too!\n\nCan define S3 methods for R6 classes"
   },
   {
-    "objectID": "slides/16.html#namespacing",
-    "href": "slides/16.html#namespacing",
+    "objectID": "slides/16.html#use-r6-for-stateful-objects",
+    "href": "slides/16.html#use-r6-for-stateful-objects",
     "title": "Trade-offs",
-    "section": "Namespacing",
-    "text": "Namespacing\nWhere methods are found?\n\nin S3, Generic functions are global and live in the global namespace\n\nAdvantage: Uniform API: summary, print, predict etc.\nDisadvantage: Must be careful about creating new methods! Homonyms must be avoided, don’t define plot(bank_heist)\n\nin R6, Encapsulated methods are local: objects with a scope\n\nAdvantage: No problems with homonyms: meaning of bank_heist$plot() is clear and unambiguous.\nDisadvantage: Lack of a uniform API, except by convention."
-  },
-  {
-    "objectID": "slides/16.html#threading-state",
-    "href": "slides/16.html#threading-state",
-    "title": "Trade-offs",
-    "section": "Threading state",
-    "text": "Threading state\nIn S3 the challenge is to return a value and modify the object.\n\nnew_stack &lt;- function(items = list()) {\n  structure(list(items = items), class = \"stack\")\n}\n\npush &lt;- function(x, y) {\n  x$items &lt;- c(x$items, list(y))\n  x\n}\n\nNo problem with that, but what about when we want to pop a value? We need to return two things.\n\npop &lt;- function(x) {\n  n &lt;- length(x$items)\n  \n  item &lt;- x$items[[n]]\n  x$items &lt;- x$items[-n]\n  \n  list(item = item, x = x)\n}\n\nThe usage is a bit awkward:\n\ns &lt;- new_stack()\ns &lt;- push(s, 10)\ns &lt;- push(s, 20)\n\nout &lt;- pop(s)\n# Update state:\ns &lt;- out$x\n\nprint(out$item)\n\n#&gt; [1] 20\n\n\nIn python and other languages we have structured binding to make this less awkward. R has the {zeallot} package. For more, see this vignette:\n\nvignette('unpacking-assignment')\n\nHowever, this is all easier in R6 due to the reference semantics!\n\nStack &lt;- R6::R6Class(\"Stack\", list(\n  items = list(),\n  push = function(x) {\n    self$items &lt;- c(self$items, x)\n    invisible(self)\n  },\n  pop = function() {\n    item &lt;- self$items[[self$length()]]\n    self$items &lt;- self$items[-self$length()]\n    item\n  },\n  length = function() {\n    length(self$items)\n  }\n))\n\ns &lt;- Stack$new()\ns$push(10)\ns$push(20)\ns$pop()\n\n#&gt; [1] 20"
-  },
-  {
-    "objectID": "slides/16.html#method-chaining",
-    "href": "slides/16.html#method-chaining",
-    "title": "Trade-offs",
-    "section": "Method chaining",
-    "text": "Method chaining\nUseful to compose functions from left-to-right.\nUse of the operators:\n\nS3: |&gt; or %&gt;%\nR6: $\n\n\ns$push(44)$push(32)$pop()\n\n#&gt; [1] 32"
-  },
-  {
-    "objectID": "slides/16.html#umm-what-about-s7",
-    "href": "slides/16.html#umm-what-about-s7",
-    "title": "Trade-offs",
-    "section": "Umm… what about S7 ?",
-    "text": "Umm… what about S7 ?\n\nhttps://xkcd.com/927/Primary references:\n\nDocs: https://rconsortium.github.io/S7/\nTalk by Hadley Wickham https://www.youtube.com/watch?v=P3FxCvSueag"
-  },
-  {
-    "objectID": "slides/16.html#s7-briefly",
-    "href": "slides/16.html#s7-briefly",
-    "title": "Trade-offs",
-    "section": "S7 briefly",
-    "text": "S7 briefly\n\nS7 is a ‘better’ version of S3 with some of the ‘strictness’ of S4.\n\n\"A little bit more complex then S3, with almost all of the features, \nall of the payoff of S4\" - rstudio conf 2022, Hadley Wickham\n\nS3 + S4 = S7\nCompatible with S3: S7 objects are S3 objects! Can even extend an S3 object with S7\nSomewhat compatible with S4, see compatability vignette for details.\nHelpful error messages!\nNote that it was previously called R7, but it was changed to “S7” to better reflect that it is functional not encapsulated!"
-  },
-  {
-    "objectID": "slides/16.html#abbreviated-introduction-based-on-the-vignette",
-    "href": "slides/16.html#abbreviated-introduction-based-on-the-vignette",
-    "title": "Trade-offs",
-    "section": "Abbreviated introduction based on the vignette",
-    "text": "Abbreviated introduction based on the vignette\nTo install (it’s now on CRAN):\n\ninstall.packages(\"S7\")\n\n\nlibrary(S7)\ndog &lt;- new_class(\"dog\", properties = list(\n  name = class_character,\n  age = class_numeric\n))\ndog\n\n\n#&gt; &lt;S7_class&gt;\n#&gt; @ name  :  dog\n#&gt; @ parent: &lt;S7_object&gt;\n#&gt; @ properties:\n#&gt;  $ name: &lt;character&gt;          \n#&gt;  $ age : &lt;integer&gt; or &lt;double&gt;\n\nNote the class_character, these are S7 classes corresponding to the base classes.\nNow to use it to create an object of class dog:\n\nlola &lt;- dog(name = \"Lola\", age = 11)\nlola\n\n#&gt; &lt;dog&gt;\n#&gt;  @ name: chr \"Lola\"\n#&gt;  @ age : num 11\n\nProperties can be set/read with @, with automatic validation (‘safety rails’) based on the type!\n\nlola@age &lt;- 12\nlola@age\n\n#&gt; 12\n\nlola@age &lt;- \"twelve\"\n\n#&gt; Error: &lt;dog&gt;@age must be &lt;integer&gt; or &lt;double&gt;, not &lt;character&gt;\n\nNote the helpful error message!\nLike S3 (and S4) S7 has generics, implemented with new_generic and method for particular methods:\n\nspeak &lt;- new_generic(\"speak\", \"x\")\n\nmethod(speak, dog) &lt;- function(x) {\n  \"Woof\"\n}\n  \nspeak(lola)\n\n#&gt; [1] \"Woof\"\n\nIf we have another class, we can implement the generic for that too:\n\ncat &lt;- new_class(\"cat\", properties = list(\n  name = class_character,\n  age = class_double\n))\nmethod(speak, cat) &lt;- function(x) {\n  \"Meow\"\n}\n\nfluffy &lt;- cat(name = \"Fluffy\", age = 5)\nspeak(fluffy)\n\n#&gt; [1] \"Meow\"\n\nHelpful messages:\n\nspeak\n\n#&gt; &lt;S7_generic&gt; speak(x, ...) with 2 methods:\n#&gt; 1: method(speak, cat)\n#&gt; 2: method(speak, dog)\n\n“most usage of S7 with S3 will just work”\n\nmethod(print, cat) &lt;- function(...) {\n  print(\"I am a cat.\")\n}\n\nprint(fluffy)\n#&gt; \"I am a cat\"\n\nFor validators, inheritance, dynamic properties and more, see the vignette!"
-  },
-  {
-    "objectID": "slides/16.html#so-switch-to-s7",
-    "href": "slides/16.html#so-switch-to-s7",
-    "title": "Trade-offs",
-    "section": "So… switch to S7 ?",
-    "text": "So… switch to S7 ?\n\\[\n\\huge\n\\textbf{Soon}^{tm}\n\\]\n\nNot yet… still in development! \nBut consider trying it out:\n\nTo stay ahead of the curve… S7 will be integrated into base R someday!\nTo contribute feedback to the S7 team!\nTo get “almost all” of the benefits of S4 without the complexity !\n\nIn particular, if you have a new project that might require the complexity of S4, consider S7 instead!"
+    "section": "Use R6 for stateful objects",
+    "text": "Use R6 for stateful objects\n\nR6 methods can modify object state\n\nNo need to thread state through functions\n\nChain R6 methods with $\n\n\n# Stack is an `R6::R6Class()` with `push()`, `pop()`, and `length()` methods\ns &lt;- Stack$new()\ns$\n  push(10)$\n  push(20)$\n  pop()\n#&gt; [1] 20"
   },
   {
     "objectID": "slides/16.html#oop-system-comparison",
     "href": "slides/16.html#oop-system-comparison",
     "title": "Trade-offs",
     "section": "OOP system comparison",
-    "text": "OOP system comparison\n\n\n\nCharacteristic\nS3\nS4\nS7\nR6\n\n\n\n\nPackage\nbase R\nbase R\nS7\nR6\n\n\nProgramming type\nFunctional\nFunctional\nFunctional\nEncapulated\n\n\nComplexity\nLow\nHigh\nMedium\nHigh\n\n\nPayoff\nLow\nHigh\nHigh\nHigh\n\n\nTeam size\nSmall\nSmall-large\nLarge\n?\n\n\nNamespace\nGlobal\nGlobal?\nGlobal?\nLocal\n\n\nModify in place\nNo\nNo\nNo\nYes\n\n\nMethod chaining\n|&gt;\n|&gt;?\n|&gt;?\n$\n\n\nGet/set component\n$\n@\n@\n$\n\n\nCreate class\nclass() or structure() with class argument\nsetClass()\nnew_class()\nR6Class()\n\n\nCreate validator\nfunction()\nsetValidity() or validator argument in setClass()\nvalidator argument in new_class()\n$validate()\n\n\nCreate generic\nUseMethod()\nsetGeneric()\nnew_generic()\nNA\n\n\nCreate method\nfunction() assigned to generic.method\nsetMethod()\nmethod()\nR6Class()\n\n\nCreate object\nclass() or structure() with class argument or constructor function\nnew()\nUse registered method function\n$new()\n\n\nAdditional components\nattributes\nslots\nproperties"
+    "text": "OOP system comparison\n\n\n\n\n\nS3\nS4\nS7\nR6\n\n\n\n\nPackage\nbase R\nbase R\nS7\nR6\n\n\nOOP type\nFunctional\nFunctional\nFunctional\nEncapulated\n\n\nComplexity\nLow\nHigh\nMedium\nHigh\n\n\nPayoff\nLow\nHigh\nHigh\nHigh\n\n\nTeam size\nSmall\nLarge\nLarge\nSmall-large\n\n\nNamespace\nGlobal\nGlobal\nGlobal\nLocal\n\n\nModify in place\nNo\nNo\nNo\nYes\n\n\nMethod chaining\n|&gt;\n|&gt;\n|&gt;\n$\n\n\nGet/set\n$\n@\n@\n$\n\n\nCreate class\nfunction()\nsetClass()\nnew_class()\nR6Class()\n\n\nCreate validator\nfunction()\nsetValidity() | setClass(validator = f())\nnew_class(validator = f())\n$validate()\n\n\nCreate generic\nUseMethod()\nsetGeneric()\nnew_generic()\nNA\n\n\nCreate method\ng.y &lt;- function()\nsetMethod()\nmethod()\nR6Class()\n\n\nCreate object\nclass(x) &lt;- \"y\"\nnew()\nx &lt;- class_y()\n$new()\n\n\nAdditional components\nattributes\nslots\nproperties\nfields & methods"
   },
   {
     "objectID": "slides/15.html#learning-objectives",
@@ -1364,7 +1322,7 @@
     "href": "slides/13.html#print.factor-is-a-print-method-for-factors",
     "title": "S3",
     "section": "print.factor() is a print() method for factors",
-    "text": "print.factor() is a print() method for factors\nMethod: A function customized for a particular class.\n\nprint.factor # or sloop::s3_get_method(\"print.factor\")\n\n#&gt; function (x, quote = FALSE, max.levels = NULL, width = getOption(\"width\"), \n#&gt;     ...) \n#&gt; {\n#&gt;     ord &lt;- is.ordered(x)\n#&gt;     if (length(x) == 0L) \n#&gt;         cat(if (ord) \n#&gt;             \"ordered\"\n#&gt;         else \"factor\", \"()\\n\", sep = \"\")\n#&gt;     else {\n#&gt;         xx &lt;- character(length(x))\n#&gt;         xx[] &lt;- as.character(x)\n#&gt;         keepAttrs &lt;- setdiff(names(attributes(x)), c(\"levels\", \n#&gt;             \"class\"))\n#&gt;         attributes(xx)[keepAttrs] &lt;- attributes(x)[keepAttrs]\n#&gt;         print(xx, quote = quote, ...)\n#&gt;     }\n#&gt;     maxl &lt;- max.levels %||% TRUE\n#&gt;     if (maxl) {\n#&gt;         n &lt;- length(lev &lt;- encodeString(levels(x), quote = ifelse(quote, \n#&gt;             \"\\\"\", \"\")))\n#&gt;         colsep &lt;- if (ord) \n#&gt;             \" &lt; \"\n#&gt;         else \" \"\n#&gt;         T0 &lt;- \"Levels: \"\n#&gt;         if (is.logical(maxl)) \n#&gt;             maxl &lt;- {\n#&gt;                 width &lt;- width - (nchar(T0, \"w\") + 3L + 1L + \n#&gt;                   3L)\n#&gt;                 lenl &lt;- cumsum(nchar(lev, \"w\") + nchar(colsep, \n#&gt;                   \"w\"))\n#&gt;                 if (n &lt;= 1L || lenl[n] &lt;= width) \n#&gt;                   n\n#&gt;                 else max(1L, which.max(lenl &gt; width) - 1L)\n#&gt;             }\n#&gt;         drop &lt;- n &gt; maxl\n#&gt;         cat(if (drop) \n#&gt;             paste(format(n), \"\"), T0, paste(if (drop) \n#&gt;             c(lev[1L:max(1, maxl - 1)], \"...\", if (maxl &gt; 1) lev[n])\n#&gt;         else lev, collapse = colsep), \"\\n\", sep = \"\")\n#&gt;     }\n#&gt;     if (!isTRUE(val &lt;- .valid.factor(x))) \n#&gt;         warning(val)\n#&gt;     invisible(x)\n#&gt; }\n#&gt; &lt;bytecode: 0x0000025824b39540&gt;\n#&gt; &lt;environment: namespace:base&gt;"
+    "text": "print.factor() is a print() method for factors\nMethod: A function customized for a particular class.\n\nprint.factor # or sloop::s3_get_method(\"print.factor\")\n\n#&gt; function (x, quote = FALSE, max.levels = NULL, width = getOption(\"width\"), \n#&gt;     ...) \n#&gt; {\n#&gt;     ord &lt;- is.ordered(x)\n#&gt;     if (length(x) == 0L) \n#&gt;         cat(if (ord) \n#&gt;             \"ordered\"\n#&gt;         else \"factor\", \"()\\n\", sep = \"\")\n#&gt;     else {\n#&gt;         xx &lt;- character(length(x))\n#&gt;         xx[] &lt;- as.character(x)\n#&gt;         keepAttrs &lt;- setdiff(names(attributes(x)), c(\"levels\", \n#&gt;             \"class\"))\n#&gt;         attributes(xx)[keepAttrs] &lt;- attributes(x)[keepAttrs]\n#&gt;         print(xx, quote = quote, ...)\n#&gt;     }\n#&gt;     maxl &lt;- max.levels %||% TRUE\n#&gt;     if (maxl) {\n#&gt;         n &lt;- length(lev &lt;- encodeString(levels(x), quote = ifelse(quote, \n#&gt;             \"\\\"\", \"\")))\n#&gt;         colsep &lt;- if (ord) \n#&gt;             \" &lt; \"\n#&gt;         else \" \"\n#&gt;         T0 &lt;- \"Levels: \"\n#&gt;         if (is.logical(maxl)) \n#&gt;             maxl &lt;- {\n#&gt;                 width &lt;- width - (nchar(T0, \"w\") + 3L + 1L + \n#&gt;                   3L)\n#&gt;                 lenl &lt;- cumsum(nchar(lev, \"w\") + nchar(colsep, \n#&gt;                   \"w\"))\n#&gt;                 if (n &lt;= 1L || lenl[n] &lt;= width) \n#&gt;                   n\n#&gt;                 else max(1L, which.max(lenl &gt; width) - 1L)\n#&gt;             }\n#&gt;         drop &lt;- n &gt; maxl\n#&gt;         cat(if (drop) \n#&gt;             paste(format(n), \"\"), T0, paste(if (drop) \n#&gt;             c(lev[1L:max(1, maxl - 1)], \"...\", if (maxl &gt; 1) lev[n])\n#&gt;         else lev, collapse = colsep), \"\\n\", sep = \"\")\n#&gt;     }\n#&gt;     if (!isTRUE(val &lt;- .valid.factor(x))) \n#&gt;         warning(val)\n#&gt;     invisible(x)\n#&gt; }\n#&gt; &lt;bytecode: 0x0000022856b4d820&gt;\n#&gt; &lt;environment: namespace:base&gt;"
   },
   {
     "objectID": "slides/13.html#assign-an-s3-class-to-a-new-object-with-structure-or-class-",
@@ -1413,7 +1371,7 @@
     "href": "slides/13.html#summary-is-an-s3-generic-that-behaves-based-on-an-objects-class",
     "title": "S3",
     "section": "summary() is an S3 generic that behaves based on an object’s class",
-    "text": "summary() is an S3 generic that behaves based on an object’s class\n\nsloop::is_s3_generic(\"summary\")\n\n#&gt; [1] TRUE\n\nsummary\n\n#&gt; function (object, ...) \n#&gt; UseMethod(\"summary\")\n#&gt; &lt;bytecode: 0x0000025822139b98&gt;\n#&gt; &lt;environment: namespace:base&gt;\n\nsloop::s3_methods_generic(\n  \"summary\"\n) |&gt; \n  knitr::kable()\n\n\n\n\ngeneric\nclass\nvisible\nsource\n\n\n\n\nsummary\naov\nTRUE\nstats\n\n\nsummary\naovlist\nFALSE\nregistered S3method\n\n\nsummary\naspell\nFALSE\nregistered S3method\n\n\nsummary\ncheck_packages_in_dir\nFALSE\nregistered S3method\n\n\nsummary\nconnection\nTRUE\nbase\n\n\nsummary\ndata.frame\nTRUE\nbase\n\n\nsummary\nDate\nTRUE\nbase\n\n\nsummary\ndefault\nTRUE\nbase\n\n\nsummary\ndifftime\nTRUE\nbase\n\n\nsummary\necdf\nFALSE\nregistered S3method\n\n\nsummary\nfactor\nTRUE\nbase\n\n\nsummary\nglm\nTRUE\nstats\n\n\nsummary\ninfl\nFALSE\nregistered S3method\n\n\nsummary\nlm\nTRUE\nstats\n\n\nsummary\nloess\nFALSE\nregistered S3method\n\n\nsummary\nmanova\nTRUE\nstats\n\n\nsummary\nmatrix\nTRUE\nbase\n\n\nsummary\nmlm\nFALSE\nregistered S3method\n\n\nsummary\nnls\nFALSE\nregistered S3method\n\n\nsummary\npackageStatus\nFALSE\nregistered S3method\n\n\nsummary\nPOSIXct\nTRUE\nbase\n\n\nsummary\nPOSIXlt\nTRUE\nbase\n\n\nsummary\nppr\nFALSE\nregistered S3method\n\n\nsummary\nprcomp\nFALSE\nregistered S3method\n\n\nsummary\nprincomp\nFALSE\nregistered S3method\n\n\nsummary\nproc_time\nTRUE\nbase\n\n\nsummary\nrlang:::list_of_conditions\nFALSE\nregistered S3method\n\n\nsummary\nrlang_error\nFALSE\nregistered S3method\n\n\nsummary\nrlang_message\nFALSE\nregistered S3method\n\n\nsummary\nrlang_trace\nFALSE\nregistered S3method\n\n\nsummary\nrlang_warning\nFALSE\nregistered S3method\n\n\nsummary\nsrcfile\nTRUE\nbase\n\n\nsummary\nsrcref\nTRUE\nbase\n\n\nsummary\nstepfun\nTRUE\nstats\n\n\nsummary\nstl\nFALSE\nregistered S3method\n\n\nsummary\ntable\nTRUE\nbase\n\n\nsummary\ntukeysmooth\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_sclr\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_vctr\nFALSE\nregistered S3method\n\n\nsummary\nwarnings\nTRUE\nbase\n\n\n\n\n\n\nThis slide throws a warning because the generated table actually includes 3 colons. It isn’t a “problemwith a fenced div” like the warning thinks."
+    "text": "summary() is an S3 generic that behaves based on an object’s class\n\nsloop::is_s3_generic(\"summary\")\n\n#&gt; [1] TRUE\n\nsummary\n\n#&gt; function (object, ...) \n#&gt; UseMethod(\"summary\")\n#&gt; &lt;bytecode: 0x0000022854118238&gt;\n#&gt; &lt;environment: namespace:base&gt;\n\nsloop::s3_methods_generic(\n  \"summary\"\n) |&gt; \n  knitr::kable()\n\n\n\n\ngeneric\nclass\nvisible\nsource\n\n\n\n\nsummary\naov\nTRUE\nstats\n\n\nsummary\naovlist\nFALSE\nregistered S3method\n\n\nsummary\naspell\nFALSE\nregistered S3method\n\n\nsummary\ncheck_packages_in_dir\nFALSE\nregistered S3method\n\n\nsummary\nconnection\nTRUE\nbase\n\n\nsummary\ndata.frame\nTRUE\nbase\n\n\nsummary\nDate\nTRUE\nbase\n\n\nsummary\ndefault\nTRUE\nbase\n\n\nsummary\ndifftime\nTRUE\nbase\n\n\nsummary\necdf\nFALSE\nregistered S3method\n\n\nsummary\nfactor\nTRUE\nbase\n\n\nsummary\nglm\nTRUE\nstats\n\n\nsummary\ninfl\nFALSE\nregistered S3method\n\n\nsummary\nlm\nTRUE\nstats\n\n\nsummary\nloess\nFALSE\nregistered S3method\n\n\nsummary\nmanova\nTRUE\nstats\n\n\nsummary\nmatrix\nTRUE\nbase\n\n\nsummary\nmlm\nFALSE\nregistered S3method\n\n\nsummary\nnls\nFALSE\nregistered S3method\n\n\nsummary\npackageStatus\nFALSE\nregistered S3method\n\n\nsummary\nPOSIXct\nTRUE\nbase\n\n\nsummary\nPOSIXlt\nTRUE\nbase\n\n\nsummary\nppr\nFALSE\nregistered S3method\n\n\nsummary\nprcomp\nFALSE\nregistered S3method\n\n\nsummary\nprincomp\nFALSE\nregistered S3method\n\n\nsummary\nproc_time\nTRUE\nbase\n\n\nsummary\nrlang:::list_of_conditions\nFALSE\nregistered S3method\n\n\nsummary\nrlang_error\nFALSE\nregistered S3method\n\n\nsummary\nrlang_message\nFALSE\nregistered S3method\n\n\nsummary\nrlang_trace\nFALSE\nregistered S3method\n\n\nsummary\nrlang_warning\nFALSE\nregistered S3method\n\n\nsummary\nsrcfile\nTRUE\nbase\n\n\nsummary\nsrcref\nTRUE\nbase\n\n\nsummary\nstepfun\nTRUE\nstats\n\n\nsummary\nstl\nFALSE\nregistered S3method\n\n\nsummary\ntable\nTRUE\nbase\n\n\nsummary\ntukeysmooth\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_sclr\nFALSE\nregistered S3method\n\n\nsummary\nvctrs_vctr\nFALSE\nregistered S3method\n\n\nsummary\nwarnings\nTRUE\nbase\n\n\n\n\n\n\nThis slide throws a warning because the generated table actually includes 3 colons. It isn’t a “problem with a fenced div” like the warning thinks."
   },
   {
     "objectID": "slides/13.html#summary-is-an-interface-to-different-methods",
@@ -4071,7 +4029,7 @@
     "href": "slides/14.html#active-fields-hide-complex-method-calls",
     "title": "R6",
     "section": "Active fields hide complex method calls",
-    "text": "Active fields hide complex method calls\n\nRando &lt;- R6::R6Class(\"Rando\", active = list(\n  random = function(value) {\n    if (missing(value)) {\n      runif(1)  \n    } else {\n      stop(\"Can't set `$random`\", call. = FALSE)\n    }\n  }\n))\nx &lt;- Rando$new()\nx$random\n\n#&gt; [1] 0.4715425\n\nx$random\n\n#&gt; [1] 0.1138315\n\nx$random\n\n#&gt; [1] 0.1306242"
+    "text": "Active fields hide complex method calls\n\nRando &lt;- R6::R6Class(\"Rando\", active = list(\n  random = function(value) {\n    if (missing(value)) {\n      runif(1)  \n    } else {\n      stop(\"Can't set `$random`\", call. = FALSE)\n    }\n  }\n))\nx &lt;- Rando$new()\nx$random\n\n#&gt; [1] 0.7535612\n\nx$random\n\n#&gt; [1] 0.04193666\n\nx$random\n\n#&gt; [1] 0.7111096"
   },
   {
     "objectID": "slides/14.html#active-fields-hide-complexity-like-validating-user-input",
@@ -4092,7 +4050,7 @@
     "href": "slides/14.html#finalize-deletesunlinks-anything-created-by-the-r6-object",
     "title": "R6",
     "section": "$finalize() deletes/unlinks anything created by the R6 object",
-    "text": "$finalize() deletes/unlinks anything created by the R6 object\n\nA &lt;- R6Class(\"A\", private = list(\n  finalize = function() {\n    print(\"Finalizer has been called!\")\n  }\n))\n\nobj &lt;- A$new()\n\nrm(obj); gc()\n\n#&gt; [1] \"Finalizer has been called!\"\n\n\n#&gt;           used (Mb) gc trigger (Mb) max used (Mb)\n#&gt; Ncells  622966 33.3    1375035 73.5  1375035 73.5\n#&gt; Vcells 1162108  8.9    8388608 64.0  2090411 16.0"
+    "text": "$finalize() deletes/unlinks anything created by the R6 object\n\nA &lt;- R6Class(\"A\", private = list(\n  finalize = function() {\n    print(\"Finalizer has been called!\")\n  }\n))\n\nobj &lt;- A$new()\n\nrm(obj); gc()\n\n#&gt; [1] \"Finalizer has been called!\"\n\n\n#&gt;           used (Mb) gc trigger (Mb) max used (Mb)\n#&gt; Ncells  686302 36.7    1511162 80.8  1511162 80.8\n#&gt; Vcells 1261105  9.7    8388608 64.0  2049170 15.7"
   },
   {
     "objectID": "slides/15b.html#learning-objectives",
