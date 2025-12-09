@@ -1,0 +1,89 @@
+---
+engine: knitr
+title: Trade-offs
+---
+
+## Learning objectives:
+
+- Decide whether to use S3 or S4 (or maybe S7) for a project.
+- Decide whether to use R6 or S3 (or maybe S7) for a project.
+
+## Default to S3`*`
+
+> "I recommend that you default to S3." - Hadley Wickham
+
+- Simple & widely used
+- R6 leads to non-idiomatic R code
+  - More like other languages, so tempting for newcomers
+
+`*` [Or maybe S7?](https://bsky.app/profile/did:plc:peeplnvlwcohp4jly3fpwj46/post/3m73gizpiw22n)
+
+::: notes
+- "Functional OOP" aka "Generic function OOP" aka "Multimethod OOP"
+  - S3, S4, S7
+- "Encapsulated OOP"
+  - R6
+:::
+
+## Use S4 for large team projects`*`
+
+- S4 requires more up-front design than S3
+- S4 is more formal, strict, and verbose
+- Structure from S4 reduces risk from new team members
+- Examples:
+  - [Bioconductor](https://www.bioconductor.org/) (~3-4k packages)
+  - [{Matrix}](https://cran.r-project.org/package=Matrix) (108 classes, 23 generic functions, and 1780 methods)
+- S4 lacks great docs (needs a book)
+
+`*` Maybe use S7 instead?
+
+## Use S3 for standard, shared methods
+
+- S3 generics are global functions
+  - Standard generics: `print()`, `summary()`, `plot()`, `predict()`, etc.
+  - Easy to create your own class & methods
+- R6 methods are local to the object
+  - Can have different args than standard method
+  - Can mean something else entirely vs standard
+- R6 objects are S3 objects, too!
+  - Can define S3 methods for R6 classes
+
+## Use R6 for stateful objects
+
+- R6 methods can modify object state
+  - No need to thread state through functions
+- Chain R6 methods with `$`
+
+```{r}
+#| eval: false
+# Stack is an `R6::R6Class()` with `push()`, `pop()`, and `length()` methods
+s <- Stack$new()
+s$
+  push(10)$
+  push(20)$
+  pop()
+#> [1] 20
+```
+
+## OOP system comparison
+
+::: {style="font-size: 0.5em;"}
+| | S3 | S4 | S7 | R6 |
+|-------|------|------|------|------|
+| *Package* | base R | base R | [S7](https://rconsortium.github.io/S7/) | [R6](https://r6.r-lib.org/) |
+| *OOP type* | Functional | Functional | Functional | Encapulated |
+| *Complexity* | Low | High | Medium | High |
+| *Payoff* | Low | High | High | High |
+| *Team size* | Small | Large | Large | Small-large |
+| *Namespace* | Global | Global | Global | Local |
+| *Modify in place* | No | No | No | Yes |
+| *Method chaining* | `|>` | `|>` | `|>` | `$` |
+| *Get/set* | `$` | `@` | `@` | `$` |
+| *Create class* | `function()` | `setClass()` | `new_class()` | `R6Class()` |
+| *Create validator* | `function()` | `setValidity() | setClass(validator = f())` | `new_class(validator = f())` | `$validate()` |
+| *Create generic* | `UseMethod()` | `setGeneric()` | `new_generic()` | `NA` |
+| *Create method* | `g.y <- function()` | `setMethod()` | `method()` | `R6Class()` |
+| *Create object* | `class(x) <- "y"` | `new()` | `x <- class_y()` | `$new()` |
+| *Additional components* | attributes | slots | properties | fields & methods |
+| | | | | |
+:::
