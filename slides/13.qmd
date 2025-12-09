@@ -163,7 +163,7 @@ sloop::s3_methods_generic(
 ```
 
 ::: notes
-This slide throws a warning because the generated table actually includes 3 colons. It isn't a "problemwith a fenced div" like the warning thinks. 
+This slide throws a warning because the generated table actually includes 3 colons. It isn't a "problem with a fenced div" like the warning thinks. 
 :::
 
 ## `summary()` is an interface to different methods
