@@ -1,12 +1,15 @@
 ---
 engine: knitr
-title: Big picture
+title: Metaprogramming intro and big picture
 ---
 
 ## Learning objectives:
 
--   Become familiar with some metaprogramming principles and how they relate to each other
--   Review vocabulary associated with metaprogramming
+- Capture code as data using expressions
+- Inspect code as abstract syntax trees
+- Generate and execute code programmatically
+- Use data frames as execution environments
+- Recognize why quosures are useful
 
 ```{r}
 #| message: false
@@ -15,15 +18,16 @@ library(rlang)
 library(lobstr)
 ```
 
-## Some general ideas about metaprogramming
+# Some general ideas about metaprogramming
 
--   **Metaprogramming:** code is data that can be inspected and modified programmatically
--   Metaprogramming allow us to write `library(purrr)` instead of `library("purrr")`
--   Related concept ➜ *non-standard evaluation (NSE)*
+## Metaprogramming uses code as data
 
-## Some general ideas about metaprogramming
+- **Metaprogramming:** code is data that can be inspected and modified programmatically
+- Metaprogramming allow us to write `library(purrr)` instead of `library("purrr")`
 
-**Non-standard evaluation** ➜ *not telling R where an object comes from?*
+## NSE allows us to write functions that behave differently than base R
+
+**Non-standard evaluation (NSE)** ➜ *not telling R where an object comes from?*
 
 ```{r}
 #| eval: false
@@ -40,31 +44,33 @@ mtcars |> dplyr::filter(cyl == 6) # Non-standard (tidyverse)
 
 `mtcars$cyl` v/s `cyl`
 
-## Some general ideas about metaprogramming
+## NSE is a confusing term
 
 **Non-standard evaluation** is commonly used to describe the behaviour of R functions, but...
 
--   NSE is a property of the arguments, not the function
--   It’s confusing to define something by what it’s not
+- NSE is a property of the arguments, not the function
+- It’s confusing to define something by what it’s not
 
-## Some general ideas about metaprogramming
+## "Tidy evaluation" is the rlang version of NSE
 
 > "Specifically, this book focuses on tidy evaluation. Tidy evaluation is implemented in the `rlang` package, and I’ll use `rlang` extensively in these chapters. This will allow you to focus on the big ideas, without being distracted by the quirks of implementation that arise from R’s history"
 
-## Main principles
+## Metaprogramming in R involves 7 big ideas
 
--   Code is data
--   Code is a tree
--   Code can generate code
--   Evaluation runs code
--   Can customize evaluation with functions
--   Can customize evaluation with data
--   Quosures are your new friend
+- Code is data
+- Code is a tree
+- Code can generate code
+- Evaluation runs code
+- Can customize evaluation with functions
+- Can customize evaluation with data
+- Quosures are your new friend
 
-## Code is data
+# Code is data
 
--   **expression:** captured code (*call*, *symbol*, *constant*, or *pairlist*)
--   Separating our description of the action from the action itself (*recipe and dish analogy?*)
+## Code is captured as data in expressions
+
+- **expression:** captured code (*call*, *symbol*, *constant*, or *pairlist*)
+- Separating our description of the action from the action itself (*recipe and dish analogy?*)
 
 Use `rlang::expr()` to capture code directly
 
@@ -81,19 +87,17 @@ capture_it <- function(x) { # 'automatically quotes first argument'
 capture_it(a + b + c)
 ```
 
-## Code is data
-
--   *Captured* code can be modified (like a list)
--   First element is the function, next elements are the arguments
+## Captured code is like a list
 
 ```{r}
 f <- expr(f(x = 1, y = 2))
 names(f)
+f[[1]]  # Function name
+f[[2]]  # First argument; equivalent to f$x
+f[[3]]  # Second argument; equivalent to f$y
 ```
 
-## Code is data
-
-Let's modify some captured code!
+## Expressions can be modified like lists
 
 ```{r}
 f <- expr(f(x = 1, y = 2))
@@ -112,19 +116,19 @@ ff
 fff
 ```
 
-## Code is a tree
+# Code is a tree
 
--   **Abstract syntax tree** (AST) ➜ almost every language represents code as a tree
--   Use `lobstr::ast()` to inspect these code trees
+## Code is represented as a tree
+
+- **Abstract syntax tree** (AST) ➜ almost every language represents code as a tree
+- Use `lobstr::ast()` to inspect these code trees
 
 ```{r}
 ast(f1(f2(a, b), f3(1))) # Regular (prefix) functions
 ast(1 + 2 * 3) # Infix functions
 ```
 
-## Code is a tree
-
-Another example...
+## ASTs can have different shapes
 
 ```{r}
 vct <- 1:100 # Dummy vector
@@ -134,31 +138,30 @@ ast(mean(x = vct, trim = 0.1, na.rm = TRUE)) # Multiple arguments
 ast(round(x = mean(x = vct, trim = 0.1, na.rm = TRUE), digits = 0)) # Nested function
 ```
 
-## Code can generate code
+# Code can generate code
 
-### Two ways of generating code...
+## rlang introduces ~~2~~ 3 main tools for generating code
 
--   `rlang::call2()` and
--   `!!` bang-bang - **unquote operator**
+- `rlang::call2()`
+- `!!` ("bang-bang") - **unquote operator**
+- `{{` `}}` ("curly-curly") - **embrace operator** (introduced after this book was published, equivalent to `!!enquo()`)
 
-## Code can generate code
+## `call2()` constructs function calls
 
--   `rlang::call2()` constructs a function call from its components ➜ the function to call, and the arguments to call it with.
+- `rlang::call2()` constructs a function call from its components ➜ the function to call, and the arguments to call it with.
 
 ```{r}
 call2("f", 1, 2, 3)
 ```
 
--   Going backwards from the tree, can use functions to create calls
+- Going backwards from the tree, can use functions to create calls
 
 ```{r}
 call2("f1", call2("f2", "a", "b"), call2("f3", 1))
 call2("+", 1, call2("*", 2, 3))
 ```
 
-## Code can generate code
-
-Another example...
+## `call2()` can build complex calls
 
 ```{r}
 vct <- 1:100 # Dummy vector
@@ -168,12 +171,14 @@ call2("mean", x = vct, trim = 0.1, na.rm = TRUE) # Single function
 call2("round", 
   x = call2("mean", x = vct, trim = 0.1, na.rm = TRUE), 
   digits = 0
-  ) # Nested function
+) # Nested function
 ```
 
-## Code can generate code
+## `!!` injects expressions
 
--   `!!` bang-bang - **unquote operator**: inserts previously defined expressions into the current one
+`!!` ("bang-bang") - **unquote operator**
+
+- inserts previously defined expressions into the current one
 
 ```{r}
 xx <- expr(x + x)
@@ -183,9 +188,7 @@ expr(xx / yy)     # Nope!
 expr(!!xx / !!yy) # Yup!
 ```
 
-## Code can generate code
-
-Let's capture the user's expression into the coefficient of variation formula...
+## We can capture user input and generate code
 
 ```{r}
 cv <- function(var) {
@@ -197,9 +200,7 @@ cv(x)
 cv(x + y)
 ```
 
-## Code can generate code
-
-What if we don't use the bang-bang operator (`!!`)?
+## Without `!!` user input is not inserted
 
 ```{r}
 cv2 <- function(var) {
@@ -210,20 +211,22 @@ cv2 <- function(var) {
 cv2(x)
 ```
 
-It doesn't work...
+It doesn't work.
 
-## Code can generate code
+## Don't rely on pasting together code strings
 
 Avoid `paste()` for building code ➜ problems with non-syntactic names and precedence among expressions
 
 > "You might think this is an esoteric concern, but not worrying about it when generating SQL code in web applications led to SQL injection attacks that have collectively cost billions of dollars."
 
-## Evaluation runs code
+# Evaluation runs code
 
--   **evaluate**: run/execute an expression
--   need both expression and environment
--   `eval()` uses current environment if not set
--   manual evaluation means you can tweak the environment!
+## Evaluation runs code in an environment
+
+- **evaluate**: run/execute an expression
+- need both expression and environment
+- `eval()` uses current environment if not set
+- manual evaluation means you can tweak the environment!
 
 ```{r}
 xy <- expr(x + y)
@@ -232,10 +235,10 @@ eval(xy, env(x = 1, y = 10))
 eval(xy, env(x = 2, y = 100))
 ```
 
-## Can customize evaluations with functions
+## Can customize evaluation with functions
 
--   Can also bind names to functions in supplied environment
--   Allows overriding function behaviour
+- Can also bind names to functions in supplied environment
+- Allows overriding function behaviour
 
 ```{r}
 string_math <- function(x) {
@@ -254,16 +257,16 @@ string_math(("dslc" + "is" + "awesome---") * cohort)
 
 ## Can customize evaluation with data
 
--   Look for variables inside data frame
--   [Data mask](https://rlang.r-lib.org/reference/topic-data-mask.html) - typically a data frame
--   use `rlang::eval_tidy()` rather than `eval()`
+- Look for variables inside data frame
+- [Data mask](https://rlang.r-lib.org/reference/topic-data-mask.html) - typically a data frame
+- use `rlang::eval_tidy()` rather than `eval()`
 
 ```{r}
 df <- data.frame(x = 1:5, y = sample(5))
 eval_tidy(expr(x + y), df)
 ```
 
-## Can customize evaluation with data
+## Can customize evaluation with data in functions
 
 We also can catch user input with `enexpr()`...
 
@@ -277,9 +280,12 @@ with2(df, x + y)
 
 **But there's a bug!**
 
-## Can customize evaluation with data
+## Data masks can be tricky
 
--   **Bug** ➜ evaluates in environment inside `with2()`, but the expression likely refers to objects in the Global environment
+**Bug** ➜ 
+
+- evaluates in environment inside `with2()`, but 
+- the expression likely refers to objects in the Global environment
 
 ```{r}
 with2 <- function(df, expr) {
@@ -292,13 +298,12 @@ a <- 10 # 'a' created in the global environment
 with2(df, x + a) # R is taking the 'a' from the function environment! 
 ```
 
--   Solved with Quosures...
+# Quosures bundle expression with an environment
 
-## Quosures are your new friend
+## `enquo()` creates a quosure
 
--   **Quosures** bundles expression with an environment
--   They bundle the environment where the expression is created
--   Use `enquo()` instead of `enexpr()` (with `eval_tidy()`)
+- Bundle the environment where the expression is created
+- Use `enquo()` instead of `enexpr()` (with `eval_tidy()`)
 
 ```{r}
 with2 <- function(df, expr) {
@@ -311,17 +316,13 @@ a <- 10
 with2(df, x + a)
 ```
 
-## Quosures are your new friend
+## Always use `enquo()` with data masks
 
 > "Whenever you use a data mask, you must always use `enquo()` instead of `enexpr()`".
 
-## Quosures are your new friend
+- Quosures bundle the environment where the expression is created (i.e. the parent of where `enquo()` is called)
 
-### Which environment is bundled?
-
--   The environment where the expression is created (i.e. the parent of where `enquo()` is called)
-
-Here, the global environment
+## `enquo()` captures the calling environment
 
 ```{r}
 with2 <- function(df, expr) {
@@ -341,7 +342,7 @@ df <- data.frame(x = 1:3)
 with2(df, x + a)
 ```
 
-Here, the `fun1()` environment
+## Without `enquo()`, the wrong environment is captured
 
 ```{r}
 fun1 <- function(df) {
@@ -358,15 +359,19 @@ df <- data.frame(x = 1:3)
 fun1(df)
 ```
 
-## Summary
+# Summary
 
--   Code can be treated as data: we can capture code by creating *expressions* with `rlang::expr()` and `rlang::enexpr()`.
--   Code can be represented as a tree and inspected with `lobstr::ast()`.
--   Code can generate code by creating calls from function components (with `rlang::call2()`) or by injecting previously defined expressions into an expression (with `!!`).
--   Code (expressions) can be evaluated with `eval()` or `eval_tidy()`.
+## Big ideas of metaprogramming in R
 
-## Summary
+- Capture code as expressions with `rlang::expr()` and `rlang::enexpr()`.
+- Represent code as a tree with `lobstr::ast()`.
+- Create calls from function components with `rlang::call2()`.
+- Inject previously defined expressions into an expression with `!!`.
+- Evaluate expressions with `eval()` or `eval_tidy()`.
 
--   We can customize evaluation by creating environments. This gives us flexibility, for example, to override common functions.
--   We can also customize evaluation using data frames; in this case, objects are first looked up in the data frame.
--   When working with expressions and data frames, we should use *quosures* to capture both the expression and the environment in which it was created (with `rlang::enquo()` when catching user's input).
+## Use expressions to customize evaluation
+
+- Override common functions with evaluation environments.
+- Data masks are data frames used as evaluation environments.
+- Use **quosures** to capture both the expression and the environment in which it was created.
+- `rlang::enquo()` captures user input in a quosure.
