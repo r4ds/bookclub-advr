@@ -4188,58 +4188,205 @@
   {
     "objectID": "slides/17.html#learning-objectives",
     "href": "slides/17.html#learning-objectives",
-    "title": "Big picture",
+    "title": "Metaprogramming intro and big picture",
     "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nBecome familiar with some metaprogramming principals and how they relate to each other\nReview vocabulary associated with metaprogramming\n\n\nlibrary(rlang)\nlibrary(lobstr)"
+    "text": "Learning objectives:\n\nCapture code as data using expressions\nInspect code as abstract syntax trees\nGenerate and execute code programmatically\nUse data frames as execution environments\nRecognize why quosures are useful\n\n\nlibrary(rlang)\nlibrary(lobstr)"
   },
   {
-    "objectID": "slides/17.html#code-is-data",
-    "href": "slides/17.html#code-is-data",
-    "title": "Big picture",
-    "section": "Code is data",
-    "text": "Code is data\n\nexpression - Captured code (call, symbol, constant, or pairlist)\nUse rlang::expr()1 to capture code directly\n\n\nexpr(mean(x, na.rm = TRUE))\n\n#&gt; mean(x, na.rm = TRUE)\n\n\n\nUse rlang::enexpr() to capture code indirectly\n\n\ncapture_it &lt;- function(x) { # 'automatically quotes first argument'\n  enexpr(x)\n}\ncapture_it(a + b + c)\n\n#&gt; a + b + c\n\n\n\n‘Captured’ code can be modified (like a list)!\n\nFirst element is the function, next elements are the arguments\n\n\n\nf &lt;- expr(f(x = 1, y = 2))\nnames(f)\n\n#&gt; [1] \"\"  \"x\" \"y\"\n\nff &lt;- fff &lt;- f   # Create two copies\n\nff$z &lt;- 3        # Add an argument to one\nfff[[2]] &lt;- NULL # Remove an argument from another\n\nf\n\n#&gt; f(x = 1, y = 2)\n\nff\n\n#&gt; f(x = 1, y = 2, z = 3)\n\nfff\n\n#&gt; f(y = 2)\n\n\n\nMore on this next week!\n\nEquivalent to base::bquote()"
+    "objectID": "slides/17.html#metaprogramming-uses-code-as-data",
+    "href": "slides/17.html#metaprogramming-uses-code-as-data",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Metaprogramming uses code as data",
+    "text": "Metaprogramming uses code as data\n\nMetaprogramming: code is data that can be inspected and modified programmatically\nMetaprogramming allow us to write library(purrr) instead of library(\"purrr\")"
   },
   {
-    "objectID": "slides/17.html#code-is-a-tree",
-    "href": "slides/17.html#code-is-a-tree",
-    "title": "Big picture",
-    "section": "Code is a tree",
-    "text": "Code is a tree\n\nAbstract syntax tree (AST) - Almost every language represents code as a tree\nUse lobstr::ast() to inspect these code trees\n\n\nast(f1(f2(a, b), f3(1)))\n\n#&gt; █─f1 \n#&gt; ├─█─f2 \n#&gt; │ ├─a \n#&gt; │ └─b \n#&gt; └─█─f3 \n#&gt;   └─1\n\nast(1 + 2 * 3)\n\n#&gt; █─`+` \n#&gt; ├─1 \n#&gt; └─█─`*` \n#&gt;   ├─2 \n#&gt;   └─3"
+    "objectID": "slides/17.html#nse-allows-us-to-write-functions-that-behave-differently-than-base-r",
+    "href": "slides/17.html#nse-allows-us-to-write-functions-that-behave-differently-than-base-r",
+    "title": "Metaprogramming intro and big picture",
+    "section": "NSE allows us to write functions that behave differently than base R",
+    "text": "NSE allows us to write functions that behave differently than base R\nNon-standard evaluation (NSE) ➜ not telling R where an object comes from?\n\n# Calling a vector\nmtcars$cyl                 # Standard\nwith(mtcars, cyl)          # Non-standard (base)\nmtcars |&gt; dplyr::pull(cyl) # Non-standard (tidyverse)\n\n# Filtering df\nmtcars[mtcars$cyl == 6,]          # Standard\nsubset(mtcars, cyl == 6)          # Non-standard (base)\nmtcars |&gt; dplyr::filter(cyl == 6) # Non-standard (tidyverse)\n\nmtcars$cyl v/s cyl"
   },
   {
-    "objectID": "slides/17.html#code-can-generate-code",
-    "href": "slides/17.html#code-can-generate-code",
-    "title": "Big picture",
-    "section": "Code can generate code",
-    "text": "Code can generate code\n\nrlang::call2() creates function call\n\n\ncall2(\"f\", 1, 2, 3)\n\n#&gt; f(1, 2, 3)\n\n\n\nGoing backwards from the tree, can use functions to create calls\n\n\ncall2(\"f1\", call2(\"f2\", \"a\", \"b\"), call2(\"f3\", 1))\n\n#&gt; f1(f2(\"a\", \"b\"), f3(1))\n\ncall2(\"+\", 1, call2(\"*\", 2, 3))\n\n#&gt; 1 + 2 * 3\n\n\n\n!! bang-bang - unquote operator\n\ninserts previously defined expressions into the current one\n\n\n\nxx &lt;- expr(x + x)\nyy &lt;- expr(y + y)\nexpr(xx / yy)     # Nope!\n\n#&gt; xx/yy\n\nexpr(!!xx / !!yy) # Yup!\n\n#&gt; (x + x)/(y + y)\n\n\n\ncv &lt;- function(var) {\n  var &lt;- enexpr(var)            # Get user's expression\n  expr(sd(!!var) / mean(!!var)) # Insert user's expression\n}\n\ncv(x)\n\n#&gt; sd(x)/mean(x)\n\ncv(x + y)\n\n#&gt; sd(x + y)/mean(x + y)\n\n\n\nAvoid paste() for building code\n\nProblems with non-syntactic names and precedence among expressions\n\n\n\n“You might think this is an esoteric concern, but not worrying about it when generating SQL code in web applications led to SQL injection attacks that have collectively cost billions of dollars.”"
+    "objectID": "slides/17.html#nse-is-a-confusing-term",
+    "href": "slides/17.html#nse-is-a-confusing-term",
+    "title": "Metaprogramming intro and big picture",
+    "section": "NSE is a confusing term",
+    "text": "NSE is a confusing term\nNon-standard evaluation is commonly used to describe the behaviour of R functions, but…\n\nNSE is a property of the arguments, not the function\nIt’s confusing to define something by what it’s not"
   },
   {
-    "objectID": "slides/17.html#evaluation-runs-code",
-    "href": "slides/17.html#evaluation-runs-code",
-    "title": "Big picture",
-    "section": "Evaluation runs code",
-    "text": "Evaluation runs code\n\nevaluate - run/execute an expression\nneed both expression and environment\neval() uses current environment if not set\nmanual evaluation means you can tweak the environment!\n\n\nxy &lt;- expr(x + y)\n\neval(xy, env(x = 1, y = 10))\n\n#&gt; [1] 11\n\neval(xy, env(x = 2, y = 100))\n\n#&gt; [1] 102"
+    "objectID": "slides/17.html#tidy-evaluation-is-the-rlang-version-of-nse",
+    "href": "slides/17.html#tidy-evaluation-is-the-rlang-version-of-nse",
+    "title": "Metaprogramming intro and big picture",
+    "section": "“Tidy evaluation” is the rlang version of NSE",
+    "text": "“Tidy evaluation” is the rlang version of NSE\n\n“Specifically, this book focuses on tidy evaluation. Tidy evaluation is implemented in the rlang package, and I’ll use rlang extensively in these chapters. This will allow you to focus on the big ideas, without being distracted by the quirks of implementation that arise from R’s history”"
   },
   {
-    "objectID": "slides/17.html#customizing-evaluations-with-functions",
-    "href": "slides/17.html#customizing-evaluations-with-functions",
-    "title": "Big picture",
-    "section": "Customizing evaluations with functions",
-    "text": "Customizing evaluations with functions\n\nCan also bind names to functions in supplied environment\nAllows overriding function behaviour\nThis is how dplyr generates SQL for working with databases\n\nFor example…\n\nstring_math &lt;- function(x) {\n  e &lt;- env(\n    caller_env(),\n    `+` = function(x, y) paste(x, y),\n    `*` = function(x, y) strrep(x, y)\n  )\n\n  eval(enexpr(x), e)\n}\n\ncohort &lt;- 9\nstring_math(\"Hello\" + \"cohort\" + cohort)\n\n#&gt; [1] \"Hello cohort 9\"\n\nstring_math((\"dslc\" + \"is\" + \"awesome---\") * cohort)\n\n#&gt; [1] \"dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---\""
+    "objectID": "slides/17.html#metaprogramming-in-r-involves-7-big-ideas",
+    "href": "slides/17.html#metaprogramming-in-r-involves-7-big-ideas",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Metaprogramming in R involves 7 big ideas",
+    "text": "Metaprogramming in R involves 7 big ideas\n\nCode is data\nCode is a tree\nCode can generate code\nEvaluation runs code\nCan customize evaluation with functions\nCan customize evaluation with data\nQuosures are your new friend"
   },
   {
-    "objectID": "slides/17.html#customizing-evaluation-with-data",
-    "href": "slides/17.html#customizing-evaluation-with-data",
-    "title": "Big picture",
-    "section": "Customizing evaluation with data",
-    "text": "Customizing evaluation with data\n\nLook for variables inside data frame\nData mask - typically a data frame\nuse rlang::eval_tidy() rather than eval()\n\n\ndf &lt;- data.frame(x = 1:5, y = sample(5))\neval_tidy(expr(x + y), df)\n\n#&gt; [1] 2 4 6 9 9\n\n\nCatch user input with enexpr()…\n\nwith2 &lt;- function(df, expr) {\n  eval_tidy(enexpr(expr), df)\n}\n\nwith2(df, x + y)\n\n#&gt; [1] 2 4 6 9 9\n\n\nBut there’s a bug!\n\nEvaluates in environment inside with2(), but the expression likely refers to objects in the Global environment\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enexpr(expr), df)\n}\n\ndf &lt;- data.frame(x = 1:3)\na &lt;- 10\nwith2(df, x + a)\n\n#&gt; [1] 1001 1002 1003\n\n\n\nSolved with Quosures…"
+    "objectID": "slides/17.html#code-is-captured-as-data-in-expressions",
+    "href": "slides/17.html#code-is-captured-as-data-in-expressions",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Code is captured as data in expressions",
+    "text": "Code is captured as data in expressions\n\nexpression: captured code (call, symbol, constant, or pairlist)\nSeparating our description of the action from the action itself (recipe and dish analogy?)\n\nUse rlang::expr() to capture code directly\n\nexpr(mean(x, na.rm = TRUE))\n\n#&gt; mean(x, na.rm = TRUE)\n\n\nUse rlang::enexpr() to capture code indirectly\n\ncapture_it &lt;- function(x) { # 'automatically quotes first argument'\n  enexpr(x)\n}\ncapture_it(a + b + c)\n\n#&gt; a + b + c"
   },
   {
-    "objectID": "slides/17.html#quosures",
-    "href": "slides/17.html#quosures",
-    "title": "Big picture",
-    "section": "Quosures",
-    "text": "Quosures\n\nQuosures bundles expression with an environment\nUse enquo() instead of enexpr() (with eval_tidy())\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enquo(expr), df)\n}\n\ndf &lt;- data.frame(x = 1:3)\na &lt;- 10\nwith2(df, x + a)\n\n#&gt; [1] 11 12 13\n\n\n\n“Whenever you use a data mask, you must always use enquo() instead of enexpr().\n\nThis comes back in Chapter 20.\nWhich environment is bundled?\n\nThe environment where the expression is created (i.e. the parent of where enquo() is called)\n\nHere, the global environment\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eq &lt;- enquo(expr)\n  message(\"with2() Parent/Calling environment: \")\n  print(rlang::caller_env())\n  message(\"with2() environment: \")\n  print(rlang::current_env())\n  message(\"Quosure details: \")\n  print(eq)  # Print the details of the quosure\n  eval_tidy(eq, df)\n}\n\na &lt;- 10000\ndf &lt;- data.frame(x = 1:3)\nwith2(df, x + a)\n\n#&gt; with2() Parent/Calling environment:\n\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n#&gt; with2() environment:\n\n\n#&gt; &lt;environment: 0x0000018dede5ddd0&gt;\n\n\n#&gt; Quosure details:\n\n\n#&gt; &lt;quosure&gt;\n#&gt; expr: ^x + a\n#&gt; env:  global\n\n\n#&gt; [1] 10001 10002 10003\n\n\nHere, the fun1() environment\n\nfun1 &lt;- function(df) {\n  a &lt;- 10\n  message(\"fun1() Parent/Calling environment: \")\n  print(rlang::caller_env())\n  message(\"fun1() environment: \")\n  print(rlang::current_env())\n  with2(df, x + a)\n}\n\na &lt;- 10000\ndf &lt;- data.frame(x = 1:3)\nfun1(df)\n\n#&gt; fun1() Parent/Calling environment:\n\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n#&gt; fun1() environment:\n\n\n#&gt; &lt;environment: 0x0000018df3e748f8&gt;\n\n\n#&gt; with2() Parent/Calling environment:\n\n\n#&gt; &lt;environment: 0x0000018df3e748f8&gt;\n\n\n#&gt; with2() environment:\n\n\n#&gt; &lt;environment: 0x0000018df3ebc698&gt;\n\n\n#&gt; Quosure details:\n\n\n#&gt; &lt;quosure&gt;\n#&gt; expr: ^x + a\n#&gt; env:  0x0000018df3e748f8\n\n\n#&gt; [1] 11 12 13"
+    "objectID": "slides/17.html#captured-code-is-like-a-list",
+    "href": "slides/17.html#captured-code-is-like-a-list",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Captured code is like a list",
+    "text": "Captured code is like a list\n\nf &lt;- expr(f(x = 1, y = 2))\nnames(f)\n\n#&gt; [1] \"\"  \"x\" \"y\"\n\nf[[1]]  # Function name\n\n#&gt; f\n\nf[[2]]  # First argument; equivalent to f$x\n\n#&gt; [1] 1\n\nf[[3]]  # Second argument; equivalent to f$y\n\n#&gt; [1] 2"
+  },
+  {
+    "objectID": "slides/17.html#expressions-can-be-modified-like-lists",
+    "href": "slides/17.html#expressions-can-be-modified-like-lists",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Expressions can be modified like lists",
+    "text": "Expressions can be modified like lists\n\nf &lt;- expr(f(x = 1, y = 2))\n\nff &lt;- fff &lt;- f   # Create two copies\n\nff$z &lt;- 3        # Add an argument to one\nfff[[2]] &lt;- NULL # Remove an argument from another\n\nAnd let’s take a look…\n\nf\n\n#&gt; f(x = 1, y = 2)\n\nff\n\n#&gt; f(x = 1, y = 2, z = 3)\n\nfff\n\n#&gt; f(y = 2)"
+  },
+  {
+    "objectID": "slides/17.html#code-is-represented-as-a-tree",
+    "href": "slides/17.html#code-is-represented-as-a-tree",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Code is represented as a tree",
+    "text": "Code is represented as a tree\n\nAbstract syntax tree (AST) ➜ almost every language represents code as a tree\nUse lobstr::ast() to inspect these code trees\n\n\nast(f1(f2(a, b), f3(1))) # Regular (prefix) functions\n\n#&gt; █─f1 \n#&gt; ├─█─f2 \n#&gt; │ ├─a \n#&gt; │ └─b \n#&gt; └─█─f3 \n#&gt;   └─1\n\nast(1 + 2 * 3) # Infix functions\n\n#&gt; █─`+` \n#&gt; ├─1 \n#&gt; └─█─`*` \n#&gt;   ├─2 \n#&gt;   └─3"
+  },
+  {
+    "objectID": "slides/17.html#asts-can-have-different-shapes",
+    "href": "slides/17.html#asts-can-have-different-shapes",
+    "title": "Metaprogramming intro and big picture",
+    "section": "ASTs can have different shapes",
+    "text": "ASTs can have different shapes\n\nvct &lt;- 1:100 # Dummy vector\n\nast(mean(x = vct)) # One argument\n\n#&gt; █─mean \n#&gt; └─x = vct\n\nast(mean(x = vct, trim = 0.1, na.rm = TRUE)) # Multiple arguments\n\n#&gt; █─mean \n#&gt; ├─x = vct \n#&gt; ├─trim = 0.1 \n#&gt; └─na.rm = TRUE\n\nast(round(x = mean(x = vct, trim = 0.1, na.rm = TRUE), digits = 0)) # Nested function\n\n#&gt; █─round \n#&gt; ├─x = █─mean \n#&gt; │     ├─x = vct \n#&gt; │     ├─trim = 0.1 \n#&gt; │     └─na.rm = TRUE \n#&gt; └─digits = 0"
+  },
+  {
+    "objectID": "slides/17.html#rlang-introduces-2-3-main-tools-for-generating-code",
+    "href": "slides/17.html#rlang-introduces-2-3-main-tools-for-generating-code",
+    "title": "Metaprogramming intro and big picture",
+    "section": "rlang introduces 2 3 main tools for generating code",
+    "text": "rlang introduces 2 3 main tools for generating code\n\nrlang::call2()\n!! (“bang-bang”) - unquote operator\n{{ }} (“curly-curly”) - embrace operator (introduced after this book was published, equivalent to !!enquo())"
+  },
+  {
+    "objectID": "slides/17.html#call2-constructs-function-calls",
+    "href": "slides/17.html#call2-constructs-function-calls",
+    "title": "Metaprogramming intro and big picture",
+    "section": "call2() constructs function calls",
+    "text": "call2() constructs function calls\n\nrlang::call2() constructs a function call from its components ➜ the function to call, and the arguments to call it with.\n\n\ncall2(\"f\", 1, 2, 3)\n\n#&gt; f(1, 2, 3)\n\n\n\nGoing backwards from the tree, can use functions to create calls\n\n\ncall2(\"f1\", call2(\"f2\", \"a\", \"b\"), call2(\"f3\", 1))\n\n#&gt; f1(f2(\"a\", \"b\"), f3(1))\n\ncall2(\"+\", 1, call2(\"*\", 2, 3))\n\n#&gt; 1 + 2 * 3"
+  },
+  {
+    "objectID": "slides/17.html#call2-can-build-complex-calls",
+    "href": "slides/17.html#call2-can-build-complex-calls",
+    "title": "Metaprogramming intro and big picture",
+    "section": "call2() can build complex calls",
+    "text": "call2() can build complex calls\n\nvct &lt;- 1:100 # Dummy vector\n\ncall2(\"mean\", x = vct, trim = 0.1, na.rm = TRUE) # Single function\n\n#&gt; mean(x = 1:100, trim = 0.1, na.rm = TRUE)\n\ncall2(\"round\", \n  x = call2(\"mean\", x = vct, trim = 0.1, na.rm = TRUE), \n  digits = 0\n) # Nested function\n\n#&gt; round(x = mean(x = 1:100, trim = 0.1, na.rm = TRUE), digits = 0)"
+  },
+  {
+    "objectID": "slides/17.html#injects-expressions",
+    "href": "slides/17.html#injects-expressions",
+    "title": "Metaprogramming intro and big picture",
+    "section": "!! injects expressions",
+    "text": "!! injects expressions\n!! (“bang-bang”) - unquote operator\n\ninserts previously defined expressions into the current one\n\n\nxx &lt;- expr(x + x)\nyy &lt;- expr(y + y)\nexpr(xx / yy)     # Nope!\n\n#&gt; xx/yy\n\nexpr(!!xx / !!yy) # Yup!\n\n#&gt; (x + x)/(y + y)"
+  },
+  {
+    "objectID": "slides/17.html#we-can-capture-user-input-and-generate-code",
+    "href": "slides/17.html#we-can-capture-user-input-and-generate-code",
+    "title": "Metaprogramming intro and big picture",
+    "section": "We can capture user input and generate code",
+    "text": "We can capture user input and generate code\n\ncv &lt;- function(var) {\n  var &lt;- enexpr(var)            # Get user's expression\n  expr(sd(!!var) / mean(!!var)) # Insert user's expression\n}\n\ncv(x)\n\n#&gt; sd(x)/mean(x)\n\ncv(x + y)\n\n#&gt; sd(x + y)/mean(x + y)"
+  },
+  {
+    "objectID": "slides/17.html#without-user-input-is-not-inserted",
+    "href": "slides/17.html#without-user-input-is-not-inserted",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Without !! user input is not inserted",
+    "text": "Without !! user input is not inserted\n\ncv2 &lt;- function(var) {\n  var &lt;- enexpr(var)        # Get user's expression\n  expr(sd(var) / mean(var)) # Insert user's expression\n}\n\ncv2(x)\n\n#&gt; sd(var)/mean(var)\n\n\nIt doesn’t work."
+  },
+  {
+    "objectID": "slides/17.html#dont-rely-on-pasting-together-code-strings",
+    "href": "slides/17.html#dont-rely-on-pasting-together-code-strings",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Don’t rely on pasting together code strings",
+    "text": "Don’t rely on pasting together code strings\nAvoid paste() for building code ➜ problems with non-syntactic names and precedence among expressions\n\n“You might think this is an esoteric concern, but not worrying about it when generating SQL code in web applications led to SQL injection attacks that have collectively cost billions of dollars.”"
+  },
+  {
+    "objectID": "slides/17.html#evaluation-runs-code-in-an-environment",
+    "href": "slides/17.html#evaluation-runs-code-in-an-environment",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Evaluation runs code in an environment",
+    "text": "Evaluation runs code in an environment\n\nevaluate: run/execute an expression\nneed both expression and environment\neval() uses current environment if not set\nmanual evaluation means you can tweak the environment!\n\n\nxy &lt;- expr(x + y)\n\neval(xy, env(x = 1, y = 10))\n\n#&gt; [1] 11\n\neval(xy, env(x = 2, y = 100))\n\n#&gt; [1] 102"
+  },
+  {
+    "objectID": "slides/17.html#can-customize-evaluation-with-functions",
+    "href": "slides/17.html#can-customize-evaluation-with-functions",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Can customize evaluation with functions",
+    "text": "Can customize evaluation with functions\n\nCan also bind names to functions in supplied environment\nAllows overriding function behaviour\n\n\nstring_math &lt;- function(x) {\n  e &lt;- env(\n    caller_env(),\n    `+` = function(x, y) paste(x, y),\n    `*` = function(x, y) strrep(x, y)\n  )\n  eval(enexpr(x), e)\n}\n\ncohort &lt;- 10\nstring_math(\"Hello\" + \"cohort\" + cohort)\n\n#&gt; [1] \"Hello cohort 10\"\n\nstring_math((\"dslc\" + \"is\" + \"awesome---\") * cohort)\n\n#&gt; [1] \"dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---\""
+  },
+  {
+    "objectID": "slides/17.html#can-customize-evaluation-with-data",
+    "href": "slides/17.html#can-customize-evaluation-with-data",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Can customize evaluation with data",
+    "text": "Can customize evaluation with data\n\nLook for variables inside data frame\nData mask - typically a data frame\nuse rlang::eval_tidy() rather than eval()\n\n\ndf &lt;- data.frame(x = 1:5, y = sample(5))\neval_tidy(expr(x + y), df)\n\n#&gt; [1] 2 7 6 6 9"
+  },
+  {
+    "objectID": "slides/17.html#can-customize-evaluation-with-data-in-functions",
+    "href": "slides/17.html#can-customize-evaluation-with-data-in-functions",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Can customize evaluation with data in functions",
+    "text": "Can customize evaluation with data in functions\nWe also can catch user input with enexpr()…\n\nwith2 &lt;- function(df, expr) {\n  eval_tidy(enexpr(expr), df)\n}\n\nwith2(df, x + y)\n\n#&gt; [1] 2 7 6 6 9\n\n\nBut there’s a bug!"
+  },
+  {
+    "objectID": "slides/17.html#data-masks-can-be-tricky",
+    "href": "slides/17.html#data-masks-can-be-tricky",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Data masks can be tricky",
+    "text": "Data masks can be tricky\nBug ➜\n\nevaluates in environment inside with2(), but\nthe expression likely refers to objects in the Global environment\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000 # 'a' is created inside the with2() environment\n  eval_tidy(enexpr(expr), df)\n}\n\ndf &lt;- data.frame(x = 1:3)\na &lt;- 10 # 'a' created in the global environment\nwith2(df, x + a) # R is taking the 'a' from the function environment! \n\n#&gt; [1] 1001 1002 1003"
+  },
+  {
+    "objectID": "slides/17.html#enquo-creates-a-quosure",
+    "href": "slides/17.html#enquo-creates-a-quosure",
+    "title": "Metaprogramming intro and big picture",
+    "section": "enquo() creates a quosure",
+    "text": "enquo() creates a quosure\n\nBundle the environment where the expression is created\nUse enquo() instead of enexpr() (with eval_tidy())\n\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eval_tidy(enquo(expr), df)\n}\n\ndf &lt;- data.frame(x = 1:3)\na &lt;- 10\nwith2(df, x + a)\n\n#&gt; [1] 11 12 13"
+  },
+  {
+    "objectID": "slides/17.html#always-use-enquo-with-data-masks",
+    "href": "slides/17.html#always-use-enquo-with-data-masks",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Always use enquo() with data masks",
+    "text": "Always use enquo() with data masks\n\n“Whenever you use a data mask, you must always use enquo() instead of enexpr()”.\n\n\nQuosures bundle the environment where the expression is created (i.e. the parent of where enquo() is called)"
+  },
+  {
+    "objectID": "slides/17.html#enquo-captures-the-calling-environment",
+    "href": "slides/17.html#enquo-captures-the-calling-environment",
+    "title": "Metaprogramming intro and big picture",
+    "section": "enquo() captures the calling environment",
+    "text": "enquo() captures the calling environment\n\nwith2 &lt;- function(df, expr) {\n  a &lt;- 1000\n  eq &lt;- enquo(expr)\n  message(\"with2() Parent/Calling environment: \")\n  print(rlang::caller_env())\n  message(\"with2() environment: \")\n  print(rlang::current_env())\n  message(\"Quosure details: \")\n  print(eq)  # Print the details of the quosure\n  eval_tidy(eq, df)\n}\n\na &lt;- 10000\ndf &lt;- data.frame(x = 1:3)\nwith2(df, x + a)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n#&gt; &lt;environment: 0x00000208278b93f0&gt;\n\n\n#&gt; &lt;quosure&gt;\n#&gt; expr: ^x + a\n#&gt; env:  global\n\n\n#&gt; [1] 10001 10002 10003"
+  },
+  {
+    "objectID": "slides/17.html#without-enquo-the-wrong-environment-is-captured",
+    "href": "slides/17.html#without-enquo-the-wrong-environment-is-captured",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Without enquo(), the wrong environment is captured",
+    "text": "Without enquo(), the wrong environment is captured\n\nfun1 &lt;- function(df) {\n  a &lt;- 10\n  message(\"fun1() Parent/Calling environment: \")\n  print(rlang::caller_env())\n  message(\"fun1() environment: \")\n  print(rlang::current_env())\n  with2(df, x + a)\n}\n\na &lt;- 10000\ndf &lt;- data.frame(x = 1:3)\nfun1(df)\n\n#&gt; &lt;environment: R_GlobalEnv&gt;\n\n\n#&gt; &lt;environment: 0x00000208287b37a8&gt;\n\n\n#&gt; &lt;environment: 0x00000208287b37a8&gt;\n\n\n#&gt; &lt;environment: 0x00000208287a4970&gt;\n\n\n#&gt; &lt;quosure&gt;\n#&gt; expr: ^x + a\n#&gt; env:  0x00000208287b37a8\n\n\n#&gt; [1] 11 12 13"
+  },
+  {
+    "objectID": "slides/17.html#big-ideas-of-metaprogramming-in-r",
+    "href": "slides/17.html#big-ideas-of-metaprogramming-in-r",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Big ideas of metaprogramming in R",
+    "text": "Big ideas of metaprogramming in R\n\nCapture code as expressions with rlang::expr() and rlang::enexpr().\nRepresent code as a tree with lobstr::ast().\nCreate calls from function components with rlang::call2().\nInject previously defined expressions into an expression with !!.\nEvaluate expressions with eval() or eval_tidy()."
+  },
+  {
+    "objectID": "slides/17.html#use-expressions-to-customize-evaluation",
+    "href": "slides/17.html#use-expressions-to-customize-evaluation",
+    "title": "Metaprogramming intro and big picture",
+    "section": "Use expressions to customize evaluation",
+    "text": "Use expressions to customize evaluation\n\nOverride common functions with evaluation environments.\nData masks are data frames used as evaluation environments.\nUse quosures to capture both the expression and the environment in which it was created.\nrlang::enquo() captures user input in a quosure."
   },
   {
     "objectID": "slides/19.html#learning-objectives",

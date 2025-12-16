@@ -9,7 +9,7 @@
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <title>Advanced R Book Club – Big picture</title>
+  <title>Advanced R Book Club – Metaprogramming intro and big picture</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -193,7 +193,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Big picture</h1>
+  <h1 class="title">Metaprogramming intro and big picture</h1>
 
 <div class="quarto-title-authors">
 </div>
@@ -202,80 +202,161 @@
 <section id="learning-objectives" class="slide level2">
 <h2>Learning objectives:</h2>
 <ul>
-<li>Become familiar with some metaprogramming principals and how they relate to each other</li>
-<li>Review vocabulary associated with metaprogramming</li>
+<li>Capture code as data using expressions</li>
+<li>Inspect code as abstract syntax trees</li>
+<li>Generate and execute code programmatically</li>
+<li>Use data frames as execution environments</li>
+<li>Recognize why quosures are useful</li>
 </ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(rlang)</span>
 <span id="cb1-2"><a></a><span class="fu">library</span>(lobstr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="code-is-data" class="slide level2 scrollable">
-<h2>Code is data</h2>
+<section>
+<section id="some-general-ideas-about-metaprogramming" class="title-slide slide level1 center">
+<h1>Some general ideas about metaprogramming</h1>
+
+</section>
+<section id="metaprogramming-uses-code-as-data" class="slide level2">
+<h2>Metaprogramming uses code as data</h2>
 <ul>
-<li><strong>expression</strong> - Captured code (<em>call</em>, <em>symbol</em>, <em>constant</em>, or <em>pairlist</em>)</li>
-<li>Use <code>rlang::expr()</code><sup>1</sup> to capture code directly</li>
+<li><strong>Metaprogramming:</strong> code is data that can be inspected and modified programmatically</li>
+<li>Metaprogramming allow us to write <code>library(purrr)</code> instead of <code>library("purrr")</code></li>
 </ul>
+</section>
+<section id="nse-allows-us-to-write-functions-that-behave-differently-than-base-r" class="slide level2">
+<h2>NSE allows us to write functions that behave differently than base R</h2>
+<p><strong>Non-standard evaluation (NSE)</strong> ➜ <em>not telling R where an object comes from?</em></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">expr</span>(<span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="co"># Calling a vector</span></span>
+<span id="cb2-2"><a></a>mtcars<span class="sc">$</span>cyl                 <span class="co"># Standard</span></span>
+<span id="cb2-3"><a></a><span class="fu">with</span>(mtcars, cyl)          <span class="co"># Non-standard (base)</span></span>
+<span id="cb2-4"><a></a>mtcars <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(cyl) <span class="co"># Non-standard (tidyverse)</span></span>
+<span id="cb2-5"><a></a></span>
+<span id="cb2-6"><a></a><span class="co"># Filtering df</span></span>
+<span id="cb2-7"><a></a>mtcars[mtcars<span class="sc">$</span>cyl <span class="sc">==</span> <span class="dv">6</span>,]          <span class="co"># Standard</span></span>
+<span id="cb2-8"><a></a><span class="fu">subset</span>(mtcars, cyl <span class="sc">==</span> <span class="dv">6</span>)          <span class="co"># Non-standard (base)</span></span>
+<span id="cb2-9"><a></a>mtcars <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(cyl <span class="sc">==</span> <span class="dv">6</span>) <span class="co"># Non-standard (tidyverse)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>mtcars$cyl</code> v/s <code>cyl</code></p>
+</section>
+<section id="nse-is-a-confusing-term" class="slide level2">
+<h2>NSE is a confusing term</h2>
+<p><strong>Non-standard evaluation</strong> is commonly used to describe the behaviour of R functions, but…</p>
+<ul>
+<li>NSE is a property of the arguments, not the function</li>
+<li>It’s confusing to define something by what it’s not</li>
+</ul>
+</section>
+<section id="tidy-evaluation-is-the-rlang-version-of-nse" class="slide level2">
+<h2>“Tidy evaluation” is the rlang version of NSE</h2>
+<blockquote>
+<p>“Specifically, this book focuses on tidy evaluation. Tidy evaluation is implemented in the <code>rlang</code> package, and I’ll use <code>rlang</code> extensively in these chapters. This will allow you to focus on the big ideas, without being distracted by the quirks of implementation that arise from R’s history”</p>
+</blockquote>
+</section>
+<section id="metaprogramming-in-r-involves-7-big-ideas" class="slide level2">
+<h2>Metaprogramming in R involves 7 big ideas</h2>
+<ul>
+<li>Code is data</li>
+<li>Code is a tree</li>
+<li>Code can generate code</li>
+<li>Evaluation runs code</li>
+<li>Can customize evaluation with functions</li>
+<li>Can customize evaluation with data</li>
+<li>Quosures are your new friend</li>
+</ul>
+</section></section>
+<section>
+<section id="code-is-data" class="title-slide slide level1 center">
+<h1>Code is data</h1>
+
+</section>
+<section id="code-is-captured-as-data-in-expressions" class="slide level2">
+<h2>Code is captured as data in expressions</h2>
+<ul>
+<li><strong>expression:</strong> captured code (<em>call</em>, <em>symbol</em>, <em>constant</em>, or <em>pairlist</em>)</li>
+<li>Separating our description of the action from the action itself (<em>recipe and dish analogy?</em>)</li>
+</ul>
+<p>Use <code>rlang::expr()</code> to capture code directly</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">expr</span>(<span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; mean(x, na.rm = TRUE)</code></pre>
 </div>
 </div>
-<ul>
-<li>Use <code>rlang::enexpr()</code> to capture code indirectly</li>
-</ul>
+<p>Use <code>rlang::enexpr()</code> to capture code indirectly</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>capture_it <span class="ot">&lt;-</span> <span class="cf">function</span>(x) { <span class="co"># 'automatically quotes first argument'</span></span>
-<span id="cb4-2"><a></a>  <span class="fu">enexpr</span>(x)</span>
-<span id="cb4-3"><a></a>}</span>
-<span id="cb4-4"><a></a><span class="fu">capture_it</span>(a <span class="sc">+</span> b <span class="sc">+</span> c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>capture_it <span class="ot">&lt;-</span> <span class="cf">function</span>(x) { <span class="co"># 'automatically quotes first argument'</span></span>
+<span id="cb5-2"><a></a>  <span class="fu">enexpr</span>(x)</span>
+<span id="cb5-3"><a></a>}</span>
+<span id="cb5-4"><a></a><span class="fu">capture_it</span>(a <span class="sc">+</span> b <span class="sc">+</span> c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; a + b + c</code></pre>
 </div>
 </div>
-<ul>
-<li>‘Captured’ code can be modified (like a list)!
-<ul>
-<li>First element is the function, next elements are the arguments</li>
-</ul></li>
-</ul>
+</section>
+<section id="captured-code-is-like-a-list" class="slide level2">
+<h2>Captured code is like a list</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>f <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="fu">f</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>))</span>
-<span id="cb6-2"><a></a><span class="fu">names</span>(f)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>f <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="fu">f</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>))</span>
+<span id="cb7-2"><a></a><span class="fu">names</span>(f)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] ""  "x" "y"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>ff <span class="ot">&lt;-</span> fff <span class="ot">&lt;-</span> f   <span class="co"># Create two copies</span></span>
-<span id="cb8-2"><a></a></span>
-<span id="cb8-3"><a></a>ff<span class="sc">$</span>z <span class="ot">&lt;-</span> <span class="dv">3</span>        <span class="co"># Add an argument to one</span></span>
-<span id="cb8-4"><a></a>fff[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> <span class="cn">NULL</span> <span class="co"># Remove an argument from another</span></span>
-<span id="cb8-5"><a></a></span>
-<span id="cb8-6"><a></a>f</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>f[[<span class="dv">1</span>]]  <span class="co"># Function name</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; f</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>f[[<span class="dv">2</span>]]  <span class="co"># First argument; equivalent to f$x</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>f[[<span class="dv">3</span>]]  <span class="co"># Second argument; equivalent to f$y</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 2</code></pre>
+</div>
+</div>
+</section>
+<section id="expressions-can-be-modified-like-lists" class="slide level2">
+<h2>Expressions can be modified like lists</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>f <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="fu">f</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>))</span>
+<span id="cb15-2"><a></a></span>
+<span id="cb15-3"><a></a>ff <span class="ot">&lt;-</span> fff <span class="ot">&lt;-</span> f   <span class="co"># Create two copies</span></span>
+<span id="cb15-4"><a></a></span>
+<span id="cb15-5"><a></a>ff<span class="sc">$</span>z <span class="ot">&lt;-</span> <span class="dv">3</span>        <span class="co"># Add an argument to one</span></span>
+<span id="cb15-6"><a></a>fff[[<span class="dv">2</span>]] <span class="ot">&lt;-</span> <span class="cn">NULL</span> <span class="co"># Remove an argument from another</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>And let’s take a look…</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>f</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; f(x = 1, y = 2)</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>ff</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>ff</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; f(x = 1, y = 2, z = 3)</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>fff</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>fff</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; f(y = 2)</code></pre>
 </div>
 </div>
-<blockquote>
-<p>More on this next week!</p>
-</blockquote>
-<aside><ol class="aside-footnotes"><li id="fn1"><p>Equivalent to <code>base::bquote()</code></p></li></ol></aside></section>
-<section id="code-is-a-tree" class="slide level2">
-<h2>Code is a tree</h2>
+</section></section>
+<section>
+<section id="code-is-a-tree" class="title-slide slide level1 center">
+<h1>Code is a tree</h1>
+
+</section>
+<section id="code-is-represented-as-a-tree" class="slide level2">
+<h2>Code is represented as a tree</h2>
 <ul>
-<li><strong>Abstract syntax tree</strong> (AST) - Almost every language represents code as a tree</li>
+<li><strong>Abstract syntax tree</strong> (AST) ➜ almost every language represents code as a tree</li>
 <li>Use <code>lobstr::ast()</code> to inspect these code trees</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">ast</span>(<span class="fu">f1</span>(<span class="fu">f2</span>(a, b), <span class="fu">f3</span>(<span class="dv">1</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">ast</span>(<span class="fu">f1</span>(<span class="fu">f2</span>(a, b), <span class="fu">f3</span>(<span class="dv">1</span>))) <span class="co"># Regular (prefix) functions</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; █─f1 
 #&gt; ├─█─f2 
@@ -284,7 +365,7 @@
 #&gt; └─█─f3 
 #&gt;   └─1</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">ast</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">ast</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> <span class="dv">3</span>) <span class="co"># Infix functions</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; █─`+` 
 #&gt; ├─1 
@@ -294,13 +375,54 @@
 </div>
 </div>
 </section>
-<section id="code-can-generate-code" class="slide level2">
-<h2>Code can generate code</h2>
+<section id="asts-can-have-different-shapes" class="slide level2">
+<h2>ASTs can have different shapes</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>vct <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span> <span class="co"># Dummy vector</span></span>
+<span id="cb26-2"><a></a></span>
+<span id="cb26-3"><a></a><span class="fu">ast</span>(<span class="fu">mean</span>(<span class="at">x =</span> vct)) <span class="co"># One argument</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─mean 
+#&gt; └─x = vct</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">ast</span>(<span class="fu">mean</span>(<span class="at">x =</span> vct, <span class="at">trim =</span> <span class="fl">0.1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="co"># Multiple arguments</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─mean 
+#&gt; ├─x = vct 
+#&gt; ├─trim = 0.1 
+#&gt; └─na.rm = TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">ast</span>(<span class="fu">round</span>(<span class="at">x =</span> <span class="fu">mean</span>(<span class="at">x =</span> vct, <span class="at">trim =</span> <span class="fl">0.1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">digits =</span> <span class="dv">0</span>)) <span class="co"># Nested function</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; █─round 
+#&gt; ├─x = █─mean 
+#&gt; │     ├─x = vct 
+#&gt; │     ├─trim = 0.1 
+#&gt; │     └─na.rm = TRUE 
+#&gt; └─digits = 0</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="code-can-generate-code" class="title-slide slide level1 center">
+<h1>Code can generate code</h1>
+
+</section>
+<section id="rlang-introduces-2-3-main-tools-for-generating-code" class="slide level2">
+<h2>rlang introduces <del>2</del> 3 main tools for generating code</h2>
 <ul>
-<li><code>rlang::call2()</code> creates function call</li>
+<li><code>rlang::call2()</code></li>
+<li><code>!!</code> (“bang-bang”) - <strong>unquote operator</strong></li>
+<li><code>{{</code> <code>}}</code> (“curly-curly”) - <strong>embrace operator</strong> (introduced after this book was published, equivalent to <code>!!enquo()</code>)</li>
+</ul>
+</section>
+<section id="call2-constructs-function-calls" class="slide level2">
+<h2><code>call2()</code> constructs function calls</h2>
+<ul>
+<li><code>rlang::call2()</code> constructs a function call from its components ➜ the function to call, and the arguments to call it with.</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">call2</span>(<span class="st">"f"</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">call2</span>(<span class="st">"f"</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; f(1, 2, 3)</code></pre>
 </div>
@@ -309,213 +431,254 @@
 <li>Going backwards from the tree, can use functions to create calls</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">call2</span>(<span class="st">"f1"</span>, <span class="fu">call2</span>(<span class="st">"f2"</span>, <span class="st">"a"</span>, <span class="st">"b"</span>), <span class="fu">call2</span>(<span class="st">"f3"</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="fu">call2</span>(<span class="st">"f1"</span>, <span class="fu">call2</span>(<span class="st">"f2"</span>, <span class="st">"a"</span>, <span class="st">"b"</span>), <span class="fu">call2</span>(<span class="st">"f3"</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; f1(f2("a", "b"), f3(1))</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">call2</span>(<span class="st">"+"</span>, <span class="dv">1</span>, <span class="fu">call2</span>(<span class="st">"*"</span>, <span class="dv">2</span>, <span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a><span class="fu">call2</span>(<span class="st">"+"</span>, <span class="dv">1</span>, <span class="fu">call2</span>(<span class="st">"*"</span>, <span class="dv">2</span>, <span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; 1 + 2 * 3</code></pre>
 </div>
 </div>
-<ul>
-<li><code>!!</code> bang-bang - <strong>unquote operator</strong>
+</section>
+<section id="call2-can-build-complex-calls" class="slide level2">
+<h2><code>call2()</code> can build complex calls</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>vct <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span> <span class="co"># Dummy vector</span></span>
+<span id="cb38-2"><a></a></span>
+<span id="cb38-3"><a></a><span class="fu">call2</span>(<span class="st">"mean"</span>, <span class="at">x =</span> vct, <span class="at">trim =</span> <span class="fl">0.1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="co"># Single function</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; mean(x = 1:100, trim = 0.1, na.rm = TRUE)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a><span class="fu">call2</span>(<span class="st">"round"</span>, </span>
+<span id="cb40-2"><a></a>  <span class="at">x =</span> <span class="fu">call2</span>(<span class="st">"mean"</span>, <span class="at">x =</span> vct, <span class="at">trim =</span> <span class="fl">0.1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb40-3"><a></a>  <span class="at">digits =</span> <span class="dv">0</span></span>
+<span id="cb40-4"><a></a>) <span class="co"># Nested function</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; round(x = mean(x = 1:100, trim = 0.1, na.rm = TRUE), digits = 0)</code></pre>
+</div>
+</div>
+</section>
+<section id="injects-expressions" class="slide level2">
+<h2><code>!!</code> injects expressions</h2>
+<p><code>!!</code> (“bang-bang”) - <strong>unquote operator</strong></p>
 <ul>
 <li>inserts previously defined expressions into the current one</li>
-</ul></li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>xx <span class="ot">&lt;-</span> <span class="fu">expr</span>(x <span class="sc">+</span> x)</span>
-<span id="cb24-2"><a></a>yy <span class="ot">&lt;-</span> <span class="fu">expr</span>(y <span class="sc">+</span> y)</span>
-<span id="cb24-3"><a></a><span class="fu">expr</span>(xx <span class="sc">/</span> yy)     <span class="co"># Nope!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>xx <span class="ot">&lt;-</span> <span class="fu">expr</span>(x <span class="sc">+</span> x)</span>
+<span id="cb42-2"><a></a>yy <span class="ot">&lt;-</span> <span class="fu">expr</span>(y <span class="sc">+</span> y)</span>
+<span id="cb42-3"><a></a><span class="fu">expr</span>(xx <span class="sc">/</span> yy)     <span class="co"># Nope!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; xx/yy</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">expr</span>(<span class="sc">!!</span>xx <span class="sc">/</span> <span class="sc">!!</span>yy) <span class="co"># Yup!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">expr</span>(<span class="sc">!!</span>xx <span class="sc">/</span> <span class="sc">!!</span>yy) <span class="co"># Yup!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; (x + x)/(y + y)</code></pre>
 </div>
 </div>
+</section>
+<section id="we-can-capture-user-input-and-generate-code" class="slide level2">
+<h2>We can capture user input and generate code</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>cv <span class="ot">&lt;-</span> <span class="cf">function</span>(var) {</span>
-<span id="cb28-2"><a></a>  var <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(var)            <span class="co"># Get user's expression</span></span>
-<span id="cb28-3"><a></a>  <span class="fu">expr</span>(<span class="fu">sd</span>(<span class="sc">!!</span>var) <span class="sc">/</span> <span class="fu">mean</span>(<span class="sc">!!</span>var)) <span class="co"># Insert user's expression</span></span>
-<span id="cb28-4"><a></a>}</span>
-<span id="cb28-5"><a></a></span>
-<span id="cb28-6"><a></a><span class="fu">cv</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>cv <span class="ot">&lt;-</span> <span class="cf">function</span>(var) {</span>
+<span id="cb46-2"><a></a>  var <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(var)            <span class="co"># Get user's expression</span></span>
+<span id="cb46-3"><a></a>  <span class="fu">expr</span>(<span class="fu">sd</span>(<span class="sc">!!</span>var) <span class="sc">/</span> <span class="fu">mean</span>(<span class="sc">!!</span>var)) <span class="co"># Insert user's expression</span></span>
+<span id="cb46-4"><a></a>}</span>
+<span id="cb46-5"><a></a></span>
+<span id="cb46-6"><a></a><span class="fu">cv</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; sd(x)/mean(x)</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">cv</span>(x <span class="sc">+</span> y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a><span class="fu">cv</span>(x <span class="sc">+</span> y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; sd(x + y)/mean(x + y)</code></pre>
 </div>
 </div>
-<ul>
-<li>Avoid <code>paste()</code> for building code
-<ul>
-<li>Problems with non-syntactic names and precedence among expressions</li>
-</ul></li>
-</ul>
+</section>
+<section id="without-user-input-is-not-inserted" class="slide level2">
+<h2>Without <code>!!</code> user input is not inserted</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a>cv2 <span class="ot">&lt;-</span> <span class="cf">function</span>(var) {</span>
+<span id="cb50-2"><a></a>  var <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(var)        <span class="co"># Get user's expression</span></span>
+<span id="cb50-3"><a></a>  <span class="fu">expr</span>(<span class="fu">sd</span>(var) <span class="sc">/</span> <span class="fu">mean</span>(var)) <span class="co"># Insert user's expression</span></span>
+<span id="cb50-4"><a></a>}</span>
+<span id="cb50-5"><a></a></span>
+<span id="cb50-6"><a></a><span class="fu">cv2</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; sd(var)/mean(var)</code></pre>
+</div>
+</div>
+<p>It doesn’t work.</p>
+</section>
+<section id="dont-rely-on-pasting-together-code-strings" class="slide level2">
+<h2>Don’t rely on pasting together code strings</h2>
+<p>Avoid <code>paste()</code> for building code ➜ problems with non-syntactic names and precedence among expressions</p>
 <blockquote>
 <p>“You might think this is an esoteric concern, but not worrying about it when generating SQL code in web applications led to SQL injection attacks that have collectively cost billions of dollars.”</p>
 </blockquote>
+</section></section>
+<section>
+<section id="evaluation-runs-code" class="title-slide slide level1 center">
+<h1>Evaluation runs code</h1>
+
 </section>
-<section id="evaluation-runs-code" class="slide level2">
-<h2>Evaluation runs code</h2>
+<section id="evaluation-runs-code-in-an-environment" class="slide level2">
+<h2>Evaluation runs code in an environment</h2>
 <ul>
-<li><strong>evaluate</strong> - run/execute an expression</li>
+<li><strong>evaluate</strong>: run/execute an expression</li>
 <li>need both expression and environment</li>
 <li><code>eval()</code> uses current environment if not set</li>
 <li>manual evaluation means you can tweak the environment!</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>xy <span class="ot">&lt;-</span> <span class="fu">expr</span>(x <span class="sc">+</span> y)</span>
-<span id="cb32-2"><a></a></span>
-<span id="cb32-3"><a></a><span class="fu">eval</span>(xy, <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>xy <span class="ot">&lt;-</span> <span class="fu">expr</span>(x <span class="sc">+</span> y)</span>
+<span id="cb52-2"><a></a></span>
+<span id="cb52-3"><a></a><span class="fu">eval</span>(xy, <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 11</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="fu">eval</span>(xy, <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">2</span>, <span class="at">y =</span> <span class="dv">100</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a><span class="fu">eval</span>(xy, <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">2</span>, <span class="at">y =</span> <span class="dv">100</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 102</code></pre>
 </div>
 </div>
 </section>
-<section id="customizing-evaluations-with-functions" class="slide level2">
-<h2>Customizing evaluations with functions</h2>
+<section id="can-customize-evaluation-with-functions" class="slide level2">
+<h2>Can customize evaluation with functions</h2>
 <ul>
 <li>Can also bind names to functions in supplied environment</li>
 <li>Allows overriding function behaviour</li>
-<li>This is how dplyr generates SQL for working with databases</li>
 </ul>
-<p>For example…</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>string_math <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb36-2"><a></a>  e <span class="ot">&lt;-</span> <span class="fu">env</span>(</span>
-<span id="cb36-3"><a></a>    <span class="fu">caller_env</span>(),</span>
-<span id="cb36-4"><a></a>    <span class="st">`</span><span class="at">+</span><span class="st">`</span> <span class="ot">=</span> <span class="cf">function</span>(x, y) <span class="fu">paste</span>(x, y),</span>
-<span id="cb36-5"><a></a>    <span class="st">`</span><span class="at">*</span><span class="st">`</span> <span class="ot">=</span> <span class="cf">function</span>(x, y) <span class="fu">strrep</span>(x, y)</span>
-<span id="cb36-6"><a></a>  )</span>
-<span id="cb36-7"><a></a></span>
-<span id="cb36-8"><a></a>  <span class="fu">eval</span>(<span class="fu">enexpr</span>(x), e)</span>
-<span id="cb36-9"><a></a>}</span>
-<span id="cb36-10"><a></a></span>
-<span id="cb36-11"><a></a>cohort <span class="ot">&lt;-</span> <span class="dv">9</span></span>
-<span id="cb36-12"><a></a><span class="fu">string_math</span>(<span class="st">"Hello"</span> <span class="sc">+</span> <span class="st">"cohort"</span> <span class="sc">+</span> cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a>string_math <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb56-2"><a></a>  e <span class="ot">&lt;-</span> <span class="fu">env</span>(</span>
+<span id="cb56-3"><a></a>    <span class="fu">caller_env</span>(),</span>
+<span id="cb56-4"><a></a>    <span class="st">`</span><span class="at">+</span><span class="st">`</span> <span class="ot">=</span> <span class="cf">function</span>(x, y) <span class="fu">paste</span>(x, y),</span>
+<span id="cb56-5"><a></a>    <span class="st">`</span><span class="at">*</span><span class="st">`</span> <span class="ot">=</span> <span class="cf">function</span>(x, y) <span class="fu">strrep</span>(x, y)</span>
+<span id="cb56-6"><a></a>  )</span>
+<span id="cb56-7"><a></a>  <span class="fu">eval</span>(<span class="fu">enexpr</span>(x), e)</span>
+<span id="cb56-8"><a></a>}</span>
+<span id="cb56-9"><a></a></span>
+<span id="cb56-10"><a></a>cohort <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb56-11"><a></a><span class="fu">string_math</span>(<span class="st">"Hello"</span> <span class="sc">+</span> <span class="st">"cohort"</span> <span class="sc">+</span> cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "Hello cohort 9"</code></pre>
+<pre><code>#&gt; [1] "Hello cohort 10"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="fu">string_math</span>((<span class="st">"dslc"</span> <span class="sc">+</span> <span class="st">"is"</span> <span class="sc">+</span> <span class="st">"awesome---"</span>) <span class="sc">*</span> cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="fu">string_math</span>((<span class="st">"dslc"</span> <span class="sc">+</span> <span class="st">"is"</span> <span class="sc">+</span> <span class="st">"awesome---"</span>) <span class="sc">*</span> cohort)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---"</code></pre>
+<pre><code>#&gt; [1] "dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---dslc is awesome---"</code></pre>
 </div>
 </div>
 </section>
-<section id="customizing-evaluation-with-data" class="slide level2">
-<h2>Customizing evaluation with data</h2>
+<section id="can-customize-evaluation-with-data" class="slide level2">
+<h2>Can customize evaluation with data</h2>
 <ul>
 <li>Look for variables inside data frame</li>
-<li><strong>Data mask</strong> - typically a data frame</li>
+<li><a href="https://rlang.r-lib.org/reference/topic-data-mask.html">Data mask</a> - typically a data frame</li>
 <li>use <code>rlang::eval_tidy()</code> rather than <code>eval()</code></li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">y =</span> <span class="fu">sample</span>(<span class="dv">5</span>))</span>
-<span id="cb40-2"><a></a><span class="fu">eval_tidy</span>(<span class="fu">expr</span>(x <span class="sc">+</span> y), df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">y =</span> <span class="fu">sample</span>(<span class="dv">5</span>))</span>
+<span id="cb60-2"><a></a><span class="fu">eval_tidy</span>(<span class="fu">expr</span>(x <span class="sc">+</span> y), df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 2 4 6 9 9</code></pre>
+<pre><code>#&gt; [1] 2 7 6 6 9</code></pre>
 </div>
 </div>
-<p>Catch user input with <code>enexpr()</code>…</p>
+</section>
+<section id="can-customize-evaluation-with-data-in-functions" class="slide level2">
+<h2>Can customize evaluation with data in functions</h2>
+<p>We also can catch user input with <code>enexpr()</code>…</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>with2 <span class="ot">&lt;-</span> <span class="cf">function</span>(df, expr) {</span>
-<span id="cb42-2"><a></a>  <span class="fu">eval_tidy</span>(<span class="fu">enexpr</span>(expr), df)</span>
-<span id="cb42-3"><a></a>}</span>
-<span id="cb42-4"><a></a></span>
-<span id="cb42-5"><a></a><span class="fu">with2</span>(df, x <span class="sc">+</span> y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a>with2 <span class="ot">&lt;-</span> <span class="cf">function</span>(df, expr) {</span>
+<span id="cb62-2"><a></a>  <span class="fu">eval_tidy</span>(<span class="fu">enexpr</span>(expr), df)</span>
+<span id="cb62-3"><a></a>}</span>
+<span id="cb62-4"><a></a></span>
+<span id="cb62-5"><a></a><span class="fu">with2</span>(df, x <span class="sc">+</span> y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 2 4 6 9 9</code></pre>
+<pre><code>#&gt; [1] 2 7 6 6 9</code></pre>
 </div>
 </div>
-<p>But there’s a bug!</p>
+<p><strong>But there’s a bug!</strong></p>
+</section>
+<section id="data-masks-can-be-tricky" class="slide level2">
+<h2>Data masks can be tricky</h2>
+<p><strong>Bug</strong> ➜</p>
 <ul>
-<li>Evaluates in environment inside <code>with2()</code>, but the expression likely refers to objects in the Global environment</li>
+<li>evaluates in environment inside <code>with2()</code>, but</li>
+<li>the expression likely refers to objects in the Global environment</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>with2 <span class="ot">&lt;-</span> <span class="cf">function</span>(df, expr) {</span>
-<span id="cb44-2"><a></a>  a <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb44-3"><a></a>  <span class="fu">eval_tidy</span>(<span class="fu">enexpr</span>(expr), df)</span>
-<span id="cb44-4"><a></a>}</span>
-<span id="cb44-5"><a></a></span>
-<span id="cb44-6"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
-<span id="cb44-7"><a></a>a <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb44-8"><a></a><span class="fu">with2</span>(df, x <span class="sc">+</span> a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a></a>with2 <span class="ot">&lt;-</span> <span class="cf">function</span>(df, expr) {</span>
+<span id="cb64-2"><a></a>  a <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="co"># 'a' is created inside the with2() environment</span></span>
+<span id="cb64-3"><a></a>  <span class="fu">eval_tidy</span>(<span class="fu">enexpr</span>(expr), df)</span>
+<span id="cb64-4"><a></a>}</span>
+<span id="cb64-5"><a></a></span>
+<span id="cb64-6"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb64-7"><a></a>a <span class="ot">&lt;-</span> <span class="dv">10</span> <span class="co"># 'a' created in the global environment</span></span>
+<span id="cb64-8"><a></a><span class="fu">with2</span>(df, x <span class="sc">+</span> a) <span class="co"># R is taking the 'a' from the function environment! </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 1001 1002 1003</code></pre>
 </div>
 </div>
-<ul>
-<li>Solved with Quosures…</li>
-</ul>
+</section></section>
+<section>
+<section id="quosures-bundle-expression-with-an-environment" class="title-slide slide level1 center">
+<h1>Quosures bundle expression with an environment</h1>
+
 </section>
-<section id="quosures" class="slide level2">
-<h2>Quosures</h2>
+<section id="enquo-creates-a-quosure" class="slide level2">
+<h2><code>enquo()</code> creates a quosure</h2>
 <ul>
-<li><strong>Quosures</strong> bundles expression with an environment</li>
+<li>Bundle the environment where the expression is created</li>
 <li>Use <code>enquo()</code> instead of <code>enexpr()</code> (with <code>eval_tidy()</code>)</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>with2 <span class="ot">&lt;-</span> <span class="cf">function</span>(df, expr) {</span>
-<span id="cb46-2"><a></a>  a <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb46-3"><a></a>  <span class="fu">eval_tidy</span>(<span class="fu">enquo</span>(expr), df)</span>
-<span id="cb46-4"><a></a>}</span>
-<span id="cb46-5"><a></a></span>
-<span id="cb46-6"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
-<span id="cb46-7"><a></a>a <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb46-8"><a></a><span class="fu">with2</span>(df, x <span class="sc">+</span> a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a></a>with2 <span class="ot">&lt;-</span> <span class="cf">function</span>(df, expr) {</span>
+<span id="cb66-2"><a></a>  a <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb66-3"><a></a>  <span class="fu">eval_tidy</span>(<span class="fu">enquo</span>(expr), df)</span>
+<span id="cb66-4"><a></a>}</span>
+<span id="cb66-5"><a></a></span>
+<span id="cb66-6"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb66-7"><a></a>a <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb66-8"><a></a><span class="fu">with2</span>(df, x <span class="sc">+</span> a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 11 12 13</code></pre>
 </div>
 </div>
+</section>
+<section id="always-use-enquo-with-data-masks" class="slide level2">
+<h2>Always use <code>enquo()</code> with data masks</h2>
 <blockquote>
-<p>“Whenever you use a data mask, you must always use <code>enquo()</code> instead of <code>enexpr()</code>.</p>
+<p>“Whenever you use a data mask, you must always use <code>enquo()</code> instead of <code>enexpr()</code>”.</p>
 </blockquote>
-<p>This comes back in Chapter 20.</p>
-<h3 id="which-environment-is-bundled">Which environment is bundled?</h3>
 <ul>
-<li>The environment where the expression is created (i.e.&nbsp;the parent of where <code>enquo()</code> is called)</li>
+<li>Quosures bundle the environment where the expression is created (i.e.&nbsp;the parent of where <code>enquo()</code> is called)</li>
 </ul>
-<p>Here, the global environment</p>
+</section>
+<section id="enquo-captures-the-calling-environment" class="slide level2">
+<h2><code>enquo()</code> captures the calling environment</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>with2 <span class="ot">&lt;-</span> <span class="cf">function</span>(df, expr) {</span>
-<span id="cb48-2"><a></a>  a <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb48-3"><a></a>  eq <span class="ot">&lt;-</span> <span class="fu">enquo</span>(expr)</span>
-<span id="cb48-4"><a></a>  <span class="fu">message</span>(<span class="st">"with2() Parent/Calling environment: "</span>)</span>
-<span id="cb48-5"><a></a>  <span class="fu">print</span>(rlang<span class="sc">::</span><span class="fu">caller_env</span>())</span>
-<span id="cb48-6"><a></a>  <span class="fu">message</span>(<span class="st">"with2() environment: "</span>)</span>
-<span id="cb48-7"><a></a>  <span class="fu">print</span>(rlang<span class="sc">::</span><span class="fu">current_env</span>())</span>
-<span id="cb48-8"><a></a>  <span class="fu">message</span>(<span class="st">"Quosure details: "</span>)</span>
-<span id="cb48-9"><a></a>  <span class="fu">print</span>(eq)  <span class="co"># Print the details of the quosure</span></span>
-<span id="cb48-10"><a></a>  <span class="fu">eval_tidy</span>(eq, df)</span>
-<span id="cb48-11"><a></a>}</span>
-<span id="cb48-12"><a></a></span>
-<span id="cb48-13"><a></a>a <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb48-14"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
-<span id="cb48-15"><a></a><span class="fu">with2</span>(df, x <span class="sc">+</span> a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; with2() Parent/Calling environment:</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a>with2 <span class="ot">&lt;-</span> <span class="cf">function</span>(df, expr) {</span>
+<span id="cb68-2"><a></a>  a <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb68-3"><a></a>  eq <span class="ot">&lt;-</span> <span class="fu">enquo</span>(expr)</span>
+<span id="cb68-4"><a></a>  <span class="fu">message</span>(<span class="st">"with2() Parent/Calling environment: "</span>)</span>
+<span id="cb68-5"><a></a>  <span class="fu">print</span>(rlang<span class="sc">::</span><span class="fu">caller_env</span>())</span>
+<span id="cb68-6"><a></a>  <span class="fu">message</span>(<span class="st">"with2() environment: "</span>)</span>
+<span id="cb68-7"><a></a>  <span class="fu">print</span>(rlang<span class="sc">::</span><span class="fu">current_env</span>())</span>
+<span id="cb68-8"><a></a>  <span class="fu">message</span>(<span class="st">"Quosure details: "</span>)</span>
+<span id="cb68-9"><a></a>  <span class="fu">print</span>(eq)  <span class="co"># Print the details of the quosure</span></span>
+<span id="cb68-10"><a></a>  <span class="fu">eval_tidy</span>(eq, df)</span>
+<span id="cb68-11"><a></a>}</span>
+<span id="cb68-12"><a></a></span>
+<span id="cb68-13"><a></a>a <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb68-14"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb68-15"><a></a><span class="fu">with2</span>(df, x <span class="sc">+</span> a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; with2() environment:</code></pre>
-</div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x0000018dede5ddd0&gt;</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Quosure details:</code></pre>
+<pre><code>#&gt; &lt;environment: 0x00000208278b93f0&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;quosure&gt;
@@ -526,60 +689,70 @@
 <pre><code>#&gt; [1] 10001 10002 10003</code></pre>
 </div>
 </div>
-<p>Here, the <code>fun1()</code> environment</p>
+</section>
+<section id="without-enquo-the-wrong-environment-is-captured" class="slide level2">
+<h2>Without <code>enquo()</code>, the wrong environment is captured</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a>fun1 <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
-<span id="cb56-2"><a></a>  a <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb56-3"><a></a>  <span class="fu">message</span>(<span class="st">"fun1() Parent/Calling environment: "</span>)</span>
-<span id="cb56-4"><a></a>  <span class="fu">print</span>(rlang<span class="sc">::</span><span class="fu">caller_env</span>())</span>
-<span id="cb56-5"><a></a>  <span class="fu">message</span>(<span class="st">"fun1() environment: "</span>)</span>
-<span id="cb56-6"><a></a>  <span class="fu">print</span>(rlang<span class="sc">::</span><span class="fu">current_env</span>())</span>
-<span id="cb56-7"><a></a>  <span class="fu">with2</span>(df, x <span class="sc">+</span> a)</span>
-<span id="cb56-8"><a></a>}</span>
-<span id="cb56-9"><a></a></span>
-<span id="cb56-10"><a></a>a <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb56-11"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
-<span id="cb56-12"><a></a><span class="fu">fun1</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; fun1() Parent/Calling environment:</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a>fun1 <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb73-2"><a></a>  a <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb73-3"><a></a>  <span class="fu">message</span>(<span class="st">"fun1() Parent/Calling environment: "</span>)</span>
+<span id="cb73-4"><a></a>  <span class="fu">print</span>(rlang<span class="sc">::</span><span class="fu">caller_env</span>())</span>
+<span id="cb73-5"><a></a>  <span class="fu">message</span>(<span class="st">"fun1() environment: "</span>)</span>
+<span id="cb73-6"><a></a>  <span class="fu">print</span>(rlang<span class="sc">::</span><span class="fu">current_env</span>())</span>
+<span id="cb73-7"><a></a>  <span class="fu">with2</span>(df, x <span class="sc">+</span> a)</span>
+<span id="cb73-8"><a></a>}</span>
+<span id="cb73-9"><a></a></span>
+<span id="cb73-10"><a></a>a <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb73-11"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb73-12"><a></a><span class="fu">fun1</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; fun1() environment:</code></pre>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;environment: 0x00000208287b37a8&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x0000018df3e748f8&gt;</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; with2() Parent/Calling environment:</code></pre>
+<pre><code>#&gt; &lt;environment: 0x00000208287b37a8&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x0000018df3e748f8&gt;</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; with2() environment:</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x0000018df3ebc698&gt;</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>#&gt; Quosure details:</code></pre>
+<pre><code>#&gt; &lt;environment: 0x00000208287a4970&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;quosure&gt;
 #&gt; expr: ^x + a
-#&gt; env:  0x0000018df3e748f8</code></pre>
+#&gt; env:  0x00000208287b37a8</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 11 12 13</code></pre>
 </div>
 </div>
-
+</section></section>
+<section>
+<section id="summary" class="title-slide slide level1 center">
+<h1>Summary</h1>
 
 </section>
+<section id="big-ideas-of-metaprogramming-in-r" class="slide level2">
+<h2>Big ideas of metaprogramming in R</h2>
+<ul>
+<li>Capture code as expressions with <code>rlang::expr()</code> and <code>rlang::enexpr()</code>.</li>
+<li>Represent code as a tree with <code>lobstr::ast()</code>.</li>
+<li>Create calls from function components with <code>rlang::call2()</code>.</li>
+<li>Inject previously defined expressions into an expression with <code>!!</code>.</li>
+<li>Evaluate expressions with <code>eval()</code> or <code>eval_tidy()</code>.</li>
+</ul>
+</section>
+<section id="use-expressions-to-customize-evaluation" class="slide level2">
+<h2>Use expressions to customize evaluation</h2>
+<ul>
+<li>Override common functions with evaluation environments.</li>
+<li>Data masks are data frames used as evaluation environments.</li>
+<li>Use <strong>quosures</strong> to capture both the expression and the environment in which it was created.</li>
+<li><code>rlang::enquo()</code> captures user input in a quosure.</li>
+</ul>
 
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -795,6 +968,44 @@
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
