@@ -9,6 +9,7 @@ title: Expressions
 
 * Capture code expressions
 * Inspect expressions
+* Define expressions
 * Modify expressions
 * Identify grammar of parsing code
 * Implement advanced code parsing
@@ -64,15 +65,42 @@ This chapter focuses on capturing and inspecting the _operation_. `eval` will be
 
 ### Using infix notation
 
-```{r,eval=FALSE}
+```{r}
 lobstr::ast(y <- x * 10)
 ```
 
 ### Using prefix notation
 
-```{r,eval=FALSE}
+```{r}
 lobstr::ast(`<-`(y,`*`(x,10)))
 ```
+
+:::
+
+## The leaves, branches, and colors from `ast` identify expression data structures
+
+```{r}
+lobstr::ast(y <- x * 10)
+```
+
+::: panel-tabset
+
+### Constants
+
+*   Found in `ast` leaves
+*   Leaves have black borders and sharp corners
+
+### Symbols
+
+*   Found in `ast` leaves
+*   Leaves have purple borders and rounded corners
+
+### Calls
+
+*   Found in `ast` branches.
+*   Branches are orange rectangles
+*   First child is the function call name
+*   Subsequent children are arguments to the function call
 
 :::
 
