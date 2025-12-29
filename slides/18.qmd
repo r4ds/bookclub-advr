@@ -11,6 +11,7 @@ title: Expressions
 * Inspect expressions
 * Define expressions
 * Modify expressions
+* Generate expressions
 * Identify grammar of parsing code
 * Implement advanced code parsing
 
@@ -30,8 +31,9 @@ library(lobstr)
 *   Capture code as an __expression__
 
 ```{r}
-z <- rlang::expr(y <- x * 10)
+z <- rlang::expr(x * 10)
 z
+rlang::is_expression(z)
 class(z)
 ```
 
@@ -79,21 +81,24 @@ lobstr::ast(`<-`(y,`*`(x,10)))
 
 ## The leaves, branches, and colors from `ast` identify expression data structures
 
-```{r}
-lobstr::ast(y <- x * 10)
-```
+![](images/prefix.png)
 
 ::: panel-tabset
 
 ### Constants
 
+*   Also called scalars
 *   Found in `ast` leaves
 *   Leaves have black borders and sharp corners
+*   Identify with `rlang::is_syntactic_literal`
 
 ### Symbols
 
 *   Found in `ast` leaves
 *   Leaves have purple borders and rounded corners
+*   Identify with `is.name` or `is.symbol`
+*   Convert strings to symbols with `rlang::sym` or `rlang::syms`
+*   Convert a symbol to a string with `rlang::as_string`  or `as.character`
 
 ### Calls
 
@@ -101,216 +106,93 @@ lobstr::ast(y <- x * 10)
 *   Branches are orange rectangles
 *   First child is the function call name
 *   Subsequent children are arguments to the function call
+*   Calls behave as lists
+*   `typeof` and `str` return "language" for call objects
 
 :::
 
-## Expression 
+## Expressions can be modified using list subsetting
 
-* Collectively, the data structures present in the AST are called expressions.
-* These include:
-  1. Constants
-  2. Symbols
-  3. Calls 
-  4. Pairlists
+::: panel-tabset
 
-### Constants
-
-* Scalar constants are the simplest component of the AST. 
-* A constant is either **NULL** or a **length-1** atomic vector (or scalar) 
-  * e.g., `TRUE`, `1L`, `2.5`, `"x"`, or `"hello"`. 
-* We can test for a constant with `rlang::is_syntactic_literal()`.
-* Constants are self-quoting in the sense that the expression used to represent a constant is the same constant:
+### Inspect
 
 ```{r}
-identical(expr(TRUE), TRUE)
-identical(expr(1), 1)
-identical(expr(2L), 2L)
-identical(expr("x"), "x")
-identical(expr("hello"), "hello")
+x <- rlang::expr(10*2)
+str(x)
+rlang::is_list(x)
+rlang::is_expression(x)
+purrr::map(as.list(x),~{.x})
 ```
 
-### Symbols
-
-* A symbol represents the name of an object.
-  * `x`
-  * `mtcars`
-  * `mean`
-* In base R, the terms symbol and name are used interchangeably (i.e., `is.name()` is identical to `is.symbol()`), but this book used symbol consistently because **"name"** has many other meanings.
-* You can create a symbol in two ways: 
-  1. by capturing code that references an object with `expr()`.
-  2. turning a string into a symbol with `rlang::sym()`.
+### Modify
 
 ```{r}
-expr(x)
-```
-
-```{r}
-sym("x")
-```
-
-* A symbol can be turned back into a string with `as.character()` or `rlang::as_string()`. 
-* `as_string()` has the advantage of clearly signalling that you’ll get a character vector of length 1.
-
-```{r}
-as_string(expr(x))
-```
-
-* We can recognize a symbol because it is printed without quotes
-
-```{r}
-expr(x)
-```
-
-* `str()` tells you that it is a symbol, and `is.symbol()` is TRUE:
-
-```{r}
-str(expr(x))
-```
-
-```{r}
-is.symbol(expr(x))
-```
-
-* The symbol type is not vectorised, i.e., a symbol is always length 1. 
-* If you want multiple symbols, you’ll need to put them in a list, using `rlang::syms()`.
-
-Note that `as_string()` will not work on expressions which are not symbols.
-
-```{r}
-#| error: true
-as_string(expr(x+y))
-```
-
-
-### Calls
-
-* A call object represents a captured function call. 
-* Call objects are a special type of list. 
-  * The first component specifies the function to call (usually a symbol, i.e., the name fo the function). 
-  * The remaining elements are the arguments for that call. 
-* Call objects create branches in the AST, because calls can be nested inside other calls.
-* You can identify a call object when printed because it looks just like a function call. 
-* Confusingly `typeof()` and `str()` print language for call objects (where we might expect it to return that it is a "call" object), but `is.call()` returns TRUE:
-
-```{r}
-lobstr::ast(read.table("important.csv", row.names = FALSE))
-```
-
-```{r}
-x <- expr(read.table("important.csv", row.names = FALSE))
-```
-
-```{r}
-typeof(x)
-```
-
-```{r}
-is.call(x)
-```
-
-### Subsetting
-
-* Calls generally behave like lists.
-* Since they are list-like, you can use standard subsetting tools. 
-* The first element of the call object is the function to call, which is usually a symbol:
-
-```{r}
-x[[1]]
-```
-
-```{r}
-is.symbol(x[[1]])
-```
-* The remainder of the elements are the arguments:
-
-```{r}
-is.symbol(x[-1])
-as.list(x[-1])
-```
-* We can extract individual arguments with [[ or, if named, $:
-
-```{r}
-x[[2]]
-```
-
-```{r}
-x$row.names
-```
-
-* We can determine the number of arguments in a call object by subtracting 1 from its length:
-
-```{r}
-length(x) - 1
-```
-
-* Extracting specific arguments from calls is challenging because of R’s flexible rules for argument matching:
-  * It could potentially be in any location, with the full name, with an abbreviated name, or with no name. 
-
-* To work around this problem, you can use `rlang::call_standardise()` which standardizes all arguments to use the full name:
-
-```{r}
-rlang::call_standardise(x)
-```
-
-* But If the function uses ... it’s not possible to standardise all arguments.
-* Calls can be modified in the same way as lists:
-
-```{r}
-x$header <- TRUE
+tracemem(x)
 x
+x[[2]] <- 4
+x
+untracemem(x)
 ```
 
-### Function position
+:::
 
-* The first element of the call object is the function position. This contains the function that will be called when the object is evaluated, and is usually a symbol.
+## Expressions can be generated using `call2` or `expr`
+
+::: panel-tabset
+
+### Generate using `call2`
+
+Clunky  for more complex  expressions, see chapter 19 for more details
 
 ```{r}
-lobstr::ast(foo())
+rlang::call2("mean", x = rlang::expr(x), na.rm = TRUE)
 ```
 
-* While R allows you to surround the name of the function with quotes, the parser converts it to a symbol:
+### Generate & filters
 
 ```{r}
-lobstr::ast("foo"())
+and_filters <- 
+  purrr::map(
+    letters[6:8], #f, g, h
+    ~{
+      rlang::expr(.data[["x"]] < !!.x)
+     }
+  ) |> 
+    purrr::reduce(
+      .f = function(left, right) {
+        rlang::expr(!!left & !!right)
+      }
+    )
+tibble::tibble(
+  x = letters
+) |> 
+  dplyr::filter(!!!and_filters)
+
 ```
 
-* However, sometimes the function doesn’t exist in the current environment and you need to do some computation to retrieve it: 
-  * For example, if the function is in another package, is a method of an R6 object, or is created by a function factory. In this case, the function position will be occupied by another call:
-
+### Generate | filters
 
 ```{r}
-lobstr::ast(pkg::foo(1))
+or_filters <- 
+  purrr::map(
+    letters[6:8], #f, g, h
+    ~{
+      rlang::expr(.data[["x"]] < !!.x)
+     }
+  ) |> 
+    purrr::reduce(
+      .f = function(left, right) {
+        rlang::expr(!!left | !!right)
+      }
+    )
+tibble::tibble(
+  x = letters
+) |> 
+  dplyr::filter(!!!or_filters)
 ```
 
-```{r}
-lobstr::ast(obj$foo(1))
-```
-
-```{r}
-lobstr::ast(foo(1)(2))
-```
-
-![](images/call-call.png)
-
-### Constructing
-
-* You can construct a call object from its components using `rlang::call2()`. 
-* The first argument is the name of the function to call (either as a string, a symbol, or another call).
-* The remaining arguments will be passed along to the call:
-
-```{r}
-call2("mean", x = expr(x), na.rm = TRUE)
-```
-
-```{r}
-call2(expr(base::mean), x = expr(x), na.rm = TRUE)
-```
-
-* Infix calls created in this way still print as usual.
-
-```{r}
-call2("<-", expr(x), 10)
-```
+:::
 
 ## Parsing and grammar
 
