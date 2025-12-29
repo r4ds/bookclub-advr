@@ -3,11 +3,13 @@ engine: knitr
 title: Expressions
 ---
 
+# To compute on the language, we first need to understand its structure.
+
 ## Learning objectives:
 
-* Capture code
-* Inspect code using the abstract syntax tree (AST) 
-* Define expressions
+* Capture code expressions
+* Inspect expressions
+* Modify expressions
 * Identify grammar of parsing code
 * Implement advanced code parsing
 
@@ -16,124 +18,63 @@ library(rlang)
 library(lobstr)
 ```
 
-## Introduction
+## `expr` captures code without executing
 
-> To compute on the language, we first need to understand its structure.
+*   Distinguishes the _operation_ from the _result_
 
-* This requires a few things:
-  * New vocabulary.
-  * New tools to inspect and modify expressions.
-  * Approach the use of the language with new ways of thinking.
-* One of the first new ways of thinking is the distinction between an operation and its result.
+::: panel-tabset
+
+### Operation
+
+*   Capture code as an __expression__
+
+```{r}
+z <- rlang::expr(y <- x * 10)
+z
+class(z)
+```
+
+### Result
+
+*   Evaluate the code expression __immediately__
 
 ```{r, error = TRUE}
 y <- x * 10
 ```
 
-* We can capture the intent of the code without executing it using the rlang package.
+:::
+
+## `eval` evaluates the code expression
 
 ```{r}
-z <- rlang::expr(y <- x * 10)
-
-z
-```
-
-* We can then evaluate the expression using the **base::eval** function.
-
-```{r}
-x <- 4
-
-base::eval(expr(y <- x * 10))
-
-y
-```
-
-### Evaluating multiple expressions 
-
-* The function `expression()` allows for multiple expressions, and in some ways it acts similarly to the way files are `source()`d in.  That is, we `eval()`uate all of the expressions at once.
-
-* `expression()` returns a vector and can be passed to `eval()`.
-
-```{r}
-z <- expression(x <- 4, x * 10)
-
+z <- rlang::expr(x * 10)
+x <- 10
 eval(z)
-is.atomic(z)
-is.vector(z)
 ```
 
-* `exprs()` does not evaluate everything at once.  To evaluate each expression, the individual expressions must be evaluated in a loop.
+::: callout-note
+This chapter focuses on capturing and inspecting the _operation_. `eval` will be discussed more in chapters 19 and 20.
+:::
 
-```{r}
-for (i in exprs(x <- 4, x * 10)) {
-print(i)
-print(eval(i))
-}
-```
+## `ast` parses and identifies the parts of an expression
 
-## Abstract Syntax Tree (AST)
+*   Expressions are also called abstract syntax trees (ASTs) because of the hierarchical structure and natural tree representation. 
 
-* Expressions are objects that capture the structure of code without evaluating it.
-* Expressions are also called abstract syntax trees (ASTs) because the structure of code is hierarchical and can be naturally represented as a tree. 
-* Understanding this tree structure is crucial for inspecting and modifying expressions.
-  * Branches = Calls
-  * Leaves = Symbols and constants
+::: panel-tabset
+
+### Using infix notation
 
 ```{r,eval=FALSE}
-f(x, "y", 1)
-```
-
-![](images/simple.png)
-
-### With `lobstr::ast():`
-
-```{r}
-lobstr::ast(f(x, "y", 1))
-```
-
-* Some functions might also contain more calls like the example below:
-
-```{r,eval=FALSE}
-f(g(1, 2), h(3, 4, i())):
-```
-![](images/complicated.png)
-
-```{r}
-lobstr::ast(f(g(1, 2), h(3, 4, i())))
-```
-* Read the **hand-drawn diagrams** from left-to-right (ignoring vertical position)
-* Read the **lobstr-drawn diagrams** from top-to-bottom (ignoring horizontal position).
-* The depth within the tree is determined by the nesting of function calls. 
-* Depth also determines evaluation order, **as evaluation generally proceeds from deepest-to-shallowest, but this is not guaranteed because of lazy evaluation**.
-
-###  Infix calls
-
-> Every call in R can be written in tree form because any call can be written in prefix form.
-
-An infix operator is a function where the function name is placed between its arguments. Prefix form is when then function name comes before the arguments, which are enclosed in parentheses. [Note that the name infix comes from the words prefix and suffix.]
-
-```{r}
-y <- x * 10
-`<-`(y, `*`(x, 10))
-```
-
-* A characteristic of the language is that infix functions can always be written as prefix functions; therefore, all function calls can be represented using an AST.
-
-![](images/prefix.png)
-
-```{r}
 lobstr::ast(y <- x * 10)
 ```
 
-```{r}
-lobstr::ast(`<-`(y, `*`(x, 10)))
+### Using prefix notation
+
+```{r,eval=FALSE}
+lobstr::ast(`<-`(y,`*`(x,10)))
 ```
 
-* There is no difference between the ASTs for the infix version vs the prefix version, and if you generate an expression with prefix calls, R will still print it in infix form:
-
-```{r}
-rlang::expr(`<-`(y, `*`(x, 10)))
-```
+:::
 
 ## Expression 
 
