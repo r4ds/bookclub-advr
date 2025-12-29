@@ -5,18 +5,11 @@ title: Expressions
 
 ## Learning objectives:
 
-* Understand the idea of the abstract syntax tree (AST). 
-* Discuss the data structures that underlie the AST:
-  * Constants
-  * Symbols
-  * Calls
-* Explore the idea behind parsing.
-* Explore some details of R's grammar.
-* Discuss the use or recursive functions to compute on the language.
-* Work with three other more specialized data structures:
-  * Pairlists
-  * Missing arguments
-  * Expression vectors
+* Capture code
+* Inspect code using the abstract syntax tree (AST) 
+* Define expressions
+* Identify grammar of parsing code
+* Implement advanced code parsing
 
 ```{r, message = FALSE, warning = FALSE}
 library(rlang)
