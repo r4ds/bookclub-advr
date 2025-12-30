@@ -3,13 +3,27 @@ engine: knitr
 title: Improving performance
 ---
 
-## Overview
+## Learning Objectives
 
-1. Code organization
+0. Determine when to optimize code
+1. Organize code for performance
 2. Check for existing solutions
-3. Do as little as possible
-4. Vectorise
-5. Avoid Copies
+3. Create simple solutions
+4. Vectorise code
+5. Avoid code copying
+
+```{r}
+library(bench)
+```
+
+## Code that works, is correct, and is reproducible should be the first priority
+
+*   Correct code generates a *good product*
+*   Incorrect code generates a *bad product*
+*   A good product is _more valuable_ than an bad product
+*   People will use **and** wait for valuable products
+*   People will not use incorrect products
+*   Do not optimize code that doesn' yet generate a good product
 
 ## Organizing code
 
