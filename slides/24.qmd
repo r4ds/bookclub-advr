@@ -5,12 +5,12 @@ title: Improving performance
 
 ## Learning Objectives
 
-0. Determine when to optimize code
-1. Organize code for performance
-2. Check for existing solutions
-3. Create simple solutions
-4. Vectorise code
-5. Avoid code copying
+0.  Determine when to optimize code
+1.  Organize code for introducing optimizations
+2.  Check for existing solutions
+3.  Create simple solutions
+4.  Vectorise code
+5.  Avoid code copying
 
 ```{r}
 library(bench)
@@ -20,73 +20,78 @@ library(bench)
 
 ## Code that works, is correct, and is reproducible should be the first priority
 
-*   Correct code generates a *good product*
-*   Incorrect code generates a *bad product*
-*   A good product is _more valuable_ than an bad product
-*   People will use **and** wait for valuable products
-*   People will not use incorrect products
-*   Do not optimize code that doesn't yet generate a good product
+::: incremental
+-   Correct code generates a *good product*
+-   Incorrect code generates a *bad product*
+-   A good product is *more valuable* than a bad product
+-   People will use and wait for valuable products
+-   People will not use incorrect products
+-   Do not optimize code that doesn't yet generate a good product
+:::
 
 ## Optimized *correct* code should be the second priority
 
-*   Time and space constraints should set optimization goals and priorities
-*   We all strive to be efficient, but we must first prioritize to meet constraints
+-   Time and space constraints should set optimization goals and priorities
+-   We all strive to be efficient, whether doing something in less time or with less space
+-   But we must first prioritize to meet our various constraints
 
-#  Organize code for performance
+# Organize code for introducing optimizations
 
-## Organizing code
+## Create functions to evaluate approaches and quantify optimization
 
-- Write a function for each approach
+-   Goal: Modular, repeatable units of code
+-   Keep old functions that you've tried, even the failures
+-   Create examples with `{roxygen}` and tests with `{testthat}`
+
 ```{r}
 mean1 <- function(x) mean(x)
 mean2 <- function(x) sum(x) / length(x)
-```
-- Keep old functions that you've tried, even the failures
-- Generate a representative test case
-```{r}
+
 x <- runif(1e5)
-```
-- Use `bench::mark` to compare the different versions (and include unit tests)
-```{r}
+
 bench::mark(
   mean1(x),
   mean2(x)
-)[c("expression", "min", "median", "itr/sec", "n_gc")]
+)[c("expression", "min", "median", "mem_alloc")]
 ```
 
-## Check for Existing Solution
-- CRAN task views (http://cran.rstudio.com/web/views/)
-- Reverse dependencies of Rcpp (https://cran.r-project.org/web/packages/Rcpp/)
-- Talk to others!
-  - Google (rseek)
-  - Stackoverflow ([R])
-  - https://community.rstudio.com/
-  - DSLC community
+## Online resources can provide existing solutions or new coding approaches
+
+1.  Package documentation
+2.  Search engine e.g. Google
+3.  Github issues for a package
+4.  CRAN task views (http://cran.rstudio.com/web/views/)
+5.  Reverse dependencies of Rcpp (https://cran.r-project.org/web/packages/Rcpp/)
+
+## Online communities also provide learning opportunities and idea sharing
+
+-   Talk to others!
+    -   Google (rseek)
+    -   Stackoverflow (\[R\])
+    -   https://community.rstudio.com/
+    -   DSLC community
 
 ## Do as little as possible
-- use a function tailored to a more specific type of input or output, or to a more specific problem
-  - `rowSums()`, `colSums()`, `rowMeans()`, and `colMeans()` are faster than equivalent invocations that use `apply()` because they are vectorised
-  - `vapply()` is faster than `sapply()` because it pre-specifies the output type
-  - `any(x == 10)` is much faster than `10 %in% x` because testing equality is simpler than testing set inclusion
-- Some functions coerce their inputs into a specific type. If your input is not the right type, the function has to do extra work
-  - e.g. `apply()` will always turn a dataframe into a matrix
-- Other examples
-  - `read.csv()`: specify known column types with `colClasses`. (Also consider
-  switching to `readr::read_csv()` or `data.table::fread()` which are 
-  considerably faster than `read.csv()`.)
 
-  - `factor()`: specify known levels with `levels`.
+-   use a function tailored to a more specific type of input or output, or to a more specific problem
+    -   `rowSums()`, `colSums()`, `rowMeans()`, and `colMeans()` are faster than equivalent invocations that use `apply()` because they are vectorised
+    -   `vapply()` is faster than `sapply()` because it pre-specifies the output type
+    -   `any(x == 10)` is much faster than `10 %in% x` because testing equality is simpler than testing set inclusion
+-   Some functions coerce their inputs into a specific type. If your input is not the right type, the function has to do extra work
+    -   e.g. `apply()` will always turn a dataframe into a matrix
+-   Other examples
+    -   `read.csv()`: specify known column types with `colClasses`. (Also consider switching to `readr::read_csv()` or `data.table::fread()` which are considerably faster than `read.csv()`.)
 
-  - `cut()`: don't generate labels with `labels = FALSE` if you don't need them,
-  or, even better, use `findInterval()` as mentioned in the "see also" section
-  of the documentation.
-  
-  - `unlist(x, use.names = FALSE)` is much faster than `unlist(x)`.
+    -   `factor()`: specify known levels with `levels`.
 
-  - `interaction()`: if you only need combinations that exist in the data, use
-  `drop = TRUE`.
-  
+    -   `cut()`: don't generate labels with `labels = FALSE` if you don't need them, or, even better, use `findInterval()` as mentioned in the "see also" section of the documentation.
+
+    -   `unlist(x, use.names = FALSE)` is much faster than `unlist(x)`.
+
+    -   `interaction()`: if you only need combinations that exist in the data, use `drop = TRUE`.
+
 ## Avoiding Method Dispatch
+
 ```{r}
 x <- runif(1e2)
 bench::mark(
@@ -114,8 +119,9 @@ bench::mark(
 ```
 
 ## Avoiding Input Coercion
-- `as.data.frame()` is quite slow because it coerces each element into a data frame and then `rbind()`s them together
-- instead, if you have a named list with vectors of equal length, you can directly transform it into a data frame
+
+-   `as.data.frame()` is quite slow because it coerces each element into a data frame and then `rbind()`s them together
+-   instead, if you have a named list with vectors of equal length, you can directly transform it into a data frame
 
 ```{r}
 quickdf <- function(l) {
@@ -134,17 +140,18 @@ bench::mark(
 *Caveat!* This method is fast because it's dangerous!
 
 ## Vectorise
-- vectorisation means finding the existing R function that is implemented in C and most closely applies to your problem
-- Vectorised functions that apply to many scenarios
-  - `rowSums()`, `colSums()`, `rowMeans()`, and `colMeans()`
-  - Vectorised subsetting can lead to big improvements in speed
-  - `cut()` and `findInterval()` for converting continuous variables to categorical
-  - Be aware of vectorised functions like `cumsum()` and `diff()`
-  - Matrix algebra is a general example of vectorisation
+
+-   vectorisation means finding the existing R function that is implemented in C and most closely applies to your problem
+-   Vectorised functions that apply to many scenarios
+    -   `rowSums()`, `colSums()`, `rowMeans()`, and `colMeans()`
+    -   Vectorised subsetting can lead to big improvements in speed
+    -   `cut()` and `findInterval()` for converting continuous variables to categorical
+    -   Be aware of vectorised functions like `cumsum()` and `diff()`
+    -   Matrix algebra is a general example of vectorisation
 
 ## Avoiding copies
 
-- Whenever you use c(), append(), cbind(), rbind(), or paste() to create a bigger object, R must first allocate space for the new object and then copy the old object to its new home.
+-   Whenever you use c(), append(), cbind(), rbind(), or paste() to create a bigger object, R must first allocate space for the new object and then copy the old object to its new home.
 
 ```{r}
 random_string <- function() {
@@ -244,24 +251,15 @@ stopifnot(all.equal(t1, t3))
 1000 times faster than when we started!
 
 ## Other techniques
-* [Read R blogs](http://www.r-bloggers.com/) to see what performance
-  problems other people have struggled with, and how they have made their
-  code faster.
 
-* Read other R programming books, like The Art of R Programming or Patrick Burns'
-  [_R Inferno_](http://www.burns-stat.com/documents/books/the-r-inferno/) to
-  learn about common traps.
+-   [Read R blogs](http://www.r-bloggers.com/) to see what performance problems other people have struggled with, and how they have made their code faster.
 
-* Take an algorithms and data structure course to learn some
-  well known ways of tackling certain classes of problems. I have heard
-  good things about Princeton's
-  [Algorithms course](https://www.coursera.org/course/algs4partI) offered on
-  Coursera.
-  
-* Learn how to parallelise your code. Two places to start are
-  Parallel R and Parallel Computing for Data Science
+-   Read other R programming books, like The Art of R Programming or Patrick Burns' [*R Inferno*](http://www.burns-stat.com/documents/books/the-r-inferno/) to learn about common traps.
 
-* Read general books about optimisation like Mature optimisation
-  or the Pragmatic Programmer
-  
-* Read more R code. StackOverflow, R Mailing List, DSLC, GitHub, etc.
+-   Take an algorithms and data structure course to learn some well known ways of tackling certain classes of problems. I have heard good things about Princeton's [Algorithms course](https://www.coursera.org/course/algs4partI) offered on Coursera.
+
+-   Learn how to parallelise your code. Two places to start are Parallel R and Parallel Computing for Data Science
+
+-   Read general books about optimisation like Mature optimisation or the Pragmatic Programmer
+
+-   Read more R code. StackOverflow, R Mailing List, DSLC, GitHub, etc.
