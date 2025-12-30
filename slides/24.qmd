@@ -16,6 +16,8 @@ title: Improving performance
 library(bench)
 ```
 
+# Determine when to optimize code
+
 ## Code that works, is correct, and is reproducible should be the first priority
 
 *   Correct code generates a *good product*
@@ -23,7 +25,14 @@ library(bench)
 *   A good product is _more valuable_ than an bad product
 *   People will use **and** wait for valuable products
 *   People will not use incorrect products
-*   Do not optimize code that doesn' yet generate a good product
+*   Do not optimize code that doesn't yet generate a good product
+
+## Optimized *correct* code should be the second priority
+
+*   Time and space constraints should set optimization goals and priorities
+*   We all strive to be efficient, but we must first prioritize to meet constraints
+
+#  Organize code for performance
 
 ## Organizing code
 
