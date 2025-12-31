@@ -55,24 +55,41 @@ bench::mark(
 )[c("expression", "min", "median", "mem_alloc")]
 ```
 
-## Online resources can provide existing solutions or new coding approaches
+## Online resources and communities can provide existing solutions or new coding approaches
 
-1.  Package documentation
-2.  Search engine e.g. Google
-3.  Github issues for a package
-4.  CRAN task views (http://cran.rstudio.com/web/views/)
-5.  Reverse dependencies of Rcpp (https://cran.r-project.org/web/packages/Rcpp/)
+-   After exhausting options at hand, online resources can provide new approaches not thought of.
 
-## Online communities also provide learning opportunities and idea sharing
+-   Alternatively, reframe the problem to find solutions
 
--   Talk to others!
-    -   Google (rseek)
-    -   Stackoverflow (\[R\])
-    -   https://community.rstudio.com/
-    -   DSLC community
+-   Talking to peers helps brainstorm solutions and reframe the problem
 
-## Do as little as possible
+-   Learning broadly improves your ability to dissect problems and develop solutions
 
+# Strategies for code optimization
+
+## Do as little as possible to make functions faster
+
+::: panel-tabset
+
+### Use vectorisation
+
+```{r}
+
+```
+
+### Prespeccify output types
+
+```{r}
+
+```
+
+### Test equally versus set incclusion
+
+```{r}
+
+```
+
+:::
 -   use a function tailored to a more specific type of input or output, or to a more specific problem
     -   `rowSums()`, `colSums()`, `rowMeans()`, and `colMeans()` are faster than equivalent invocations that use `apply()` because they are vectorised
     -   `vapply()` is faster than `sapply()` because it pre-specifies the output type
