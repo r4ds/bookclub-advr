@@ -46,9 +46,7 @@ library(bench)
 ```{r}
 mean1 <- function(x) mean(x)
 mean2 <- function(x) sum(x) / length(x)
-
 x <- runif(1e5)
-
 bench::mark(
   mean1(x),
   mean2(x)
@@ -67,45 +65,45 @@ bench::mark(
 
 # Strategies for code optimization
 
-## Do as little as possible to make functions faster
+## Functions, arguments, and data types should factor into code optimization for the problem at hand.
 
 ::: panel-tabset
 
 ### Use vectorisation
 
 ```{r}
-
+X <- matrix(1:1e6,nrow=100)
+bench::mark(
+  colMeans(X),
+  apply(X,2,function(x)sum(x) / length(x))
+)[c("expression", "min", "median", "mem_alloc")]
 ```
 
-### Prespeccify output types
+### Prespecify outputs
+
+-   Note: specifying `double` versus `numeric` in vapply regulates speed.
 
 ```{r}
-
+X <- rep(list(1:1e4),1e4)
+bench::mark(
+  vapply(X,mean,double(1)),
+  sapply(X,mean)
+)[c("expression", "min", "median", "mem_alloc")]
 ```
 
-### Test equally versus set incclusion
+### Test equally versus set inclusion
+
+-   Note: `any` becomes faster than  `%in%` if `length(X)>1e7`
 
 ```{r}
-
+X <- 1:1e8
+bench::mark(
+  any(X == 1450),
+  1450 %in% X
+)[c("expression", "min", "median", "mem_alloc")]
 ```
 
 :::
--   use a function tailored to a more specific type of input or output, or to a more specific problem
-    -   `rowSums()`, `colSums()`, `rowMeans()`, and `colMeans()` are faster than equivalent invocations that use `apply()` because they are vectorised
-    -   `vapply()` is faster than `sapply()` because it pre-specifies the output type
-    -   `any(x == 10)` is much faster than `10 %in% x` because testing equality is simpler than testing set inclusion
--   Some functions coerce their inputs into a specific type. If your input is not the right type, the function has to do extra work
-    -   e.g. `apply()` will always turn a dataframe into a matrix
--   Other examples
-    -   `read.csv()`: specify known column types with `colClasses`. (Also consider switching to `readr::read_csv()` or `data.table::fread()` which are considerably faster than `read.csv()`.)
-
-    -   `factor()`: specify known levels with `levels`.
-
-    -   `cut()`: don't generate labels with `labels = FALSE` if you don't need them, or, even better, use `findInterval()` as mentioned in the "see also" section of the documentation.
-
-    -   `unlist(x, use.names = FALSE)` is much faster than `unlist(x)`.
-
-    -   `interaction()`: if you only need combinations that exist in the data, use `drop = TRUE`.
 
 ## Avoiding Method Dispatch
 
