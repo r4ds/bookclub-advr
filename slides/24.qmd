@@ -103,66 +103,24 @@ bench::mark(
 )[c("expression", "min", "median", "mem_alloc")]
 ```
 
-:::
-
-## Avoiding Method Dispatch
+### Avoid method dispatch
 
 ```{r}
 x <- runif(1e2)
+
 bench::mark(
   mean(x),
   mean.default(x)
-)[c("expression", "min", "median", "itr/sec", "n_gc")]
+)[c("expression", "min", "median", "mem_alloc")]
 ```
+:::
 
-```{r}
-x <- runif(1e2)
-bench::mark(
-  mean(x),
-  mean.default(x),
-  .Internal(mean(x))
-)[c("expression", "min", "median", "itr/sec", "n_gc")]
-```
+## Using vectorised code often leads to optimized code
 
-```{r}
-x <- runif(1e4)
-bench::mark(
-  mean(x),
-  mean.default(x),
-  .Internal(mean(x))
-)[c("expression", "min", "median", "itr/sec", "n_gc")]
-```
-
-## Avoiding Input Coercion
-
--   `as.data.frame()` is quite slow because it coerces each element into a data frame and then `rbind()`s them together
--   instead, if you have a named list with vectors of equal length, you can directly transform it into a data frame
-
-```{r}
-quickdf <- function(l) {
-  class(l) <- "data.frame"
-  attr(l, "row.names") <- .set_row_names(length(l[[1]]))
-  l
-}
-l <- lapply(1:26, function(i) runif(1e3))
-names(l) <- letters
-bench::mark(
-  as.data.frame = as.data.frame(l),
-  quick_df      = quickdf(l)
-)[c("expression", "min", "median", "itr/sec", "n_gc")]
-```
-
-*Caveat!* This method is fast because it's dangerous!
-
-## Vectorise
-
--   vectorisation means finding the existing R function that is implemented in C and most closely applies to your problem
--   Vectorised functions that apply to many scenarios
-    -   `rowSums()`, `colSums()`, `rowMeans()`, and `colMeans()`
-    -   Vectorised subsetting can lead to big improvements in speed
-    -   `cut()` and `findInterval()` for converting continuous variables to categorical
-    -   Be aware of vectorised functions like `cumsum()` and `diff()`
-    -   Matrix algebra is a general example of vectorisation
+-   Vectorisation: Using an R function implemented
+-   Matrix algebra functions are a great example of vectorisation
+-   The help documentation can lead you to a vectorised solution
+-   Performing operations at the scale of your problem shows actual versus expected optimizations
 
 ## Avoiding copies
 
