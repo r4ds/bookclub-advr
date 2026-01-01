@@ -147,9 +147,7 @@ strings10 <- replicate(10, random_string())
 strings100 <- replicate(100, random_string())
 collapse <- function(xs) {
   out <- ""
-  for (x in xs) {
-    out <- paste0(out, x)
-  }
+  for (x in xs) { out <- paste0(out, x) }
   out
 }
 bench::mark(
@@ -161,91 +159,124 @@ bench::mark(
 )[c("expression", "min", "median", "mem_alloc", "n_gc")]
 ```
 
-## Case study: t-test
+# Evaluating optimizations to `t.test`
+
+## Most data analysis projects ask to compare the means between two groups
+
+::: panel-tabset
+
+### Problem Statement
+
+-   Though better statistics exist, Student's t test is often asked for
+-   Many tests need to be performed, often in the thousands or more
+-   Speed can take precedent over safety given the dozens of projects with this problem
+-   Correctness is a key requirement
+
+### Data
 
 ```{r}
-m <- 1000
-n <- 50
+m <- 100
+n <- 1000
 X <- matrix(rnorm(m * n, mean = 10, sd = 3), nrow = m)
-grp <- rep(1:2, each = n / 2)
+grp <- rep(1:2, each = m / 2)
 ```
 
-```{r}
-# formula interface
-system.time(
-  for (i in 1:m) {
-    t.test(X[i, ] ~ grp)$statistic
-  }
-)
-# provide two vectors
-system.time(
-  for (i in 1:m) {
-    t.test(X[i, grp == 1], X[i, grp == 2])$statistic
-  }
-)
-```
+:::
 
-Add functionality to save values
+## We can leverage our strategies to compute many t-tests
+
+::: panel-tabset
+
+### Base Case
 
 ```{r}
-compT <- function(i){
-  t.test(X[i, grp == 1], X[i, grp == 2])$statistic
+ttest_base <- function(x,groups) {
+  vec <- double()
+  for(i in 1:ncol(x)) {
+    veci <- t.test(x[groups == 1, i], x[groups == 2, i])[['statistic']]
+    vec <- c(vec,veci)
+  }
+  unname(vec)
 }
-system.time(t1 <- purrr::map_dbl(1:m, compT))
 ```
 
-If you look at the source code of `stats:::t.test.default()`, you’ll see that it does a lot more than just compute the t-statistic.
+### No copying
 
 ```{r}
-# Do less work
-my_t <- function(x, grp) {
+ttest_nocopy <- function(x,groups) {
+  purrr::map_dbl(
+    1:ncol(x),
+    function(i) {
+      t.test(x[groups == 1, i], x[groups == 2, i])[['statistic']]
+    }
+  )
+}
+```
+
+### No dispatching
+
+```{r}
+ttest_nodispatch <- function(x,groups) {
+  purrr::map_dbl(
+    1:ncol(x),
+    function(i) {
+      stats:::t.test.default(x[groups == 1, i], x[groups == 2, i])[['statistic']]
+    }
+  )
+}
+```
+
+### Matrix algebra
+
+```{r}
+ttest_malgebra <- function(x, groups) {
   t_stat <- function(x) {
-    m <- mean(x)
-    n <- length(x)
+    m <- mean(x); n <- length(x)
     var <- sum((x - m) ^ 2) / (n - 1)
     list(m = m, n = n, var = var)
   }
-  g1 <- t_stat(x[grp == 1])
-  g2 <- t_stat(x[grp == 2])
-  se_total <- sqrt(g1$var / g1$n + g2$var / g2$n)
-  (g1$m - g2$m) / se_total
+  purrr::map_dbl(
+    1:ncol(x),
+    function(i) {
+      g1 <- t_stat(x[groups == 1,i]); g2 <- t_stat(x[groups == 2,i])
+      se_total <- sqrt(g1$var / g1$n + g2$var / g2$n)
+      (g1$m - g2$m) / se_total
+    }
+  )
 }
-system.time(t2 <- purrr::map_dbl(1:m, ~ my_t(X[.,], grp)))
-stopifnot(all.equal(t1, t2))
 ```
 
-This gives us a six-fold speed improvement!
+### Vectorise
 
 ```{r}
-# Vectorise it
-rowtstat <- function(X, grp){
-  t_stat <- function(X) {
-    m <- rowMeans(X)
-    n <- ncol(X)
-    var <- rowSums((X - m) ^ 2) / (n - 1)
-    list(m = m, n = n, var = var)
-  }
-  g1 <- t_stat(X[, grp == 1])
-  g2 <- t_stat(X[, grp == 2])
-  se_total <- sqrt(g1$var / g1$n + g2$var / g2$n)
-  (g1$m - g2$m) / se_total
+ttest_vectorise <- function(x, groups) {
+  x1 <- x[groups == 1, , drop = FALSE]
+  x2 <- x[groups == 2, , drop = FALSE]
+  n1 <- nrow(x1)
+  n2 <- nrow(x2)
+  m1 <- Matrix::colMeans(x1)
+  m2 <- Matrix::colMeans(x2)
+  v1 <- Matrix::colSums(
+    (x1 - matrix(m1, n1, ncol(x), byrow = TRUE)
+  )^2) / (n1 - 1)
+  v2 <- Matrix::colSums(
+    (x2 - matrix(m2, n2, ncol(x), byrow = TRUE)
+  )^2) / (n2 - 1)
+  se_total <- sqrt(v1 / n1 + v2 / n2)
+  (m1 - m2) / se_total
 }
-system.time(t3 <- rowtstat(X, grp))
-stopifnot(all.equal(t1, t3))
 ```
 
-1000 times faster than when we started!
+:::
 
-## Other techniques
+## We can identify optimal code by evaluating different t-test strategies
 
--   [Read R blogs](http://www.r-bloggers.com/) to see what performance problems other people have struggled with, and how they have made their code faster.
-
--   Read other R programming books, like The Art of R Programming or Patrick Burns' [*R Inferno*](http://www.burns-stat.com/documents/books/the-r-inferno/) to learn about common traps.
-
--   Take an algorithms and data structure course to learn some well known ways of tackling certain classes of problems. I have heard good things about Princeton's [Algorithms course](https://www.coursera.org/course/algs4partI) offered on Coursera.
-
--   Learn how to parallelise your code. Two places to start are Parallel R and Parallel Computing for Data Science
-
--   Read general books about optimisation like Mature optimisation or the Pragmatic Programmer
-
--   Read more R code. StackOverflow, R Mailing List, DSLC, GitHub, etc.
+```{r}
+bench::mark(
+  ttest_base(X,grp),
+  ttest_nocopy(X,grp),
+  ttest_nodispatch(X,grp),
+  ttest_malgebra(X,grp),
+  ttest_vectorise(X,grp)
+)[c("expression", "min", "median", "mem_alloc", "n_gc")]
+```
