@@ -6,11 +6,12 @@ title: Improving performance
 ## Learning Objectives
 
 0.  Determine when to optimize code
-1.  Organize code for introducing optimizations
+1.  Organize code for optimization
 2.  Check for existing solutions
 3.  Create simple solutions
 4.  Vectorise code
 5.  Avoid code copying
+6.  Evaluate optimization for `t.test`
 
 ```{r}
 library(bench)
@@ -29,7 +30,7 @@ library(bench)
 -   Do not optimize code that doesn't yet generate a good product
 :::
 
-## Optimized *correct* code should be the second priority
+## Optimizing *correct* code should be the second priority
 
 -   Time and space constraints should set optimization goals and priorities
 -   We all strive to be efficient, whether doing something in less time or with less space
@@ -52,6 +53,20 @@ bench::mark(
   mean2(x)
 )[c("expression", "min", "median", "mem_alloc")]
 ```
+
+## Utilize `{usethis}` and `{devtools}` for developing and testing functions
+
+::: {layout-ncol=2}
+
+![](images/usethis_hex_logo.png){width="160px" height="190px" fig-align="center"}
+![](images/devtools_hex_logo.png){width="160px" height="190px" fig-align="center"}
+
+:::
+
+1. Create a project/package directory manually or with `usetihs::create_package()`
+2. Revise functions within R scripts in an R folder
+3. Use `devtools::load_all()` to load and use functions
+4. Repeat #2-4
 
 ## Online resources and communities can provide existing solutions or new coding approaches
 
@@ -117,14 +132,12 @@ bench::mark(
 
 ## Using vectorised code often leads to optimized code
 
--   Vectorisation: Using an R function implemented
+-   Vectorisation: Using an R function implemented in C
 -   Matrix algebra functions are a great example of vectorisation
 -   The help documentation can lead you to a vectorised solution
 -   Performing operations at the scale of your problem shows actual versus expected optimizations
 
-## Avoiding copies
-
--   Whenever you use c(), append(), cbind(), rbind(), or paste() to create a bigger object, R must first allocate space for the new object and then copy the old object to its new home.
+## Preallocate vectors to avoid copying and increase performance
 
 ```{r}
 random_string <- function() {
@@ -145,7 +158,7 @@ bench::mark(
   vec10   = paste(strings10, collapse = ""),
   vec100  = paste(strings100, collapse = ""),
   check = FALSE
-)[c("expression", "min", "median", "itr/sec", "n_gc")]
+)[c("expression", "min", "median", "mem_alloc", "n_gc")]
 ```
 
 ## Case study: t-test
