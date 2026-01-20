@@ -832,14 +832,14 @@
     "href": "slides/20.html#evaluation-eval_tidy",
     "title": "Evaluation",
     "section": "Evaluation: eval_tidy()",
-    "text": "Evaluation: eval_tidy()\nThe purpose of the concept of quosure is to be able to pass a single object to rlang::eval_tidy(), as opposed to the expression-environment pair, as required for base::eval():\n\nrlang::eval_tidy(q1)\n\n#&gt; [1] 11\n\n\nGet the quosure components if you need them:\n\nrlang::get_expr(q1)\n\n#&gt; x + y\n\nrlang::get_env(q1)\n\n#&gt; &lt;environment: 0x55ce5cbccfb8&gt;\n\n\nOr set them\n\nq1 &lt;- set_env(q1, env(x = 3, y = 4))\neval_tidy(q1)\n\n#&gt; [1] 7"
+    "text": "Evaluation: eval_tidy()\nThe purpose of the concept of quosure is to be able to pass a single object to rlang::eval_tidy(), as opposed to the expression-environment pair, as required for base::eval():\n\nrlang::eval_tidy(q1)\n\n#&gt; [1] 11\n\n\nGet the quosure components if you need them:\n\nrlang::get_expr(q1)\n\n#&gt; x + y\n\nrlang::get_env(q1)\n\n#&gt; &lt;environment: 0x55cdc3942fb8&gt;\n\n\nOr set them\n\nq1 &lt;- set_env(q1, env(x = 3, y = 4))\neval_tidy(q1)\n\n#&gt; [1] 7"
   },
   {
     "objectID": "slides/20.html#quosures-and",
     "href": "slides/20.html#quosures-and",
     "title": "Evaluation",
     "section": "Quosures and …",
-    "text": "Quosures and …\nQuosures are just a convenience, but they are essential when it comes to working with ..., because you can have different arguments from ... associated with different environments.\n\ng &lt;- function(...) {\n  ## Creating our quosures from ...\n  enquos(...)\n}\n\ncreateQuos &lt;- function(...) {\n  ## symbol from the function environment\n  x &lt;- 1\n  g(..., f = x)\n}\n\n\n## symbol from the global environment\nx &lt;- 0\nqs &lt;- createQuos(global = x)\nqs\n\n#&gt; &lt;list_of&lt;quosure&gt;&gt;\n#&gt; \n#&gt; $global\n#&gt; &lt;quosure&gt;\n#&gt; expr: ^x\n#&gt; env:  global\n#&gt; \n#&gt; $f\n#&gt; &lt;quosure&gt;\n#&gt; expr: ^x\n#&gt; env:  0x55ce5e5fe960"
+    "text": "Quosures and …\nQuosures are just a convenience, but they are essential when it comes to working with ..., because you can have different arguments from ... associated with different environments.\n\ng &lt;- function(...) {\n  ## Creating our quosures from ...\n  enquos(...)\n}\n\ncreateQuos &lt;- function(...) {\n  ## symbol from the function environment\n  x &lt;- 1\n  g(..., f = x)\n}\n\n\n## symbol from the global environment\nx &lt;- 0\nqs &lt;- createQuos(global = x)\nqs\n\n#&gt; &lt;list_of&lt;quosure&gt;&gt;\n#&gt; \n#&gt; $global\n#&gt; &lt;quosure&gt;\n#&gt; expr: ^x\n#&gt; env:  global\n#&gt; \n#&gt; $f\n#&gt; &lt;quosure&gt;\n#&gt; expr: ^x\n#&gt; env:  0x55cdc5374960"
   },
   {
     "objectID": "slides/20.html#other-facts-about-quosures",
@@ -930,7 +930,7 @@
     "href": "slides/20.html#using-tidy-evaluation",
     "title": "Evaluation",
     "section": "Using tidy evaluation",
-    "text": "Using tidy evaluation\nMost of the time we might not do it in our code, but we often end up calling a function that uses eval_tidy() (becoming developer AND user)\nUse case: resample and subset\nWe have a function that resamples a dataset:\n\nresample &lt;- function(df, n) {\n  idx &lt;- sample(nrow(df), n, replace = TRUE)\n  df[idx, , drop = FALSE]\n}\n\n\nresample(sample_df, 10)\n\n#&gt;     a b c\n#&gt; 1   1 5 5\n#&gt; 1.1 1 5 5\n#&gt; 1.2 1 5 5\n#&gt; 5   5 1 1\n#&gt; 2   2 4 3\n#&gt; 2.1 2 4 3\n#&gt; 2.2 2 4 3\n#&gt; 1.3 1 5 5\n#&gt; 5.1 5 1 1\n#&gt; 2.3 2 4 3\n\n\nBut we also want to use subset and we want to create a function that allow us to resample and subset (with subset2()) in a single step."
+    "text": "Using tidy evaluation\nMost of the time we might not do it in our code, but we often end up calling a function that uses eval_tidy() (becoming developer AND user)\nUse case: resample and subset\nWe have a function that resamples a dataset:\n\nresample &lt;- function(df, n) {\n  idx &lt;- sample(nrow(df), n, replace = TRUE)\n  df[idx, , drop = FALSE]\n}\n\n\nresample(sample_df, 10)\n\n#&gt;     a b c\n#&gt; 1   1 5 5\n#&gt; 1.1 1 5 5\n#&gt; 5   5 1 1\n#&gt; 5.1 5 1 1\n#&gt; 4   4 2 4\n#&gt; 5.2 5 1 1\n#&gt; 1.2 1 5 5\n#&gt; 5.3 5 1 1\n#&gt; 2   2 4 3\n#&gt; 3   3 3 2\n\n\nBut we also want to use subset and we want to create a function that allow us to resample and subset (with subset2()) in a single step."
   },
   {
     "objectID": "slides/20.html#resample-and-subset-1",
@@ -951,7 +951,7 @@
     "href": "slides/20.html#resample-and-subset-3",
     "title": "Evaluation",
     "section": "Resample and subset (3)",
-    "text": "Resample and subset (3)\nSo we have to quote cond and unquote it when we pass it to subset2()\n\nsubsample &lt;- function(df, cond, n = nrow(df)) {\n  cond &lt;- enquo(cond)\n  df &lt;- subset2(df, !!cond)\n  resample(df, n)\n}\n\n\nsubsample(sample_df, b == c, 3)\n\n#&gt;     a b c\n#&gt; 1   1 5 5\n#&gt; 5   5 1 1\n#&gt; 1.1 1 5 5"
+    "text": "Resample and subset (3)\nSo we have to quote cond and unquote it when we pass it to subset2()\n\nsubsample &lt;- function(df, cond, n = nrow(df)) {\n  cond &lt;- enquo(cond)\n  df &lt;- subset2(df, !!cond)\n  resample(df, n)\n}\n\n\nsubsample(sample_df, b == c, 3)\n\n#&gt;     a b c\n#&gt; 1   1 5 5\n#&gt; 1.1 1 5 5\n#&gt; 5   5 1 1"
   },
   {
     "objectID": "slides/20.html#ambiguity-with-known-column-names",
@@ -1028,14 +1028,14 @@
     "href": "slides/18.html#expressions-and-lists-have-similar-memory-mapping",
     "title": "Expressions",
     "section": "Expressions and lists have similar memory mapping",
-    "text": "Expressions and lists have similar memory mapping\n\nx &lt;- rlang::expr(y &lt;- x * 10)\nlength(x)\n\n#&gt; [1] 3\n\nis.list(x)\n\n#&gt; [1] FALSE\n\nlobstr::obj_addr(x)\n\n#&gt; [1] \"0x559d4dfcb1b0\"\n\nlobstr::obj_addr(x[[1]])\n\n#&gt; [1] \"0x559d493abf00\"\n\nlobstr::obj_addr(x[[2]])\n\n#&gt; [1] \"0x559d4951bdf8\"\n\nlobstr::obj_addr(x[[3]])\n\n#&gt; [1] \"0x559d4dfcb108\"\n\nlst_x &lt;- as.list(x)\n# Will not work: lobstr::obj_addrs(x)\nlobstr::obj_addrs(lst_x)\n\n#&gt; [1] \"0x559d493abf00\" \"0x559d4951bdf8\" \"0x559d4dfcb108\""
+    "text": "Expressions and lists have similar memory mapping\n\nx &lt;- rlang::expr(y &lt;- x * 10)\nlength(x)\n\n#&gt; [1] 3\n\nis.list(x)\n\n#&gt; [1] FALSE\n\nlobstr::obj_addr(x)\n\n#&gt; [1] \"0x55cea44fe2a0\"\n\nlobstr::obj_addr(x[[1]])\n\n#&gt; [1] \"0x55ce9f8dcf00\"\n\nlobstr::obj_addr(x[[2]])\n\n#&gt; [1] \"0x55ce9fa4cdf8\"\n\nlobstr::obj_addr(x[[3]])\n\n#&gt; [1] \"0x55cea44fe1f8\"\n\nlst_x &lt;- as.list(x)\n# Will not work: lobstr::obj_addrs(x)\nlobstr::obj_addrs(lst_x)\n\n#&gt; [1] \"0x55ce9f8dcf00\" \"0x55ce9fa4cdf8\" \"0x55cea44fe1f8\""
   },
   {
     "objectID": "slides/18.html#expressions-can-be-modified-using-list-subsetting",
     "href": "slides/18.html#expressions-can-be-modified-using-list-subsetting",
     "title": "Expressions",
     "section": "Expressions can be modified using list subsetting",
-    "text": "Expressions can be modified using list subsetting\n\nInspectModify\n\n\n\nx &lt;- rlang::expr(10*2)\nstr(x)\n\n#&gt;  language 10 * 2\n\nrlang::is_expression(x)\n\n#&gt; [1] TRUE\n\npurrr::map(as.list(x),~{.x})\n\n#&gt; [[1]]\n#&gt; `*`\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 10\n#&gt; \n#&gt; [[3]]\n#&gt; [1] 2\n\n\n\n\n\ntracemem(x)\n\n#&gt; [1] \"&lt;0x559d4e5b6260&gt;\"\n\nx\n\n#&gt; 10 * 2\n\nx[[2]] &lt;- 4\n\n#&gt; tracemem[0x559d4e5b6260 -&gt; 0x559d4f0427d8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers with_options &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main\n\nx\n\n#&gt; 4 * 2\n\nuntracemem(x)"
+    "text": "Expressions can be modified using list subsetting\n\nInspectModify\n\n\n\nx &lt;- rlang::expr(10*2)\nstr(x)\n\n#&gt;  language 10 * 2\n\nrlang::is_expression(x)\n\n#&gt; [1] TRUE\n\npurrr::map(as.list(x),~{.x})\n\n#&gt; [[1]]\n#&gt; `*`\n#&gt; \n#&gt; [[2]]\n#&gt; [1] 10\n#&gt; \n#&gt; [[3]]\n#&gt; [1] 2\n\n\n\n\n\ntracemem(x)\n\n#&gt; [1] \"&lt;0x55cea4ae9350&gt;\"\n\nx\n\n#&gt; 10 * 2\n\nx[[2]] &lt;- 4\n\n#&gt; tracemem[0x55cea4ae9350 -&gt; 0x55cea55758c8]: eval eval withVisible withCallingHandlers eval eval with_handlers doWithOneRestart withOneRestart withRestartList doWithOneRestart withOneRestart withRestartList withRestarts &lt;Anonymous&gt; evaluate in_dir in_input_dir eng_r block_exec call_block process_group withCallingHandlers with_options &lt;Anonymous&gt; process_file &lt;Anonymous&gt; &lt;Anonymous&gt; execute .main\n\nx\n\n#&gt; 4 * 2\n\nuntracemem(x)"
   },
   {
     "objectID": "slides/18.html#simple-expressions-can-be-generated-using-call2-parse_expr-or-expr_text",
