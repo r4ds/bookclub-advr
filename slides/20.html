@@ -6,8 +6,8 @@
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.8.26">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.27">
 
   <title>Advanced R Book Club – Evaluation</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -214,21 +214,25 @@
 <section id="a-bit-of-a-recap" class="slide level2">
 <h2>A bit of a recap</h2>
 <ul>
-<li>Metaprogramming: To separate our description of the action from the action itself - Separate the code from its evaluation.</li>
-<li>Quasiquotation: combine code written by the <em>function’s author</em> with code written by the <em>function’s user</em>.
+<li>Metaprogramming: To separate our description of the action from the action itself
 <ul>
-<li>Unquotation: it gives the <em>user</em> the ability to evaluate parts of a quoted argument.</li>
-<li>Evaluation: it gives the <em>developer</em> the ability to evluated quoted expression in custom environments.</li>
+<li>Separate the code from its evaluation.</li>
+</ul></li>
+<li>Quasiquotation: combine code written by the <em>function’s author</em> with code (expressions) written by the <em>function’s user</em>.
+<ul>
+<li>Unquotation: gives the <em>user</em> the ability to evaluate parts of a quoted argument.</li>
+<li>Evaluation: gives the <em>developer</em> the ability to evaluate quoted expression in custom environments.</li>
 </ul></li>
 </ul>
-<p><strong>Tidy evaluation</strong>: quasiquotation, quosures and data masks</p>
+<p><strong>Non-standard evaluation</strong> (<a href="https://developer.r-project.org/nonstandard-eval.pdf">NSE</a>): dealing with expressions as function inputs in base R.</p>
+<p><strong>Tidy evaluation</strong>: quasiquotation, quosures and data masks.</p>
 </section>
 <section id="evaluation-basics" class="slide level2">
 <h2>Evaluation basics</h2>
-<p>We use <code>eval()</code> to evaluate, run, or execute expressions. It requires two arguments:</p>
+<p>We use <code>base::eval()</code> to evaluate, run, or execute expressions. It requires two arguments:</p>
 <ul>
 <li><code>expr</code>: the object to evaluate, either an expression or a symbol.</li>
-<li><code>env</code>: the environment in which to evaluate the expression or where to look for the values. Defaults to current env.</li>
+<li><code>envir</code>: the environment in which to evaluate the expression or where to look for the values. Defaults to current environment (techncially <code>parent.frame()</code> which is the environment that <code>eval()</code> was called from).</li>
 </ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>sumexpr <span class="ot">&lt;-</span> <span class="fu">expr</span>(x <span class="sc">+</span> y)</span>
@@ -247,13 +251,13 @@
 </div>
 </section>
 <section id="application-reimplementing-source" class="slide level2">
-<h2>Application: reimplementing <code>source()</code></h2>
+<h2>Application: reimplementing source()</h2>
 <p>What do we need?</p>
 <ul>
 <li>Read the file being sourced.</li>
-<li>Parse its expressions (quote them?)</li>
+<li>Parse its expressions (think: do we need to quote them?)</li>
 <li>Evaluate each expression saving the results</li>
-<li>Return the results</li>
+<li>Return the results (result of the last expression)</li>
 </ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>source2 <span class="ot">&lt;-</span> <span class="cf">function</span>(path, <span class="at">env =</span> <span class="fu">caller_env</span>()) {</span>
@@ -270,68 +274,75 @@
 </div>
 <p>The real source is much more complex.</p>
 </section>
-<section id="quosures" class="slide level2">
-<h2>Quosures</h2>
-<p><strong>quosures</strong> are a data structure from <code>rlang</code> containing both and expression and an environment</p>
+<section id="quosures-1" class="slide level2">
+<h2>Quosures (1)</h2>
+<p><code>eval()</code> needs both the code and the environment to run the code in.</p>
+<p><strong>quosures</strong> are a data structure from <code>rlang</code> containing both the expression and the environment.</p>
 <p><em>Quoting</em> + <em>closure</em> because it quotes the expression and encloses the environment.</p>
-<p>Three ways to create them:</p>
-<ul>
-<li>Used mostly for learning: <code>new_quosure()</code>, creates a quosure from its components.</li>
-</ul>
+<p>Three ways to create quosures, in the upcoming slides.</p>
+</section>
+<section id="quosures-2" class="slide level2">
+<h2>Quosures (2)</h2>
+<p>Used mostly for learning: <code>new_quosure()</code>, creates a quosure from its components.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>q1 <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">new_quosure</span>(<span class="fu">expr</span>(x <span class="sc">+</span> y), </span>
 <span id="cb7-2"><a></a>                         <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>With a quosure, we can use <code>eval_tidy()</code> directly.</p>
+</section>
+<section id="quosures-3" class="slide level2">
+<h2>Quosures (3)</h2>
+<p>Used in the real world: <code>enquo()</code> or <code>enquos()</code>, to capture user supplied expressions. They take the environment from where they are created.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>rlang<span class="sc">::</span><span class="fu">eval_tidy</span>(q1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 11</code></pre>
-</div>
-</div>
-<p>And get its components</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>rlang<span class="sc">::</span><span class="fu">get_expr</span>(q1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; x + y</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>rlang<span class="sc">::</span><span class="fu">get_env</span>(q1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x000001f161f6d698&gt;</code></pre>
-</div>
-</div>
-<p>Or set them</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>q1 <span class="ot">&lt;-</span> <span class="fu">set_env</span>(q1, <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">3</span>, <span class="at">y =</span> <span class="dv">4</span>))</span>
-<span id="cb14-2"><a></a><span class="fu">eval_tidy</span>(q1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] 7</code></pre>
-</div>
-</div>
-<ul>
-<li>Used in the real world: <code>enquo()</code> o <code>enquos()</code>, to capture user supplied expressions. They take the environment from where they’re created.</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>foo <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">enquo</span>(x)</span>
-<span id="cb16-2"><a></a>quo_foo <span class="ot">&lt;-</span> <span class="fu">foo</span>(a <span class="sc">+</span> b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>foo <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">enquo</span>(x)</span>
+<span id="cb8-2"><a></a>quo_foo <span class="ot">&lt;-</span> <span class="fu">foo</span>(a <span class="sc">+</span> b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">get_expr</span>(quo_foo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">get_expr</span>(quo_foo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; a + b</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">get_env</span>(quo_foo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">get_env</span>(quo_foo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
 </div>
 </div>
-<ul>
-<li>Almost never used: <code>quo()</code> and <code>quos()</code>, to match to <code>expr()</code> and <code>exprs()</code>.</li>
-</ul>
 </section>
-<section id="quosures-and-..." class="slide level2">
-<h2>Quosures and <code>...</code></h2>
-<p>Quosures are just a convenience, but they are essential when it comes to working with <code>...</code>, because you can have each argument from <code>...</code> associated with a different environment.</p>
+<section id="quosures-4" class="slide level2">
+<h2>Quosures (4)</h2>
+<p>Almost never used: <code>quo()</code> and <code>quos()</code>, to match to <code>expr()</code> and <code>exprs()</code>.</p>
+</section>
+<section id="evaluation-eval_tidy" class="slide level2">
+<h2>Evaluation: eval_tidy()</h2>
+<p>The purpose of the concept of quosure is to be able to pass a single object to <code>rlang::eval_tidy()</code>, as opposed to the expression-environment pair, as required for <code>base::eval()</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>rlang<span class="sc">::</span><span class="fu">eval_tidy</span>(q1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 11</code></pre>
+</div>
+</div>
+<p>Get the quosure components if you need them:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>rlang<span class="sc">::</span><span class="fu">get_expr</span>(q1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; x + y</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>rlang<span class="sc">::</span><span class="fu">get_env</span>(q1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;environment: 0x55ce5cbccfb8&gt;</code></pre>
+</div>
+</div>
+<p>Or set them</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>q1 <span class="ot">&lt;-</span> <span class="fu">set_env</span>(q1, <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">3</span>, <span class="at">y =</span> <span class="dv">4</span>))</span>
+<span id="cb19-2"><a></a><span class="fu">eval_tidy</span>(q1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] 7</code></pre>
+</div>
+</div>
+</section>
+<section id="quosures-and" class="slide level2">
+<h2>Quosures and …</h2>
+<p>Quosures are just a convenience, but they are essential when it comes to working with <code>...</code>, because you can have different arguments from <code>...</code> associated with different environments.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>g <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
 <span id="cb21-2"><a></a>  <span class="do">## Creating our quosures from ...</span></span>
@@ -360,13 +371,13 @@
 #&gt; $f
 #&gt; &lt;quosure&gt;
 #&gt; expr: ^x
-#&gt; env:  0x000001f15fc6f2e0</code></pre>
+#&gt; env:  0x55ce5e5fe960</code></pre>
 </div>
 </div>
 </section>
 <section id="other-facts-about-quosures" class="slide level2">
 <h2>Other facts about quosures</h2>
-<p>Formulas were the inspiration for closures because they also capture an expression and an environment</p>
+<p>Formulas were the predecessor and inspiration for quosures because they also capture an expression and an environment.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>f <span class="ot">&lt;-</span> <span class="er">~</span><span class="fu">runif</span>(<span class="dv">3</span>)</span>
 <span id="cb24-2"><a></a><span class="fu">str</span>(f)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -375,6 +386,7 @@
 #&gt;   ..- attr(*, ".Environment")=&lt;environment: R_GlobalEnv&gt;</code></pre>
 </div>
 </div>
+<p>(This creates weird problems when functions return formulas, which in turn may drag the entire <code>GlobalEnv</code> with them. Have 10Gb worth of objects in there? Let’s store them all!!!)</p>
 <p>There was an early version of tidy evaluation with formulas, but there’s no easy way to implement quasiquotation with them.</p>
 <p>They are actually call objects</p>
 <div class="cell">
@@ -395,7 +407,9 @@
 <pre><code>#&gt; &lt;environment: R_GlobalEnv&gt;</code></pre>
 </div>
 </div>
-<p><strong>Nested quosures</strong></p>
+</section>
+<section id="nested-quosures" class="slide level2">
+<h2>Nested quosures</h2>
 <p>With quosiquotation we can embed quosures in expressions.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>q2 <span class="ot">&lt;-</span> <span class="fu">new_quosure</span>(<span class="fu">expr</span>(x), <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">1</span>))</span>
@@ -403,14 +417,14 @@
 <span id="cb32-3"><a></a></span>
 <span id="cb32-4"><a></a>nq <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="sc">!!</span>q2 <span class="sc">+</span> <span class="sc">!!</span>q3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>And evaluate them</p>
+<p>And evaluate them:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">eval_tidy</span>(nq)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 101</code></pre>
 </div>
 </div>
-<p>But for printing it’s better to use <code>expr_print(x)</code></p>
+<p>Display: it is better to use <code>expr_print(x)</code> (note the subtle color differences indicating that the different <code>x</code>s come from different environments).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">expr_print</span>(nq)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -422,11 +436,11 @@
 </div>
 </div>
 </section>
-<section id="data-mask" class="slide level2">
-<h2>Data mask</h2>
-<p>A data frame where the evaluated code will look first for its variable definitions.</p>
-<p>Used in packages like dplyr and ggplot.</p>
-<p>To use it we need to supply the data mask as a second argument to <code>eval_tidy()</code></p>
+<section id="data-mask-1" class="slide level2">
+<h2>Data mask (1)</h2>
+<p>Data mask is a special type of quosure where the target environment is a data frame. Thus the evaluated code will look first for the columns in the specified data frame.</p>
+<p>Used in packages like <code>dplyr</code> and <code>ggplot2</code>.</p>
+<p>Supply the data mask as a second argument to <code>eval_tidy()</code>:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a>q1 <span class="ot">&lt;-</span> <span class="fu">new_quosure</span>(<span class="fu">expr</span>(x <span class="sc">*</span> y), <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">100</span>))</span>
 <span id="cb39-2"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">y =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
@@ -436,7 +450,10 @@
 <pre><code>#&gt;  [1]  100  200  300  400  500  600  700  800  900 1000</code></pre>
 </div>
 </div>
-<p>Everything together, in one function.</p>
+</section>
+<section id="data-mask-2" class="slide level2">
+<h2>Data mask (2)</h2>
+<p>Reimplementing <code>base::with()</code> for the purposes of working with a <code>data.frame</code>:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a>with2 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, expr) {</span>
 <span id="cb41-2"><a></a>  expr <span class="ot">&lt;-</span> <span class="fu">enquo</span>(expr)</span>
@@ -446,171 +463,337 @@
 <p>But we need to create the objects that are not part of our data mask</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>x <span class="ot">&lt;-</span> <span class="dv">100</span></span>
-<span id="cb42-2"><a></a><span class="fu">with2</span>(df, x <span class="sc">*</span> y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb42-2"><a></a><span class="fu">with</span>(df, x <span class="sc">*</span> y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;  [1]  100  200  300  400  500  600  700  800  900 1000</code></pre>
 </div>
-</div>
-<p>Also doable with <code>base::eval()</code> instead of <code>rlang::eval_tidy()</code> but we have to use <code>base::substitute()</code> instead of <code>enquo()</code> (like we did for <code>enexpr()</code>) and we need to specify the environment.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a>with3 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, expr) {</span>
-<span id="cb44-2"><a></a>  expr <span class="ot">&lt;-</span> <span class="fu">substitute</span>(expr)</span>
-<span id="cb44-3"><a></a>  <span class="fu">eval</span>(expr, data, <span class="fu">caller_env</span>())</span>
-<span id="cb44-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a><span class="fu">with3</span>(df, x<span class="sc">*</span>y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a></a><span class="fu">with2</span>(df, x <span class="sc">*</span> y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;  [1]  100  200  300  400  500  600  700  800  900 1000</code></pre>
 </div>
 </div>
 </section>
-<section id="pronouns-.data-and-.env" class="slide level2">
-<h2>Pronouns: .data$ and .env$</h2>
-<p><strong>Ambiguity!!</strong></p>
-<p>An object value can come from the env or from the data mask</p>
+<section id="data-mask-3" class="slide level2">
+<h2>Data mask (3)</h2>
+<p>Also doable with <code>base::eval()</code> instead of <code>rlang::eval_tidy()</code> but a strict base implementation would need to use <code>base::substitute()</code> instead of <code>enquo()</code> (like we did for <code>enexpr()</code>) , and we need to specify the environment.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a>q1 <span class="ot">&lt;-</span> <span class="fu">new_quosure</span>(<span class="fu">expr</span>(x <span class="sc">*</span> y <span class="sc">+</span> x), <span class="at">env =</span> <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">1</span>))</span>
-<span id="cb47-2"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">y =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, </span>
-<span id="cb47-3"><a></a>                 <span class="at">x =</span> <span class="dv">10</span>)</span>
-<span id="cb47-4"><a></a></span>
-<span id="cb47-5"><a></a><span class="fu">eval_tidy</span>(q1, df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a>with3 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, expr) {</span>
+<span id="cb46-2"><a></a>  expr <span class="ot">&lt;-</span> <span class="fu">substitute</span>(expr)</span>
+<span id="cb46-3"><a></a>  <span class="fu">eval</span>(expr, data, <span class="fu">caller_env</span>())</span>
+<span id="cb46-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a><span class="fu">with3</span>(df, x<span class="sc">*</span>y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;  [1]  100  200  300  400  500  600  700  800  900 1000</code></pre>
+</div>
+</div>
+</section>
+<section id="reference-ambiguity" class="slide level2">
+<h2>Reference ambiguity</h2>
+<p>When you write</p>
+<pre><code>with2(df, y = x)</code></pre>
+<p>Do you mean <code>x</code> as the column in <code>df</code>, or as an object in the environment?</p>
+<p>(<code>devtools::check()</code> finds these and complains about ‘<em>no visible global bindings</em>’.)</p>
+<p>An object value can come from the env or from the data</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a>q1 <span class="ot">&lt;-</span> <span class="fu">new_quosure</span>(<span class="fu">expr</span>(x <span class="sc">*</span> y <span class="sc">+</span> x), <span class="at">env =</span> <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">1</span>))</span>
+<span id="cb50-2"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">y =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, </span>
+<span id="cb50-3"><a></a>                 <span class="at">x =</span> <span class="dv">10</span>)</span>
+<span id="cb50-4"><a></a></span>
+<span id="cb50-5"><a></a><span class="fu">eval_tidy</span>(q1, df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 20 30 40 50 60</code></pre>
 </div>
 </div>
-<p>We use pronouns:</p>
+</section>
+<section id="rlang-pronouns-.data-and-.env" class="slide level2">
+<h2>rlang pronouns: .data$ and .env$</h2>
+<p><code>rlang</code> provides pronouns:</p>
 <ul>
-<li><code>.data$x</code>: <code>x</code> from the data mask</li>
-<li><code>.env$x</code>: <code>x</code> from the environment</li>
+<li><code>.data$x</code>: take <code>x</code> from the data mask</li>
+<li><code>.env$x</code>: take <code>x</code> from the environment</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a>q1 <span class="ot">&lt;-</span> <span class="fu">new_quosure</span>(<span class="fu">expr</span>(.data<span class="sc">$</span>x <span class="sc">*</span> y <span class="sc">+</span> .env<span class="sc">$</span>x), <span class="at">env =</span> <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">1</span>))</span>
-<span id="cb49-2"><a></a><span class="fu">eval_tidy</span>(q1, df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>q1 <span class="ot">&lt;-</span> <span class="fu">new_quosure</span>(<span class="fu">expr</span>(.data<span class="sc">$</span>x <span class="sc">*</span> y <span class="sc">+</span> .env<span class="sc">$</span>x), <span class="at">env =</span> <span class="fu">env</span>(<span class="at">x =</span> <span class="dv">1</span>))</span>
+<span id="cb52-2"><a></a><span class="fu">eval_tidy</span>(q1, df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] 11 21 31 41 51</code></pre>
 </div>
 </div>
 </section>
 <section id="application-reimplementing-basesubset" class="slide level2">
-<h2>Application: reimplementing <code>base::subset()</code></h2>
+<h2>Application: reimplementing base::subset()</h2>
 <p><code>base::subset()</code> works like <code>dplyr::filter()</code>: it selects rows of a data frame given an expression.</p>
 <p>What do we need?</p>
 <ul>
 <li>Quote the expression to filter</li>
 <li>Figure out which rows in the data frame pass the filter</li>
-<li>Subset the data frame</li>
+<li>Subset and return the data frame</li>
 </ul>
+</section>
+<section id="subset2" class="slide level2">
+<h2>subset2()</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a></a>subset2 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, rows) {</span>
-<span id="cb51-2"><a></a>  rows <span class="ot">&lt;-</span> <span class="fu">enquo</span>(rows)</span>
-<span id="cb51-3"><a></a>  rows_val <span class="ot">&lt;-</span> <span class="fu">eval_tidy</span>(rows, data)</span>
-<span id="cb51-4"><a></a>  <span class="fu">stopifnot</span>(<span class="fu">is.logical</span>(rows_val))</span>
-<span id="cb51-5"><a></a></span>
-<span id="cb51-6"><a></a>  data[rows_val, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb51-7"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a>subset2 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, rows) {</span>
+<span id="cb54-2"><a></a>  rows <span class="ot">&lt;-</span> <span class="fu">enquo</span>(rows)</span>
+<span id="cb54-3"><a></a>  rows_val <span class="ot">&lt;-</span> <span class="fu">eval_tidy</span>(rows, data)</span>
+<span id="cb54-4"><a></a>  <span class="fu">stopifnot</span>(<span class="st">"rows argument does not evaluate to a subsetting condition"</span> <span class="ot">=</span> </span>
+<span id="cb54-5"><a></a>    <span class="fu">is.logical</span>(rows_val) <span class="sc">&amp;&amp;</span> <span class="fu">length</span>(rows_val)<span class="sc">==</span><span class="fu">nrow</span>(data))</span>
+<span id="cb54-6"><a></a></span>
+<span id="cb54-7"><a></a>  data[rows_val, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb54-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>sample_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">b =</span> <span class="dv">5</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">c =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">1</span>))</span>
-<span id="cb52-2"><a></a></span>
-<span id="cb52-3"><a></a><span class="co"># Shorthand for sample_df[sample_df$b == sample_df$c, ]</span></span>
-<span id="cb52-4"><a></a><span class="fu">subset2</span>(sample_df, b <span class="sc">==</span> c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a>sample_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">a =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">b =</span> <span class="dv">5</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">c =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">1</span>))</span>
+<span id="cb55-2"><a></a></span>
+<span id="cb55-3"><a></a><span class="co"># Shorthand for sample_df[sample_df$b == sample_df$c, ]</span></span>
+<span id="cb55-4"><a></a><span class="fu">subset2</span>(sample_df, b <span class="sc">==</span> c)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;   a b c
 #&gt; 1 1 5 5
 #&gt; 5 5 1 1</code></pre>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a></a><span class="fu">subset2</span>(sample_df, <span class="dv">42</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in `subset2()`:
+#&gt; ! rows argument does not evaluate to a subsetting condition</code></pre>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a></a><span class="fu">subset2</span>(sample_df, <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in `subset2()`:
+#&gt; ! rows argument does not evaluate to a subsetting condition</code></pre>
+</div>
+</div>
+</section>
+<section id="select-columns-1" class="slide level2">
+<h2>select() columns (1)</h2>
+<p>Let us implement one more feature of <code>base::subset(select=_some columns_)</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">3</span>, <span class="at">d =</span> <span class="dv">4</span>, <span class="at">e =</span> <span class="dv">5</span>)</span>
+<span id="cb61-2"><a></a><span class="fu">subset</span>(df, <span class="at">select =</span> b<span class="sc">:</span>d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   b c d
+#&gt; 1 2 3 4</code></pre>
+</div>
+</div>
+</section>
+<section id="select2-columns-2" class="slide level2">
+<h2>select2() columns (2)</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a>vars <span class="ot">&lt;-</span> <span class="fu">as.list</span>(<span class="fu">set_names</span>(<span class="fu">seq_along</span>(df), <span class="fu">names</span>(df)))</span>
+<span id="cb63-2"><a></a><span class="fu">str</span>(vars)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; List of 5
+#&gt;  $ a: int 1
+#&gt;  $ b: int 2
+#&gt;  $ c: int 3
+#&gt;  $ d: int 4
+#&gt;  $ e: int 5</code></pre>
+</div>
+</div>
+</section>
+<section id="select2-columns-3" class="slide level2">
+<h2>select2() columns (3)</h2>
+<p>(<code>base</code> trivia: why do you need <code>drop = FALSE</code>?)</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a></a>select2 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, ...) {</span>
+<span id="cb65-2"><a></a>  dots <span class="ot">&lt;-</span> <span class="fu">enquos</span>(...)</span>
+<span id="cb65-3"><a></a></span>
+<span id="cb65-4"><a></a>  vars <span class="ot">&lt;-</span> <span class="fu">as.list</span>(<span class="fu">set_names</span>(<span class="fu">seq_along</span>(data), <span class="fu">names</span>(data)))</span>
+<span id="cb65-5"><a></a>  cols <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">map</span>(dots, eval_tidy, vars))</span>
+<span id="cb65-6"><a></a></span>
+<span id="cb65-7"><a></a>  data[, cols, drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb65-8"><a></a>}</span>
+<span id="cb65-9"><a></a><span class="fu">select2</span>(df, b<span class="sc">:</span>d)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt;   b c d
+#&gt; 1 2 3 4</code></pre>
+</div>
+</div>
+<p><code>tidyselect</code> helpers: provide more functions that return logical expressions to be added to <code>cols</code>.</p>
 </section>
 <section id="using-tidy-evaluation" class="slide level2">
 <h2>Using tidy evaluation</h2>
-<p>Most of the time we might not call it directly, but call a function that uses <code>eval_tidy()</code> (becoming developer AND user)</p>
+<p>Most of the time we might not do it in our code, but we often end up calling a function that uses <code>eval_tidy()</code> (becoming developer AND user)</p>
 <p><strong>Use case</strong>: resample and subset</p>
 <p>We have a function that resamples a dataset:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a>resample <span class="ot">&lt;-</span> <span class="cf">function</span>(df, n) {</span>
-<span id="cb54-2"><a></a>  idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(df), n, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb54-3"><a></a>  df[idx, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb54-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a></a>resample <span class="ot">&lt;-</span> <span class="cf">function</span>(df, n) {</span>
+<span id="cb67-2"><a></a>  idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">nrow</span>(df), n, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb67-3"><a></a>  df[idx, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb67-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a><span class="fu">resample</span>(sample_df, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a><span class="fu">resample</span>(sample_df, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;     a b c
-#&gt; 4   4 2 4
-#&gt; 3   3 3 2
 #&gt; 1   1 5 5
 #&gt; 1.1 1 5 5
-#&gt; 3.1 3 3 2
+#&gt; 1.2 1 5 5
 #&gt; 5   5 1 1
+#&gt; 2   2 4 3
+#&gt; 2.1 2 4 3
+#&gt; 2.2 2 4 3
+#&gt; 1.3 1 5 5
 #&gt; 5.1 5 1 1
-#&gt; 3.2 3 3 2
-#&gt; 5.2 5 1 1
-#&gt; 4.1 4 2 4</code></pre>
+#&gt; 2.3 2 4 3</code></pre>
 </div>
 </div>
 <p>But we also want to use subset and we want to create a function that allow us to resample and subset (with <code>subset2()</code>) in a single step.</p>
+</section>
+<section id="resample-and-subset-1" class="slide level2">
+<h2>Resample and subset (1)</h2>
 <p>First attempt:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a></a>subsample <span class="ot">&lt;-</span> <span class="cf">function</span>(df, cond, <span class="at">n =</span> <span class="fu">nrow</span>(df)) {</span>
-<span id="cb57-2"><a></a>  df <span class="ot">&lt;-</span> <span class="fu">subset2</span>(df, cond)</span>
-<span id="cb57-3"><a></a>  <span class="fu">resample</span>(df, n)</span>
-<span id="cb57-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a></a>subsample <span class="ot">&lt;-</span> <span class="cf">function</span>(df, cond, <span class="at">n =</span> <span class="fu">nrow</span>(df)) {</span>
+<span id="cb70-2"><a></a>  df <span class="ot">&lt;-</span> <span class="fu">subset2</span>(df, cond)</span>
+<span id="cb70-3"><a></a>  <span class="fu">resample</span>(df, n)</span>
+<span id="cb70-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="fu">subsample</span>(sample_df, b <span class="sc">==</span> c, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a><span class="fu">subsample</span>(sample_df, b <span class="sc">==</span> c, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-error">
-<pre><code>#&gt; Error: object 'b' not found</code></pre>
+<pre><code>#&gt; Error:
+#&gt; ! object 'b' not found</code></pre>
 </div>
 </div>
 <p>What happened?</p>
-<p><code>subsample()</code> doesn’t quote any arguments and <code>cond</code> is evaluated normally</p>
+</section>
+<section id="resample-and-subset-2" class="slide level2">
+<h2>Resample and subset (2)</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a>subsample <span class="ot">&lt;-</span> <span class="cf">function</span>(df, cond, <span class="at">n =</span> <span class="fu">nrow</span>(df)) {</span>
+<span id="cb73-2"><a></a>  df <span class="ot">&lt;-</span> <span class="fu">subset2</span>(df, cond)</span>
+<span id="cb73-3"><a></a>  <span class="fu">resample</span>(df, n)</span>
+<span id="cb73-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><code>subsample()</code> doesn’t quote any arguments and <code>cond</code> is evaluated normally. The caller environment does not have <code>b</code> and <code>c</code> (or what is worse, if it does, the intent of the condition goes out the window.)</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a></a>b <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb74-2"><a></a>c <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>)</span>
+<span id="cb74-3"><a></a><span class="fu">subsample</span>(sample_df, b <span class="sc">==</span> c, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>#&gt; Error in `subset2()`:
+#&gt; ! rows argument does not evaluate to a subsetting condition</code></pre>
+</div>
+</div>
+</section>
+<section id="resample-and-subset-3" class="slide level2">
+<h2>Resample and subset (3)</h2>
 <p>So we have to quote <code>cond</code> and unquote it when we pass it to <code>subset2()</code></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a>subsample <span class="ot">&lt;-</span> <span class="cf">function</span>(df, cond, <span class="at">n =</span> <span class="fu">nrow</span>(df)) {</span>
-<span id="cb60-2"><a></a>  cond <span class="ot">&lt;-</span> <span class="fu">enquo</span>(cond)</span>
-<span id="cb60-3"><a></a></span>
-<span id="cb60-4"><a></a>  df <span class="ot">&lt;-</span> <span class="fu">subset2</span>(df, <span class="sc">!!</span>cond)</span>
-<span id="cb60-5"><a></a>  <span class="fu">resample</span>(df, n)</span>
-<span id="cb60-6"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a></a>subsample <span class="ot">&lt;-</span> <span class="cf">function</span>(df, cond, <span class="at">n =</span> <span class="fu">nrow</span>(df)) {</span>
+<span id="cb76-2"><a></a>  cond <span class="ot">&lt;-</span> <span class="fu">enquo</span>(cond)</span>
+<span id="cb76-3"><a></a>  df <span class="ot">&lt;-</span> <span class="fu">subset2</span>(df, <span class="sc">!!</span>cond)</span>
+<span id="cb76-4"><a></a>  <span class="fu">resample</span>(df, n)</span>
+<span id="cb76-5"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a><span class="fu">subsample</span>(sample_df, b <span class="sc">==</span> c, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a><span class="fu">subsample</span>(sample_df, b <span class="sc">==</span> c, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;     a b c
-#&gt; 5   5 1 1
-#&gt; 5.1 5 1 1
-#&gt; 5.2 5 1 1
 #&gt; 1   1 5 5
-#&gt; 5.3 5 1 1
-#&gt; 1.1 1 5 5
-#&gt; 5.4 5 1 1
-#&gt; 5.5 5 1 1
-#&gt; 1.2 1 5 5
-#&gt; 1.3 1 5 5</code></pre>
+#&gt; 5   5 1 1
+#&gt; 1.1 1 5 5</code></pre>
 </div>
 </div>
+</section>
+<section id="ambiguity-with-known-column-names" class="slide level2">
+<h2>Ambiguity with “known” column names</h2>
 <p><strong>Be careful!</strong>, potential ambiguity:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a>threshold_x <span class="ot">&lt;-</span> <span class="cf">function</span>(df, val) {</span>
-<span id="cb63-2"><a></a>  <span class="fu">subset2</span>(df, x <span class="sc">&gt;=</span> val)</span>
-<span id="cb63-3"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a>threshold_x <span class="ot">&lt;-</span> <span class="cf">function</span>(df, val) {</span>
+<span id="cb79-2"><a></a>  <span class="fu">subset2</span>(df, x <span class="sc">&gt;=</span> val)</span>
+<span id="cb79-3"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>What would happen if <code>x</code> exists in the calling environment but doesn’t exist in <code>df</code>? Or if <code>val</code> also exists in <code>df</code>?</p>
-<p>So, as developers of <code>threshold_x()</code> and users of <code>subset2()</code>, we have to add some pronouns:</p>
+<p>So, as developers of <code>threshold_x()</code> and users of <code>subset2()</code>, we have to add disambiguating pronouns:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a></a>threshold_x <span class="ot">&lt;-</span> <span class="cf">function</span>(df, val) {</span>
-<span id="cb64-2"><a></a>  <span class="fu">subset2</span>(df, .data<span class="sc">$</span>x <span class="sc">&gt;=</span> .env<span class="sc">$</span>val)</span>
-<span id="cb64-3"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a></a>threshold_x <span class="ot">&lt;-</span> <span class="cf">function</span>(df, val) {</span>
+<span id="cb80-2"><a></a>  <span class="fu">subset2</span>(df, .data<span class="sc">$</span>x <span class="sc">&gt;=</span> .env<span class="sc">$</span>val)</span>
+<span id="cb80-3"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
+<section id="tidy-eval-summarized" class="slide level2">
+<h2>Tidy eval, summarized</h2>
+<p>Thresholding on steroids:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a>threshold_expr <span class="ot">&lt;-</span> <span class="cf">function</span>(df, expr, val) {</span>
+<span id="cb81-2"><a></a>  expr <span class="ot">&lt;-</span> <span class="fu">enquo</span>(expr)</span>
+<span id="cb81-3"><a></a>  <span class="fu">subset2</span>(df, <span class="sc">!!</span>expr <span class="sc">&gt;=</span> <span class="sc">!!</span>val)</span>
+<span id="cb81-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>It may not be possible to evaluate <code>expr</code> only in the data mask, because the data mask does not include any functions nor operations like <code>+</code> or <code>==</code>.</p>
 <p>Just remember:</p>
 <blockquote>
 <p>As a general rule of thumb, as a function author it’s your responsibility to avoid ambiguity with any expressions that you create; it’s the user’s responsibility to avoid ambiguity in expressions that they create.</p>
 </blockquote>
 </section>
-<section id="base-evaluation" class="slide level2">
-<h2>Base evaluation</h2>
-<p>Check 20.6 in the book!</p>
+<section id="base-evaluation-substitute" class="slide level2">
+<h2>Base evaluation: <code>substitute()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a></a>subset_base <span class="ot">&lt;-</span> <span class="cf">function</span>(data, rows) {</span>
+<span id="cb82-2"><a></a>  rows <span class="ot">&lt;-</span> <span class="fu">substitute</span>(rows)      <span class="co"># instead of enquo()</span></span>
+<span id="cb82-3"><a></a>  rows_val <span class="ot">&lt;-</span> <span class="fu">eval</span>(rows, data,  <span class="co"># instead of </span></span>
+<span id="cb82-4"><a></a>                <span class="fu">caller_env</span>())   <span class="co">#  eval_tidy()</span></span>
+<span id="cb82-5"><a></a>  <span class="fu">stopifnot</span>(<span class="fu">is.logical</span>(rows_val))</span>
+<span id="cb82-6"><a></a></span>
+<span id="cb82-7"><a></a>  data[rows_val, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb82-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The base world forces us to evaluate in the caller environment rather in the environment where it is defined (quosure); loss of flexibility.</p>
+</section>
+<section id="base-evaluation-match.call" class="slide level2">
+<h2>Base evaluation: <code>match.call()</code></h2>
+<p><code>match.call()</code> captures the entire call. A number of <code>base</code> functions (and <code>base</code>-only packages like <code>survey</code>) use it:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a>lm2 <span class="ot">&lt;-</span> <span class="cf">function</span>(formula, data) {</span>
+<span id="cb83-2"><a></a>  <span class="fu">lm</span>(formula, data)</span>
+<span id="cb83-3"><a></a>}</span>
+<span id="cb83-4"><a></a><span class="fu">lm2</span>(mpg <span class="sc">~</span> disp, mtcars)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = formula, data = data)
+#&gt; 
+#&gt; Coefficients:
+#&gt; (Intercept)         disp  
+#&gt;    29.59985     -0.04122</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a><span class="fu">lm2</span>(mpg <span class="sc">~</span> disp, mtcars)<span class="sc">$</span>call</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; lm(formula = formula, data = data)</code></pre>
+</div>
+</div>
+</section>
+<section id="fixing-match.call" class="slide level2">
+<h2>Fixing match.call()</h2>
+<p><code>lm()</code> itself cannot really do better as that was all it received, and it could not possibly figure out the components. To overcome this problem, we need to capture the arguments as expressions, create the call to <code>lm()</code> using unquoting, then evaluate that call.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a></a>lm3 <span class="ot">&lt;-</span> <span class="cf">function</span>(formula, data, <span class="at">env =</span> <span class="fu">caller_env</span>()) {</span>
+<span id="cb87-2"><a></a>  formula <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(formula)</span>
+<span id="cb87-3"><a></a>  data <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(data)</span>
+<span id="cb87-4"><a></a></span>
+<span id="cb87-5"><a></a>  lm_call <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="fu">lm</span>(<span class="sc">!!</span>formula, <span class="at">data =</span> <span class="sc">!!</span>data))</span>
+<span id="cb87-6"><a></a>  <span class="fu">expr_print</span>(lm_call)</span>
+<span id="cb87-7"><a></a>  <span class="fu">eval</span>(lm_call, env)</span>
+<span id="cb87-8"><a></a>}</span>
+<span id="cb87-9"><a></a></span>
+<span id="cb87-10"><a></a><span class="fu">lm3</span>(mpg <span class="sc">~</span> disp, mtcars)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; lm(mpg ~ disp, data = mtcars)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; 
+#&gt; Call:
+#&gt; lm(formula = mpg ~ disp, data = mtcars)
+#&gt; 
+#&gt; Coefficients:
+#&gt; (Intercept)         disp  
+#&gt;    29.59985     -0.04122</code></pre>
+</div>
+</div>
 
 
 </section>
@@ -829,6 +1012,44 @@
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
