@@ -6,7 +6,7 @@ title: Translating R code
 ## Learning objectives:
 
 -   Understand what it means to *translate* R code
--   See how treating code as data enables domain-specific languages (DSLs)
+-   Treat code as data to enable domain-specific languages (DSLs)
 -   Create HTML and LaTeX DSLs
 -   Learn how environments, S3, and metaprogramming work together
 
@@ -17,7 +17,7 @@ library(purrr)
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 
-# These are needed for actually running the code in the slides, but I'm showing them in theirs respective slide.
+# These are needed for actually running the code in the slides, but I'm showing them in their respective slide.
 
 html_attributes <- function(list) {
   if (length(list) == 0) {
@@ -77,7 +77,7 @@ switch_expr <- function(x, ...) {
 }
 ```
 
-# What means translating R code?
+# What does translating R code mean?
 
 ## R code → another language
 
@@ -156,17 +156,17 @@ with_html(
 )
 ```
 
-Basically, HTML tags are "ordinary" R functions
+Basically, HTML tags become "ordinary" R functions
 
 ## Our DSL makes translation easy
 
--   **Same structure**: the nesting of function calls matches the nesting of tags.
+-   **Same structure**: nesting of function calls == nesting of tags.
 
--   **Similar logic**: unnamed arguments become the content of the tag, and named arguments become their attributes.
+-   **Similar logic**: unnamed arguments -> tag content, named arguments -> tag attributes.
 
--   **User experience**: special characters are automatically escaped (e.g. `&`).
+-   **User experience**: special characters automatically escaped (e.g. `"&"` -> `"&amp;"`).
 
-## We need to know five basic HTML tags for this exercise
+## We need five basic HTML tags for this exercise
 
 ``` html
 <body>
@@ -206,7 +206,7 @@ Examples
 
 # How to R → HTML
 
-## We are going to create HTML DSL following a micro-macro procedure
+## Follow a micro-macro procedure to create HTML DSL
 
 ``` r
 with_html(
@@ -220,10 +220,10 @@ with_html(
 
 The steps...
 
--   Create an S3 that translates and automatically escape user's input
+-   Create an S3 that translates & automatically escapes user's input
 -   Create a basic structure for tag functions
 -   Create a function factory for creating tag functions
--   Create and HTML environment of evaluation
+-   Create an HTML environment of evaluation
 
 ## We can translate R to HTML via S3
 
@@ -268,21 +268,18 @@ escape(escape("This is some text. 1 > 2"))
 escape(html("<hr />"))
 ```
 
-## We can create HTML tags creating corresponding R functions
+## We create R functions for HTML tags
 
--   Let's create `<p>` tag by creating `p()` function, then we use this logic to create the other tags.
-
--   Goal:
+-   `<p>` tag -> `p()` function
+    -   Distinguish between content and attributes
+    -   Manage the big amount of attributes that exists (also customs ones)
+-   Same logic to create other tags
 
 ``` r
 p("Some text. ", b(i("some bold italic text")), class = "mypara")
 ```
 
--   Our tag function must:
-    -   Distinguish between content and attributes
-    -   Manage the big amount of attributes that exists (also customs ones)
-
-## For translating, we need to distinguish between content and attributes
+## We must distinguish between content and attributes
 
 ```{r}
 # Separate named and unnamed arguments
@@ -448,7 +445,7 @@ img
 img(src = "myimage.png", width = 100, height = 100)
 ```
 
-## We need to create and HTML environment of evaluation
+## Store tags in an HTML environment
 
 -   We need to store all of our tags:
 
@@ -588,7 +585,7 @@ void_tags <- c(
 
 -   **Solution**: first a `list()`, then an "environment"
 
-## Creating a list makes translation works
+## Creating a list makes translation work
 
 ```{r}
 # Create the list
@@ -651,7 +648,7 @@ to_math(sin(pi) + f(a))
 
 # How to R → LaTeX
 
-## We are going to create LaTeX DSL following a macro-micro procedure
+## Follow a macro-micro procedure to create LaTeX DSL
 
 -   Start with infrastructure (`to_math()`) and experiment until cover every use case.
 
@@ -665,11 +662,14 @@ to_math(sin(pi) + f(a))
 
     -   Wrap unknown functions with `\textrm`: `f(a)` → `\textrm{f}(a)`
 
-## Our HTML DSL is going to be different than our LaTeX DSL
+## Our LaTeX DSL will be different than our HTML DSL
 
--   The evaluation environment is no longer constant, as it has to vary depending on the input. This is necessary to handle unknown symbols and functions.
-
--   We never evaluate in the argument environment because we’re translating every function to a LaTeX expression. The user will need to use explicitly `!!` in order to evaluate normally.
+-   Evaluation environment no longer constant
+  - Has to vary depending on input
+  - Necessary to handle unknown symbols & functions
+-   Never evaluate in argument environment
+  - We translate every function to a LaTeX expression
+  - User must explicitly `!!` in order to evaluate normally
 
 ## We need to create an execution environment: `to_math()`
 
@@ -759,7 +759,7 @@ to_math(beta)
 
 ## We can capture the unknown symbols from the expression
 
-We need to leave non-Greek symbols as they are, but we don´t know what symbols are going to be used.
+Leave non-Greek symbols as-is, but we don´t know what symbols are going to be used.
 
 ```{r}
 # Walk the AST to find all the symbols:
@@ -1000,7 +1000,7 @@ to_math(sin(pi) + f(a))
 
 # Synthesis
 
-## Is possible to R → HTML via a micro-macro procedure
+## R can translate to HTML via a micro-macro procedure
 
 -   Creating an S3 for translation and automatic escaping
 
@@ -1010,7 +1010,7 @@ to_math(sin(pi) + f(a))
 
 -   Creating an execution environment: `with_html()`
 
-## Is possible R → LaTeX via macro-micro procedure
+## R can translate to LaTeX via a macro-micro procedure
 
 -   Build an interface that contains a dynamic environment
 
@@ -1022,7 +1022,7 @@ to_math(sin(pi) + f(a))
 
 -   Creating and environment of **unknown functions** by walking the AST and using a function factory
 
--   Integranting all the environment in the dynamic environment contained in the `to_math()` interface
+-   Integrating all the environment in the dynamic environment contained in the `to_math()` interface
 
 # Final remarks
 
@@ -1036,7 +1036,5 @@ to_math(sin(pi) + f(a))
 ## Takeaway: R enables languages inside the language
 
 -   Translation comes naturally from how R is designed
-
 -    Creating small domain-specific languages in R is normal and expected, not a trick
-
 -    *Advanced R* shows how to build them in a clear, safe, and maintainable way
