@@ -328,7 +328,7 @@
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>rlang<span class="sc">::</span><span class="fu">get_env</span>(q1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;environment: 0x55a5675d80f8&gt;</code></pre>
+<pre><code>#&gt; &lt;environment: 0x0000027140d5c6c8&gt;</code></pre>
 </div>
 </div>
 <p>Or set them</p>
@@ -371,7 +371,7 @@
 #&gt; $f
 #&gt; &lt;quosure&gt;
 #&gt; expr: ^x
-#&gt; env:  0x55a569009c40</code></pre>
+#&gt; env:  0x00000271438a6388</code></pre>
 </div>
 </div>
 </section>
@@ -628,16 +628,16 @@
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a></a><span class="fu">resample</span>(sample_df, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;     a b c
-#&gt; 1   1 5 5
+#&gt; 2   2 4 3
+#&gt; 2.1 2 4 3
+#&gt; 5   5 1 1
 #&gt; 3   3 3 2
 #&gt; 4   4 2 4
-#&gt; 3.1 3 3 2
-#&gt; 5   5 1 1
-#&gt; 2   2 4 3
-#&gt; 1.1 1 5 5
-#&gt; 2.1 2 4 3
-#&gt; 3.2 3 3 2
-#&gt; 2.2 2 4 3</code></pre>
+#&gt; 2.2 2 4 3
+#&gt; 2.3 2 4 3
+#&gt; 5.1 5 1 1
+#&gt; 2.4 2 4 3
+#&gt; 3.1 3 3 2</code></pre>
 </div>
 </div>
 <p>But we also want to use subset and we want to create a function that allow us to resample and subset (with <code>subset2()</code>) in a single step.</p>
@@ -693,9 +693,9 @@
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a><span class="fu">subsample</span>(sample_df, b <span class="sc">==</span> c, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;     a b c
+#&gt; 5   5 1 1
 #&gt; 1   1 5 5
-#&gt; 1.1 1 5 5
-#&gt; 5   5 1 1</code></pre>
+#&gt; 1.1 1 5 5</code></pre>
 </div>
 </div>
 </section>
