@@ -187,7 +187,7 @@
       margin-right: 0; 
     }
   </style>
-  <link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+  <link href="../site_libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
   <script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
   <script src="../site_libs/d3-3.3.8/d3.min.js"></script>
   <script src="../site_libs/dagre-0.4.0/dagre-d3.min.js"></script>
@@ -211,392 +211,558 @@
 <section id="learning-objectives" class="slide level2">
 <h2>Learning objectives:</h2>
 <ul>
-<li>Build DSL (domain specific languages) to aid interoperability between R, HTML and LaTeX</li>
-<li>Reinforce metaprogramming concepts (expressions, quasiquotation, evaluation)</li>
+<li>Understand what it means to <em>translate</em> R code</li>
+<li>Treat code as data to enable domain-specific languages (DSLs)</li>
+<li>Create HTML and LaTeX DSLs</li>
+<li>Learn how environments, S3, and metaprogramming work together</li>
 </ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(rlang)</span>
+<span id="cb1-2"><a></a><span class="fu">library</span>(purrr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section>
+<section id="what-does-translating-r-code-mean" class="title-slide slide level1 center">
+<h1>What does translating R code mean?</h1>
+
+</section>
+<section id="r-code-another-language" class="slide level2">
+<h2>R code → another language</h2>
 <div class="cell">
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-4e2b51612b3b0cac2d87" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-4e2b51612b3b0cac2d87">{"x":{"diagram":"\ngraph LR\n\nexpressions --> R\nquasiquotation --> R\nevaluation --> R\n\nR --> HTML\nR --> LaTeX\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-2afa8e7d631bcb1878b7" style="width:960px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-2afa8e7d631bcb1878b7">{"x":{"diagram":"\ngraph LR\n\nexpressions --> R\nquasiquotation --> R\nevaluation --> R\n\nR --> HTML\nR --> LaTeX\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
-<details>
-<summary>
-Mermaid code
-</summary>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>DiagrammeR<span class="sc">::</span><span class="fu">mermaid</span>(<span class="st">"</span></span>
-<span id="cb1-2"><a></a><span class="st">graph LR</span></span>
-<span id="cb1-3"><a></a></span>
-<span id="cb1-4"><a></a><span class="st">expressions --&gt; R</span></span>
-<span id="cb1-5"><a></a><span class="st">quasiquotation --&gt; R</span></span>
-<span id="cb1-6"><a></a><span class="st">evaluation --&gt; R</span></span>
-<span id="cb1-7"><a></a></span>
-<span id="cb1-8"><a></a><span class="st">R --&gt; HTML</span></span>
-<span id="cb1-9"><a></a><span class="st">R --&gt; LaTeX</span></span>
-<span id="cb1-10"><a></a><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</details>
-<details>
-<summary>
-Session Info
-</summary>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">library</span>(DiagrammeR) <span class="co">#for Mermaid flowchart</span></span>
-<span id="cb2-2"><a></a><span class="fu">library</span>(lobstr)     <span class="co">#abstract syntax trees</span></span>
-<span id="cb2-3"><a></a><span class="fu">library</span>(purrr)      <span class="co">#functional programming</span></span>
-<span id="cb2-4"><a></a><span class="fu">library</span>(rlang)      <span class="co">#tidy evaluation</span></span>
-<span id="cb2-5"><a></a></span>
-<span id="cb2-6"><a></a><span class="co"># from section 18.5</span></span>
-<span id="cb2-7"><a></a>expr_type <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb2-8"><a></a>  <span class="cf">if</span> (rlang<span class="sc">::</span><span class="fu">is_syntactic_literal</span>(x)) {</span>
-<span id="cb2-9"><a></a>    <span class="st">"constant"</span></span>
-<span id="cb2-10"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.symbol</span>(x)) {</span>
-<span id="cb2-11"><a></a>    <span class="st">"symbol"</span></span>
-<span id="cb2-12"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.call</span>(x)) {</span>
-<span id="cb2-13"><a></a>    <span class="st">"call"</span></span>
-<span id="cb2-14"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.pairlist</span>(x)) {</span>
-<span id="cb2-15"><a></a>    <span class="st">"pairlist"</span></span>
-<span id="cb2-16"><a></a>  } <span class="cf">else</span> {</span>
-<span id="cb2-17"><a></a>    <span class="fu">typeof</span>(x)</span>
-<span id="cb2-18"><a></a>  }</span>
-<span id="cb2-19"><a></a>}</span>
-<span id="cb2-20"><a></a>flat_map_chr <span class="ot">&lt;-</span> <span class="cf">function</span>(.x, .f, ...) {</span>
-<span id="cb2-21"><a></a>  purrr<span class="sc">::</span><span class="fu">flatten_chr</span>(purrr<span class="sc">::</span><span class="fu">map</span>(.x, .f, ...))</span>
-<span id="cb2-22"><a></a>}</span>
-<span id="cb2-23"><a></a>switch_expr <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
-<span id="cb2-24"><a></a>  <span class="cf">switch</span>(<span class="fu">expr_type</span>(x),</span>
-<span id="cb2-25"><a></a>    ...,</span>
-<span id="cb2-26"><a></a>    <span class="fu">stop</span>(<span class="st">"Don't know how to handle type "</span>, <span class="fu">typeof</span>(x), <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb2-27"><a></a>  )</span>
-<span id="cb2-28"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>utils<span class="sc">::</span><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; R version 4.5.1 (2025-06-13 ucrt)
-#&gt; Platform: x86_64-w64-mingw32/x64
-#&gt; Running under: Windows 11 x64 (build 26100)
-#&gt; 
-#&gt; Matrix products: default
-#&gt;   LAPACK version 3.12.1
-#&gt; 
-#&gt; locale:
-#&gt; [1] LC_COLLATE=English_United States.utf8 
-#&gt; [2] LC_CTYPE=English_United States.utf8   
-#&gt; [3] LC_MONETARY=English_United States.utf8
-#&gt; [4] LC_NUMERIC=C                          
-#&gt; [5] LC_TIME=English_United States.utf8    
-#&gt; 
-#&gt; time zone: America/Chicago
-#&gt; tzcode source: internal
-#&gt; 
-#&gt; attached base packages:
-#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
-#&gt; 
-#&gt; other attached packages:
-#&gt; [1] rlang_1.1.6       purrr_1.1.0       lobstr_1.1.2      DiagrammeR_1.0.11
-#&gt; 
-#&gt; loaded via a namespace (and not attached):
-#&gt;  [1] digest_0.6.37      RColorBrewer_1.1-3 R6_2.6.1           fastmap_1.2.0     
-#&gt;  [5] xfun_0.52          magrittr_2.0.3     glue_1.8.0         knitr_1.50        
-#&gt;  [9] htmltools_0.5.8.1  rmarkdown_2.29     lifecycle_1.0.4    cli_3.6.5         
-#&gt; [13] visNetwork_2.1.2   vctrs_0.6.5        compiler_4.5.1     tools_4.5.1       
-#&gt; [17] evaluate_1.0.4     yaml_2.3.10        jsonlite_2.0.0     htmlwidgets_1.6.4 
-#&gt; [21] keyring_1.4.1</code></pre>
-</div>
-</div>
-</details>
 </section>
-<section id="case-study-mcq" class="slide level2 scrollable">
-<h2>Case Study: MCQ</h2>
-<p>We are going to use R code to generate HTML or LaTeX to produce multiple-choice questions such as</p>
-<h3 id="pop-quiz">Pop Quiz!</h3>
-<ol type="1">
-<li><p>What is the <strong>derivative</strong> of <span class="math inline">\(f(x) = 1 + 2\cos(3\pi x + 4)\)</span>?</p>
-<ol type="a">
-<li><span class="math inline">\(f'(x) = 6\pi\sin(3\pi x + 4)\)</span></li>
-<li><span class="math inline">\(f'(x) = -6\pi\sin(3\pi x + 4)\)</span></li>
-<li><span class="math inline">\(f'(x) = 24\pi\sin(3\pi x + 4)\)</span></li>
-<li><span class="math inline">\(f'(x) = -24\pi\sin(3\pi x + 4)\)</span></li>
-</ol></li>
-</ol>
-
-<img data-src="images/translating/calculus_cat.png" class="r-stretch quarto-figure-center"><p class="caption">A whisker plot</p></section>
-<section class="slide level2">
-
-<p>As developers, we may be asking ourselves:</p>
+<section id="translating-code-is-not-the-same-as-evaluating-code" class="slide level2">
+<h2>Translating code is not the same as evaluating code</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="co"># Evaluation</span></span>
+<span id="cb2-2"><a></a><span class="fu">sqrt</span>(<span class="dv">9</span>)</span>
+<span id="cb2-3"><a></a></span>
+<span id="cb2-4"><a></a><span class="co"># Translation</span></span>
+<span id="cb2-5"><a></a>expr <span class="ot">&lt;-</span> <span class="fu">quote</span>(<span class="fu">sqrt</span>(x))</span>
+<span id="cb2-6"><a></a>expr</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
-<li>What are the expressions?</li>
-<li>What are the symbols?</li>
-<li>Will we have to quote inputs from the user (math teacher)?</li>
+<li>Evaluation produces a value (<code>3</code>)</li>
+<li>Translation preserves structure (<code>sqrt(x)</code>)</li>
+<li>The result is code, not a computed number</li>
 </ul>
 </section>
-<section id="html" class="slide level2 scrollable">
-<h2>HTML</h2>
-<p>We are trying to produce</p>
-<pre><code>&lt;body&gt;
-  &lt;h1 id = 'pop_quiz'&gt;Pop Quiz&lt;/h1&gt;
-  &lt;ol&gt;
-    &lt;li&gt;What is the &lt;b&gt;derivative&lt;/b&gt; of $f(x) = 1 + 2\cos(3\pi x + 4)$?&lt;/li&gt;
-    &lt;ol&gt;
-      &lt;li&gt;$f'(x) = 6\pi\sin(3\pi x + 4)$&lt;/li&gt;
-      &lt;li&gt;$f'(x) = -6\pi\sin(3\pi x + 4)$&lt;/li&gt;
-      &lt;li&gt;$f'(x) = 24\pi\sin(3\pi x + 4)$&lt;/li&gt;
-      &lt;li&gt;$f'(x) = -24\pi\sin(3\pi x + 4)$&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/ol&gt;
-  &lt;img src = 'calculus_cat.png' width = '100' height = '100' /&gt;
-&lt;/body&gt;</code></pre>
-<p>using DSL</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">with_html</span>(</span>
-<span id="cb6-2"><a></a>  <span class="fu">body</span>(</span>
-<span id="cb6-3"><a></a>    <span class="fu">h1</span>(<span class="st">"Pop quiz!"</span>, <span class="at">id =</span> <span class="st">"pop_quiz"</span>),</span>
-<span id="cb6-4"><a></a>    <span class="fu">ol</span>(</span>
-<span id="cb6-5"><a></a>      <span class="fu">li</span>(<span class="st">"What is the "</span>, <span class="fu">b</span>(<span class="st">"derivative"</span>),  <span class="st">"of $f(x) = 1 + 2cos(3pi x + 4)$?"</span>),</span>
-<span id="cb6-6"><a></a>      <span class="fu">ol</span>(</span>
-<span id="cb6-7"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = 6pi*sin(3pi x + 4)$"</span>),</span>
-<span id="cb6-8"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = -6pi*sin(3pi x + 4)$"</span>),</span>
-<span id="cb6-9"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = 24pi*sin(3pi x + 4)$"</span>),</span>
-<span id="cb6-10"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = -24pi*sin(3pi x + 4)$"</span>)</span>
-<span id="cb6-11"><a></a>      )</span>
-<span id="cb6-12"><a></a>    ),</span>
-<span id="cb6-13"><a></a>    <span class="fu">img</span>(<span class="at">src =</span> <span class="st">"images/translating/calculus_cat.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span>
-<span id="cb6-14"><a></a>  )</span>
-<span id="cb6-15"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>In particular,</p>
+<section id="code-translation-relies-on-metaprogramming" class="slide level2">
+<h2>Code translation relies on metaprogramming</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">library</span>(rlang)</span>
+<span id="cb3-2"><a></a></span>
+<span id="cb3-3"><a></a>expr <span class="ot">&lt;-</span> <span class="fu">expr</span>(<span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb3-4"><a></a>expr</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
-<li><strong>tags</strong> such as <code>&lt;b&gt;&lt;/b&gt;</code> have <em>attributes</em></li>
-<li><strong>void tags</strong> such as <code>&lt;img /&gt;</code></li>
-<li>special characters: <code>&amp;</code>, <code>&lt;</code>, and <code>&gt;</code></li>
+<li>Expressions are captured with <code>expr()</code> / <code>enexpr()</code></li>
+<li>Calls, symbols, etc… can be inspected</li>
+<li>Translation operates on the AST, not on values</li>
 </ul>
-<details>
-<summary>
-HTML verification
-</summary>
-
-  <h1 id="pop_quiz">Pop Quiz</h1>
-  <ol>
-    <li>What is the <b>derivative</b> of $f(x) = 1 + 2\cos(3\pi x + 4)$?</li>
-    <ol>
-      <li>$f'(x) = 6\pi\sin(3\pi x + 4)$</li>
-      <li>$f'(x) = -6\pi\sin(3\pi x + 4)$</li>
-      <li>$f'(x) = 24\pi\sin(3\pi x + 4)$</li>
-      <li>$f'(x) = -24\pi\sin(3\pi x + 4)$</li>
-    </ol>
-  </ol>
-  <img src="images/translating/calculus_cat.png" width="100" height="100">
-
-</details>
 </section>
-<section id="escaping" class="slide level2">
-<h2>Escaping</h2>
+<section id="the-practical-goal-of-translation-is-domain-specific-languages" class="slide level2">
+<h2>The practical goal of translation is domain-specific languages</h2>
 <ul>
-<li>need to escape <code>&amp;</code>, <code>&lt;</code>, and <code>&gt;</code></li>
-<li>don’t “double escape”</li>
-<li>leave HTML alone</li>
+<li>DSLs embed a small language inside R</li>
+<li>R syntax becomes a frontend for another language</li>
+<li><code>dbplyr</code> as an example: R → SQL</li>
 </ul>
-<h3 id="s3-class">S3 Class</h3>
+</section></section>
+<section>
+<section id="fundamentals-of-r-html" class="title-slide slide level1 center">
+<h1>Fundamentals of R → HTML</h1>
+
+</section>
+<section id="we-can-generate-html-code-from-r" class="slide level2">
+<h2>We can generate HTML code from R</h2>
+<ul>
+<li>We can do this…</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource html number-lines code-with-copy"><code class="sourceCode html"><span id="cb4-1"><a></a><span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb4-2"><a></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="ot"> id</span><span class="op">=</span><span class="st">'first'</span><span class="dt">&gt;</span>A heading<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb4-3"><a></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Some text <span class="dv">&amp;amp;</span> <span class="dt">&lt;</span><span class="kw">b</span><span class="dt">&gt;</span>some bold text.<span class="dt">&lt;/</span><span class="kw">b</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb4-4"><a></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">'myimg.png'</span><span class="ot"> width</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> height</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb4-5"><a></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>By doing this…</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a><span class="fu">with_html</span>(</span>
+<span id="cb5-2"><a></a>  <span class="fu">body</span>(</span>
+<span id="cb5-3"><a></a>    <span class="fu">h1</span>(<span class="st">"A heading"</span>, <span class="at">id =</span> <span class="st">"first"</span>),</span>
+<span id="cb5-4"><a></a>    <span class="fu">p</span>(<span class="st">"Some text &amp;"</span>, <span class="fu">b</span>(<span class="st">"some bold text."</span>)),</span>
+<span id="cb5-5"><a></a>    <span class="fu">img</span>(<span class="at">src =</span> <span class="st">"myimg.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span>
+<span id="cb5-6"><a></a>  )</span>
+<span id="cb5-7"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Basically, HTML tags become “ordinary” R functions</p>
+</section>
+<section id="our-dsl-makes-translation-easy" class="slide level2">
+<h2>Our DSL makes translation easy</h2>
+<ul>
+<li><p><strong>Same structure</strong>: nesting of function calls == nesting of tags.</p></li>
+<li><p><strong>Similar logic</strong>: unnamed arguments -&gt; tag content, named arguments -&gt; tag attributes.</p></li>
+<li><p><strong>User experience</strong>: special characters automatically escaped (e.g.&nbsp;<code>"&amp;"</code> -&gt; <code>"&amp;amp;"</code>).</p></li>
+</ul>
+</section>
+<section id="we-need-five-basic-html-tags-for-this-exercise" class="slide level2">
+<h2>We need five basic HTML tags for this exercise</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource html number-lines code-with-copy"><code class="sourceCode html"><span id="cb6-1"><a></a><span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb6-2"><a></a>  <span class="dt">&lt;</span><span class="kw">h1</span><span class="ot"> id</span><span class="op">=</span><span class="st">'first'</span><span class="dt">&gt;</span>A heading<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb6-3"><a></a>  <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Some text <span class="dv">&amp;amp;</span> <span class="dt">&lt;</span><span class="kw">b</span><span class="dt">&gt;</span>some bold text.<span class="dt">&lt;/</span><span class="kw">b</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb6-4"><a></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">'myimg.png'</span><span class="ot"> width</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> height</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb6-5"><a></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><code>&lt;body&gt;</code> is the top-level tag that contains all content.</li>
+<li><code>&lt;h1&gt;</code> defines a top level heading.</li>
+<li><code>&lt;p&gt;</code> defines a paragraph.</li>
+<li><code>&lt;b&gt;</code> emboldens text.</li>
+<li><code>&lt;img&gt;</code> embeds an image.</li>
+</ul>
+</section>
+<section id="we-need-to-know-the-main-structure-of-tags" class="slide level2">
+<h2>We need to know the main structure of tags</h2>
+<ul>
+<li>Main tags structure: <code>&lt;tag&gt; &lt;/tag&gt;</code></li>
+<li>Void tags structure: <code>&lt;tag /&gt;</code></li>
+<li>Tags can have attributes: <code>&lt;tag name1='value1' name2='value2'&gt;&lt;/tag&gt;</code></li>
+</ul>
+<p>Examples</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource html number-lines code-with-copy"><code class="sourceCode html"><span id="cb7-1"><a></a><span class="co">&lt;!-- Main tag with some atributes --&gt;</span></span>
+<span id="cb7-2"><a></a><span class="dt">&lt;</span><span class="kw">h1</span><span class="ot"> id</span><span class="op">=</span><span class="st">'first'</span><span class="dt">&gt;</span>A heading<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb7-3"><a></a></span>
+<span id="cb7-4"><a></a><span class="co">&lt;!-- Void tag with some atributes --&gt;</span></span>
+<span id="cb7-5"><a></a><span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">'myimg.png'</span><span class="ot"> width</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> height</span><span class="op">=</span><span class="st">'100'</span><span class="ot"> </span><span class="dt">/&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="we-need-to-know-how-to-escape-some-characters" class="slide level2">
+<h2>We need to know how to escape some characters</h2>
+<ul>
+<li><code>&amp;</code> is escaped with <code>&amp;amp;</code></li>
+<li><code>&lt;</code> is escaped with <code>&amp;lt;</code></li>
+<li><code>&gt;</code> is escaped with <code>&amp;gt;</code></li>
+</ul>
+</section></section>
+<section>
+<section id="how-to-r-html" class="title-slide slide level1 center">
+<h1>How to R → HTML</h1>
+
+</section>
+<section id="follow-a-micro-macro-procedure-to-create-html-dsl" class="slide level2">
+<h2>Follow a micro-macro procedure to create HTML DSL</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">with_html</span>(</span>
+<span id="cb8-2"><a></a>  <span class="fu">body</span>(</span>
+<span id="cb8-3"><a></a>    <span class="fu">h1</span>(<span class="st">"A heading"</span>, <span class="at">id =</span> <span class="st">"first"</span>),</span>
+<span id="cb8-4"><a></a>    <span class="fu">p</span>(<span class="st">"Some text &amp;"</span>, <span class="fu">b</span>(<span class="st">"some bold text."</span>)),</span>
+<span id="cb8-5"><a></a>    <span class="fu">img</span>(<span class="at">src =</span> <span class="st">"myimg.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span>
+<span id="cb8-6"><a></a>  )</span>
+<span id="cb8-7"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The steps…</p>
+<ul>
+<li>Create an S3 that translates &amp; automatically escapes user’s input</li>
+<li>Create a basic structure for tag functions</li>
+<li>Create a function factory for creating tag functions</li>
+<li>Create an HTML environment of evaluation</li>
+</ul>
+</section>
+<section id="we-can-translate-r-to-html-via-s3" class="slide level2">
+<h2>We can translate R to HTML via S3</h2>
+<p>Class constructor and dispatch</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>html <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">structure</span>(x, <span class="at">class =</span> <span class="st">"advr_html"</span>)</span>
-<span id="cb7-2"><a></a></span>
-<span id="cb7-3"><a></a><span class="co">#dispatch</span></span>
-<span id="cb7-4"><a></a>print.advr_html <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
-<span id="cb7-5"><a></a>  out <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"&lt;HTML&gt; "</span>, x)</span>
-<span id="cb7-6"><a></a>  <span class="fu">cat</span>(<span class="fu">paste</span>(<span class="fu">strwrap</span>(out), <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb7-7"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>html <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">structure</span>(x, <span class="at">class =</span> <span class="st">"advr_html"</span>)</span>
+<span id="cb9-2"><a></a></span>
+<span id="cb9-3"><a></a>print.advr_html <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb9-4"><a></a>  out <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"&lt;HTML&gt; "</span>, x)</span>
+<span id="cb9-5"><a></a>  <span class="fu">cat</span>(<span class="fu">paste</span>(<span class="fu">strwrap</span>(out), <span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb9-6"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<h3 id="generic">Generic</h3>
+<p>Methods that consider automatic escaping</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>escape <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">UseMethod</span>(<span class="st">"escape"</span>)</span>
-<span id="cb8-2"><a></a>escape.character <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb8-3"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&amp;"</span>, <span class="st">"&amp;amp;"</span>, x)</span>
-<span id="cb8-4"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&lt;"</span>, <span class="st">"&amp;lt;"</span>, x)</span>
-<span id="cb8-5"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&gt;"</span>, <span class="st">"&amp;gt;"</span>, x)</span>
-<span id="cb8-6"><a></a>  <span class="fu">html</span>(x)</span>
-<span id="cb8-7"><a></a>}</span>
-<span id="cb8-8"><a></a>escape.advr_html <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>escape <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">UseMethod</span>(<span class="st">"escape"</span>)</span>
+<span id="cb10-2"><a></a></span>
+<span id="cb10-3"><a></a>escape.character <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb10-4"><a></a>  <span class="co"># Method for escaping</span></span>
+<span id="cb10-5"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&amp;"</span>, <span class="st">"&amp;amp;"</span>, x)</span>
+<span id="cb10-6"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&lt;"</span>, <span class="st">"&amp;lt;"</span>, x)</span>
+<span id="cb10-7"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"&gt;"</span>, <span class="st">"&amp;gt;"</span>, x)</span>
+<span id="cb10-8"><a></a></span>
+<span id="cb10-9"><a></a>  <span class="fu">html</span>(x)</span>
+<span id="cb10-10"><a></a>}</span>
+<span id="cb10-11"><a></a></span>
+<span id="cb10-12"><a></a>escape.advr_html <span class="ot">&lt;-</span> <span class="cf">function</span>(x) x <span class="co"># Method when escaping not needed</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<h3 id="checks">Checks</h3>
+</section>
+<section id="our-s3-translates-and-automatically-escapes-users-input" class="slide level2">
+<h2>Our S3 translates and automatically escapes user’s input</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">escape</span>(<span class="st">"This is some text."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">escape</span>(<span class="st">"This is some text."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;HTML&gt; This is some text.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">escape</span>(<span class="st">"x &gt; 1 &amp; y &lt; 2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">escape</span>(<span class="st">"x &gt; 1 &amp; y &lt; 2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;HTML&gt; x &amp;gt; 1 &amp;amp; y &amp;lt; 2</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">escape</span>(<span class="fu">escape</span>(<span class="st">"This is some text. 1 &gt; 2"</span>)) <span class="co">#double escape</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="co"># Double escaping is not a problem</span></span>
+<span id="cb15-2"><a></a><span class="fu">escape</span>(<span class="fu">escape</span>(<span class="st">"This is some text. 1 &gt; 2"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;HTML&gt; This is some text. 1 &amp;gt; 2</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">escape</span>(<span class="fu">html</span>(<span class="st">"&lt;hr /&gt;"</span>)) <span class="co">#already html</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="co"># And text we know is HTML doesn't get escaped.</span></span>
+<span id="cb17-2"><a></a><span class="fu">escape</span>(<span class="fu">html</span>(<span class="st">"&lt;hr /&gt;"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;HTML&gt; &lt;hr /&gt;</code></pre>
 </div>
 </div>
 </section>
-<section id="named-components" class="slide level2">
-<h2>Named Components</h2>
-<pre><code>li("What is the ", b("derivative"),  "of $f(x) = 1 + 2\cos(3\pi x + 4)$?")</code></pre>
+<section id="we-create-r-functions-for-html-tags" class="slide level2">
+<h2>We create R functions for HTML tags</h2>
 <ul>
-<li>aiming to classify <code>li</code> and <code>b</code> as <strong>named components</strong></li>
+<li><code>&lt;p&gt;</code> tag -&gt; <code>p()</code> function
+<ul>
+<li>Distinguish between content and attributes</li>
+<li>Manage the big amount of attributes that exists (also customs ones)</li>
+</ul></li>
+<li>Same logic to create other tags</li>
 </ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">p</span>(<span class="st">"Some text. "</span>, <span class="fu">b</span>(<span class="fu">i</span>(<span class="st">"some bold italic text"</span>)), <span class="at">class =</span> <span class="st">"mypara"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="we-must-distinguish-between-content-and-attributes" class="slide level2">
+<h2>We must distinguish between content and attributes</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>dots_partition <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
-<span id="cb18-2"><a></a>  dots <span class="ot">&lt;-</span> <span class="fu">list2</span>(...)</span>
-<span id="cb18-3"><a></a>  </span>
-<span id="cb18-4"><a></a> <span class="cf">if</span> (<span class="fu">is.null</span>(<span class="fu">names</span>(dots))) {</span>
-<span id="cb18-5"><a></a>  is_named <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="fu">length</span>(dots))</span>
-<span id="cb18-6"><a></a>} <span class="cf">else</span> {</span>
-<span id="cb18-7"><a></a>  is_named <span class="ot">&lt;-</span> <span class="fu">names</span>(dots) <span class="sc">!=</span> <span class="st">""</span></span>
-<span id="cb18-8"><a></a>}</span>
-<span id="cb18-9"><a></a>  </span>
-<span id="cb18-10"><a></a>  <span class="fu">list</span>(</span>
-<span id="cb18-11"><a></a>    <span class="at">named =</span> dots[is_named],</span>
-<span id="cb18-12"><a></a>    <span class="at">unnamed =</span> dots[<span class="sc">!</span>is_named]</span>
-<span id="cb18-13"><a></a>  )</span>
-<span id="cb18-14"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<h3 id="check">Check</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="fu">str</span>(<span class="fu">dots_partition</span>(<span class="at">company =</span> <span class="st">"Posit"</span>,</span>
-<span id="cb19-2"><a></a>                   <span class="at">software =</span> <span class="st">"RStudio"</span>,</span>
-<span id="cb19-3"><a></a>                   <span class="st">"DSLC"</span>,</span>
-<span id="cb19-4"><a></a>                   <span class="st">"Cohort 9"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="co"># Separate named and unnamed arguments</span></span>
+<span id="cb20-2"><a></a>dots_partition <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb20-3"><a></a>  dots <span class="ot">&lt;-</span> <span class="fu">list2</span>(...)</span>
+<span id="cb20-4"><a></a></span>
+<span id="cb20-5"><a></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(<span class="fu">names</span>(dots))) {</span>
+<span id="cb20-6"><a></a>    is_named <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="fu">length</span>(dots))</span>
+<span id="cb20-7"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb20-8"><a></a>    is_named <span class="ot">&lt;-</span> <span class="fu">names</span>(dots) <span class="sc">!=</span> <span class="st">""</span></span>
+<span id="cb20-9"><a></a>  }</span>
+<span id="cb20-10"><a></a></span>
+<span id="cb20-11"><a></a>  <span class="fu">list</span>(</span>
+<span id="cb20-12"><a></a>    <span class="at">named =</span> dots[is_named], <span class="co"># Attributes</span></span>
+<span id="cb20-13"><a></a>    <span class="at">unnamed =</span> dots[<span class="sc">!</span>is_named] <span class="co"># Contents</span></span>
+<span id="cb20-14"><a></a>  )</span>
+<span id="cb20-15"><a></a>}</span>
+<span id="cb20-16"><a></a></span>
+<span id="cb20-17"><a></a><span class="fu">str</span>(<span class="fu">dots_partition</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="dv">2</span>, <span class="at">b =</span> <span class="dv">3</span>, <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; List of 2
 #&gt;  $ named  :List of 2
-#&gt;   ..$ company : chr "Posit"
-#&gt;   ..$ software: chr "RStudio"
+#&gt;   ..$ a: num 1
+#&gt;   ..$ b: num 3
 #&gt;  $ unnamed:List of 2
-#&gt;   ..$ : chr "DSLC"
-#&gt;   ..$ : chr "Cohort 9"</code></pre>
+#&gt;   ..$ : num 2
+#&gt;   ..$ : num 4</code></pre>
 </div>
+</div>
+</section>
+<section id="we-can-create-p-tag-via-p-function" class="slide level2">
+<h2>We can create <code>&lt;p&gt;</code> tag via <code>p()</code> function</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>p <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb22-2"><a></a>  dots <span class="ot">&lt;-</span> <span class="fu">dots_partition</span>(...) <span class="co"># List with named and unnamed args</span></span>
+<span id="cb22-3"><a></a>  attribs <span class="ot">&lt;-</span> <span class="fu">html_attributes</span>(dots<span class="sc">$</span>named)</span>
+<span id="cb22-4"><a></a>  children <span class="ot">&lt;-</span> <span class="fu">map_chr</span>(dots<span class="sc">$</span>unnamed, escape)</span>
+<span id="cb22-5"><a></a></span>
+<span id="cb22-6"><a></a>  <span class="fu">html</span>(<span class="fu">paste0</span>(</span>
+<span id="cb22-7"><a></a>    <span class="st">"&lt;p"</span>,</span>
+<span id="cb22-8"><a></a>    attribs,</span>
+<span id="cb22-9"><a></a>    <span class="st">"&gt;"</span>,</span>
+<span id="cb22-10"><a></a>    <span class="fu">paste</span>(children, <span class="at">collapse =</span> <span class="st">""</span>),</span>
+<span id="cb22-11"><a></a>    <span class="st">"&lt;/p&gt;"</span></span>
+<span id="cb22-12"><a></a>  ))</span>
+<span id="cb22-13"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <details>
 <summary>
-HTML Attributes
+More about <code>html_attributes()</code>
 </summary>
 <p>Found among the textbook’s <a href="https://github.com/hadley/adv-r/blob/master/dsl-html-attributes.r">source code</a></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>html_attributes <span class="ot">&lt;-</span> <span class="cf">function</span>(list) {</span>
-<span id="cb21-2"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(list) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="st">""</span>)</span>
-<span id="cb21-3"><a></a></span>
-<span id="cb21-4"><a></a>  attr <span class="ot">&lt;-</span> <span class="fu">map2_chr</span>(<span class="fu">names</span>(list), list, html_attribute)</span>
-<span id="cb21-5"><a></a>  <span class="fu">paste0</span>(<span class="st">" "</span>, <span class="fu">unlist</span>(attr), <span class="at">collapse =</span> <span class="st">""</span>)</span>
-<span id="cb21-6"><a></a>}</span>
-<span id="cb21-7"><a></a>html_attribute <span class="ot">&lt;-</span> <span class="cf">function</span>(name, <span class="at">value =</span> <span class="cn">NULL</span>) {</span>
-<span id="cb21-8"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(value) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(name) <span class="co"># for attributes with no value</span></span>
-<span id="cb21-9"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(value) <span class="sc">!=</span> <span class="dv">1</span>) <span class="fu">stop</span>(<span class="st">"`value` must be NULL or length 1"</span>)</span>
-<span id="cb21-10"><a></a></span>
-<span id="cb21-11"><a></a>  <span class="cf">if</span> (<span class="fu">is.logical</span>(value)) {</span>
-<span id="cb21-12"><a></a>    <span class="co"># Convert T and F to true and false</span></span>
-<span id="cb21-13"><a></a>    value <span class="ot">&lt;-</span> <span class="fu">tolower</span>(value)</span>
-<span id="cb21-14"><a></a>  } <span class="cf">else</span> {</span>
-<span id="cb21-15"><a></a>    value <span class="ot">&lt;-</span> <span class="fu">escape_attr</span>(value)</span>
-<span id="cb21-16"><a></a>  }</span>
-<span id="cb21-17"><a></a>  <span class="fu">paste0</span>(name, <span class="st">"='"</span>, value, <span class="st">"'"</span>)</span>
-<span id="cb21-18"><a></a>}</span>
-<span id="cb21-19"><a></a>escape_attr <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb21-20"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">escape.character</span>(x)</span>
-<span id="cb21-21"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\'</span><span class="st">"</span>, <span class="st">'&amp;#39;'</span>, x)</span>
-<span id="cb21-22"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\"</span><span class="st">"</span>, <span class="st">'&amp;quot;'</span>, x)</span>
-<span id="cb21-23"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\r</span><span class="st">"</span>, <span class="st">'&amp;#13;'</span>, x)</span>
-<span id="cb21-24"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="st">'&amp;#10;'</span>, x)</span>
-<span id="cb21-25"><a></a>  x</span>
-<span id="cb21-26"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>html_attributes <span class="ot">&lt;-</span> <span class="cf">function</span>(list) {</span>
+<span id="cb23-2"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(list) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb23-3"><a></a>    <span class="fu">return</span>(<span class="st">""</span>)</span>
+<span id="cb23-4"><a></a>  }</span>
+<span id="cb23-5"><a></a></span>
+<span id="cb23-6"><a></a>  attr <span class="ot">&lt;-</span> <span class="fu">map2_chr</span>(<span class="fu">names</span>(list), list, html_attribute)</span>
+<span id="cb23-7"><a></a>  <span class="fu">paste0</span>(<span class="st">" "</span>, <span class="fu">unlist</span>(attr), <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb23-8"><a></a>}</span>
+<span id="cb23-9"><a></a>html_attribute <span class="ot">&lt;-</span> <span class="cf">function</span>(name, <span class="at">value =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb23-10"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(value) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb23-11"><a></a>    <span class="fu">return</span>(name)</span>
+<span id="cb23-12"><a></a>  } <span class="co"># for attributes with no value</span></span>
+<span id="cb23-13"><a></a>  <span class="cf">if</span> (<span class="fu">length</span>(value) <span class="sc">!=</span> <span class="dv">1</span>) {</span>
+<span id="cb23-14"><a></a>    <span class="fu">stop</span>(<span class="st">"`value` must be NULL or length 1"</span>)</span>
+<span id="cb23-15"><a></a>  }</span>
+<span id="cb23-16"><a></a></span>
+<span id="cb23-17"><a></a>  <span class="cf">if</span> (<span class="fu">is.logical</span>(value)) {</span>
+<span id="cb23-18"><a></a>    <span class="co"># Convert T and F to true and false</span></span>
+<span id="cb23-19"><a></a>    value <span class="ot">&lt;-</span> <span class="fu">tolower</span>(value)</span>
+<span id="cb23-20"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb23-21"><a></a>    value <span class="ot">&lt;-</span> <span class="fu">escape_attr</span>(value)</span>
+<span id="cb23-22"><a></a>  }</span>
+<span id="cb23-23"><a></a>  <span class="fu">paste0</span>(name, <span class="st">"='"</span>, value, <span class="st">"'"</span>)</span>
+<span id="cb23-24"><a></a>}</span>
+<span id="cb23-25"><a></a>escape_attr <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb23-26"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">escape.character</span>(x)</span>
+<span id="cb23-27"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\'</span><span class="st">"</span>, <span class="st">'&amp;#39;'</span>, x)</span>
+<span id="cb23-28"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\"</span><span class="st">"</span>, <span class="st">'&amp;quot;'</span>, x)</span>
+<span id="cb23-29"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\r</span><span class="st">"</span>, <span class="st">'&amp;#13;'</span>, x)</span>
+<span id="cb23-30"><a></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="st">'&amp;#10;'</span>, x)</span>
+<span id="cb23-31"><a></a>  x</span>
+<span id="cb23-32"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </details>
+</section></section>
+<section>
+<section id="our-p-function-works" class="title-slide slide level1 center">
+<h1>Our <code>p()</code> function works</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">p</span>(<span class="st">"Some text"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; &lt;p&gt;Some text&lt;/p&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">p</span>(<span class="st">"Some text"</span>, <span class="at">id =</span> <span class="st">"myid"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; &lt;p id='myid'&gt;Some text&lt;/p&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">p</span>(<span class="st">"Some text"</span>, <span class="at">class =</span> <span class="st">"important"</span>, <span class="st">`</span><span class="at">data-value</span><span class="st">`</span> <span class="ot">=</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; &lt;p class='important' data-value='10'&gt;Some text&lt;/p&gt;</code></pre>
+</div>
+</div>
 </section>
-<section id="tags-calls" class="slide level2">
-<h2>Tags (calls)</h2>
+<section id="we-can-use-a-function-factory-for-tags" class="slide level2">
+<h2>We can use a function factory for tags</h2>
+<ul>
+<li>Instead of one function for each tag, we use a function factory:</li>
+</ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>tag <span class="ot">&lt;-</span> <span class="cf">function</span>(tag) {</span>
-<span id="cb22-2"><a></a>  <span class="fu">new_function</span>(</span>
-<span id="cb22-3"><a></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ), <span class="co">#arguments of new function</span></span>
-<span id="cb22-4"><a></a>    <span class="fu">expr</span>({         <span class="co">#body of the new function</span></span>
-<span id="cb22-5"><a></a>      </span>
-<span id="cb22-6"><a></a>      <span class="co">#classify tags as named components</span></span>
-<span id="cb22-7"><a></a>      dots <span class="ot">&lt;-</span> <span class="fu">dots_partition</span>(...)</span>
-<span id="cb22-8"><a></a>      </span>
-<span id="cb22-9"><a></a>      <span class="co">#focus on named components as the tags</span></span>
-<span id="cb22-10"><a></a>      attribs <span class="ot">&lt;-</span> <span class="fu">html_attributes</span>(dots<span class="sc">$</span>named)</span>
-<span id="cb22-11"><a></a>      </span>
-<span id="cb22-12"><a></a>      <span class="co"># otherwise, nested code</span></span>
-<span id="cb22-13"><a></a>      children <span class="ot">&lt;-</span> <span class="fu">map_chr</span>(dots<span class="sc">$</span>unnamed, escape)</span>
-<span id="cb22-14"><a></a></span>
-<span id="cb22-15"><a></a>      <span class="co"># paste brackets, tag names, and attributes together</span></span>
-<span id="cb22-16"><a></a>      <span class="co"># then unquote user arguments</span></span>
-<span id="cb22-17"><a></a>      <span class="fu">html</span>(<span class="fu">paste0</span>(</span>
-<span id="cb22-18"><a></a>        <span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag), attribs, <span class="st">"&gt;"</span>,</span>
-<span id="cb22-19"><a></a>        <span class="fu">paste</span>(children, <span class="at">collapse =</span> <span class="st">""</span>),</span>
-<span id="cb22-20"><a></a>        <span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;/"</span>, tag, <span class="st">"&gt;"</span>)</span>
-<span id="cb22-21"><a></a>      ))</span>
-<span id="cb22-22"><a></a>    }),</span>
-<span id="cb22-23"><a></a>    <span class="fu">caller_env</span>() <span class="co">#return the environment</span></span>
-<span id="cb22-24"><a></a>  )</span>
-<span id="cb22-25"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>tag <span class="ot">&lt;-</span> <span class="cf">function</span>(tag) {</span>
+<span id="cb30-2"><a></a>  <span class="fu">new_function</span>(</span>
+<span id="cb30-3"><a></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ), <span class="co"># Capture the intended tag!</span></span>
+<span id="cb30-4"><a></a>    <span class="fu">expr</span>({</span>
+<span id="cb30-5"><a></a>      <span class="co"># Capture the code that contains the structure of tag functions</span></span>
+<span id="cb30-6"><a></a>      dots <span class="ot">&lt;-</span> <span class="fu">dots_partition</span>(...)</span>
+<span id="cb30-7"><a></a>      attribs <span class="ot">&lt;-</span> <span class="fu">html_attributes</span>(dots<span class="sc">$</span>named)</span>
+<span id="cb30-8"><a></a>      children <span class="ot">&lt;-</span> <span class="fu">map_chr</span>(dots<span class="sc">$</span>unnamed, escape)</span>
+<span id="cb30-9"><a></a></span>
+<span id="cb30-10"><a></a>      <span class="fu">html</span>(<span class="fu">paste0</span>(</span>
+<span id="cb30-11"><a></a>        <span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag),</span>
+<span id="cb30-12"><a></a>        attribs,</span>
+<span id="cb30-13"><a></a>        <span class="st">"&gt;"</span>,</span>
+<span id="cb30-14"><a></a>        <span class="fu">paste</span>(children, <span class="at">collapse =</span> <span class="st">""</span>),</span>
+<span id="cb30-15"><a></a>        <span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;/"</span>, tag, <span class="st">"&gt;"</span>)</span>
+<span id="cb30-16"><a></a>      ))</span>
+<span id="cb30-17"><a></a>    }),</span>
+<span id="cb30-18"><a></a>    <span class="fu">caller_env</span>() <span class="co"># Get the environment of the caller frame</span></span>
+<span id="cb30-19"><a></a>  )</span>
+<span id="cb30-20"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<details>
-<summary>
-Void tags
-</summary>
+</section>
+<section id="our-function-factory-for-tags-works" class="slide level2">
+<h2>Our function factory for tags works</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>void_tag <span class="ot">&lt;-</span> <span class="cf">function</span>(tag) {</span>
-<span id="cb23-2"><a></a>  <span class="fu">new_function</span>(</span>
-<span id="cb23-3"><a></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ), <span class="co">#allows for missing arguments</span></span>
-<span id="cb23-4"><a></a>    <span class="fu">expr</span>({</span>
-<span id="cb23-5"><a></a>      dots <span class="ot">&lt;-</span> <span class="fu">dots_partition</span>(...)</span>
-<span id="cb23-6"><a></a>      </span>
-<span id="cb23-7"><a></a>      <span class="co"># error check</span></span>
-<span id="cb23-8"><a></a>      <span class="cf">if</span> (<span class="fu">length</span>(dots<span class="sc">$</span>unnamed) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb23-9"><a></a>        <span class="fu">abort</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag, <span class="st">"&gt; must not have unnamed arguments"</span>))</span>
-<span id="cb23-10"><a></a>      }</span>
-<span id="cb23-11"><a></a>      attribs <span class="ot">&lt;-</span> <span class="fu">html_attributes</span>(dots<span class="sc">$</span>named)</span>
-<span id="cb23-12"><a></a></span>
-<span id="cb23-13"><a></a>      <span class="fu">html</span>(<span class="fu">paste0</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag), attribs, <span class="st">" /&gt;"</span>))</span>
-<span id="cb23-14"><a></a>    }),</span>
-<span id="cb23-15"><a></a>    <span class="fu">caller_env</span>()</span>
-<span id="cb23-16"><a></a>  )</span>
-<span id="cb23-17"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</details>
-<h3 id="checks-1">Checks</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">tag</span>(<span class="st">"ol"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="fu">tag</span>(<span class="st">"b"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (...) 
 #&gt; {
 #&gt;     dots &lt;- dots_partition(...)
 #&gt;     attribs &lt;- html_attributes(dots$named)
 #&gt;     children &lt;- map_chr(dots$unnamed, escape)
-#&gt;     html(paste0("&lt;ol", attribs, "&gt;", paste(children, collapse = ""), 
-#&gt;         "&lt;/ol&gt;"))
+#&gt;     html(paste0("&lt;b", attribs, "&gt;", paste(children, collapse = ""), 
+#&gt;         "&lt;/b&gt;"))
 #&gt; }</code></pre>
 </div>
 </div>
+<p>Re-run earlier example…</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>img <span class="ot">&lt;-</span> <span class="fu">void_tag</span>(<span class="st">"img"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">img</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-
-<img class="r-stretch"><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">img</span>(<span class="at">src =</span> <span class="st">"images/translating/calculus_cat.png"</span>,</span>
-<span id="cb28-2"><a></a>    <span class="at">width =</span> <span class="dv">100</span>,</span>
-<span id="cb28-3"><a></a>    <span class="at">height =</span> <span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a>p <span class="ot">&lt;-</span> <span class="fu">tag</span>(<span class="st">"p"</span>)</span>
+<span id="cb33-2"><a></a>b <span class="ot">&lt;-</span> <span class="fu">tag</span>(<span class="st">"b"</span>)</span>
+<span id="cb33-3"><a></a>i <span class="ot">&lt;-</span> <span class="fu">tag</span>(<span class="st">"i"</span>)</span>
+<span id="cb33-4"><a></a><span class="fu">p</span>(<span class="st">"Some text. "</span>, <span class="fu">b</span>(<span class="fu">i</span>(<span class="st">"some bold italic text"</span>)), <span class="at">class =</span> <span class="st">"mypara"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;HTML&gt; &lt;img src='images/translating/calculus_cat.png' width='100'
-#&gt; height='100' /&gt;</code></pre>
+<pre><code>#&gt; &lt;HTML&gt; &lt;p class='mypara'&gt;Some text. &lt;b&gt;&lt;i&gt;some bold italic
+#&gt; text&lt;/i&gt;&lt;/b&gt;&lt;/p&gt;</code></pre>
 </div>
 </div>
 </section>
-<section id="tags-processing" class="slide level2">
-<h2>Tags (processing)</h2>
+<section id="we-need-to-consider-void-tags" class="slide level2">
+<h2>We need to consider void tags</h2>
+<ul>
+<li>Void tags have slightly different structure:</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a>void_tag <span class="ot">&lt;-</span> <span class="cf">function</span>(tag) {</span>
+<span id="cb35-2"><a></a>  <span class="fu">new_function</span>(</span>
+<span id="cb35-3"><a></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ),</span>
+<span id="cb35-4"><a></a>    <span class="fu">expr</span>({</span>
+<span id="cb35-5"><a></a>      dots <span class="ot">&lt;-</span> <span class="fu">dots_partition</span>(...)</span>
+<span id="cb35-6"><a></a>      <span class="cf">if</span> (<span class="fu">length</span>(dots<span class="sc">$</span>unnamed) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb35-7"><a></a>        <span class="co"># Throws an error because void tags can't have children</span></span>
+<span id="cb35-8"><a></a>        <span class="fu">abort</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag, <span class="st">"&gt; must not have unnamed arguments"</span>))</span>
+<span id="cb35-9"><a></a>      }</span>
+<span id="cb35-10"><a></a>      attribs <span class="ot">&lt;-</span> <span class="fu">html_attributes</span>(dots<span class="sc">$</span>named)</span>
+<span id="cb35-11"><a></a></span>
+<span id="cb35-12"><a></a>      <span class="fu">html</span>(<span class="fu">paste0</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"&lt;"</span>, tag), attribs, <span class="st">" /&gt;"</span>))</span>
+<span id="cb35-13"><a></a>    }),</span>
+<span id="cb35-14"><a></a>    <span class="fu">caller_env</span>()</span>
+<span id="cb35-15"><a></a>  )</span>
+<span id="cb35-16"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="our-variant-for-void-tags-works" class="slide level2">
+<h2>Our variant for void tags works</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a></a>img <span class="ot">&lt;-</span> <span class="fu">void_tag</span>(<span class="st">"img"</span>)</span>
+<span id="cb36-2"><a></a>img</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; function (...) 
+#&gt; {
+#&gt;     dots &lt;- dots_partition(...)
+#&gt;     if (length(dots$unnamed) &gt; 0) {
+#&gt;         abort("&lt;img&gt; must not have unnamed arguments")
+#&gt;     }
+#&gt;     attribs &lt;- html_attributes(dots$named)
+#&gt;     html(paste0("&lt;img", attribs, " /&gt;"))
+#&gt; }</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a><span class="fu">img</span>(<span class="at">src =</span> <span class="st">"myimage.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;HTML&gt; &lt;img src='myimage.png' width='100' height='100' /&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="store-tags-in-an-html-environment" class="slide level2">
+<h2>Store tags in an HTML environment</h2>
+<ul>
+<li>We need to store all of our tags:</li>
+</ul>
+<details>
+<summary>
+All tags…
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a>tags <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb40-2"><a></a>  <span class="st">"a"</span>,</span>
+<span id="cb40-3"><a></a>  <span class="st">"abbr"</span>,</span>
+<span id="cb40-4"><a></a>  <span class="st">"address"</span>,</span>
+<span id="cb40-5"><a></a>  <span class="st">"article"</span>,</span>
+<span id="cb40-6"><a></a>  <span class="st">"aside"</span>,</span>
+<span id="cb40-7"><a></a>  <span class="st">"audio"</span>,</span>
+<span id="cb40-8"><a></a>  <span class="st">"b"</span>,</span>
+<span id="cb40-9"><a></a>  <span class="st">"bdi"</span>,</span>
+<span id="cb40-10"><a></a>  <span class="st">"bdo"</span>,</span>
+<span id="cb40-11"><a></a>  <span class="st">"blockquote"</span>,</span>
+<span id="cb40-12"><a></a>  <span class="st">"body"</span>,</span>
+<span id="cb40-13"><a></a>  <span class="st">"button"</span>,</span>
+<span id="cb40-14"><a></a>  <span class="st">"canvas"</span>,</span>
+<span id="cb40-15"><a></a>  <span class="st">"caption"</span>,</span>
+<span id="cb40-16"><a></a>  <span class="st">"cite"</span>,</span>
+<span id="cb40-17"><a></a>  <span class="st">"code"</span>,</span>
+<span id="cb40-18"><a></a>  <span class="st">"colgroup"</span>,</span>
+<span id="cb40-19"><a></a>  <span class="st">"data"</span>,</span>
+<span id="cb40-20"><a></a>  <span class="st">"datalist"</span>,</span>
+<span id="cb40-21"><a></a>  <span class="st">"dd"</span>,</span>
+<span id="cb40-22"><a></a>  <span class="st">"del"</span>,</span>
+<span id="cb40-23"><a></a>  <span class="st">"details"</span>,</span>
+<span id="cb40-24"><a></a>  <span class="st">"dfn"</span>,</span>
+<span id="cb40-25"><a></a>  <span class="st">"div"</span>,</span>
+<span id="cb40-26"><a></a>  <span class="st">"dl"</span>,</span>
+<span id="cb40-27"><a></a>  <span class="st">"dt"</span>,</span>
+<span id="cb40-28"><a></a>  <span class="st">"em"</span>,</span>
+<span id="cb40-29"><a></a>  <span class="st">"eventsource"</span>,</span>
+<span id="cb40-30"><a></a>  <span class="st">"fieldset"</span>,</span>
+<span id="cb40-31"><a></a>  <span class="st">"figcaption"</span>,</span>
+<span id="cb40-32"><a></a>  <span class="st">"figure"</span>,</span>
+<span id="cb40-33"><a></a>  <span class="st">"footer"</span>,</span>
+<span id="cb40-34"><a></a>  <span class="st">"form"</span>,</span>
+<span id="cb40-35"><a></a>  <span class="st">"h1"</span>,</span>
+<span id="cb40-36"><a></a>  <span class="st">"h2"</span>,</span>
+<span id="cb40-37"><a></a>  <span class="st">"h3"</span>,</span>
+<span id="cb40-38"><a></a>  <span class="st">"h4"</span>,</span>
+<span id="cb40-39"><a></a>  <span class="st">"h5"</span>,</span>
+<span id="cb40-40"><a></a>  <span class="st">"h6"</span>,</span>
+<span id="cb40-41"><a></a>  <span class="st">"head"</span>,</span>
+<span id="cb40-42"><a></a>  <span class="st">"header"</span>,</span>
+<span id="cb40-43"><a></a>  <span class="st">"hgroup"</span>,</span>
+<span id="cb40-44"><a></a>  <span class="st">"html"</span>,</span>
+<span id="cb40-45"><a></a>  <span class="st">"i"</span>,</span>
+<span id="cb40-46"><a></a>  <span class="st">"iframe"</span>,</span>
+<span id="cb40-47"><a></a>  <span class="st">"ins"</span>,</span>
+<span id="cb40-48"><a></a>  <span class="st">"kbd"</span>,</span>
+<span id="cb40-49"><a></a>  <span class="st">"label"</span>,</span>
+<span id="cb40-50"><a></a>  <span class="st">"legend"</span>,</span>
+<span id="cb40-51"><a></a>  <span class="st">"li"</span>,</span>
+<span id="cb40-52"><a></a>  <span class="st">"mark"</span>,</span>
+<span id="cb40-53"><a></a>  <span class="st">"map"</span>,</span>
+<span id="cb40-54"><a></a>  <span class="st">"menu"</span>,</span>
+<span id="cb40-55"><a></a>  <span class="st">"meter"</span>,</span>
+<span id="cb40-56"><a></a>  <span class="st">"nav"</span>,</span>
+<span id="cb40-57"><a></a>  <span class="st">"noscript"</span>,</span>
+<span id="cb40-58"><a></a>  <span class="st">"object"</span>,</span>
+<span id="cb40-59"><a></a>  <span class="st">"ol"</span>,</span>
+<span id="cb40-60"><a></a>  <span class="st">"optgroup"</span>,</span>
+<span id="cb40-61"><a></a>  <span class="st">"option"</span>,</span>
+<span id="cb40-62"><a></a>  <span class="st">"output"</span>,</span>
+<span id="cb40-63"><a></a>  <span class="st">"p"</span>,</span>
+<span id="cb40-64"><a></a>  <span class="st">"pre"</span>,</span>
+<span id="cb40-65"><a></a>  <span class="st">"progress"</span>,</span>
+<span id="cb40-66"><a></a>  <span class="st">"q"</span>,</span>
+<span id="cb40-67"><a></a>  <span class="st">"ruby"</span>,</span>
+<span id="cb40-68"><a></a>  <span class="st">"rp"</span>,</span>
+<span id="cb40-69"><a></a>  <span class="st">"rt"</span>,</span>
+<span id="cb40-70"><a></a>  <span class="st">"s"</span>,</span>
+<span id="cb40-71"><a></a>  <span class="st">"samp"</span>,</span>
+<span id="cb40-72"><a></a>  <span class="st">"script"</span>,</span>
+<span id="cb40-73"><a></a>  <span class="st">"section"</span>,</span>
+<span id="cb40-74"><a></a>  <span class="st">"select"</span>,</span>
+<span id="cb40-75"><a></a>  <span class="st">"small"</span>,</span>
+<span id="cb40-76"><a></a>  <span class="st">"span"</span>,</span>
+<span id="cb40-77"><a></a>  <span class="st">"strong"</span>,</span>
+<span id="cb40-78"><a></a>  <span class="st">"style"</span>,</span>
+<span id="cb40-79"><a></a>  <span class="st">"sub"</span>,</span>
+<span id="cb40-80"><a></a>  <span class="st">"summary"</span>,</span>
+<span id="cb40-81"><a></a>  <span class="st">"sup"</span>,</span>
+<span id="cb40-82"><a></a>  <span class="st">"table"</span>,</span>
+<span id="cb40-83"><a></a>  <span class="st">"tbody"</span>,</span>
+<span id="cb40-84"><a></a>  <span class="st">"td"</span>,</span>
+<span id="cb40-85"><a></a>  <span class="st">"textarea"</span>,</span>
+<span id="cb40-86"><a></a>  <span class="st">"tfoot"</span>,</span>
+<span id="cb40-87"><a></a>  <span class="st">"th"</span>,</span>
+<span id="cb40-88"><a></a>  <span class="st">"thead"</span>,</span>
+<span id="cb40-89"><a></a>  <span class="st">"time"</span>,</span>
+<span id="cb40-90"><a></a>  <span class="st">"title"</span>,</span>
+<span id="cb40-91"><a></a>  <span class="st">"tr"</span>,</span>
+<span id="cb40-92"><a></a>  <span class="st">"u"</span>,</span>
+<span id="cb40-93"><a></a>  <span class="st">"ul"</span>,</span>
+<span id="cb40-94"><a></a>  <span class="st">"var"</span>,</span>
+<span id="cb40-95"><a></a>  <span class="st">"video"</span></span>
+<span id="cb40-96"><a></a>)</span>
+<span id="cb40-97"><a></a></span>
+<span id="cb40-98"><a></a>void_tags <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb40-99"><a></a>  <span class="st">"area"</span>,</span>
+<span id="cb40-100"><a></a>  <span class="st">"base"</span>,</span>
+<span id="cb40-101"><a></a>  <span class="st">"br"</span>,</span>
+<span id="cb40-102"><a></a>  <span class="st">"col"</span>,</span>
+<span id="cb40-103"><a></a>  <span class="st">"command"</span>,</span>
+<span id="cb40-104"><a></a>  <span class="st">"embed"</span>,</span>
+<span id="cb40-105"><a></a>  <span class="st">"hr"</span>,</span>
+<span id="cb40-106"><a></a>  <span class="st">"img"</span>,</span>
+<span id="cb40-107"><a></a>  <span class="st">"input"</span>,</span>
+<span id="cb40-108"><a></a>  <span class="st">"keygen"</span>,</span>
+<span id="cb40-109"><a></a>  <span class="st">"link"</span>,</span>
+<span id="cb40-110"><a></a>  <span class="st">"meta"</span>,</span>
+<span id="cb40-111"><a></a>  <span class="st">"param"</span>,</span>
+<span id="cb40-112"><a></a>  <span class="st">"source"</span>,</span>
+<span id="cb40-113"><a></a>  <span class="st">"track"</span>,</span>
+<span id="cb40-114"><a></a>  <span class="st">"wbr"</span></span>
+<span id="cb40-115"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</details>
+<ul>
+<li>But there are tags that will override R functions…</li>
+</ul>
 <details>
 <summary>
 Venn Diagram
@@ -607,386 +773,553 @@ Venn Diagram
 <figcaption>Venn Diagram of words in R or HTML</figcaption>
 </figure>
 </div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a>tags <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"abbr"</span>, <span class="st">"address"</span>, <span class="st">"article"</span>, <span class="st">"aside"</span>, <span class="st">"audio"</span>,</span>
-<span id="cb30-2"><a></a>  <span class="st">"b"</span>,<span class="st">"bdi"</span>, <span class="st">"bdo"</span>, <span class="st">"blockquote"</span>, <span class="st">"body"</span>, <span class="st">"button"</span>, <span class="st">"canvas"</span>,</span>
-<span id="cb30-3"><a></a>  <span class="st">"caption"</span>,<span class="st">"cite"</span>, <span class="st">"code"</span>, <span class="st">"colgroup"</span>, <span class="st">"data"</span>, <span class="st">"datalist"</span>,</span>
-<span id="cb30-4"><a></a>  <span class="st">"dd"</span>, <span class="st">"del"</span>,<span class="st">"details"</span>, <span class="st">"dfn"</span>, <span class="st">"div"</span>, <span class="st">"dl"</span>, <span class="st">"dt"</span>, <span class="st">"em"</span>,</span>
-<span id="cb30-5"><a></a>  <span class="st">"eventsource"</span>,<span class="st">"fieldset"</span>, <span class="st">"figcaption"</span>, <span class="st">"figure"</span>, <span class="st">"footer"</span>,</span>
-<span id="cb30-6"><a></a>  <span class="st">"form"</span>, <span class="st">"h1"</span>, <span class="st">"h2"</span>, <span class="st">"h3"</span>, <span class="st">"h4"</span>, <span class="st">"h5"</span>, <span class="st">"h6"</span>, <span class="st">"head"</span>, <span class="st">"header"</span>,</span>
-<span id="cb30-7"><a></a>  <span class="st">"hgroup"</span>, <span class="st">"html"</span>, <span class="st">"i"</span>,<span class="st">"iframe"</span>, <span class="st">"ins"</span>, <span class="st">"kbd"</span>, <span class="st">"label"</span>,</span>
-<span id="cb30-8"><a></a>  <span class="st">"legend"</span>, <span class="st">"li"</span>, <span class="st">"mark"</span>, <span class="st">"map"</span>,<span class="st">"menu"</span>, <span class="st">"meter"</span>, <span class="st">"nav"</span>,</span>
-<span id="cb30-9"><a></a>  <span class="st">"noscript"</span>, <span class="st">"object"</span>, <span class="st">"ol"</span>, <span class="st">"optgroup"</span>, <span class="st">"option"</span>, <span class="st">"output"</span>,</span>
-<span id="cb30-10"><a></a>  <span class="st">"p"</span>, <span class="st">"pre"</span>, <span class="st">"progress"</span>, <span class="st">"q"</span>, <span class="st">"ruby"</span>, <span class="st">"rp"</span>,<span class="st">"rt"</span>, <span class="st">"s"</span>, <span class="st">"samp"</span>,</span>
-<span id="cb30-11"><a></a>  <span class="st">"script"</span>, <span class="st">"section"</span>, <span class="st">"select"</span>, <span class="st">"small"</span>, <span class="st">"span"</span>, <span class="st">"strong"</span>,</span>
-<span id="cb30-12"><a></a>  <span class="st">"style"</span>, <span class="st">"sub"</span>, <span class="st">"summary"</span>, <span class="st">"sup"</span>, <span class="st">"table"</span>, <span class="st">"tbody"</span>, <span class="st">"td"</span>,</span>
-<span id="cb30-13"><a></a>  <span class="st">"textarea"</span>, <span class="st">"tfoot"</span>, <span class="st">"th"</span>, <span class="st">"thead"</span>, <span class="st">"time"</span>, <span class="st">"title"</span>, <span class="st">"tr"</span>,</span>
-<span id="cb30-14"><a></a>  <span class="st">"u"</span>, <span class="st">"ul"</span>, <span class="st">"var"</span>, <span class="st">"video"</span></span>
-<span id="cb30-15"><a></a>)</span>
-<span id="cb30-16"><a></a></span>
-<span id="cb30-17"><a></a>void_tags <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"area"</span>, <span class="st">"base"</span>, <span class="st">"br"</span>, <span class="st">"col"</span>, <span class="st">"command"</span>, <span class="st">"embed"</span>,</span>
-<span id="cb30-18"><a></a>  <span class="st">"hr"</span>, <span class="st">"img"</span>, <span class="st">"input"</span>, <span class="st">"keygen"</span>, <span class="st">"link"</span>, <span class="st">"meta"</span>, <span class="st">"param"</span>,</span>
-<span id="cb30-19"><a></a>  <span class="st">"source"</span>, <span class="st">"track"</span>, <span class="st">"wbr"</span></span>
-<span id="cb30-20"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 </details>
+<ul>
+<li><strong>Solution</strong>: first a <code>list()</code>, then an “environment”</li>
+</ul>
+</section>
+<section id="creating-a-list-makes-translation-work" class="slide level2">
+<h2>Creating a list makes translation work</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>html_tags <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb31-2"><a></a>  tags <span class="sc">|&gt;</span>          <span class="co">#list of tag names from HTML</span></span>
-<span id="cb31-3"><a></a>    <span class="fu">set_names</span>() <span class="sc">|&gt;</span> <span class="co">#named variable to avoid reserved words!</span></span>
-<span id="cb31-4"><a></a>    <span class="fu">map</span>(tag),      <span class="co">#make them function calls</span></span>
-<span id="cb31-5"><a></a>  void_tags <span class="sc">|&gt;</span></span>
-<span id="cb31-6"><a></a>    <span class="fu">set_names</span>() <span class="sc">|&gt;</span></span>
-<span id="cb31-7"><a></a>    <span class="fu">map</span>(void_tag)</span>
-<span id="cb31-8"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<h3 id="example">Example</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>html_tags<span class="sc">$</span><span class="fu">ol</span>(</span>
-<span id="cb32-2"><a></a>  html_tags<span class="sc">$</span><span class="fu">li</span>(<span class="st">"What is the "</span>, </span>
-<span id="cb32-3"><a></a>               html_tags<span class="sc">$</span><span class="fu">b</span>(<span class="st">"derivative"</span>),</span>
-<span id="cb32-4"><a></a>               <span class="st">"of $f(x) = 1 + 2cos(3pi x + 4)$?"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a></a><span class="co"># Create the list</span></span>
+<span id="cb41-2"><a></a>html_tags <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb41-3"><a></a>  tags <span class="sc">%&gt;%</span> <span class="fu">set_names</span>() <span class="sc">%&gt;%</span> <span class="fu">map</span>(tag),</span>
+<span id="cb41-4"><a></a>  void_tags <span class="sc">%&gt;%</span> <span class="fu">set_names</span>() <span class="sc">%&gt;%</span> <span class="fu">map</span>(void_tag)</span>
+<span id="cb41-5"><a></a>)</span>
+<span id="cb41-6"><a></a></span>
+<span id="cb41-7"><a></a><span class="co"># Check!</span></span>
+<span id="cb41-8"><a></a>html_tags<span class="sc">$</span><span class="fu">p</span>(</span>
+<span id="cb41-9"><a></a>  <span class="st">"Some text. "</span>,</span>
+<span id="cb41-10"><a></a>  html_tags<span class="sc">$</span><span class="fu">b</span>(html_tags<span class="sc">$</span><span class="fu">i</span>(<span class="st">"some bold italic text"</span>)),</span>
+<span id="cb41-11"><a></a>  <span class="at">class =</span> <span class="st">"mypara"</span></span>
+<span id="cb41-12"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;HTML&gt; &lt;ol&gt;&lt;li&gt;What is the &lt;b&gt;derivative&lt;/b&gt;of $f(x) = 1 + 2cos(3pi x +
-#&gt; 4)$?&lt;/li&gt;&lt;/ol&gt;</code></pre>
+<pre><code>#&gt; &lt;HTML&gt; &lt;p class='mypara'&gt;Some text. &lt;b&gt;&lt;i&gt;some bold italic
+#&gt; text&lt;/i&gt;&lt;/b&gt;&lt;/p&gt;</code></pre>
 </div>
 </div>
 </section>
-<section id="bringing-the-html-together" class="slide level2 scrollable">
-<h2>Bringing the HTML Together</h2>
+<section id="creating-an-environment-makes-the-ux-better" class="slide level2">
+<h2>Creating an environment makes the UX better</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a>with_html <span class="ot">&lt;-</span> <span class="cf">function</span>(code) {</span>
-<span id="cb34-2"><a></a>  <span class="fu">eval_tidy</span>(<span class="fu">enquo</span>(code), html_tags)</span>
-<span id="cb34-3"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<h3 id="main-example">Main Example</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a></a><span class="fu">with_html</span>(</span>
-<span id="cb35-2"><a></a>  <span class="fu">body</span>(</span>
-<span id="cb35-3"><a></a>    <span class="fu">h1</span>(<span class="st">"Pop quiz!"</span>, <span class="at">id =</span> <span class="st">"pop_quiz"</span>),</span>
-<span id="cb35-4"><a></a>    <span class="fu">ol</span>(</span>
-<span id="cb35-5"><a></a>      <span class="fu">li</span>(<span class="st">"What is the "</span>, <span class="fu">b</span>(<span class="st">"derivative"</span>),  <span class="st">"of $f(x) = 1 + 2cos(3pi x + 4)$?"</span>),</span>
-<span id="cb35-6"><a></a>      <span class="fu">ol</span>(</span>
-<span id="cb35-7"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = 6pi*sin(3pi x + 4)$"</span>),</span>
-<span id="cb35-8"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = -6pi*sin(3pi x + 4)$"</span>),</span>
-<span id="cb35-9"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = 24pi*sin(3pi x + 4)$"</span>),</span>
-<span id="cb35-10"><a></a>        <span class="fu">li</span>(<span class="st">"$f'(x) = -24pi*sin(3pi x + 4)$"</span>)</span>
-<span id="cb35-11"><a></a>      )</span>
-<span id="cb35-12"><a></a>    ),</span>
-<span id="cb35-13"><a></a>    <span class="fu">img</span>(<span class="at">src =</span> <span class="st">"images/translating/calculus_cat.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span>
-<span id="cb35-14"><a></a>  )</span>
-<span id="cb35-15"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="co"># Create an "environment"</span></span>
+<span id="cb43-2"><a></a>with_html <span class="ot">&lt;-</span> <span class="cf">function</span>(code) {</span>
+<span id="cb43-3"><a></a>  code <span class="ot">&lt;-</span> <span class="fu">enquo</span>(code)</span>
+<span id="cb43-4"><a></a>  <span class="fu">eval_tidy</span>(code, html_tags)</span>
+<span id="cb43-5"><a></a>}</span>
+<span id="cb43-6"><a></a></span>
+<span id="cb43-7"><a></a><span class="co"># Check!</span></span>
+<span id="cb43-8"><a></a><span class="fu">with_html</span>(</span>
+<span id="cb43-9"><a></a>  <span class="fu">body</span>(</span>
+<span id="cb43-10"><a></a>    <span class="fu">h1</span>(<span class="st">"A heading"</span>, <span class="at">id =</span> <span class="st">"first"</span>),</span>
+<span id="cb43-11"><a></a>    <span class="fu">p</span>(<span class="st">"Some text &amp;"</span>, <span class="fu">b</span>(<span class="st">"some bold text."</span>)),</span>
+<span id="cb43-12"><a></a>    <span class="fu">img</span>(<span class="at">src =</span> <span class="st">"myimg.png"</span>, <span class="at">width =</span> <span class="dv">100</span>, <span class="at">height =</span> <span class="dv">100</span>)</span>
+<span id="cb43-13"><a></a>  )</span>
+<span id="cb43-14"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; &lt;HTML&gt; &lt;body&gt;&lt;h1 id='pop_quiz'&gt;Pop quiz!&lt;/h1&gt;&lt;ol&gt;&lt;li&gt;What is the
-#&gt; &lt;b&gt;derivative&lt;/b&gt;of $f(x) = 1 + 2cos(3pi x + 4)$?&lt;/li&gt;&lt;ol&gt;&lt;li&gt;$f'(x) =
-#&gt; 6pi*sin(3pi x + 4)$&lt;/li&gt;&lt;li&gt;$f'(x) = -6pi*sin(3pi x +
-#&gt; 4)$&lt;/li&gt;&lt;li&gt;$f'(x) = 24pi*sin(3pi x + 4)$&lt;/li&gt;&lt;li&gt;$f'(x) =
-#&gt; -24pi*sin(3pi x + 4)$&lt;/li&gt;&lt;/ol&gt;&lt;/ol&gt;&lt;img
-#&gt; src='images/translating/calculus_cat.png' width='100' height='100'
+<pre><code>#&gt; &lt;HTML&gt; &lt;body&gt;&lt;h1 id='first'&gt;A heading&lt;/h1&gt;&lt;p&gt;Some text &amp;amp;&lt;b&gt;some
+#&gt; bold text.&lt;/b&gt;&lt;/p&gt;&lt;img src='myimg.png' width='100' height='100'
 #&gt; /&gt;&lt;/body&gt;</code></pre>
 </div>
 </div>
-<h3 id="check-1">Check</h3>
-<h1 id="pop_quiz">Pop quiz!</h1><ol><li>What is the <b>derivative</b> of $f(x) = 1 + 2cos(3pi x + 4)$?</li><ol><li>$f'(x) = 6pi*sin(3pi x + 4)$</li><li>$f'(x) = -6pi*sin(3pi x + 4)$</li><li>$f'(x) = 24pi*sin(3pi x + 4)$</li><li>$f'(x) = -24pi*sin(3pi x + 4)$</li></ol></ol><img src="images/translating/calculus_cat.png" width="100" height="100">
+</section></section>
+<section>
+<section id="fundamentals-of-r-latex" class="title-slide slide level1 center">
+<h1>Fundamentals of R → LaTeX</h1>
+
 </section>
-<section id="latex" class="slide level2">
-<h2>LaTeX</h2>
+<section id="we-can-generate-latex-syntax-from-r" class="slide level2">
+<h2>We can generate LaTeX syntax from R</h2>
+<ul>
+<li>We can do this:</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode numberSource latex number-lines code-with-copy"><code class="sourceCode latex"><span id="cb45-1"><a></a><span class="fu">\sin</span>(<span class="fu">\pi</span>) + <span class="fu">\mathrm</span>{f}(a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><p>That look like this:<span class="math display">\[\sin(\pi) + \mathrm{f}(a)\]</span></p></li>
+<li><p>By doing this:</p></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="fu">to_math</span>(<span class="fu">sin</span>(pi) <span class="sc">+</span> <span class="fu">f</span>(a))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="we-need-to-know-some-latex-structure-for-this-exercise" class="slide level2">
+<h2>We need to know some LaTeX structure for this exercise</h2>
+<ul>
+<li>Simple mathematical equations are written like in R: <code>x * y, z ^ 5</code> = <span class="math inline">\(x * y, z^5\)</span></li>
+<li>Special characters start with a <code>\</code>. For example, <code>\pi</code> = <span class="math inline">\(\pi\)</span></li>
+<li>Complicated functions look like <code>\name{arg1}{arg2}</code>. For example, fractions are <code>\frac{a}{b}</code> = <span class="math inline">\(\frac{a}{b}\)</span></li>
+<li>Mathematics functions need to be written like <code>\textrm{f}(a * b)</code> = <span class="math inline">\(\textrm{f}(a*b)\)</span></li>
+</ul>
+</section></section>
+<section>
+<section id="how-to-r-latex" class="title-slide slide level1 center">
+<h1>How to R → LaTeX</h1>
+
+</section>
+<section id="follow-a-macro-micro-procedure-to-create-latex-dsl" class="slide level2">
+<h2>Follow a macro-micro procedure to create LaTeX DSL</h2>
+<ul>
+<li><p>Start with infrastructure (<code>to_math()</code>) and experiment until cover every use case.</p></li>
+<li><p>Four stages:</p>
+<ul>
+<li><p>Convert known symbols: <code>pi</code> → <code>\pi</code></p></li>
+<li><p>Leave other symbols unchanged: <code>x</code> → <code>x</code>, <code>y</code> → <code>y</code></p></li>
+<li><p>Convert known functions to their special forms: <code>sqrt(frac(a, b))</code> → <code>\sqrt{\frac{a}{b}}</code></p></li>
+<li><p>Wrap unknown functions with <code>\textrm</code>: <code>f(a)</code> → <code>\textrm{f}(a)</code></p></li>
+</ul></li>
+</ul>
+</section>
+<section id="our-latex-dsl-will-be-different-than-our-html-dsl" class="slide level2">
+<h2>Our LaTeX DSL will be different than our HTML DSL</h2>
+<ul>
+<li>Evaluation environment no longer constant</li>
+<li>Has to vary depending on input</li>
+<li>Necessary to handle unknown symbols &amp; functions</li>
+<li>Never evaluate in argument environment</li>
+<li>We translate every function to a LaTeX expression</li>
+<li>User must explicitly <code>!!</code> in order to evaluate normally</li>
+</ul>
+</section>
+<section id="we-need-to-create-an-execution-environment-to_math" class="slide level2">
+<h2>We need to create an execution environment: <code>to_math()</code></h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a></a>latex <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">structure</span>(x, <span class="at">class =</span> <span class="st">"advr_latex"</span>)</span>
-<span id="cb37-2"><a></a>print.advr_latex <span class="ot">&lt;-</span> <span class="cf">function</span>(x) { <span class="fu">cat</span>(<span class="st">"&lt;LATEX&gt; "</span>, x, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>) }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a></a><span class="co"># Execution environment</span></span>
+<span id="cb47-2"><a></a>to_math <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb47-3"><a></a>  expr <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(x) <span class="co"># Capture expression (intended LaTeX)</span></span>
+<span id="cb47-4"><a></a>  out <span class="ot">&lt;-</span> <span class="fu">eval_bare</span>(expr, <span class="fu">latex_env</span>(expr)) <span class="co"># Evaluate in a specific environment for this expression</span></span>
+<span id="cb47-5"><a></a></span>
+<span id="cb47-6"><a></a>  <span class="fu">latex</span>(out)</span>
+<span id="cb47-7"><a></a>}</span>
+<span id="cb47-8"><a></a></span>
+<span id="cb47-9"><a></a><span class="co"># Class generator</span></span>
+<span id="cb47-10"><a></a>latex <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">structure</span>(x, <span class="at">class =</span> <span class="st">"advr_latex"</span>)</span>
+<span id="cb47-11"><a></a></span>
+<span id="cb47-12"><a></a><span class="co"># Dispatch</span></span>
+<span id="cb47-13"><a></a>print.advr_latex <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb47-14"><a></a>  <span class="fu">cat</span>(<span class="st">"&lt;LATEX&gt; "</span>, x, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb47-15"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<h3 id="to_math">to_math</h3>
+<p><code>latex_env()</code> is going to be created later. It depends on the expression.</p>
+</section></section>
+<section>
+<section id="r-latex-translating-known-symbols" class="title-slide slide level1 center">
+<h1>R → LaTeX: translating known symbols</h1>
+
+</section>
+<section id="we-can-quickly-create-an-environment-with-all-the-greek-letters" class="slide level2">
+<h2>We can quickly create an environment with all the Greek letters</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a></a>to_math <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb38-2"><a></a>  expr <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(x)</span>
-<span id="cb38-3"><a></a>  <span class="fu">latex</span>(              <span class="co">#return LaTeX code</span></span>
-<span id="cb38-4"><a></a>    <span class="fu">eval_bare</span>(        <span class="co">#eval_bare to ensure use of latex environment </span></span>
-<span id="cb38-5"><a></a>      expr,           <span class="co">#expression (not quosure)</span></span>
-<span id="cb38-6"><a></a>      <span class="fu">latex_env</span>(expr) <span class="co">#need to define latex_env</span></span>
-<span id="cb38-7"><a></a>    ))</span>
-<span id="cb38-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>greek <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb48-2"><a></a>  <span class="st">"alpha"</span>,</span>
+<span id="cb48-3"><a></a>  <span class="st">"theta"</span>,</span>
+<span id="cb48-4"><a></a>  <span class="st">"tau"</span>,</span>
+<span id="cb48-5"><a></a>  <span class="st">"beta"</span>,</span>
+<span id="cb48-6"><a></a>  <span class="st">"vartheta"</span>,</span>
+<span id="cb48-7"><a></a>  <span class="st">"pi"</span>,</span>
+<span id="cb48-8"><a></a>  <span class="st">"upsilon"</span>,</span>
+<span id="cb48-9"><a></a>  <span class="st">"gamma"</span>,</span>
+<span id="cb48-10"><a></a>  <span class="st">"varpi"</span>,</span>
+<span id="cb48-11"><a></a>  <span class="st">"phi"</span>,</span>
+<span id="cb48-12"><a></a>  <span class="st">"delta"</span>,</span>
+<span id="cb48-13"><a></a>  <span class="st">"kappa"</span>,</span>
+<span id="cb48-14"><a></a>  <span class="st">"rho"</span>,</span>
+<span id="cb48-15"><a></a>  <span class="st">"varphi"</span>,</span>
+<span id="cb48-16"><a></a>  <span class="st">"epsilon"</span>,</span>
+<span id="cb48-17"><a></a>  <span class="st">"lambda"</span>,</span>
+<span id="cb48-18"><a></a>  <span class="st">"varrho"</span>,</span>
+<span id="cb48-19"><a></a>  <span class="st">"chi"</span>,</span>
+<span id="cb48-20"><a></a>  <span class="st">"varepsilon"</span>,</span>
+<span id="cb48-21"><a></a>  <span class="st">"mu"</span>,</span>
+<span id="cb48-22"><a></a>  <span class="st">"sigma"</span>,</span>
+<span id="cb48-23"><a></a>  <span class="st">"psi"</span>,</span>
+<span id="cb48-24"><a></a>  <span class="st">"zeta"</span>,</span>
+<span id="cb48-25"><a></a>  <span class="st">"nu"</span>,</span>
+<span id="cb48-26"><a></a>  <span class="st">"varsigma"</span>,</span>
+<span id="cb48-27"><a></a>  <span class="st">"omega"</span>,</span>
+<span id="cb48-28"><a></a>  <span class="st">"eta"</span>,</span>
+<span id="cb48-29"><a></a>  <span class="st">"xi"</span>,</span>
+<span id="cb48-30"><a></a>  <span class="st">"Gamma"</span>,</span>
+<span id="cb48-31"><a></a>  <span class="st">"Lambda"</span>,</span>
+<span id="cb48-32"><a></a>  <span class="st">"Sigma"</span>,</span>
+<span id="cb48-33"><a></a>  <span class="st">"Psi"</span>,</span>
+<span id="cb48-34"><a></a>  <span class="st">"Delta"</span>,</span>
+<span id="cb48-35"><a></a>  <span class="st">"Xi"</span>,</span>
+<span id="cb48-36"><a></a>  <span class="st">"Upsilon"</span>,</span>
+<span id="cb48-37"><a></a>  <span class="st">"Omega"</span>,</span>
+<span id="cb48-38"><a></a>  <span class="st">"Theta"</span>,</span>
+<span id="cb48-39"><a></a>  <span class="st">"Pi"</span>,</span>
+<span id="cb48-40"><a></a>  <span class="st">"Phi"</span></span>
+<span id="cb48-41"><a></a>)</span>
+<span id="cb48-42"><a></a>greek_list <span class="ot">&lt;-</span> <span class="fu">set_names</span>(<span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">"</span>, greek), greek)</span>
+<span id="cb48-43"><a></a>greek_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(greek_list)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="known-symbols" class="slide level2">
-<h2>Known Symbols</h2>
+<section id="our-environment-for-known-symbols-works" class="slide level2">
+<h2>Our environment for known symbols works</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a></a>greek_letters <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb39-2"><a></a>  <span class="st">"alpha"</span>, <span class="st">"beta"</span>, <span class="st">"chi"</span>, <span class="st">"delta"</span>, <span class="st">"Delta"</span>, <span class="st">"epsilon"</span>, <span class="st">"eta"</span>, </span>
-<span id="cb39-3"><a></a><span class="st">"gamma"</span>, <span class="st">"Gamma"</span>, <span class="st">"iota"</span>, <span class="st">"kappa"</span>, <span class="st">"lambda"</span>, <span class="st">"Lambda"</span>, <span class="st">"mu"</span>, </span>
-<span id="cb39-4"><a></a><span class="st">"nu"</span>, <span class="st">"omega"</span>, <span class="st">"Omega"</span>, <span class="st">"phi"</span>, <span class="st">"Phi"</span>, <span class="st">"pi"</span>, <span class="st">"Pi"</span>, <span class="st">"psi"</span>, <span class="st">"Psi"</span>, </span>
-<span id="cb39-5"><a></a><span class="st">"rho"</span>, <span class="st">"sigma"</span>, <span class="st">"Sigma"</span>, <span class="st">"tau"</span>, <span class="st">"theta"</span>, <span class="st">"Theta"</span>, <span class="st">"upsilon"</span>, </span>
-<span id="cb39-6"><a></a><span class="st">"Upsilon"</span>, <span class="st">"varepsilon"</span>, <span class="st">"varphi"</span>, <span class="st">"varrho"</span>, <span class="st">"vartheta"</span>, <span class="st">"xi"</span>, </span>
-<span id="cb39-7"><a></a><span class="st">"Xi"</span>, <span class="st">"zeta"</span></span>
-<span id="cb39-8"><a></a>)</span>
-<span id="cb39-9"><a></a></span>
-<span id="cb39-10"><a></a>greek_env <span class="ot">&lt;-</span> rlang<span class="sc">::</span><span class="fu">as_environment</span>(</span>
-<span id="cb39-11"><a></a>  rlang<span class="sc">::</span><span class="fu">set_names</span>(</span>
-<span id="cb39-12"><a></a>    <span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">"</span>, greek_letters), <span class="co">#latex values</span></span>
-<span id="cb39-13"><a></a>    greek_letters                <span class="co">#R names</span></span>
-<span id="cb39-14"><a></a>  )</span>
-<span id="cb39-15"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a></a><span class="fu">str</span>(<span class="fu">as.list</span>(greek_env))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a><span class="co"># Create the latex_env based on the greek_env</span></span>
+<span id="cb49-2"><a></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb49-3"><a></a>  greek_env</span>
+<span id="cb49-4"><a></a>}</span>
+<span id="cb49-5"><a></a></span>
+<span id="cb49-6"><a></a><span class="fu">to_math</span>(pi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; List of 38
-#&gt;  $ zeta      : chr "\\zeta"
-#&gt;  $ Xi        : chr "\\Xi"
-#&gt;  $ xi        : chr "\\xi"
-#&gt;  $ vartheta  : chr "\\vartheta"
-#&gt;  $ varrho    : chr "\\varrho"
-#&gt;  $ varphi    : chr "\\varphi"
-#&gt;  $ varepsilon: chr "\\varepsilon"
-#&gt;  $ Upsilon   : chr "\\Upsilon"
-#&gt;  $ upsilon   : chr "\\upsilon"
-#&gt;  $ Theta     : chr "\\Theta"
-#&gt;  $ theta     : chr "\\theta"
-#&gt;  $ tau       : chr "\\tau"
-#&gt;  $ Sigma     : chr "\\Sigma"
-#&gt;  $ sigma     : chr "\\sigma"
-#&gt;  $ rho       : chr "\\rho"
-#&gt;  $ Psi       : chr "\\Psi"
-#&gt;  $ psi       : chr "\\psi"
-#&gt;  $ Pi        : chr "\\Pi"
-#&gt;  $ pi        : chr "\\pi"
-#&gt;  $ Phi       : chr "\\Phi"
-#&gt;  $ phi       : chr "\\phi"
-#&gt;  $ Omega     : chr "\\Omega"
-#&gt;  $ omega     : chr "\\omega"
-#&gt;  $ nu        : chr "\\nu"
-#&gt;  $ mu        : chr "\\mu"
-#&gt;  $ Lambda    : chr "\\Lambda"
-#&gt;  $ lambda    : chr "\\lambda"
-#&gt;  $ kappa     : chr "\\kappa"
-#&gt;  $ iota      : chr "\\iota"
-#&gt;  $ Gamma     : chr "\\Gamma"
-#&gt;  $ gamma     : chr "\\gamma"
-#&gt;  $ eta       : chr "\\eta"
-#&gt;  $ epsilon   : chr "\\epsilon"
-#&gt;  $ Delta     : chr "\\Delta"
-#&gt;  $ delta     : chr "\\delta"
-#&gt;  $ chi       : chr "\\chi"
-#&gt;  $ beta      : chr "\\beta"
-#&gt;  $ alpha     : chr "\\alpha"</code></pre>
+<pre><code>#&gt; &lt;LATEX&gt; \pi</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a></a><span class="fu">to_math</span>(beta)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;LATEX&gt; \beta</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="r-latex-translating-unknown-symbols" class="title-slide slide level1 center">
+<h1>R → LaTeX: translating unknown symbols</h1>
+
+</section>
+<section id="we-can-capture-the-unknown-symbols-from-the-expression" class="slide level2">
+<h2>We can capture the unknown symbols from the expression</h2>
+<p>Leave non-Greek symbols as-is, but we don´t know what symbols are going to be used.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a></a><span class="co"># Walk the AST to find all the symbols:</span></span>
+<span id="cb53-2"><a></a>all_names_rec <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb53-3"><a></a>  <span class="fu">switch_expr</span>(</span>
+<span id="cb53-4"><a></a>    x,</span>
+<span id="cb53-5"><a></a>    <span class="at">constant =</span> <span class="fu">character</span>(),</span>
+<span id="cb53-6"><a></a>    <span class="at">symbol =</span> <span class="fu">as.character</span>(x),</span>
+<span id="cb53-7"><a></a>    <span class="at">call =</span> <span class="fu">flat_map_chr</span>(<span class="fu">as.list</span>(x[<span class="sc">-</span><span class="dv">1</span>]), all_names)</span>
+<span id="cb53-8"><a></a>  )</span>
+<span id="cb53-9"><a></a>}</span>
+<span id="cb53-10"><a></a></span>
+<span id="cb53-11"><a></a>all_names <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb53-12"><a></a>  <span class="fu">unique</span>(<span class="fu">all_names_rec</span>(x))</span>
+<span id="cb53-13"><a></a>}</span>
+<span id="cb53-14"><a></a></span>
+<span id="cb53-15"><a></a><span class="fu">all_names</span>(<span class="fu">expr</span>(x <span class="sc">+</span> y <span class="sc">+</span> <span class="fu">f</span>(a, b, c, <span class="dv">10</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] "x" "y" "a" "b" "c"</code></pre>
+</div>
+</div>
+<details>
+<summary>
+Utility functions from section 18.5…
+</summary>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a>expr_type <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb55-2"><a></a>  <span class="cf">if</span> (rlang<span class="sc">::</span><span class="fu">is_syntactic_literal</span>(x)) {</span>
+<span id="cb55-3"><a></a>    <span class="st">"constant"</span></span>
+<span id="cb55-4"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.symbol</span>(x)) {</span>
+<span id="cb55-5"><a></a>    <span class="st">"symbol"</span></span>
+<span id="cb55-6"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.call</span>(x)) {</span>
+<span id="cb55-7"><a></a>    <span class="st">"call"</span></span>
+<span id="cb55-8"><a></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.pairlist</span>(x)) {</span>
+<span id="cb55-9"><a></a>    <span class="st">"pairlist"</span></span>
+<span id="cb55-10"><a></a>  } <span class="cf">else</span> {</span>
+<span id="cb55-11"><a></a>    <span class="fu">typeof</span>(x)</span>
+<span id="cb55-12"><a></a>  }</span>
+<span id="cb55-13"><a></a>}</span>
+<span id="cb55-14"><a></a>flat_map_chr <span class="ot">&lt;-</span> <span class="cf">function</span>(.x, .f, ...) {</span>
+<span id="cb55-15"><a></a>  purrr<span class="sc">::</span><span class="fu">flatten_chr</span>(purrr<span class="sc">::</span><span class="fu">map</span>(.x, .f, ...))</span>
+<span id="cb55-16"><a></a>}</span>
+<span id="cb55-17"><a></a>switch_expr <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb55-18"><a></a>  <span class="cf">switch</span>(</span>
+<span id="cb55-19"><a></a>    <span class="fu">expr_type</span>(x),</span>
+<span id="cb55-20"><a></a>    ...,</span>
+<span id="cb55-21"><a></a>    <span class="fu">stop</span>(<span class="st">"Don't know how to handle type "</span>, <span class="fu">typeof</span>(x), <span class="at">call. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb55-22"><a></a>  )</span>
+<span id="cb55-23"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</details>
+</section>
+<section id="we-can-build-the-environment-based-on-the-list-of-the-unknown-symbols" class="slide level2">
+<h2>We can build the environment based on the list of the unknown symbols</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb56-2"><a></a>  names <span class="ot">&lt;-</span> <span class="fu">all_names</span>(expr)</span>
+<span id="cb56-3"><a></a>  symbol_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(<span class="fu">set_names</span>(names))</span>
+<span id="cb56-4"><a></a></span>
+<span id="cb56-5"><a></a>  symbol_env</span>
+<span id="cb56-6"><a></a>}</span>
+<span id="cb56-7"><a></a></span>
+<span id="cb56-8"><a></a><span class="fu">to_math</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;LATEX&gt; x</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a></a><span class="fu">to_math</span>(longvariablename)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;LATEX&gt; longvariablename</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a></a><span class="fu">to_math</span>(pi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;LATEX&gt; pi</code></pre>
 </div>
 </div>
 </section>
-<section id="known-functions" class="slide level2">
-<h2>Known Functions</h2>
-<h3 id="unary-operations">Unary Operations</h3>
+<section id="we-can-integrate-the-known-and-unknown-symbols-environments" class="slide level2">
+<h2>We can integrate the known and unknown symbols environments</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a></a>unary_op <span class="ot">&lt;-</span> <span class="cf">function</span>(left, right) {</span>
-<span id="cb42-2"><a></a>  <span class="fu">new_function</span>(</span>
-<span id="cb42-3"><a></a>    <span class="fu">exprs</span>(<span class="at">e1 =</span> ),</span>
-<span id="cb42-4"><a></a>    <span class="fu">expr</span>(</span>
-<span id="cb42-5"><a></a>      <span class="fu">paste0</span>(<span class="sc">!!</span>left, e1, <span class="sc">!!</span>right)</span>
-<span id="cb42-6"><a></a>    ),</span>
-<span id="cb42-7"><a></a>    <span class="fu">caller_env</span>()</span>
-<span id="cb42-8"><a></a>  )</span>
-<span id="cb42-9"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb62-2"><a></a>  <span class="co"># Unknown symbols</span></span>
+<span id="cb62-3"><a></a>  names <span class="ot">&lt;-</span> <span class="fu">all_names</span>(expr)</span>
+<span id="cb62-4"><a></a>  symbol_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(<span class="fu">set_names</span>(names))</span>
+<span id="cb62-5"><a></a></span>
+<span id="cb62-6"><a></a>  <span class="co"># Known symbols</span></span>
+<span id="cb62-7"><a></a>  <span class="fu">env_clone</span>(greek_env, <span class="at">parent =</span> symbol_env) <span class="co"># This gives preference to Greek over defaults.</span></span>
+<span id="cb62-8"><a></a>  <span class="co"># We want "\\pi", not "pi".</span></span>
+<span id="cb62-9"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
+<section id="our-environment-for-all-symbols-works" class="slide level2">
+<h2>Our environment for all symbols works</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a></a><span class="co">#example</span></span>
-<span id="cb43-2"><a></a><span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sqrt{"</span>, <span class="st">"}"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a><span class="fu">to_math</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;LATEX&gt; x</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a></a><span class="fu">to_math</span>(longvariablename)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;LATEX&gt; longvariablename</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a></a><span class="fu">to_math</span>(pi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;LATEX&gt; \pi</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="r-latex-translating-known-functions" class="title-slide slide level1 center">
+<h1>R → LaTeX: translating known functions</h1>
+
+</section>
+<section id="we-can-base-our-translation-on-simple-helpers" class="slide level2">
+<h2>We can base our translation on simple helpers</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a></a>unary_op <span class="ot">&lt;-</span> <span class="cf">function</span>(left, right) {</span>
+<span id="cb69-2"><a></a>  <span class="fu">new_function</span>(</span>
+<span id="cb69-3"><a></a>    <span class="fu">exprs</span>(<span class="at">e1 =</span> ),</span>
+<span id="cb69-4"><a></a>    <span class="fu">expr</span>(</span>
+<span id="cb69-5"><a></a>      <span class="fu">paste0</span>(<span class="sc">!!</span>left, e1, <span class="sc">!!</span>right)</span>
+<span id="cb69-6"><a></a>    ),</span>
+<span id="cb69-7"><a></a>    <span class="fu">caller_env</span>()</span>
+<span id="cb69-8"><a></a>  )</span>
+<span id="cb69-9"><a></a>}</span>
+<span id="cb69-10"><a></a></span>
+<span id="cb69-11"><a></a>binary_op <span class="ot">&lt;-</span> <span class="cf">function</span>(sep) {</span>
+<span id="cb69-12"><a></a>  <span class="fu">new_function</span>(</span>
+<span id="cb69-13"><a></a>    <span class="fu">exprs</span>(<span class="at">e1 =</span> , <span class="at">e2 =</span> ),</span>
+<span id="cb69-14"><a></a>    <span class="fu">expr</span>(</span>
+<span id="cb69-15"><a></a>      <span class="fu">paste0</span>(e1, <span class="sc">!!</span>sep, e2)</span>
+<span id="cb69-16"><a></a>    ),</span>
+<span id="cb69-17"><a></a>    <span class="fu">caller_env</span>()</span>
+<span id="cb69-18"><a></a>  )</span>
+<span id="cb69-19"><a></a>}</span>
+<span id="cb69-20"><a></a></span>
+<span id="cb69-21"><a></a><span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sqrt{"</span>, <span class="st">"}"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (e1) 
 #&gt; paste0("\\sqrt{", e1, "}")</code></pre>
 </div>
-</div>
-<h3 id="binary-operations">Binary Operations</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a></a>binary_op <span class="ot">&lt;-</span> <span class="cf">function</span>(sep) {</span>
-<span id="cb45-2"><a></a>  <span class="fu">new_function</span>(</span>
-<span id="cb45-3"><a></a>    <span class="fu">exprs</span>(<span class="at">e1 =</span> , <span class="at">e2 =</span> ),</span>
-<span id="cb45-4"><a></a>    <span class="fu">expr</span>(</span>
-<span id="cb45-5"><a></a>      <span class="fu">paste0</span>(e1, <span class="sc">!!</span>sep, e2)</span>
-<span id="cb45-6"><a></a>    ),</span>
-<span id="cb45-7"><a></a>    <span class="fu">caller_env</span>()</span>
-<span id="cb45-8"><a></a>  )</span>
-<span id="cb45-9"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a></a><span class="co">#example</span></span>
-<span id="cb46-2"><a></a><span class="fu">binary_op</span>(<span class="st">"+"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a></a><span class="fu">binary_op</span>(<span class="st">"+"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (e1, e2) 
 #&gt; paste0(e1, "+", e2)</code></pre>
 </div>
 </div>
-<details>
-<summary>
-Even more LaTeX syntax
-</summary>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a></a>known_func_env <span class="ot">&lt;-</span> <span class="fu">child_env</span>(</span>
-<span id="cb48-2"><a></a>  <span class="at">.parent =</span> <span class="fu">empty_env</span>(),</span>
-<span id="cb48-3"><a></a>  </span>
-<span id="cb48-4"><a></a>  <span class="co"># Binary operators</span></span>
-<span id="cb48-5"><a></a>  <span class="st">`</span><span class="at">+</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" + "</span>),</span>
-<span id="cb48-6"><a></a>  <span class="st">`</span><span class="at">-</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" - "</span>),</span>
-<span id="cb48-7"><a></a>  <span class="st">`</span><span class="at">*</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" * "</span>),</span>
-<span id="cb48-8"><a></a>  <span class="st">`</span><span class="at">/</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" / "</span>),</span>
-<span id="cb48-9"><a></a>  <span class="st">`</span><span class="at">^</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">"^"</span>),</span>
-<span id="cb48-10"><a></a>  <span class="st">`</span><span class="at">[</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">"_"</span>),</span>
-<span id="cb48-11"><a></a></span>
-<span id="cb48-12"><a></a>  <span class="co"># Grouping</span></span>
-<span id="cb48-13"><a></a>  <span class="st">`</span><span class="at">{</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left{ "</span>, <span class="st">" </span><span class="sc">\\</span><span class="st">right}"</span>),</span>
-<span id="cb48-14"><a></a>  <span class="st">`</span><span class="at">(</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left( "</span>, <span class="st">" </span><span class="sc">\\</span><span class="st">right)"</span>),</span>
-<span id="cb48-15"><a></a>  <span class="at">paste =</span> paste,</span>
-<span id="cb48-16"><a></a></span>
-<span id="cb48-17"><a></a>  <span class="co"># Other math functions</span></span>
-<span id="cb48-18"><a></a>  <span class="at">sqrt =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sqrt{"</span>, <span class="st">"}"</span>),</span>
-<span id="cb48-19"><a></a>  <span class="at">sin =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sin("</span>, <span class="st">")"</span>),</span>
-<span id="cb48-20"><a></a>  <span class="at">cos =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">cos("</span>, <span class="st">")"</span>),</span>
-<span id="cb48-21"><a></a>  <span class="at">tan =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">tan("</span>, <span class="st">")"</span>),</span>
-<span id="cb48-22"><a></a>  <span class="at">log =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">log("</span>, <span class="st">")"</span>),</span>
-<span id="cb48-23"><a></a>  <span class="at">abs =</span>  <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left| "</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">right| "</span>),</span>
-<span id="cb48-24"><a></a>  <span class="at">frac =</span> <span class="cf">function</span>(a, b) {</span>
-<span id="cb48-25"><a></a>    <span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">frac{"</span>, a, <span class="st">"}{"</span>, b, <span class="st">"}"</span>)</span>
-<span id="cb48-26"><a></a>  },</span>
-<span id="cb48-27"><a></a></span>
-<span id="cb48-28"><a></a>  <span class="co"># Labelling</span></span>
-<span id="cb48-29"><a></a>  <span class="at">hat =</span>   <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">hat{"</span>, <span class="st">"}"</span>),</span>
-<span id="cb48-30"><a></a>  <span class="at">tilde =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">tilde{"</span>, <span class="st">"}"</span>)</span>
-<span id="cb48-31"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</details>
 </section>
-<section id="unknown-symbols" class="slide level2">
-<h2>Unknown Symbols</h2>
+<section id="we-can-build-the-environment-for-functions-with-some-common-examples" class="slide level2">
+<h2>We can build the environment for functions with some common examples</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a></a>names_grabber <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb49-2"><a></a>  <span class="fu">switch_expr</span>(x,</span>
-<span id="cb49-3"><a></a>              <span class="at">constant =</span> <span class="fu">character</span>(),</span>
-<span id="cb49-4"><a></a>              <span class="at">symbol =</span>   <span class="fu">as.character</span>(x),</span>
-<span id="cb49-5"><a></a>              <span class="at">call =</span>     <span class="fu">flat_map_chr</span>(<span class="fu">as.list</span>(x[<span class="sc">-</span><span class="dv">1</span>]), names_grabber)</span>
-<span id="cb49-6"><a></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb49-7"><a></a>    <span class="fu">unique</span>()</span>
-<span id="cb49-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p><span class="math display">\[x + y + f(a, b, c, 10)\]</span></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a></a><span class="fu">names_grabber</span>(<span class="fu">expr</span>(x <span class="sc">+</span> y <span class="sc">+</span> <span class="fu">f</span>(a, b, c, <span class="dv">10</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "x" "y" "a" "b" "c"</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="fu">expr</span>(x <span class="sc">+</span> y <span class="sc">+</span> <span class="fu">f</span>(a, b, c, <span class="dv">10</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █─expr 
-#&gt; └─█─`+` 
-#&gt;   ├─█─`+` 
-#&gt;   │ ├─x 
-#&gt;   │ └─y 
-#&gt;   └─█─f 
-#&gt;     ├─a 
-#&gt;     ├─b 
-#&gt;     ├─c 
-#&gt;     └─10</code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a></a><span class="co"># Binary operators</span></span>
+<span id="cb73-2"><a></a>f_env <span class="ot">&lt;-</span> <span class="fu">child_env</span>(</span>
+<span id="cb73-3"><a></a>  <span class="at">.parent =</span> <span class="fu">empty_env</span>(),</span>
+<span id="cb73-4"><a></a>  <span class="st">`</span><span class="at">+</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" + "</span>),</span>
+<span id="cb73-5"><a></a>  <span class="st">`</span><span class="at">-</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" - "</span>),</span>
+<span id="cb73-6"><a></a>  <span class="st">`</span><span class="at">*</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" * "</span>),</span>
+<span id="cb73-7"><a></a>  <span class="st">`</span><span class="at">/</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">" / "</span>),</span>
+<span id="cb73-8"><a></a>  <span class="st">`</span><span class="at">^</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">"^"</span>),</span>
+<span id="cb73-9"><a></a>  <span class="st">`</span><span class="at">[</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">binary_op</span>(<span class="st">"_"</span>),</span>
+<span id="cb73-10"><a></a></span>
+<span id="cb73-11"><a></a>  <span class="co"># Grouping</span></span>
+<span id="cb73-12"><a></a>  <span class="st">`</span><span class="at">{</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left{ "</span>, <span class="st">" </span><span class="sc">\\</span><span class="st">right}"</span>),</span>
+<span id="cb73-13"><a></a>  <span class="st">`</span><span class="at">(</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left( "</span>, <span class="st">" </span><span class="sc">\\</span><span class="st">right)"</span>),</span>
+<span id="cb73-14"><a></a>  <span class="at">paste =</span> paste,</span>
+<span id="cb73-15"><a></a></span>
+<span id="cb73-16"><a></a>  <span class="co"># Other math functions</span></span>
+<span id="cb73-17"><a></a>  <span class="at">sqrt =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sqrt{"</span>, <span class="st">"}"</span>),</span>
+<span id="cb73-18"><a></a>  <span class="at">sin =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">sin("</span>, <span class="st">")"</span>),</span>
+<span id="cb73-19"><a></a>  <span class="at">log =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">log("</span>, <span class="st">")"</span>),</span>
+<span id="cb73-20"><a></a>  <span class="at">abs =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">left| "</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">right| "</span>),</span>
+<span id="cb73-21"><a></a>  <span class="at">frac =</span> <span class="cf">function</span>(a, b) {</span>
+<span id="cb73-22"><a></a>    <span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">frac{"</span>, a, <span class="st">"}{"</span>, b, <span class="st">"}"</span>)</span>
+<span id="cb73-23"><a></a>  },</span>
+<span id="cb73-24"><a></a></span>
+<span id="cb73-25"><a></a>  <span class="co"># Labelling</span></span>
+<span id="cb73-26"><a></a>  <span class="at">hat =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">hat{"</span>, <span class="st">"}"</span>),</span>
+<span id="cb73-27"><a></a>  <span class="at">tilde =</span> <span class="fu">unary_op</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">tilde{"</span>, <span class="st">"}"</span>)</span>
+<span id="cb73-28"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="unknown-functions" class="slide level2">
-<h2>Unknown Functions</h2>
+<section id="we-can-integrate-this-new-environment-to-the-symbols-environment" class="slide level2">
+<h2>We can integrate this new environment to the symbols environment</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a></a>calls_grabber <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb54-2"><a></a>  <span class="fu">switch_expr</span>(x,</span>
-<span id="cb54-3"><a></a>    <span class="at">constant =</span> ,</span>
-<span id="cb54-4"><a></a>    <span class="at">symbol =</span>   <span class="fu">character</span>(),</span>
-<span id="cb54-5"><a></a>    <span class="at">call =</span> {</span>
-<span id="cb54-6"><a></a>      fname <span class="ot">&lt;-</span> <span class="fu">as.character</span>(x[[<span class="dv">1</span>]])</span>
-<span id="cb54-7"><a></a>      children <span class="ot">&lt;-</span> <span class="fu">flat_map_chr</span>(<span class="fu">as.list</span>(x[<span class="sc">-</span><span class="dv">1</span>]), calls_grabber)</span>
-<span id="cb54-8"><a></a>      <span class="fu">c</span>(fname, children)</span>
-<span id="cb54-9"><a></a>    }</span>
-<span id="cb54-10"><a></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb54-11"><a></a>    <span class="fu">unique</span>()</span>
-<span id="cb54-12"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb74-2"><a></a>  <span class="co"># Known functions</span></span>
+<span id="cb74-3"><a></a>  f_env</span>
+<span id="cb74-4"><a></a></span>
+<span id="cb74-5"><a></a>  <span class="co"># Default symbols</span></span>
+<span id="cb74-6"><a></a>  names <span class="ot">&lt;-</span> <span class="fu">all_names</span>(expr)</span>
+<span id="cb74-7"><a></a>  symbol_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(<span class="fu">set_names</span>(names), <span class="at">parent =</span> f_env)</span>
+<span id="cb74-8"><a></a></span>
+<span id="cb74-9"><a></a>  <span class="co"># Known symbols</span></span>
+<span id="cb74-10"><a></a>  greek_env <span class="ot">&lt;-</span> <span class="fu">env_clone</span>(greek_env, <span class="at">parent =</span> symbol_env)</span>
+<span id="cb74-11"><a></a></span>
+<span id="cb74-12"><a></a>  greek_env</span>
+<span id="cb74-13"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><span class="math display">\[f(g + b, c, d(a))\]</span></p>
+</section>
+<section id="our-integrated-symbol-and-known-functions-environment-works" class="slide level2">
+<h2>Our integrated symbol and known functions environment works</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a></a><span class="fu">names_grabber</span>(<span class="fu">expr</span>(<span class="fu">f</span>(g <span class="sc">+</span> b, c, <span class="fu">d</span>(a))))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a></a><span class="fu">to_math</span>(<span class="fu">sin</span>(x <span class="sc">+</span> pi))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; [1] "g" "b" "c" "a"</code></pre>
+<pre><code>#&gt; &lt;LATEX&gt; \sin(x + \pi)</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a></a><span class="fu">calls_grabber</span>(<span class="fu">expr</span>(<span class="fu">f</span>(g <span class="sc">+</span> b, c, <span class="fu">d</span>(a))))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a></a><span class="fu">to_math</span>(<span class="fu">log</span>(x[i]<span class="sc">^</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;LATEX&gt; \log(x_i^2)</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a></a><span class="fu">to_math</span>(<span class="fu">sin</span>(sin))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; &lt;LATEX&gt; \sin(sin)</code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="r-latex-translating-unknown-functions" class="title-slide slide level1 center">
+<h1>R → LaTeX: translating unknown functions</h1>
+
+</section>
+<section id="we-create-a-list-of-unknown-functions-based-on-the-expression" class="slide level2">
+<h2>We create a list of unknown functions based on the expression</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a></a>all_calls_rec <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb81-2"><a></a>  <span class="fu">switch_expr</span>(x, <span class="at">constant =</span> , <span class="at">symbol =</span> <span class="fu">character</span>(), <span class="at">call =</span> {</span>
+<span id="cb81-3"><a></a>    fname <span class="ot">&lt;-</span> <span class="fu">as.character</span>(x[[<span class="dv">1</span>]])</span>
+<span id="cb81-4"><a></a>    children <span class="ot">&lt;-</span> <span class="fu">flat_map_chr</span>(<span class="fu">as.list</span>(x[<span class="sc">-</span><span class="dv">1</span>]), all_calls)</span>
+<span id="cb81-5"><a></a>    <span class="fu">c</span>(fname, children)</span>
+<span id="cb81-6"><a></a>  })</span>
+<span id="cb81-7"><a></a>}</span>
+<span id="cb81-8"><a></a>all_calls <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb81-9"><a></a>  <span class="fu">unique</span>(<span class="fu">all_calls_rec</span>(x))</span>
+<span id="cb81-10"><a></a>}</span>
+<span id="cb81-11"><a></a></span>
+<span id="cb81-12"><a></a><span class="fu">all_calls</span>(<span class="fu">expr</span>(<span class="fu">f</span>(g <span class="sc">+</span> b, c, <span class="fu">d</span>(a))))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; [1] "f" "+" "d"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a></a>lobstr<span class="sc">::</span><span class="fu">ast</span>(<span class="fu">expr</span>(<span class="fu">f</span>(g <span class="sc">+</span> b, c, <span class="fu">d</span>(a))))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="we-can-use-a-function-factory-for-creating-unknown-functions" class="slide level2">
+<h2>We can use a function factory for creating unknown functions</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a></a>unknown_op <span class="ot">&lt;-</span> <span class="cf">function</span>(op) {</span>
+<span id="cb83-2"><a></a>  <span class="fu">new_function</span>(</span>
+<span id="cb83-3"><a></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ),</span>
+<span id="cb83-4"><a></a>    <span class="fu">expr</span>({</span>
+<span id="cb83-5"><a></a>      contents <span class="ot">&lt;-</span> <span class="fu">paste</span>(..., <span class="at">collapse =</span> <span class="st">", "</span>)</span>
+<span id="cb83-6"><a></a>      <span class="fu">paste0</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">mathrm{"</span>, op, <span class="st">"}("</span>), contents, <span class="st">")"</span>)</span>
+<span id="cb83-7"><a></a>    })</span>
+<span id="cb83-8"><a></a>  )</span>
+<span id="cb83-9"><a></a>}</span>
+<span id="cb83-10"><a></a></span>
+<span id="cb83-11"><a></a><span class="fu">unknown_op</span>(<span class="st">"foo"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; █─expr 
-#&gt; └─█─f 
-#&gt;   ├─█─`+` 
-#&gt;   │ ├─g 
-#&gt;   │ └─b 
-#&gt;   ├─c 
-#&gt;   └─█─d 
-#&gt;     └─a</code></pre>
+<pre><code>#&gt; function (...) 
+#&gt; {
+#&gt;     contents &lt;- paste(..., collapse = ", ")
+#&gt;     paste0("\\mathrm{foo}(", contents, ")")
+#&gt; }
+#&gt; &lt;environment: 0x558695c98700&gt;</code></pre>
 </div>
 </div>
 </section>
-<section class="slide level2">
-
+<section id="we-can-integrate-the-unknown-function-environment" class="slide level2">
+<h2>We can integrate the unknown function environment</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a></a>seek_closure <span class="ot">&lt;-</span> <span class="cf">function</span>(op) {</span>
-<span id="cb61-2"><a></a>  <span class="co"># change math font for function names</span></span>
-<span id="cb61-3"><a></a>  <span class="co"># apply ending parenthesis</span></span>
-<span id="cb61-4"><a></a>  <span class="fu">new_function</span>(</span>
-<span id="cb61-5"><a></a>    <span class="fu">exprs</span>(<span class="at">... =</span> ),</span>
-<span id="cb61-6"><a></a>    <span class="fu">expr</span>({</span>
-<span id="cb61-7"><a></a>      contents <span class="ot">&lt;-</span> <span class="fu">paste</span>(..., <span class="at">collapse =</span> <span class="st">", "</span>)</span>
-<span id="cb61-8"><a></a>      <span class="fu">paste0</span>(<span class="sc">!!</span><span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">mathrm{"</span>, op, <span class="st">"}("</span>), contents, <span class="st">")"</span>)</span>
-<span id="cb61-9"><a></a>    })</span>
-<span id="cb61-10"><a></a>  )</span>
-<span id="cb61-11"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb85-2"><a></a>  calls <span class="ot">&lt;-</span> <span class="fu">all_calls</span>(expr)</span>
+<span id="cb85-3"><a></a>  call_list <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="fu">set_names</span>(calls), unknown_op)</span>
+<span id="cb85-4"><a></a>  call_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(call_list)</span>
+<span id="cb85-5"><a></a></span>
+<span id="cb85-6"><a></a>  <span class="co"># Known functions</span></span>
+<span id="cb85-7"><a></a>  f_env <span class="ot">&lt;-</span> <span class="fu">env_clone</span>(f_env, call_env)</span>
+<span id="cb85-8"><a></a></span>
+<span id="cb85-9"><a></a>  <span class="co"># Default symbols</span></span>
+<span id="cb85-10"><a></a>  names <span class="ot">&lt;-</span> <span class="fu">all_names</span>(expr)</span>
+<span id="cb85-11"><a></a>  symbol_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(<span class="fu">set_names</span>(names), <span class="at">parent =</span> f_env)</span>
+<span id="cb85-12"><a></a></span>
+<span id="cb85-13"><a></a>  <span class="co"># Known symbols</span></span>
+<span id="cb85-14"><a></a>  greek_env <span class="ot">&lt;-</span> <span class="fu">env_clone</span>(greek_env, <span class="at">parent =</span> symbol_env)</span>
+<span id="cb85-15"><a></a>  greek_env</span>
+<span id="cb85-16"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="bringing-the-latex-together" class="slide level2">
-<h2>Bringing the LaTeX Together</h2>
+<section id="our-final-environment-and-the-full-translation-works" class="slide level2">
+<h2>Our final environment and the full translation works!</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a></a>latex_env <span class="ot">&lt;-</span> <span class="cf">function</span>(expr) {</span>
-<span id="cb62-2"><a></a>  </span>
-<span id="cb62-3"><a></a>  <span class="co"># Unknown Functions</span></span>
-<span id="cb62-4"><a></a>  calls <span class="ot">&lt;-</span> <span class="fu">calls_grabber</span>(expr)</span>
-<span id="cb62-5"><a></a>  call_list <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="fu">set_names</span>(calls), seek_closure)</span>
-<span id="cb62-6"><a></a>  call_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(call_list)</span>
-<span id="cb62-7"><a></a></span>
-<span id="cb62-8"><a></a>  <span class="co"># Known Functions</span></span>
-<span id="cb62-9"><a></a>  known_func_env <span class="ot">&lt;-</span> <span class="fu">env_clone</span>(known_func_env, call_env)</span>
-<span id="cb62-10"><a></a></span>
-<span id="cb62-11"><a></a>  <span class="co"># Unknown Symbols</span></span>
-<span id="cb62-12"><a></a>  names <span class="ot">&lt;-</span> <span class="fu">names_grabber</span>(expr)</span>
-<span id="cb62-13"><a></a>  symbol_env <span class="ot">&lt;-</span> <span class="fu">as_environment</span>(<span class="fu">set_names</span>(names), <span class="at">parent =</span> known_func_env)</span>
-<span id="cb62-14"><a></a></span>
-<span id="cb62-15"><a></a>  <span class="co"># Known symbols</span></span>
-<span id="cb62-16"><a></a>  greek_env <span class="ot">&lt;-</span> <span class="fu">env_clone</span>(greek_env, <span class="at">parent =</span> symbol_env)</span>
-<span id="cb62-17"><a></a>  greek_env</span>
-<span id="cb62-18"><a></a>}</span>
-<span id="cb62-19"><a></a></span>
-<span id="cb62-20"><a></a>to_math <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb62-21"><a></a>  expr <span class="ot">&lt;-</span> <span class="fu">enexpr</span>(x)</span>
-<span id="cb62-22"><a></a>  <span class="fu">latex</span>(              <span class="co">#return LaTeX code</span></span>
-<span id="cb62-23"><a></a>    <span class="fu">eval_bare</span>(        <span class="co">#eval_bare to ensure use of latex environment </span></span>
-<span id="cb62-24"><a></a>      expr,           <span class="co">#expression (not quosure)</span></span>
-<span id="cb62-25"><a></a>      <span class="fu">latex_env</span>(expr) <span class="co">#need to define latex_env</span></span>
-<span id="cb62-26"><a></a>    ))</span>
-<span id="cb62-27"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<h3 id="check-2">Check</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a></a><span class="fu">to_math</span>(<span class="fu">sin</span>(pi) <span class="sc">+</span> <span class="fu">f</span>(a))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a></a><span class="fu">to_math</span>(<span class="fu">sin</span>(pi) <span class="sc">+</span> <span class="fu">f</span>(a))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; &lt;LATEX&gt; \sin(\pi) + \mathrm{f}(a)</code></pre>
 </div>
 </div>
+</section></section>
+<section>
+<section id="synthesis" class="title-slide slide level1 center">
+<h1>Synthesis</h1>
+
 </section>
-<section id="finishing-the-example" class="slide level2">
-<h2>Finishing the Example</h2>
-<p>(TO DO)</p>
+<section id="r-can-translate-to-html-via-a-micro-macro-procedure" class="slide level2">
+<h2>R can translate to HTML via a micro-macro procedure</h2>
+<ul>
+<li><p>Creating an S3 for translation and automatic escaping</p></li>
+<li><p>Creating a tag function structure</p></li>
+<li><p>Creating a function factory for tags</p></li>
+<li><p>Creating an execution environment: <code>with_html()</code></p></li>
+</ul>
+</section>
+<section id="r-can-translate-to-latex-via-a-macro-micro-procedure" class="slide level2">
+<h2>R can translate to LaTeX via a macro-micro procedure</h2>
+<ul>
+<li><p>Build an interface that contains a dynamic environment</p></li>
+<li><p>Creating and environment of <strong>known symbols</strong> by declaring them</p></li>
+<li><p>Creating and environment of <strong>unknown symbols</strong> by walking the AST of the expression</p></li>
+<li><p>Creating and environment of <strong>known functions</strong> by declaring the most common ones</p></li>
+<li><p>Creating and environment of <strong>unknown functions</strong> by walking the AST and using a function factory</p></li>
+<li><p>Integrating all the environment in the dynamic environment contained in the <code>to_math()</code> interface</p></li>
+</ul>
+</section></section>
+<section>
+<section id="final-remarks" class="title-slide slide level1 center">
+<h1>Final remarks</h1>
+
+</section>
+<section id="this-chapter-integrates-core-advanced-r-concepts" class="slide level2">
+<h2>This chapter integrates core advanced R concepts</h2>
+<ul>
+<li>Code as data</li>
+<li>S3 classes and method dispatch</li>
+<li>Environments and scoping</li>
+<li>Dynamic function generation</li>
+</ul>
+</section>
+<section id="takeaway-r-enables-languages-inside-the-language" class="slide level2">
+<h2>Takeaway: R enables languages inside the language</h2>
+<ul>
+<li>Translation comes naturally from how R is designed</li>
+<li>Creating small domain-specific languages in R is normal and expected, not a trick</li>
+<li><em>Advanced R</em> shows how to build them in a clear, safe, and maintainable way</li>
+</ul>
 
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -1202,6 +1535,44 @@ Even more LaTeX syntax
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
