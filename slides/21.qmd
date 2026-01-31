@@ -1,0 +1,1040 @@
+---
+engine: knitr
+title: Translating R code
+---
+
+## Learning objectives:
+
+-   Understand what it means to *translate* R code
+-   Treat code as data to enable domain-specific languages (DSLs)
+-   Create HTML and LaTeX DSLs
+-   Learn how environments, S3, and metaprogramming work together
+
+```{r}
+library(rlang)
+library(purrr)
+```
+
+```{r, message = FALSE, warning = FALSE, include = FALSE}
+
+# These are needed for actually running the code in the slides, but I'm showing them in their respective slide.
+
+html_attributes <- function(list) {
+  if (length(list) == 0) {
+    return("")
+  }
+
+  attr <- map2_chr(names(list), list, html_attribute)
+  paste0(" ", unlist(attr), collapse = "")
+}
+html_attribute <- function(name, value = NULL) {
+  if (length(value) == 0) {
+    return(name)
+  } # for attributes with no value
+  if (length(value) != 1) {
+    stop("`value` must be NULL or length 1")
+  }
+
+  if (is.logical(value)) {
+    # Convert T and F to true and false
+    value <- tolower(value)
+  } else {
+    value <- escape_attr(value)
+  }
+  paste0(name, "='", value, "'")
+}
+escape_attr <- function(x) {
+  x <- escape.character(x)
+  x <- gsub("\'", '&#39;', x)
+  x <- gsub("\"", '&quot;', x)
+  x <- gsub("\r", '&#13;', x)
+  x <- gsub("\n", '&#10;', x)
+  x
+}
+
+expr_type <- function(x) {
+  if (rlang::is_syntactic_literal(x)) {
+    "constant"
+  } else if (is.symbol(x)) {
+    "symbol"
+  } else if (is.call(x)) {
+    "call"
+  } else if (is.pairlist(x)) {
+    "pairlist"
+  } else {
+    typeof(x)
+  }
+}
+flat_map_chr <- function(.x, .f, ...) {
+  purrr::flatten_chr(purrr::map(.x, .f, ...))
+}
+switch_expr <- function(x, ...) {
+  switch(
+    expr_type(x),
+    ...,
+    stop("Don't know how to handle type ", typeof(x), call. = FALSE)
+  )
+}
+```
+
+# What does translating R code mean?
+
+## R code → another language
+
+```{r, echo = FALSE, eval = TRUE}
+DiagrammeR::mermaid(
+  "
+graph LR
+
+expressions --> R
+quasiquotation --> R
+evaluation --> R
+
+R --> HTML
+R --> LaTeX
+"
+)
+```
+
+## Translating code is not the same as evaluating code
+
+``` r
+# Evaluation
+sqrt(9)
+
+# Translation
+expr <- quote(sqrt(x))
+expr
+```
+
+-   Evaluation produces a value (`3`)
+-   Translation preserves structure (`sqrt(x)`)
+-   The result is code, not a computed number
+
+## Code translation relies on metaprogramming
+
+``` r
+library(rlang)
+
+expr <- expr(mean(x, na.rm = TRUE))
+expr
+```
+
+-   Expressions are captured with `expr()` / `enexpr()`
+-   Calls, symbols, etc... can be inspected
+-   Translation operates on the AST, not on values
+
+## The practical goal of translation is domain-specific languages
+
+-   DSLs embed a small language inside R
+-   R syntax becomes a frontend for another language
+-   `dbplyr` as an example: R → SQL
+
+# Fundamentals of R → HTML
+
+## We can generate HTML code from R
+
+-   We can do this...
+
+``` html
+<body>
+  <h1 id='first'>A heading</h1>
+  <p>Some text &amp; <b>some bold text.</b></p>
+  <img src='myimg.png' width='100' height='100' />
+</body>
+```
+
+-   By doing this...
+
+``` r
+with_html(
+  body(
+    h1("A heading", id = "first"),
+    p("Some text &", b("some bold text.")),
+    img(src = "myimg.png", width = 100, height = 100)
+  )
+)
+```
+
+Basically, HTML tags become "ordinary" R functions
+
+## Our DSL makes translation easy
+
+-   **Same structure**: nesting of function calls == nesting of tags.
+
+-   **Similar logic**: unnamed arguments -> tag content, named arguments -> tag attributes.
+
+-   **User experience**: special characters automatically escaped (e.g. `"&"` -> `"&amp;"`).
+
+## We need five basic HTML tags for this exercise
+
+``` html
+<body>
+  <h1 id='first'>A heading</h1>
+  <p>Some text &amp; <b>some bold text.</b></p>
+  <img src='myimg.png' width='100' height='100' />
+</body>
+```
+
+-   `<body>` is the top-level tag that contains all content.
+-   `<h1>` defines a top level heading.
+-   `<p>` defines a paragraph.
+-   `<b>` emboldens text.
+-   `<img>` embeds an image.
+
+## We need to know the main structure of tags
+
+-   Main tags structure: `<tag> </tag>`
+-   Void tags structure: `<tag />`
+-   Tags can have attributes: `<tag name1='value1' name2='value2'></tag>`
+
+Examples
+
+``` html
+<!-- Main tag with some atributes -->
+<h1 id='first'>A heading</h1>
+
+<!-- Void tag with some atributes -->
+<img src='myimg.png' width='100' height='100' />
+```
+
+## We need to know how to escape some characters
+
+-   `&` is escaped with `&amp;`
+-   `<` is escaped with `&lt;`
+-   `>` is escaped with `&gt;`
+
+# How to R → HTML
+
+## Follow a micro-macro procedure to create HTML DSL
+
+``` r
+with_html(
+  body(
+    h1("A heading", id = "first"),
+    p("Some text &", b("some bold text.")),
+    img(src = "myimg.png", width = 100, height = 100)
+  )
+)
+```
+
+The steps...
+
+-   Create an S3 that translates & automatically escapes user's input
+-   Create a basic structure for tag functions
+-   Create a function factory for creating tag functions
+-   Create an HTML environment of evaluation
+
+## We can translate R to HTML via S3
+
+Class constructor and dispatch
+
+```{r}
+html <- function(x) structure(x, class = "advr_html")
+
+print.advr_html <- function(x, ...) {
+  out <- paste0("<HTML> ", x)
+  cat(paste(strwrap(out), collapse = "\n"), "\n", sep = "")
+}
+```
+
+Methods that consider automatic escaping
+
+```{r}
+escape <- function(x) UseMethod("escape")
+
+escape.character <- function(x) {
+  # Method for escaping
+  x <- gsub("&", "&amp;", x)
+  x <- gsub("<", "&lt;", x)
+  x <- gsub(">", "&gt;", x)
+
+  html(x)
+}
+
+escape.advr_html <- function(x) x # Method when escaping not needed
+```
+
+## Our S3 translates and automatically escapes user's input
+
+```{r}
+escape("This is some text.")
+escape("x > 1 & y < 2")
+
+# Double escaping is not a problem
+escape(escape("This is some text. 1 > 2"))
+
+# And text we know is HTML doesn't get escaped.
+escape(html("<hr />"))
+```
+
+## We create R functions for HTML tags
+
+-   `<p>` tag -> `p()` function
+    -   Distinguish between content and attributes
+    -   Manage the big amount of attributes that exists (also customs ones)
+-   Same logic to create other tags
+
+``` r
+p("Some text. ", b(i("some bold italic text")), class = "mypara")
+```
+
+## We must distinguish between content and attributes
+
+```{r}
+# Separate named and unnamed arguments
+dots_partition <- function(...) {
+  dots <- list2(...)
+
+  if (is.null(names(dots))) {
+    is_named <- rep(FALSE, length(dots))
+  } else {
+    is_named <- names(dots) != ""
+  }
+
+  list(
+    named = dots[is_named], # Attributes
+    unnamed = dots[!is_named] # Contents
+  )
+}
+
+str(dots_partition(a = 1, 2, b = 3, 4))
+```
+
+## We can create `<p>` tag via `p()` function
+
+```{r}
+
+p <- function(...) {
+  dots <- dots_partition(...) # List with named and unnamed args
+  attribs <- html_attributes(dots$named)
+  children <- map_chr(dots$unnamed, escape)
+
+  html(paste0(
+    "<p",
+    attribs,
+    ">",
+    paste(children, collapse = ""),
+    "</p>"
+  ))
+}
+```
+
+<details>
+
+<summary>More about `html_attributes()`</summary>
+
+Found among the textbook's [source code](https://github.com/hadley/adv-r/blob/master/dsl-html-attributes.r)
+
+```{r}
+html_attributes <- function(list) {
+  if (length(list) == 0) {
+    return("")
+  }
+
+  attr <- map2_chr(names(list), list, html_attribute)
+  paste0(" ", unlist(attr), collapse = "")
+}
+html_attribute <- function(name, value = NULL) {
+  if (length(value) == 0) {
+    return(name)
+  } # for attributes with no value
+  if (length(value) != 1) {
+    stop("`value` must be NULL or length 1")
+  }
+
+  if (is.logical(value)) {
+    # Convert T and F to true and false
+    value <- tolower(value)
+  } else {
+    value <- escape_attr(value)
+  }
+  paste0(name, "='", value, "'")
+}
+escape_attr <- function(x) {
+  x <- escape.character(x)
+  x <- gsub("\'", '&#39;', x)
+  x <- gsub("\"", '&quot;', x)
+  x <- gsub("\r", '&#13;', x)
+  x <- gsub("\n", '&#10;', x)
+  x
+}
+```
+
+</details>
+
+# Our `p()` function works
+
+```{r}
+p("Some text")
+p("Some text", id = "myid")
+p("Some text", class = "important", `data-value` = 10)
+```
+
+## We can use a function factory for tags
+
+-   Instead of one function for each tag, we use a function factory:
+
+```{r}
+tag <- function(tag) {
+  new_function(
+    exprs(... = ), # Capture the intended tag!
+    expr({
+      # Capture the code that contains the structure of tag functions
+      dots <- dots_partition(...)
+      attribs <- html_attributes(dots$named)
+      children <- map_chr(dots$unnamed, escape)
+
+      html(paste0(
+        !!paste0("<", tag),
+        attribs,
+        ">",
+        paste(children, collapse = ""),
+        !!paste0("</", tag, ">")
+      ))
+    }),
+    caller_env() # Get the environment of the caller frame
+  )
+}
+```
+
+## Our function factory for tags works
+
+```{r}
+tag("b")
+```
+
+Re-run earlier example...
+
+```{r}
+p <- tag("p")
+b <- tag("b")
+i <- tag("i")
+p("Some text. ", b(i("some bold italic text")), class = "mypara")
+```
+
+## We need to consider void tags
+
+-   Void tags have slightly different structure:
+
+```{r}
+void_tag <- function(tag) {
+  new_function(
+    exprs(... = ),
+    expr({
+      dots <- dots_partition(...)
+      if (length(dots$unnamed) > 0) {
+        # Throws an error because void tags can't have children
+        abort(!!paste0("<", tag, "> must not have unnamed arguments"))
+      }
+      attribs <- html_attributes(dots$named)
+
+      html(paste0(!!paste0("<", tag), attribs, " />"))
+    }),
+    caller_env()
+  )
+}
+```
+
+## Our variant for void tags works
+
+```{r}
+img <- void_tag("img")
+img
+
+img(src = "myimage.png", width = 100, height = 100)
+```
+
+## Store tags in an HTML environment
+
+-   We need to store all of our tags:
+
+<details>
+
+<summary>All tags...</summary>
+
+```{r}
+tags <- c(
+  "a",
+  "abbr",
+  "address",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "bdi",
+  "bdo",
+  "blockquote",
+  "body",
+  "button",
+  "canvas",
+  "caption",
+  "cite",
+  "code",
+  "colgroup",
+  "data",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "eventsource",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "footer",
+  "form",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "head",
+  "header",
+  "hgroup",
+  "html",
+  "i",
+  "iframe",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "mark",
+  "map",
+  "menu",
+  "meter",
+  "nav",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "pre",
+  "progress",
+  "q",
+  "ruby",
+  "rp",
+  "rt",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "span",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video"
+)
+
+void_tags <- c(
+  "area",
+  "base",
+  "br",
+  "col",
+  "command",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "keygen",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr"
+)
+```
+
+</details>
+
+-   But there are tags that will override R functions...
+
+<details>
+
+<summary>Venn Diagram</summary>
+
+![Venn Diagram of words in R or HTML](images/translating/tags_r_venn.png)
+
+</details>
+
+-   **Solution**: first a `list()`, then an "environment"
+
+## Creating a list makes translation work
+
+```{r}
+# Create the list
+html_tags <- c(
+  tags %>% set_names() %>% map(tag),
+  void_tags %>% set_names() %>% map(void_tag)
+)
+
+# Check!
+html_tags$p(
+  "Some text. ",
+  html_tags$b(html_tags$i("some bold italic text")),
+  class = "mypara"
+)
+```
+
+## Creating an environment makes the UX better
+
+```{r}
+# Create an "environment"
+with_html <- function(code) {
+  code <- enquo(code)
+  eval_tidy(code, html_tags)
+}
+
+# Check!
+with_html(
+  body(
+    h1("A heading", id = "first"),
+    p("Some text &", b("some bold text.")),
+    img(src = "myimg.png", width = 100, height = 100)
+  )
+)
+```
+
+# Fundamentals of R → LaTeX
+
+## We can generate LaTeX syntax from R
+
+-   We can do this:
+
+``` latex
+\sin(\pi) + \mathrm{f}(a)
+```
+
+-   That look like this:$$\sin(\pi) + \mathrm{f}(a)$$
+
+-   By doing this:
+
+``` r
+to_math(sin(pi) + f(a))
+```
+
+## We need to know some LaTeX structure for this exercise
+
+-   Simple mathematical equations are written like in R: `x * y, z ^ 5` = $x * y, z^5$
+-   Special characters start with a `\`. For example, `\pi` = $\pi$
+-   Complicated functions look like `\name{arg1}{arg2}`. For example, fractions are `\frac{a}{b}` = $\frac{a}{b}$
+-   Mathematics functions need to be written like `\textrm{f}(a * b)` = $\textrm{f}(a*b)$
+
+# How to R → LaTeX
+
+## Follow a macro-micro procedure to create LaTeX DSL
+
+-   Start with infrastructure (`to_math()`) and experiment until cover every use case.
+
+-   Four stages:
+
+    -   Convert known symbols: `pi` → `\pi`
+
+    -   Leave other symbols unchanged: `x` → `x`, `y` → `y`
+
+    -   Convert known functions to their special forms: `sqrt(frac(a, b))` → `\sqrt{\frac{a}{b}}`
+
+    -   Wrap unknown functions with `\textrm`: `f(a)` → `\textrm{f}(a)`
+
+## Our LaTeX DSL will be different than our HTML DSL
+
+-   Evaluation environment no longer constant
+  - Has to vary depending on input
+  - Necessary to handle unknown symbols & functions
+-   Never evaluate in argument environment
+  - We translate every function to a LaTeX expression
+  - User must explicitly `!!` in order to evaluate normally
+
+## We need to create an execution environment: `to_math()`
+
+```{r}
+# Execution environment
+to_math <- function(x) {
+  expr <- enexpr(x) # Capture expression (intended LaTeX)
+  out <- eval_bare(expr, latex_env(expr)) # Evaluate in a specific environment for this expression
+
+  latex(out)
+}
+
+# Class generator
+latex <- function(x) structure(x, class = "advr_latex")
+
+# Dispatch
+print.advr_latex <- function(x) {
+  cat("<LATEX> ", x, "\n", sep = "")
+}
+```
+
+`latex_env()` is going to be created later. It depends on the expression.
+
+# R → LaTeX: translating known symbols
+
+## We can quickly create an environment with all the Greek letters
+
+```{r}
+greek <- c(
+  "alpha",
+  "theta",
+  "tau",
+  "beta",
+  "vartheta",
+  "pi",
+  "upsilon",
+  "gamma",
+  "varpi",
+  "phi",
+  "delta",
+  "kappa",
+  "rho",
+  "varphi",
+  "epsilon",
+  "lambda",
+  "varrho",
+  "chi",
+  "varepsilon",
+  "mu",
+  "sigma",
+  "psi",
+  "zeta",
+  "nu",
+  "varsigma",
+  "omega",
+  "eta",
+  "xi",
+  "Gamma",
+  "Lambda",
+  "Sigma",
+  "Psi",
+  "Delta",
+  "Xi",
+  "Upsilon",
+  "Omega",
+  "Theta",
+  "Pi",
+  "Phi"
+)
+greek_list <- set_names(paste0("\\", greek), greek)
+greek_env <- as_environment(greek_list)
+```
+
+## Our environment for known symbols works
+
+```{r}
+# Create the latex_env based on the greek_env
+latex_env <- function(expr) {
+  greek_env
+}
+
+to_math(pi)
+to_math(beta)
+```
+
+# R → LaTeX: translating unknown symbols
+
+## We can capture the unknown symbols from the expression
+
+Leave non-Greek symbols as-is, but we don´t know what symbols are going to be used.
+
+```{r}
+# Walk the AST to find all the symbols:
+all_names_rec <- function(x) {
+  switch_expr(
+    x,
+    constant = character(),
+    symbol = as.character(x),
+    call = flat_map_chr(as.list(x[-1]), all_names)
+  )
+}
+
+all_names <- function(x) {
+  unique(all_names_rec(x))
+}
+
+all_names(expr(x + y + f(a, b, c, 10)))
+```
+
+<details>
+
+<summary>Utility functions from section 18.5...</summary>
+
+```{r, message = FALSE, warning = FALSE}
+expr_type <- function(x) {
+  if (rlang::is_syntactic_literal(x)) {
+    "constant"
+  } else if (is.symbol(x)) {
+    "symbol"
+  } else if (is.call(x)) {
+    "call"
+  } else if (is.pairlist(x)) {
+    "pairlist"
+  } else {
+    typeof(x)
+  }
+}
+flat_map_chr <- function(.x, .f, ...) {
+  purrr::flatten_chr(purrr::map(.x, .f, ...))
+}
+switch_expr <- function(x, ...) {
+  switch(
+    expr_type(x),
+    ...,
+    stop("Don't know how to handle type ", typeof(x), call. = FALSE)
+  )
+}
+```
+
+</details>
+
+## We can build the environment based on the list of the unknown symbols
+
+```{r}
+latex_env <- function(expr) {
+  names <- all_names(expr)
+  symbol_env <- as_environment(set_names(names))
+
+  symbol_env
+}
+
+to_math(x)
+to_math(longvariablename)
+to_math(pi)
+```
+
+## We can integrate the known and unknown symbols environments
+
+```{r}
+latex_env <- function(expr) {
+  # Unknown symbols
+  names <- all_names(expr)
+  symbol_env <- as_environment(set_names(names))
+
+  # Known symbols
+  env_clone(greek_env, parent = symbol_env) # This gives preference to Greek over defaults.
+  # We want "\\pi", not "pi".
+}
+```
+
+## Our environment for all symbols works
+
+```{r}
+to_math(x)
+to_math(longvariablename)
+to_math(pi)
+```
+
+# R → LaTeX: translating known functions
+
+## We can base our translation on simple helpers
+
+```{r}
+unary_op <- function(left, right) {
+  new_function(
+    exprs(e1 = ),
+    expr(
+      paste0(!!left, e1, !!right)
+    ),
+    caller_env()
+  )
+}
+
+binary_op <- function(sep) {
+  new_function(
+    exprs(e1 = , e2 = ),
+    expr(
+      paste0(e1, !!sep, e2)
+    ),
+    caller_env()
+  )
+}
+
+unary_op("\\sqrt{", "}")
+binary_op("+")
+```
+
+## We can build the environment for functions with some common examples
+
+```{r}
+# Binary operators
+f_env <- child_env(
+  .parent = empty_env(),
+  `+` = binary_op(" + "),
+  `-` = binary_op(" - "),
+  `*` = binary_op(" * "),
+  `/` = binary_op(" / "),
+  `^` = binary_op("^"),
+  `[` = binary_op("_"),
+
+  # Grouping
+  `{` = unary_op("\\left{ ", " \\right}"),
+  `(` = unary_op("\\left( ", " \\right)"),
+  paste = paste,
+
+  # Other math functions
+  sqrt = unary_op("\\sqrt{", "}"),
+  sin = unary_op("\\sin(", ")"),
+  log = unary_op("\\log(", ")"),
+  abs = unary_op("\\left| ", "\\right| "),
+  frac = function(a, b) {
+    paste0("\\frac{", a, "}{", b, "}")
+  },
+
+  # Labelling
+  hat = unary_op("\\hat{", "}"),
+  tilde = unary_op("\\tilde{", "}")
+)
+```
+
+## We can integrate this new environment to the symbols environment
+
+```{r}
+latex_env <- function(expr) {
+  # Known functions
+  f_env
+
+  # Default symbols
+  names <- all_names(expr)
+  symbol_env <- as_environment(set_names(names), parent = f_env)
+
+  # Known symbols
+  greek_env <- env_clone(greek_env, parent = symbol_env)
+
+  greek_env
+}
+```
+
+## Our integrated symbol and known functions environment works
+
+```{r}
+to_math(sin(x + pi))
+to_math(log(x[i]^2))
+to_math(sin(sin))
+```
+
+# R → LaTeX: translating unknown functions
+
+## We create a list of unknown functions based on the expression
+
+```{r}
+all_calls_rec <- function(x) {
+  switch_expr(x, constant = , symbol = character(), call = {
+    fname <- as.character(x[[1]])
+    children <- flat_map_chr(as.list(x[-1]), all_calls)
+    c(fname, children)
+  })
+}
+all_calls <- function(x) {
+  unique(all_calls_rec(x))
+}
+
+all_calls(expr(f(g + b, c, d(a))))
+```
+
+## We can use a function factory for creating unknown functions
+
+```{r}
+unknown_op <- function(op) {
+  new_function(
+    exprs(... = ),
+    expr({
+      contents <- paste(..., collapse = ", ")
+      paste0(!!paste0("\\mathrm{", op, "}("), contents, ")")
+    })
+  )
+}
+
+unknown_op("foo")
+```
+
+## We can integrate the unknown function environment
+
+```{r}
+latex_env <- function(expr) {
+  calls <- all_calls(expr)
+  call_list <- map(set_names(calls), unknown_op)
+  call_env <- as_environment(call_list)
+
+  # Known functions
+  f_env <- env_clone(f_env, call_env)
+
+  # Default symbols
+  names <- all_names(expr)
+  symbol_env <- as_environment(set_names(names), parent = f_env)
+
+  # Known symbols
+  greek_env <- env_clone(greek_env, parent = symbol_env)
+  greek_env
+}
+```
+
+## Our final environment and the full translation works!
+
+```{r}
+to_math(sin(pi) + f(a))
+```
+
+# Synthesis
+
+## R can translate to HTML via a micro-macro procedure
+
+-   Creating an S3 for translation and automatic escaping
+
+-   Creating a tag function structure
+
+-   Creating a function factory for tags
+
+-   Creating an execution environment: `with_html()`
+
+## R can translate to LaTeX via a macro-micro procedure
+
+-   Build an interface that contains a dynamic environment
+
+-   Creating and environment of **known symbols** by declaring them
+
+-   Creating and environment of **unknown symbols** by walking the AST of the expression
+
+-   Creating and environment of **known functions** by declaring the most common ones
+
+-   Creating and environment of **unknown functions** by walking the AST and using a function factory
+
+-   Integrating all the environment in the dynamic environment contained in the `to_math()` interface
+
+# Final remarks
+
+## This chapter integrates core advanced R concepts
+
+-   Code as data
+-   S3 classes and method dispatch
+-   Environments and scoping
+-   Dynamic function generation
+
+## Takeaway: R enables languages inside the language
+
+-   Translation comes naturally from how R is designed
+-    Creating small domain-specific languages in R is normal and expected, not a trick
+-    *Advanced R* shows how to build them in a clear, safe, and maintainable way

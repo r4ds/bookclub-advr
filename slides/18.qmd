@@ -1,0 +1,288 @@
+---
+engine: knitr
+title: Expressions
+---
+
+# To compute on the language, we first need to understand its structure.
+
+## Learning objectives:
+
+- Capture code expressions
+- Inspect expressions
+- Define expressions
+- Modify expressions
+- Generate/Automate expressions
+
+```{r, message = FALSE, warning = FALSE}
+library(rlang)
+library(lobstr)
+```
+
+## `expr` captures code without executing
+
+-   Distinguishes the _operation_ from the _result_
+
+::: panel-tabset
+
+### Operation
+
+-   Capture code as an __expression__
+
+```{r}
+z <- rlang::expr(x - 10)
+z
+rlang::is_expression(z)
+class(z)
+```
+
+### Result
+
+-   Evaluate the code expression __immediately__
+
+```{r, error = TRUE}
+y <- x - 10
+```
+
+:::
+
+## `eval` evaluates the code expression
+
+```{r}
+z <- rlang::expr(x - 10)
+x <- 10
+eval(z)
+```
+
+::: callout-note
+This chapter focuses on capturing and inspecting the _operation_. `eval` will be discussed more in chapters 19 and 20.
+:::
+
+## `ast` parses and identifies the parts of an expression
+
+-   Expressions are also called abstract syntax trees (ASTs) because of the hierarchical structure and natural tree representation. 
+
+::: panel-tabset
+
+### Using infix notation
+
+```{r}
+lobstr::ast(y <- x - 10)
+```
+
+### Using prefix notation
+
+```{r}
+lobstr::ast(`<-`(y,`*`(x,10)))
+```
+
+:::
+
+## The leaves, branches, and colors from `ast` identify expression data structures
+
+![](images/prefix.png)
+
+::: panel-tabset
+
+### Constants
+
+-   Also called scalars
+-   Found in `ast` leaves
+-   Leaves have black borders and sharp corners
+-   Identify with `rlang::is_syntactic_literal`
+
+### Symbols
+
+-   Found in `ast` leaves
+-   Leaves have purple borders and rounded corners
+-   Identify with `is.name` or `is.symbol`
+-   Convert strings to symbols with `rlang::sym` or `rlang::syms`
+-   Convert a symbol to a string with `rlang::as_string`  or `as.character`
+
+### Calls
+
+-   Found in `ast` branches.
+-   Branches are orange rectangles
+-   First child is the function call name
+-   Subsequent children are arguments to the function call
+-   Calls behave as lists
+-   `typeof` and `str` return "language" for call objects
+
+:::
+
+## Expressions and lists have similar memory mapping 
+
+```{r}
+x <- rlang::expr(y <- x * 10)
+length(x)
+is.list(x)
+lobstr::obj_addr(x)
+lobstr::obj_addr(x[[1]])
+lobstr::obj_addr(x[[2]])
+lobstr::obj_addr(x[[3]])
+lst_x <- as.list(x)
+# Will not work: lobstr::obj_addrs(x)
+lobstr::obj_addrs(lst_x)
+```
+
+## Expressions can be modified using list subsetting
+
+::: panel-tabset
+
+### Inspect
+
+```{r}
+x <- rlang::expr(10*2)
+str(x)
+rlang::is_expression(x)
+purrr::map(as.list(x),~{.x})
+```
+
+### Modify
+
+```{r}
+tracemem(x)
+x
+x[[2]] <- 4
+x
+untracemem(x)
+```
+
+:::
+
+## Simple expressions can be generated using `call2`, `parse_expr`, or `expr_text`
+
+::: panel-tabset
+
+### `call2`
+
+-   Clunky when creating more complex expressions, see chapter 19 for more details
+
+```{r}
+rlang::call2("mean", x = rlang::expr(x), na.rm = TRUE)
+```
+
+### `parse_expr`
+
+-   __parsing__: String to expression
+-   More details and safer usage in chapter 19
+-   `base::parse` (_text_ argument) is equivalent to `rlang::parse_expr`
+
+```{r}
+"5 - 5" |> 
+  rlang::parse_expr()
+
+paste0("5 - ",1:10) |> 
+  rlang::parse_exprs()
+```
+
+### `expr_text`
+
+-   __deparsing__: Expression to string
+-   `base::deparse` outputs a vector when spanning lines
+-   The 'questioning' lifecycle in the Help page is telling...
+
+```{r}
+class(y ~ x)
+rlang::is_expression(y ~ x)
+rlang::expr_text(y ~ x)
+
+rlang::expr(x - 8) |> 
+  rlang::expr_text()
+
+```
+
+:::
+
+## Complex expressions can be automated using `expr` and `purrr::reduce`
+
+::: panel-tabset
+
+### Generate & filters
+
+```{r}
+and_filters <- 
+  purrr::map(
+    letters[6:8], #f, g, h
+    ~{
+      rlang::expr(.data[["x"]] < !!.x)
+     }
+  ) |> 
+    purrr::reduce(
+      .f = function(left, right) {
+        rlang::expr(!!left & !!right)
+      }
+    )
+tibble::tibble(
+  x = letters
+) |> 
+  dplyr::filter(!!!and_filters)
+
+```
+
+### Generate | filters
+
+```{r}
+or_filters <- 
+  purrr::map(
+    letters[6:8], #f, g, h
+    ~{
+      rlang::expr(.data[["x"]] < !!.x)
+     }
+  ) |> 
+    purrr::reduce(
+      .f = function(left, right) {
+        rlang::expr(!!left | !!right)
+      }
+    )
+tibble::tibble(
+  x = letters
+) |> 
+  dplyr::filter(!!!or_filters)
+```
+
+:::
+
+## There are specialised data structures to be aware of but have been mostly replaced
+
+::: panel-tabset
+
+### Pairlists
+
+-   Only seen when working with calls to the function
+-   But can treat it as a regular list
+
+```{r}
+f <- rlang::expr(function(x, y = 10) x + y)
+f
+f[[1]]
+f[[2]]
+typeof(f[[1]])
+typeof(f[[2]])
+
+```
+
+### Missing _arguments_
+
+-   You only need to care about the missing symbol if you’re programmatically creating functions with missing arguments
+-   Use `rlang::missing_arg()`
+-   The `...` argument is associated with an empty symbol
+
+```{r}
+f <- rlang::expr(function(x, y = 10) x + y)
+rlang::is_missing(
+  f[[2]][[1]]
+)
+```
+
+### Expression vectors
+
+-   Only generated by `base::expression` and `base::parse`
+-   Their "advantage" is `base::eval` works across te elements, but this is confusing compared to evaluating across a list of expressions
+
+```{r}
+ex <- expression(x <- 4, x)
+class(ex) #just one expression???
+length(ex) #so an expression can be 1 ting and more than 1 thing?? Just give me a list of expressions and define an expression as 1 thing
+```
+
+:::
