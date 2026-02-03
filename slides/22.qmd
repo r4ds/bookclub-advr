@@ -1,0 +1,196 @@
+---
+engine: knitr
+title: Debugging
+---
+
+## Learning objectives:
+
+- Overall: Find and fix errors.
+- Locate exactly where an error occurred with the `traceback()` function.
+- Pause the execution of a function and launch an environment to interactively explore what's happening.
+- Debug non-interactively executed code.
+- Recognize other (non-error) problems that occasionally also need debugging
+
+# Strategies for finding and fixing errors
+
+| Finding your bug is a process of confirming the many things that you *believe* are true — until you find one which is *not* true.
+
+::: {style="text-align: right;"}
+**—Norm Matloff** (emphasis added)
+:::
+
+| Debugging is like being the detective in a crime movie where you're also the murderer. 
+
+::: {style="text-align: right;"}
+**-Filipe Fortes**
+:::
+
+## Google first!
+
+- Google new error messages to help translate
+- Packages that help:
+  - [{errorist}](https://r-pkg.thecoatlessprofessor.com/errorist/)
+  - [{searcher}](https://r-pkg.thecoatlessprofessor.com/searcher/)
+  - Probably AI agents now 
+
+## Repeatable bugs are more debuggable
+
+- May need to execute many times
+- Up-front investment to make a minimal [{reprex}](https://reprex.tidyverse.org/) pays off
+
+## Use the scientific method to find bugs
+
+- Generate a hypothesis.
+- Design experiments to test that hypothesis/
+- Record your results.
+
+Being systematic often saves time in the end.
+
+## Automated tests help
+
+- Add tests for nearby working code to avoid new bugs.
+- Add tests for specific broken cases.
+- Add tests for hypotheses.
+
+# Use `traceback()` to locate the error
+
+## Example: Chained functions
+
+![](images/locating-errors.png)
+
+![](images/fa.png)
+
+## `traceback()` shows the call stack that lead to the error 
+
+Click **"Show traceback":**:
+![](images/options.png)
+
+Read bottom to top.
+
+::: notes
+- `f()` calls `g()` calls `h()` calls `i()`
+- `rlang::global_handle()` for better traceback.
+:::
+
+##  `traceback()` is confusing with lazy evaluation
+
+![](images/lazy-evaluation.png)
+
+![](images/traceback.png)
+
+::: notes
+- `j()` isn't evaluated until it gets to `i()`.
+- I honestly don't find this example all that confusing.
+:::
+
+## `rlang::global_handle()` in `.Rprofile` makes traceback better
+
+![](images/global_handle.png)
+
+::: notes
+- `rlang::with_abort()` from book no longer exists
+- I'm now experimenting with turning this off, because it breaks "rerun with debug"!
+:::
+
+# Interactive debugger
+
+## RStudio has tools for debugging
+
+- Click "Rerun with Debug" in error message
+- Enable `Debug > On Error > Break in Code` to always jump to error
+
+## Use `browser()` to set a break point in code
+
+![](images/browser.png)
+
+## `browser()` can be conditional
+
+![](images/browser2.png)
+
+## `browser()` provides special commands
+
+![](images/debug-toolbar.png)
+
+- Next (`n`): Execute the next step
+- Step into (`s`): Dive into function (or `n`)
+- Finish (`f`): Finish execution of the current loop/function
+- Continue (`c`): Continue regular execution of the function (leave interactive) 
+- Stop (`Q`): Stop debugging, terminate the function, and return to the global workspace 
+
+## Set breakpoints in RStudio for virtual `browser()`
+
+Activate:
+
+- Click to left of line number, or
+- Press **Shift + F9**
+
+Downsides:
+
+- Fail in [unusual situations](https://support.posit.co/hc/en-us/articles/200534337-Breakpoint-Troubleshooting)
+- Can't be conditional
+
+## Use `options(error = recover)` for interactive debugging prompt
+
+![](images/recover.png)
+
+Turn off with `options(error = NULL)`
+
+## `debug(fn_name)` to insert `browser()` in first line of `fn_name()`
+
+- `undebug(fn_name)` to remove it
+- `debugonce(fn_name)` to do it once (similar to rerun with debug) 
+- `utils::setBreakpoint("file_name", line_number)`
+
+::: notes
+- Pronounce `debugonce()` [like "Beyonce"](https://www.youtube.com/watch?v=JThd3YYQXGg)
+:::
+
+## Call stacks printed by `traceback()`, `browser()` & `where`, and `recover()` are not consistent
+
+![](images/print-debug.png)
+
+- RStudio displays calls in the same order as `traceback()`
+- {rlang} functions use the same ordering & numbering as `recover()`
+  - Also indent to reinforce hierarchy
+
+# Non-interactive debugging
+
+## Use `callr::r()` or fresh start to look for differences
+
+`callr::r(f, list(1, 2))` calls `f(1, 2)` in a fresh session
+
+- Global env 
+- Packages
+- Object
+- Working directory
+- `PATH` environment variable
+- `R_LIBS` environment variable
+
+## `dump.frames()` is the equivalent to `recover()` for non-interactive code.
+
+![](images/non-interractive-debugging.png)
+
+## Print debugging can help if nothing else works
+
+![](images/print-debugging.png)
+
+
+## Debugging Rmarkdown/Quarto has challenges
+
+- Call `rmarkdown::render("path/to/file.Rmd")` instead of IDE knitting
+- Use `sink()` for tricksy error handling 
+
+![](images/print-recover.png){height="110"}
+
+## Functions can fail without errors
+
+- Unexpected warning: `options(warn = 2)` turns warnings into errors.
+- Unexpected message: Proposed solution in book no longer available.
+- Function might never return. Terminate & `traceback()`.
+- Crashed R = bug in compiled (C, C++, etc) code. 
+
+## Some useful resources on debugging
+
+- ["Object of type closure is not subsettable"](https://github.com/jennybc/debugging#readme) (Jenny Bryan, `rstudio::conf(2020)`)
+- ["What They Forgot to Teach You About R" Chapter 12](https://rstats.wtf/debugging-r) (by Jenny Bryan and Jim Hester)
+- [Minimal reprex for a shiny app](https://www.youtube.com/watch?v=9w8ANOAlWy4) (video by Hadley)
