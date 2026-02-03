@@ -678,98 +678,161 @@
     "href": "slides/22.html#learning-objectives",
     "title": "Debugging",
     "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nGeneral strategy for finding and fixing errors.\nExplore the traceback() function to locate exactly where an error occurred\nExplore how to pause the execution of a function and launch environment where we can interactively explore what’s happening\nExplore debugging when you’re running code non-interactively\nExplore non-error problems that occasionally also need debugging"
+    "text": "Learning objectives:\n\nOverall: Find and fix errors.\nLocate exactly where an error occurred with the traceback() function.\nPause the execution of a function and launch an environment to interactively explore what’s happening.\nDebug non-interactively executed code.\nRecognize other (non-error) problems that occasionally also need debugging"
   },
   {
-    "objectID": "slides/22.html#introduction",
-    "href": "slides/22.html#introduction",
+    "objectID": "slides/22.html#google-first",
+    "href": "slides/22.html#google-first",
     "title": "Debugging",
-    "section": "Introduction",
-    "text": "Introduction\n\nFinding bug in code, is a process of confirming the many things that we believe are true — until we find one which is not true.\n\n—Norm Matloff\n\nDebugging is like being the detective in a crime movie where you’re also the murderer.\n\n-Filipe Fortes\nStrategies for finding and fixing errors\nGoogle!\nWhenever you see an error message, start by googling it. We can automate this process with the {errorist} and {searcher} packages.\nMake it repeatable\nTo find the root cause of an error, you’re going to need to execute the code many times as you consider and reject hypotheses. It’s worth some upfront investment to make the problem both easy and fast to reproduce.\nFigure out where it is\nTo find the bug, adopt the scientific method: generate hypotheses, design experiments to test them, and record your results. This may seem like a lot of work, but a systematic approach will end up saving you time.\nFix it and test it\nOnce you’ve found the bug, you need to figure out how to fix it and to check that the fix actually worked. It’s very useful to have automated tests in place."
+    "section": "Google first!",
+    "text": "Google first!\n\nGoogle new error messages to help translate\nPackages that help:\n\n{errorist}\n{searcher}\nProbably AI agents now"
   },
   {
-    "objectID": "slides/22.html#locating-errors",
-    "href": "slides/22.html#locating-errors",
+    "objectID": "slides/22.html#repeatable-bugs-are-more-debuggable",
+    "href": "slides/22.html#repeatable-bugs-are-more-debuggable",
     "title": "Debugging",
-    "section": "Locating errors",
-    "text": "Locating errors\nThe most important tool for finding errors is traceback(), which shows you the sequence of calls (also known as the call stack) that lead to the error.\n\nHere’s a simple example where f() calls g() calls h() calls i(), which checks if its argument is numeric:\n\n When we run f(\"a\") code in RStudio we see:\n\nIf you click “Show traceback” you see: \nYou read the traceback() output from bottom to top: the initial call is f(), which calls g(), then h(), then i(), which triggers the error."
+    "section": "Repeatable bugs are more debuggable",
+    "text": "Repeatable bugs are more debuggable\n\nMay need to execute many times\nUp-front investment to make a minimal {reprex} pays off"
   },
   {
-    "objectID": "slides/22.html#lazy-evaluation",
-    "href": "slides/22.html#lazy-evaluation",
+    "objectID": "slides/22.html#use-the-scientific-method-to-find-bugs",
+    "href": "slides/22.html#use-the-scientific-method-to-find-bugs",
     "title": "Debugging",
-    "section": "Lazy evaluation",
-    "text": "Lazy evaluation\nOne drawback to traceback() is that it always linearises the call tree, which can be confusing if there is much lazy evaluation involved. For example, take the following example where the error happens when evaluating the first argument to f():\n\n\nNote: rlang::with_abort() is no longer an exported object from ‘namespace:rlang’. There is an open issue about a fix for the chapter but no drop-in replacement."
+    "section": "Use the scientific method to find bugs",
+    "text": "Use the scientific method to find bugs\n\nGenerate a hypothesis.\nDesign experiments to test that hypothesis/\nRecord your results.\n\nBeing systematic often saves time in the end."
   },
   {
-    "objectID": "slides/22.html#interactive-debugger",
-    "href": "slides/22.html#interactive-debugger",
+    "objectID": "slides/22.html#automated-tests-help",
+    "href": "slides/22.html#automated-tests-help",
     "title": "Debugging",
-    "section": "Interactive debugger",
-    "text": "Interactive debugger\nEnter the interactive debugger is wwith RStudio’s “Rerun with Debug” tool. This reruns the command that created the error, pausing execution where the error occurred. Otherwise, you can insert a call to browser() where you want to pause, and re-run the function.\n\nbrowser() is just a regular function call which means that you can run it conditionally by wrapping it in an if statement:"
+    "section": "Automated tests help",
+    "text": "Automated tests help\n\nAdd tests for nearby working code to avoid new bugs.\nAdd tests for specific broken cases.\nAdd tests for hypotheses."
   },
   {
-    "objectID": "slides/22.html#browser-commands",
-    "href": "slides/22.html#browser-commands",
+    "objectID": "slides/22.html#example-chained-functions",
+    "href": "slides/22.html#example-chained-functions",
     "title": "Debugging",
-    "section": "browser() commands",
-    "text": "browser() commands\nbrowser() provides a few special commands.\n\n\nNext, n: executes the next step in the function.\nStep into, or s: works like next, but if the next step is a function, it will step into that function so you can explore it interactively.\nFinish, or f: finishes execution of the current loop or function.\nContinue, c: leaves interactive debugging and continues regular execution of the function.\nStop, Q: stops debugging, terminates the function, and returns to the global workspace."
+    "section": "Example: Chained functions",
+    "text": "Example: Chained functions"
   },
   {
-    "objectID": "slides/22.html#alternatives",
-    "href": "slides/22.html#alternatives",
+    "objectID": "slides/22.html#traceback-shows-the-call-stack-that-lead-to-the-error",
+    "href": "slides/22.html#traceback-shows-the-call-stack-that-lead-to-the-error",
     "title": "Debugging",
-    "section": "Alternatives",
-    "text": "Alternatives\nThere are three alternatives to using browser(): setting breakpoints in RStudio, options(error = recover), and debug() and other related functions."
+    "section": "traceback() shows the call stack that lead to the error",
+    "text": "traceback() shows the call stack that lead to the error\nClick “Show traceback”:: \nRead bottom to top.\n\n\nf() calls g() calls h() calls i()\nrlang::global_handle() for better traceback."
   },
   {
-    "objectID": "slides/22.html#breakpoints",
-    "href": "slides/22.html#breakpoints",
+    "objectID": "slides/22.html#traceback-is-confusing-with-lazy-evaluation",
+    "href": "slides/22.html#traceback-is-confusing-with-lazy-evaluation",
     "title": "Debugging",
-    "section": "Breakpoints",
-    "text": "Breakpoints\nIn RStudio, you can set a breakpoint by clicking to the left of the line number, or pressing Shift + F9. There are two small downsides to breakpoints:\n\nThere are a few unusual situations in which breakpoints will not work. Read breakpoint troubleshooting for more details\nRStudio currently does not support conditional breakpoints."
+    "section": "traceback() is confusing with lazy evaluation",
+    "text": "traceback() is confusing with lazy evaluation\n\n\n\n\nj() isn’t evaluated until it gets to i().\nI honestly don’t find this example all that confusing."
   },
   {
-    "objectID": "slides/22.html#recover",
-    "href": "slides/22.html#recover",
+    "objectID": "slides/22.html#rlangglobal_handle-in-.rprofile-makes-traceback-better",
+    "href": "slides/22.html#rlangglobal_handle-in-.rprofile-makes-traceback-better",
     "title": "Debugging",
-    "section": "recover()",
-    "text": "recover()\nWhen you set options(error = recover), when you get an error, you’ll get an interactive prompt that displays the traceback and gives you the ability to interactively debug inside any of the frames:\n You can return to default error handling with options(error = NULL)."
+    "section": "rlang::global_handle() in .Rprofile makes traceback better",
+    "text": "rlang::global_handle() in .Rprofile makes traceback better\n\n\n\nrlang::with_abort() from book no longer exists\nI’m now experimenting with turning this off, because it breaks “rerun with debug”!"
   },
   {
-    "objectID": "slides/22.html#debug",
-    "href": "slides/22.html#debug",
+    "objectID": "slides/22.html#rstudio-has-tools-for-debugging",
+    "href": "slides/22.html#rstudio-has-tools-for-debugging",
     "title": "Debugging",
-    "section": "debug()",
-    "text": "debug()\nAnother approach is to call a function that inserts the browser() call:\n\ndebug() inserts a browser statement in the first line of the specified function. undebug() removes it.\nutils::setBreakpoint() works similarly, but instead of taking a function name, it takes a file name and line number and finds the appropriate function for you."
+    "section": "RStudio has tools for debugging",
+    "text": "RStudio has tools for debugging\n\nClick “Rerun with Debug” in error message\nEnable Debug &gt; On Error &gt; Break in Code to always jump to error"
   },
   {
-    "objectID": "slides/22.html#call-stack",
-    "href": "slides/22.html#call-stack",
+    "objectID": "slides/22.html#use-browser-to-set-a-break-point-in-code",
+    "href": "slides/22.html#use-browser-to-set-a-break-point-in-code",
     "title": "Debugging",
-    "section": "Call stack",
-    "text": "Call stack\nThe call stacks printed by traceback(), browser() & where, and recover() are not consistent.\n\nRStudio displays calls in the same order as traceback(). rlang functions use the same ordering and numbering as recover(), but also use indenting to reinforce the hierarchy of calls."
+    "section": "Use browser() to set a break point in code",
+    "text": "Use browser() to set a break point in code"
   },
   {
-    "objectID": "slides/22.html#non-interactive-debugging",
-    "href": "slides/22.html#non-interactive-debugging",
+    "objectID": "slides/22.html#browser-can-be-conditional",
+    "href": "slides/22.html#browser-can-be-conditional",
     "title": "Debugging",
-    "section": "Non-interactive debugging",
-    "text": "Non-interactive debugging\nWhen you can’t explore interactively…\ncallr::r()\ncallr::r(f, list(1, 2)) calls f(1, 2) in a fresh session to help diagnose:\n\nIs the global environment different? Have you loaded different packages? Are objects left from previous sessions causing differences?\nIs the working directory different?\nIs the PATH environment variable different?\nIs the R_LIBS environment variable different?\n\ndump.frames()\ndump.frames() is the equivalent to recover() for non-interactive code.\n\nPrint debugging\nInsert numerous print statements to precisely locate the problem, and see the values of important variables. Print debugging is particularly useful for compiled code.\n\nRMarkdown\n\nIf you’re knitting the file using RStudio, switch to calling rmarkdown::render(\"path/to/file.Rmd\") instead to run the code in the current session.\nFor interactive debugging, you’ll need to call sink() in the error handler. For example, to use recover() with RMarkdown, you’d put the following code in your setup block:"
+    "section": "browser() can be conditional",
+    "text": "browser() can be conditional"
   },
   {
-    "objectID": "slides/22.html#non-error-failures",
-    "href": "slides/22.html#non-error-failures",
+    "objectID": "slides/22.html#browser-provides-special-commands",
+    "href": "slides/22.html#browser-provides-special-commands",
     "title": "Debugging",
-    "section": "Non-error failures",
-    "text": "Non-error failures\nThere are other ways for a function to fail apart from throwing an error:\n\nA function may generate an unexpected warning. Convert warnings into errors with options(warn = 2) and use the the call stack.\nA function may generate an unexpected message. The removal of with_abort() from {rlang} breaks this solution.\nA function might never return.\nThe worst scenario is that your code might crash R completely, leaving you with no way to interactively debug your code. This indicates a bug in compiled (C or C++) code."
+    "section": "browser() provides special commands",
+    "text": "browser() provides special commands\n\n\nNext (n): Execute the next step\nStep into (s): Dive into function (or n)\nFinish (f): Finish execution of the current loop/function\nContinue (c): Continue regular execution of the function (leave interactive)\nStop (Q): Stop debugging, terminate the function, and return to the global workspace"
   },
   {
-    "objectID": "slides/22.html#link-to-some-useful-resources-on-debugging",
-    "href": "slides/22.html#link-to-some-useful-resources-on-debugging",
+    "objectID": "slides/22.html#set-breakpoints-in-rstudio-for-virtual-browser",
+    "href": "slides/22.html#set-breakpoints-in-rstudio-for-virtual-browser",
     "title": "Debugging",
-    "section": "Link to some useful resources on debugging",
-    "text": "Link to some useful resources on debugging\n\nJenny Bryan’s “Object of type closure is not subsettable” talk from rstudio::conf 2020\nJenny Bryan and Jim Hester’s book: “What They Forgot to Teach You About R” Ch12\nHadley’s video on a minimal reprex for a shiny app"
+    "section": "Set breakpoints in RStudio for virtual browser()",
+    "text": "Set breakpoints in RStudio for virtual browser()\nActivate:\n\nClick to left of line number, or\nPress Shift + F9\n\nDownsides:\n\nFail in unusual situations\nCan’t be conditional"
+  },
+  {
+    "objectID": "slides/22.html#use-optionserror-recover-for-interactive-debugging-prompt",
+    "href": "slides/22.html#use-optionserror-recover-for-interactive-debugging-prompt",
+    "title": "Debugging",
+    "section": "Use options(error = recover) for interactive debugging prompt",
+    "text": "Use options(error = recover) for interactive debugging prompt\n\nTurn off with options(error = NULL)"
+  },
+  {
+    "objectID": "slides/22.html#debugfn_name-to-insert-browser-in-first-line-of-fn_name",
+    "href": "slides/22.html#debugfn_name-to-insert-browser-in-first-line-of-fn_name",
+    "title": "Debugging",
+    "section": "debug(fn_name) to insert browser() in first line of fn_name()",
+    "text": "debug(fn_name) to insert browser() in first line of fn_name()\n\nundebug(fn_name) to remove it\ndebugonce(fn_name) to do it once (similar to rerun with debug)\nutils::setBreakpoint(\"file_name\", line_number)\n\n\n\nPronounce debugonce() like “Beyonce”"
+  },
+  {
+    "objectID": "slides/22.html#call-stacks-printed-by-traceback-browser-where-and-recover-are-not-consistent",
+    "href": "slides/22.html#call-stacks-printed-by-traceback-browser-where-and-recover-are-not-consistent",
+    "title": "Debugging",
+    "section": "Call stacks printed by traceback(), browser() & where, and recover() are not consistent",
+    "text": "Call stacks printed by traceback(), browser() & where, and recover() are not consistent\n\n\nRStudio displays calls in the same order as traceback()\n{rlang} functions use the same ordering & numbering as recover()\n\nAlso indent to reinforce hierarchy"
+  },
+  {
+    "objectID": "slides/22.html#use-callrr-or-fresh-start-to-look-for-differences",
+    "href": "slides/22.html#use-callrr-or-fresh-start-to-look-for-differences",
+    "title": "Debugging",
+    "section": "Use callr::r() or fresh start to look for differences",
+    "text": "Use callr::r() or fresh start to look for differences\ncallr::r(f, list(1, 2)) calls f(1, 2) in a fresh session\n\nGlobal env\nPackages\nObject\nWorking directory\nPATH environment variable\nR_LIBS environment variable"
+  },
+  {
+    "objectID": "slides/22.html#dump.frames-is-the-equivalent-to-recover-for-non-interactive-code.",
+    "href": "slides/22.html#dump.frames-is-the-equivalent-to-recover-for-non-interactive-code.",
+    "title": "Debugging",
+    "section": "dump.frames() is the equivalent to recover() for non-interactive code.",
+    "text": "dump.frames() is the equivalent to recover() for non-interactive code."
+  },
+  {
+    "objectID": "slides/22.html#print-debugging-can-help-if-nothing-else-works",
+    "href": "slides/22.html#print-debugging-can-help-if-nothing-else-works",
+    "title": "Debugging",
+    "section": "Print debugging can help if nothing else works",
+    "text": "Print debugging can help if nothing else works"
+  },
+  {
+    "objectID": "slides/22.html#debugging-rmarkdownquarto-has-challenges",
+    "href": "slides/22.html#debugging-rmarkdownquarto-has-challenges",
+    "title": "Debugging",
+    "section": "Debugging Rmarkdown/Quarto has challenges",
+    "text": "Debugging Rmarkdown/Quarto has challenges\n\nCall rmarkdown::render(\"path/to/file.Rmd\") instead of IDE knitting\nUse sink() for tricksy error handling"
+  },
+  {
+    "objectID": "slides/22.html#functions-can-fail-without-errors",
+    "href": "slides/22.html#functions-can-fail-without-errors",
+    "title": "Debugging",
+    "section": "Functions can fail without errors",
+    "text": "Functions can fail without errors\n\nUnexpected warning: options(warn = 2) turns warnings into errors.\nUnexpected message: Proposed solution in book no longer available.\nFunction might never return. Terminate & traceback().\nCrashed R = bug in compiled (C, C++, etc) code."
+  },
+  {
+    "objectID": "slides/22.html#some-useful-resources-on-debugging",
+    "href": "slides/22.html#some-useful-resources-on-debugging",
+    "title": "Debugging",
+    "section": "Some useful resources on debugging",
+    "text": "Some useful resources on debugging\n\n“Object of type closure is not subsettable” (Jenny Bryan, rstudio::conf(2020))\n“What They Forgot to Teach You About R” Chapter 12 (by Jenny Bryan and Jim Hester)\nMinimal reprex for a shiny app (video by Hadley)"
   },
   {
     "objectID": "slides/20.html#learning-objectives",

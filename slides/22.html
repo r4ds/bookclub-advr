@@ -136,145 +136,268 @@
 <section id="learning-objectives" class="slide level2">
 <h2>Learning objectives:</h2>
 <ul>
-<li><p>General strategy for finding and fixing errors.</p></li>
-<li><p>Explore the <code>traceback()</code> function to locate exactly where an error occurred</p></li>
-<li><p>Explore how to pause the execution of a function and launch environment where we can interactively explore what’s happening</p></li>
-<li><p>Explore debugging when you’re running code non-interactively</p></li>
-<li><p>Explore non-error problems that occasionally also need debugging</p></li>
+<li>Overall: Find and fix errors.</li>
+<li>Locate exactly where an error occurred with the <code>traceback()</code> function.</li>
+<li>Pause the execution of a function and launch an environment to interactively explore what’s happening.</li>
+<li>Debug non-interactively executed code.</li>
+<li>Recognize other (non-error) problems that occasionally also need debugging</li>
 </ul>
 </section>
-<section id="introduction" class="slide level2 unnumbered">
-<h2>Introduction</h2>
-<blockquote>
-<p>Finding bug in code, is a process of confirming the many things that we believe are true — until we find one which is not true.</p>
-</blockquote>
-<p><strong>—Norm Matloff</strong></p>
-<blockquote>
-<p>Debugging is like being the detective in a crime movie where you’re also the murderer.</p>
-</blockquote>
+<section>
+<section id="strategies-for-finding-and-fixing-errors" class="title-slide slide level1 center">
+<h1>Strategies for finding and fixing errors</h1>
+<div class="line-block">Finding your bug is a process of confirming the many things that you <em>believe</em> are true — until you find one which is <em>not</em> true.</div>
+<div style="text-align: right;">
+<p><strong>—Norm Matloff</strong> (emphasis added)</p>
+</div>
+<div class="line-block">Debugging is like being the detective in a crime movie where you’re also the murderer.</div>
+<div style="text-align: right;">
 <p><strong>-Filipe Fortes</strong></p>
-<h3 class="unnumbered" id="strategies-for-finding-and-fixing-errors">Strategies for finding and fixing errors</h3>
-<h4 class="unnumbered" id="google">Google!</h4>
-<p>Whenever you see an error message, start by googling it. We can automate this process with the <a href="https://github.com/coatless-rpkg/errorist">{errorist}</a> and <a href="https://github.com/coatless-rpkg/searcher">{searcher}</a> packages.</p>
-<h4 class="unnumbered" id="make-it-repeatable">Make it repeatable</h4>
-<p>To find the root cause of an error, you’re going to need to execute the code many times as you consider and reject hypotheses. It’s worth some upfront investment to make the problem both easy and fast to reproduce.</p>
-<h4 class="unnumbered" id="figure-out-where-it-is">Figure out where it is</h4>
-<p>To find the bug, adopt the scientific method: <strong>generate hypotheses</strong>, <strong>design experiments to test them</strong>, and <strong>record your results</strong>. This may seem like a lot of work, but a systematic approach will end up saving you time.</p>
-<h4 class="unnumbered" id="fix-it-and-test-it">Fix it and test it</h4>
-<p>Once you’ve found the bug, you need to figure out how to fix it and to check that the fix actually worked. It’s very useful to have automated tests in place.</p>
+</div>
 </section>
-<section id="locating-errors" class="slide level2 unnumbered">
-<h2>Locating errors</h2>
-<p>The most important tool for finding errors is <code>traceback()</code>, which shows you the sequence of calls (also known as the <strong>call stack</strong>) that lead to the error.</p>
+<section id="google-first" class="slide level2">
+<h2>Google first!</h2>
 <ul>
-<li>Here’s a simple example where <code>f()</code> calls <code>g()</code> calls <code>h()</code> calls <code>i()</code>, which checks if its argument is numeric:</li>
+<li>Google new error messages to help translate</li>
+<li>Packages that help:
+<ul>
+<li><a href="https://r-pkg.thecoatlessprofessor.com/errorist/">{errorist}</a></li>
+<li><a href="https://r-pkg.thecoatlessprofessor.com/searcher/">{searcher}</a></li>
+<li>Probably AI agents now</li>
+</ul></li>
 </ul>
-<p><img data-src="images/locating-errors.png"> When we run <code>f("a")</code> code in RStudio we see:</p>
-<p><img data-src="images/fa.png"></p>
-<p>If you click <strong>“Show traceback”</strong> you see: <img data-src="images/options.png"></p>
-<p>You read the <code>traceback()</code> output from bottom to top: the initial call is <code>f()</code>, which calls <code>g()</code>, then <code>h()</code>, then <code>i()</code>, which triggers the error.</p>
 </section>
-<section id="lazy-evaluation" class="slide level2 unnumbered">
-<h2>Lazy evaluation</h2>
-<p>One drawback to <code>traceback()</code> is that it always <strong>linearises</strong> the call tree, which can be confusing if there is much lazy evaluation involved. For example, take the following example where the error happens when evaluating the first argument to <code>f()</code>:</p>
+<section id="repeatable-bugs-are-more-debuggable" class="slide level2">
+<h2>Repeatable bugs are more debuggable</h2>
+<ul>
+<li>May need to execute many times</li>
+<li>Up-front investment to make a minimal <a href="https://reprex.tidyverse.org/">{reprex}</a> pays off</li>
+</ul>
+</section>
+<section id="use-the-scientific-method-to-find-bugs" class="slide level2">
+<h2>Use the scientific method to find bugs</h2>
+<ul>
+<li>Generate a hypothesis.</li>
+<li>Design experiments to test that hypothesis/</li>
+<li>Record your results.</li>
+</ul>
+<p>Being systematic often saves time in the end.</p>
+</section>
+<section id="automated-tests-help" class="slide level2">
+<h2>Automated tests help</h2>
+<ul>
+<li>Add tests for nearby working code to avoid new bugs.</li>
+<li>Add tests for specific broken cases.</li>
+<li>Add tests for hypotheses.</li>
+</ul>
+</section></section>
+<section>
+<section id="use-traceback-to-locate-the-error" class="title-slide slide level1 center">
+<h1>Use <code>traceback()</code> to locate the error</h1>
+
+</section>
+<section id="example-chained-functions" class="slide level2">
+<h2>Example: Chained functions</h2>
+<p><img data-src="images/locating-errors.png"></p>
+<p><img data-src="images/fa.png"></p>
+</section>
+<section id="traceback-shows-the-call-stack-that-lead-to-the-error" class="slide level2">
+<h2><code>traceback()</code> shows the call stack that lead to the error</h2>
+<p>Click <strong>“Show traceback”:</strong>: <img data-src="images/options.png"></p>
+<p>Read bottom to top.</p>
+<aside class="notes">
+<ul>
+<li><code>f()</code> calls <code>g()</code> calls <code>h()</code> calls <code>i()</code></li>
+<li><code>rlang::global_handle()</code> for better traceback.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="traceback-is-confusing-with-lazy-evaluation" class="slide level2">
+<h2><code>traceback()</code> is confusing with lazy evaluation</h2>
 <p><img data-src="images/lazy-evaluation.png"></p>
 <p><img data-src="images/traceback.png"></p>
-<p>Note: <code>rlang::with_abort()</code> is no longer an exported object from ‘namespace:rlang’. There is an <a href="https://github.com/hadley/adv-r/issues/1740">open issue</a> about a fix for the chapter but no drop-in replacement.</p>
+<aside class="notes">
+<ul>
+<li><code>j()</code> isn’t evaluated until it gets to <code>i()</code>.</li>
+<li>I honestly don’t find this example all that confusing.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
-<section id="interactive-debugger" class="slide level2 unnumbered">
-<h2>Interactive debugger</h2>
-<p>Enter the interactive debugger is wwith RStudio’s <strong>“Rerun with Debug”</strong> tool. This reruns the command that created the error, pausing execution where the error occurred. Otherwise, you can insert a call to <code>browser()</code> where you want to pause, and re-run the function.</p>
-<p><img data-src="images/browser.png"></p>
-<p><code>browser()</code> is just a regular function call which means that you can run it conditionally by wrapping it in an <code>if</code> statement:</p>
-<p><img data-src="images/browser2.png"></p>
+<section id="rlangglobal_handle-in-.rprofile-makes-traceback-better" class="slide level2">
+<h2><code>rlang::global_handle()</code> in <code>.Rprofile</code> makes traceback better</h2>
+
+<img data-src="images/global_handle.png" class="r-stretch"><aside class="notes">
+<ul>
+<li><code>rlang::with_abort()</code> from book no longer exists</li>
+<li>I’m now experimenting with turning this off, because it breaks “rerun with debug”!</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="interactive-debugger" class="title-slide slide level1 center">
+<h1>Interactive debugger</h1>
+
 </section>
-<section id="browser-commands" class="slide level2 unnumbered">
-<h2><code>browser()</code> commands</h2>
-<p><code>browser()</code> provides a few special commands.</p>
+<section id="rstudio-has-tools-for-debugging" class="slide level2">
+<h2>RStudio has tools for debugging</h2>
+<ul>
+<li>Click “Rerun with Debug” in error message</li>
+<li>Enable <code>Debug &gt; On Error &gt; Break in Code</code> to always jump to error</li>
+</ul>
+</section>
+<section id="use-browser-to-set-a-break-point-in-code" class="slide level2">
+<h2>Use <code>browser()</code> to set a break point in code</h2>
+
+<img data-src="images/browser.png" class="r-stretch"></section>
+<section id="browser-can-be-conditional" class="slide level2">
+<h2><code>browser()</code> can be conditional</h2>
+
+<img data-src="images/browser2.png" class="r-stretch"></section>
+<section id="browser-provides-special-commands" class="slide level2">
+<h2><code>browser()</code> provides special commands</h2>
 
 <img data-src="images/debug-toolbar.png" class="r-stretch"><ul>
-<li><p>Next, <code>n</code>: executes the next step in the function.</p></li>
-<li><p>Step into, or <code>s</code>: works like next, but if the next step is a function, it will step into that function so you can explore it interactively.</p></li>
-<li><p>Finish, or <code>f</code>: finishes execution of the current loop or function.</p></li>
-<li><p>Continue, <code>c</code>: leaves interactive debugging and continues regular execution of the function.</p></li>
-<li><p>Stop, <code>Q</code>: stops debugging, terminates the function, and returns to the global workspace.</p></li>
+<li>Next (<code>n</code>): Execute the next step</li>
+<li>Step into (<code>s</code>): Dive into function (or <code>n</code>)</li>
+<li>Finish (<code>f</code>): Finish execution of the current loop/function</li>
+<li>Continue (<code>c</code>): Continue regular execution of the function (leave interactive)</li>
+<li>Stop (<code>Q</code>): Stop debugging, terminate the function, and return to the global workspace</li>
 </ul>
 </section>
-<section id="alternatives" class="slide level2 unnumbered">
-<h2>Alternatives</h2>
-<p>There are three alternatives to using <code>browser()</code>: setting breakpoints in RStudio, <code>options(error = recover)</code>, and <code>debug()</code> and other related functions.</p>
-</section>
-<section id="breakpoints" class="slide level2 unnumbered">
-<h2>Breakpoints</h2>
-<p>In RStudio, you can set a breakpoint by clicking to the left of the line number, or pressing <strong>Shift + F9.</strong> There are two small downsides to breakpoints:</p>
+<section id="set-breakpoints-in-rstudio-for-virtual-browser" class="slide level2">
+<h2>Set breakpoints in RStudio for virtual <code>browser()</code></h2>
+<p>Activate:</p>
 <ul>
-<li><p>There are a few unusual situations in which breakpoints will not work. <a href="https://support.posit.co/hc/en-us/articles/200534337-Breakpoint-Troubleshooting">Read breakpoint troubleshooting for more details</a></p></li>
-<li><p>RStudio currently does not support conditional breakpoints.</p></li>
+<li>Click to left of line number, or</li>
+<li>Press <strong>Shift + F9</strong></li>
 </ul>
-</section>
-<section id="recover" class="slide level2 unnumbered">
-<h2><code>recover()</code></h2>
-<p>When you set <code>options(error = recover)</code>, when you get an error, you’ll get an interactive prompt that displays the traceback and gives you the ability to interactively debug inside any of the frames:</p>
-<p><img data-src="images/recover.png"> You can return to default error handling with <code>options(error = NULL)</code>.</p>
-</section>
-<section id="debug" class="slide level2 unnumbered">
-<h2><code>debug()</code></h2>
-<p>Another approach is to call a function that inserts the <code>browser()</code> call:</p>
+<p>Downsides:</p>
 <ul>
-<li><p><code>debug()</code> inserts a browser statement in the first line of the specified function. undebug() removes it.</p></li>
-<li><p><code>utils::setBreakpoint()</code> works similarly, but instead of taking a function name, it takes a file name and line number and finds the appropriate function for you.</p></li>
+<li>Fail in <a href="https://support.posit.co/hc/en-us/articles/200534337-Breakpoint-Troubleshooting">unusual situations</a></li>
+<li>Can’t be conditional</li>
 </ul>
 </section>
-<section id="call-stack" class="slide level2 unnumbered">
-<h2>Call stack</h2>
-<p>The call stacks printed by <code>traceback()</code>, <code>browser()</code> &amp; <code>where</code>, and <code>recover()</code> are not consistent.</p>
+<section id="use-optionserror-recover-for-interactive-debugging-prompt" class="slide level2">
+<h2>Use <code>options(error = recover)</code> for interactive debugging prompt</h2>
 
-<img data-src="images/print-debug.png" class="r-stretch"><p>RStudio displays calls in the same order as <code>traceback()</code>. rlang functions use the same ordering and numbering as <code>recover()</code>, but also use indenting to reinforce the hierarchy of calls.</p>
+<img data-src="images/recover.png" class="r-stretch"><p>Turn off with <code>options(error = NULL)</code></p>
 </section>
-<section id="non-interactive-debugging" class="slide level2 unnumbered">
-<h2>Non-interactive debugging</h2>
-<p>When you can’t explore interactively…</p>
-<h3 class="unnumbered" id="callrr"><code>callr::r()</code></h3>
-<p><code>callr::r(f, list(1, 2))</code> calls <code>f(1, 2)</code> in a fresh session to help diagnose:</p>
+<section id="debugfn_name-to-insert-browser-in-first-line-of-fn_name" class="slide level2">
+<h2><code>debug(fn_name)</code> to insert <code>browser()</code> in first line of <code>fn_name()</code></h2>
 <ul>
-<li><p>Is the global environment different? Have you loaded different packages? Are objects left from previous sessions causing differences?</p></li>
-<li><p>Is the working directory different?</p></li>
-<li><p>Is the <code>PATH</code> environment variable different?</p></li>
-<li><p>Is the <code>R_LIBS</code> environment variable different?</p></li>
+<li><code>undebug(fn_name)</code> to remove it</li>
+<li><code>debugonce(fn_name)</code> to do it once (similar to rerun with debug)</li>
+<li><code>utils::setBreakpoint("file_name", line_number)</code></li>
 </ul>
-<h3 class="unnumbered" id="dump.frames"><code>dump.frames()</code></h3>
-<p><code>dump.frames()</code> is the equivalent to <code>recover()</code> for non-interactive code.</p>
-<p><img data-src="images/non-interractive-debugging.png"></p>
-<h3 class="unnumbered" id="print-debugging">Print debugging</h3>
-<p>Insert numerous print statements to precisely locate the problem, and see the values of important variables. Print debugging is particularly useful for compiled code.</p>
-<p><img data-src="images/print-debugging.png"></p>
-<h3 class="unnumbered" id="rmarkdown">RMarkdown</h3>
+<aside class="notes">
 <ul>
-<li><p>If you’re knitting the file using RStudio, switch to calling <code>rmarkdown::render("path/to/file.Rmd")</code> instead to run the code in the current session.</p></li>
-<li><p>For interactive debugging, you’ll need to call <code>sink()</code> in the error handler. For example, to use <code>recover()</code> with RMarkdown, you’d put the following code in your setup block:</p></li>
+<li>Pronounce <code>debugonce()</code> <a href="https://www.youtube.com/watch?v=JThd3YYQXGg">like “Beyonce”</a></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="call-stacks-printed-by-traceback-browser-where-and-recover-are-not-consistent" class="slide level2">
+<h2>Call stacks printed by <code>traceback()</code>, <code>browser()</code> &amp; <code>where</code>, and <code>recover()</code> are not consistent</h2>
+
+<img data-src="images/print-debug.png" class="r-stretch"><ul>
+<li>RStudio displays calls in the same order as <code>traceback()</code></li>
+<li>{rlang} functions use the same ordering &amp; numbering as <code>recover()</code>
+<ul>
+<li>Also indent to reinforce hierarchy</li>
+</ul></li>
+</ul>
+</section></section>
+<section>
+<section id="non-interactive-debugging" class="title-slide slide level1 center">
+<h1>Non-interactive debugging</h1>
+
+</section>
+<section id="use-callrr-or-fresh-start-to-look-for-differences" class="slide level2">
+<h2>Use <code>callr::r()</code> or fresh start to look for differences</h2>
+<p><code>callr::r(f, list(1, 2))</code> calls <code>f(1, 2)</code> in a fresh session</p>
+<ul>
+<li>Global env</li>
+<li>Packages</li>
+<li>Object</li>
+<li>Working directory</li>
+<li><code>PATH</code> environment variable</li>
+<li><code>R_LIBS</code> environment variable</li>
+</ul>
+</section>
+<section id="dump.frames-is-the-equivalent-to-recover-for-non-interactive-code." class="slide level2">
+<h2><code>dump.frames()</code> is the equivalent to <code>recover()</code> for non-interactive code.</h2>
+
+<img data-src="images/non-interractive-debugging.png" class="r-stretch"></section>
+<section id="print-debugging-can-help-if-nothing-else-works" class="slide level2">
+<h2>Print debugging can help if nothing else works</h2>
+
+<img data-src="images/print-debugging.png" class="r-stretch"></section>
+<section id="debugging-rmarkdownquarto-has-challenges" class="slide level2">
+<h2>Debugging Rmarkdown/Quarto has challenges</h2>
+<ul>
+<li>Call <code>rmarkdown::render("path/to/file.Rmd")</code> instead of IDE knitting</li>
+<li>Use <code>sink()</code> for tricksy error handling</li>
 </ul>
 <p><img data-src="images/print-recover.png" height="110"></p>
 </section>
-<section id="non-error-failures" class="slide level2 unnumbered">
-<h2>Non-error failures</h2>
-<p>There are other ways for a function to fail apart from throwing an error:</p>
+<section id="functions-can-fail-without-errors" class="slide level2">
+<h2>Functions can fail without errors</h2>
 <ul>
-<li><p>A function may generate an unexpected warning. Convert warnings into errors with <code>options(warn = 2)</code> and use the the call stack.</p></li>
-<li><p>A function may generate an unexpected message. The removal of <code>with_abort()</code> from {rlang} breaks this solution.</p></li>
-<li><p>A function might never return.</p></li>
-<li><p>The worst scenario is that your code might crash R completely, leaving you with no way to interactively debug your code. This indicates a bug in compiled (C or C++) code.</p></li>
+<li>Unexpected warning: <code>options(warn = 2)</code> turns warnings into errors.</li>
+<li>Unexpected message: Proposed solution in book no longer available.</li>
+<li>Function might never return. Terminate &amp; <code>traceback()</code>.</li>
+<li>Crashed R = bug in compiled (C, C++, etc) code.</li>
 </ul>
 </section>
-<section id="link-to-some-useful-resources-on-debugging" class="slide level2 unnumbered">
-<h2>Link to some useful resources on debugging</h2>
+<section id="some-useful-resources-on-debugging" class="slide level2">
+<h2>Some useful resources on debugging</h2>
 <ul>
-<li><p>Jenny Bryan’s <a href="https://github.com/jennybc/debugging#readme">“Object of type closure is not subsettable”</a> talk from rstudio::conf 2020</p></li>
-<li><p>Jenny Bryan and Jim Hester’s book: <a href="https://rstats.wtf/debugging-r">“What They Forgot to Teach You About R”</a> Ch12</p></li>
-<li><p>Hadley’s video on a <a href="https://www.youtube.com/watch?v=9w8ANOAlWy4">minimal reprex for a shiny app</a></p></li>
+<li><a href="https://github.com/jennybc/debugging#readme">“Object of type closure is not subsettable”</a> (Jenny Bryan, <code>rstudio::conf(2020)</code>)</li>
+<li><a href="https://rstats.wtf/debugging-r">“What They Forgot to Teach You About R” Chapter 12</a> (by Jenny Bryan and Jim Hester)</li>
+<li><a href="https://www.youtube.com/watch?v=9w8ANOAlWy4">Minimal reprex for a shiny app</a> (video by Hadley)</li>
 </ul>
 
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -490,6 +613,44 @@
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
