@@ -14,13 +14,13 @@ title: Debugging
 ## Types of errors
 
 - Parsing errors: you are missing a closing `)`, `}` or `"` 
-  so the code cannot even be read properly
-     * Usually captured by IDEs such as RStudio and Positron with red flashing stop signs
+  so the code AST cannot even be formed
+     * Usually captured by IDEs such as RStudio and Positron with red flashing pointers
 - Syntax errors: 
-     * There is the right number of closing parentheses but one of them closes at wrong time
+     * Parentheses are matched but one of them closes at wrong time
      * The name of a function input is misspelled
      * Passing more inputs to a function than it expects
-- Runtime errors: the code may be syntactically correct, but it does a weird thing
+- Runtime errors: the code is syntactically correct, but it does a weird thing
   in your actual environment with your actual data
 
 ## We want to subset our closures!!!
@@ -30,9 +30,10 @@ And then of course there's this classic:
 ![](images/22-closure-not-subsettable.png)
 
 Explanation: `df` is a closure, in this case, the function `stats::df()`, the density of F-distribution.
+(It is not a data frame, as you thought it was, ha!)
 It does not have elements that you could subset. 
 
-## Strategies for finding and fixing errors
+# Strategies for finding and fixing errors
 
 | Finding your bug is a process of confirming the many things that you *believe* are true — until you find one which is *not* true.
 
@@ -76,11 +77,38 @@ Being systematic often saves time in the end.
 Concepts of unit tests are generally associated with R package development,
 see [chapters on testing in "Writing R Packages"](https://r-pkgs.org/testing-basics.html).
 
+::: {.smaller}
 Automated testing sometimes brings a dilemma: you add something to a working function, 
-and the stuff that you added does work, but an old test gets broken. 
+and the stuff that you added does work according to the new tests, but an old test gets broken. 
 This is may not be an error per se, but it shows a gap in your knowledge of 
 and assumptions about the code (see Norm Matloff's quote above) 
 and you have to deal with that one way or another.
+:::
+
+## Common syntax errors
+
+[Longer list here](https://computing.stat.berkeley.edu/tutorial-R-debugging/#4-some-common-causes-of-bugs)
+
+- Parenthesis mismatches
+
+- `[[...]]` vs. `[...]`
+
+- `==` vs. `=`
+
+- Comparing real numbers exactly using `==` after calculations that result in non-integers
+
+- You expect a single value but your code gives you a vector 
+    * You may need `identical()` or `all()`, or form the condition more thoroughly
+
+![](images/22-cond-gt1.png)
+
+- Type coercion and dropping dimensions
+
+```{r drop_class}
+inherits(mtcars[,1], "data.frame")
+inherits(mtcars[,1, drop=FALSE], "data.frame")
+```
+
 
 # Use `traceback()` to locate the error
 
@@ -115,12 +143,16 @@ Read bottom to top.
 
 ## `traceback()` limits
 
-In real world, traceback may look like 25 layers 
+In real world, traceback may look like [25 layers](https://stbl.wrangle.zone/dev/reference/expect_pkg_error_classes.html)
 
 - Your code is the first 2-3 layers.
 - The last 5 layers are very clearly formatting the error and making a safe return of appropriate objects.
-- The middle 15 layers are classes and methods of `dplyr`, `rlang` and maybe packages you have never heard of,
-  passing very opaque things to one another, and the output of tracebacks helps rather little.
+- The middle 15 layers are classes and methods of `dplyr`, `rlang`, `purrr` and `base` 
+  and maybe packages you have never heard of,
+  passing very opaque things to one another, 
+  your informatively named objects are abstracted somewhere
+  in `...`, `.x` and `envir`...
+- ... and you are still left wondering what's going on.
 
 ## `rlang::global_handle()` in `.Rprofile` makes traceback better
 
@@ -232,6 +264,23 @@ Turn off with `options(error = NULL)`
 
 ![](images/print-debugging.png)
 
+## Debugging withing packages
+
+Recall [Chapter 8](08.html) on classed conditions:
+
+- you can create richer structured objects with 
+
+```
+rlang::abort(
+  message = "cli-formatted-message",
+  class   = "your-special-class-to-distinguish-from-other-errors",
+  ...
+)
+```
+
+- you can pass your situation report in `...` so that error handlers
+  and/or reporters can more effectively peek into your environment that errored
+- you can capture the class with `testthat::expect_s3_class()`
 
 ## Debugging Rmarkdown/Quarto has challenges
 
@@ -256,6 +305,8 @@ in Jenny Bryan's _Happy Git With R_ book.
 - ["Object of type closure is not subsettable"](https://github.com/jennybc/debugging#readme) (Jenny Bryan, `rstudio::conf(2020)`)
 - ["What They Forgot to Teach You About R" Chapter 12](https://rstats.wtf/debugging-r) (by Jenny Bryan and Jim Hester)
 - [Minimal reprex for a shiny app](https://www.youtube.com/watch?v=9w8ANOAlWy4) (video by Hadley)
+- [Debugging in RStudio, by Posit](https://support.posit.co/hc/en-us/articles/205612627-Debugging-with-the-RStudio-IDE)
+
 
 - If you have access to "Code Complete", it provides 
   [generic debugging principles](https://www.oreilly.com/library/view/code-complete-2nd/0735619670/ch08.html)
