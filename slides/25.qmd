@@ -5,9 +5,16 @@ title: Rewriting R code in C++
 
 ## Learning objectives:
 
+-   Connect R and C/C++
+-   Run C++ in R
+-   Create and call C++ functions in R
 -   Learn to improve performance by rewriting bottlenecks in C++
 
 -   Introduction to the [{Rcpp} package](https://www.rcpp.org/)
+
+```{r}
+library(Rcpp)
+```
 
 ## Introduction
 
@@ -27,17 +34,29 @@ In this chapter we'll learn how to rewrite **R** code in **C++** to make it fast
 
  
 
-## Getting started with C++
+## `evalCpp` evaluates C++ code from R
 
-```{r warning=FALSE}
-library(Rcpp)
+::: panel-tabset
+
+### No need to leave R!
+
+-   Unlike R, C++ is not vectorized
+-   `Rcpp` provides vectorization.
+
+```{r}
+set.seed(123)
+Rcpp::evalCpp("Rcpp::rnorm(3)")
 ```
 
-Install a C++ compiler:
+### A lot is done behind the scenes
 
--   Rtools, on Windows
--   Xcode, on Mac
--   Sudo apt-get install r-base-dev or similar, on Linux.
+-   Note: R and C environments share random seed settings
+```{r}
+set.seed(123)
+Rcpp::evalCpp("Rcpp::rnorm(3)",verbose = TRUE,rebuild = TRUE)
+```
+
+:::
 
 
 ### First example {-}
@@ -637,6 +656,7 @@ bench::mark(
 
 ## Resources
 
+-   [A Brief Introduction to Rcpp](https://cran.r-project.org/web/packages/Rcpp/vignettes/Rcpp-introduction.pdf)
 -   [Rcpp: Seamless R and C++ Integration](https:\\Rcpp.org)
 -   [cpp-tutorial](https://www.learncpp.com) is often recommended. Lots of ads though!
 -   [cpp-reference](https://en.cppreference.com/w/cpp)
