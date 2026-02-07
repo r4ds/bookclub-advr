@@ -77,7 +77,7 @@ Being systematic often saves time in the end.
 Concepts of unit tests are generally associated with R package development,
 see [chapters on testing in "Writing R Packages"](https://r-pkgs.org/testing-basics.html).
 
-::: {.smaller}
+::: {style="font-size: 75%;"}
 Automated testing sometimes brings a dilemma: you add something to a working function, 
 and the stuff that you added does work according to the new tests, but an old test gets broken. 
 This is may not be an error per se, but it shows a gap in your knowledge of 
