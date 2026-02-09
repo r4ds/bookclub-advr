@@ -28,6 +28,7 @@ Imports:
     lobstr,
     Matrix,
     memoise,
+    microbenchmark,
     palmerpenguins,
     patchwork,
     profvis,
