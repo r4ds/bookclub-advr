@@ -678,14 +678,28 @@
     "href": "slides/22.html#learning-objectives",
     "title": "Debugging",
     "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nOverall: Find and fix errors.\nLocate exactly where an error occurred with the traceback() function.\nPause the execution of a function and launch an environment to interactively explore what’s happening.\nDebug non-interactively executed code.\nRecognize other (non-error) problems that occasionally also need debugging"
+    "text": "Learning objectives:\n\nOverall: Find and fix errors.\nLocate exactly where an error occurred with the traceback() function.\nPause the execution of a function and launch an environment to interactively explore what’s happening.\nDebug non-interactively executed code.\nRecognize other (non-error) problems that occasionally also need debugging."
+  },
+  {
+    "objectID": "slides/22.html#types-of-errors",
+    "href": "slides/22.html#types-of-errors",
+    "title": "Debugging",
+    "section": "Types of errors",
+    "text": "Types of errors\n\nParsing errors: you are missing a closing ), } or \" so the code AST cannot even be formed\n\nUsually captured by IDEs such as RStudio and Positron with red flashing pointers\n\nSyntax errors:\n\nParentheses are matched but one of them closes at wrong time\nThe name of a function input is misspelled\nPassing more inputs to a function than it expects\n\nRuntime errors: the code is syntactically correct, but it does a weird thing in your actual environment with your actual data"
+  },
+  {
+    "objectID": "slides/22.html#we-want-to-subset-our-closures",
+    "href": "slides/22.html#we-want-to-subset-our-closures",
+    "title": "Debugging",
+    "section": "We want to subset our closures!!!",
+    "text": "We want to subset our closures!!!\nAnd then of course there’s this classic:\n\nExplanation: df is a closure, in this case, the function stats::df(), the density of F-distribution. (It is not a data frame, as you thought it was, ha!) It does not have elements that you could subset."
   },
   {
     "objectID": "slides/22.html#google-first",
     "href": "slides/22.html#google-first",
     "title": "Debugging",
     "section": "Google first!",
-    "text": "Google first!\n\nGoogle new error messages to help translate\nPackages that help:\n\n{errorist}\n{searcher}\nProbably AI agents now"
+    "text": "Google first!\n\nGoogle new error messages to help translate\nPackages that help:\n\n{errorist}\n{searcher}\nProbably AI agents after 2026"
   },
   {
     "objectID": "slides/22.html#repeatable-bugs-are-more-debuggable",
@@ -699,14 +713,21 @@
     "href": "slides/22.html#use-the-scientific-method-to-find-bugs",
     "title": "Debugging",
     "section": "Use the scientific method to find bugs",
-    "text": "Use the scientific method to find bugs\n\nGenerate a hypothesis.\nDesign experiments to test that hypothesis/\nRecord your results.\n\nBeing systematic often saves time in the end."
+    "text": "Use the scientific method to find bugs\n\nGenerate a hypothesis.\nDesign experiments to test that hypothesis.\nRecord your results.\n\nBeing systematic often saves time in the end."
   },
   {
     "objectID": "slides/22.html#automated-tests-help",
     "href": "slides/22.html#automated-tests-help",
     "title": "Debugging",
     "section": "Automated tests help",
-    "text": "Automated tests help\n\nAdd tests for nearby working code to avoid new bugs.\nAdd tests for specific broken cases.\nAdd tests for hypotheses."
+    "text": "Automated tests help\n\nAdd tests for nearby working code to avoid new bugs.\nAdd tests for specific broken cases.\nAdd tests for hypotheses.\n\nConcepts of unit tests are generally associated with R package development, see chapters on testing in “Writing R Packages”.\n\nAutomated testing sometimes brings a dilemma: you add something to a working function, and the stuff that you added does work according to the new tests, but an old test gets broken. This is may not be an error per se, but it shows a gap in your knowledge of and assumptions about the code (see Norm Matloff’s quote above) and you have to deal with that one way or another."
+  },
+  {
+    "objectID": "slides/22.html#common-syntax-errors",
+    "href": "slides/22.html#common-syntax-errors",
+    "title": "Debugging",
+    "section": "Common syntax errors",
+    "text": "Common syntax errors\nLonger list here\n\nParenthesis mismatches\n[[...]] vs. [...]\n== vs. =\nComparing real numbers exactly using == after calculations that result in non-integers\nYou expect a single value but your code gives you a vector\n\nYou may need identical() or all(), or form the condition more thoroughly\n\n\n\n\nType coercion and dropping dimensions\n\n\ninherits(mtcars[,1], \"data.frame\")\n\n#&gt; [1] FALSE\n\ninherits(mtcars[,1, drop=FALSE], \"data.frame\")\n\n#&gt; [1] TRUE"
   },
   {
     "objectID": "slides/22.html#example-chained-functions",
@@ -728,6 +749,13 @@
     "title": "Debugging",
     "section": "traceback() is confusing with lazy evaluation",
     "text": "traceback() is confusing with lazy evaluation\n\n\n\n\nj() isn’t evaluated until it gets to i().\nI honestly don’t find this example all that confusing."
+  },
+  {
+    "objectID": "slides/22.html#traceback-limits",
+    "href": "slides/22.html#traceback-limits",
+    "title": "Debugging",
+    "section": "traceback() limits",
+    "text": "traceback() limits\nIn real world, traceback may look like 25 layers\n\nYour code is the first 2-3 layers.\nThe last 5 layers are very clearly formatting the error and making a safe return of appropriate objects.\nThe middle 15 layers are classes and methods of dplyr, rlang, purrr and base and maybe packages you have never heard of, passing very opaque things to one another, your informatively named objects are abstracted somewhere in ..., .x and envir…\n… and you are still left wondering what’s going on."
   },
   {
     "objectID": "slides/22.html#rlangglobal_handle-in-.rprofile-makes-traceback-better",
@@ -755,14 +783,21 @@
     "href": "slides/22.html#browser-can-be-conditional",
     "title": "Debugging",
     "section": "browser() can be conditional",
-    "text": "browser() can be conditional"
+    "text": "browser() can be conditional\n\nA better practice would be to define your own debugging flags that would be turned off or disappear in production code\nif (exists(\"my_debugging_flag\")) browser()"
   },
   {
     "objectID": "slides/22.html#browser-provides-special-commands",
     "href": "slides/22.html#browser-provides-special-commands",
     "title": "Debugging",
     "section": "browser() provides special commands",
-    "text": "browser() provides special commands\n\n\nNext (n): Execute the next step\nStep into (s): Dive into function (or n)\nFinish (f): Finish execution of the current loop/function\nContinue (c): Continue regular execution of the function (leave interactive)\nStop (Q): Stop debugging, terminate the function, and return to the global workspace"
+    "text": "browser() provides special commands\nThese commands work in the Console; RStudio also makes the toolbar buttons available.\n\n\nNext (n): Execute the next step\nStep into (s): Dive into function (or n)\nFinish (f): Finish execution of the current loop/function\nContinue (c): Continue regular execution of the function (leave interactive)\nStop (Q): Stop debugging, terminate the function, and return to the global workspace"
+  },
+  {
+    "objectID": "slides/22.html#browser-practical-tips",
+    "href": "slides/22.html#browser-practical-tips",
+    "title": "Debugging",
+    "section": "browser() practical tips",
+    "text": "browser() practical tips\n\nRStudio runs its best attempt to show the code that is being executed in the “Source” pane\n\nparsed AST for external functions (no comments, no indents);\nactual source files within your packages when you are in the package project.\n\nThat means you can select the code and Ctrl+Enter to execute it\n\nif in doubt about the source of the error, do that rather than hitting n “Next”\nespecially if the computations leading to this point in your code are costly in terms of time"
   },
   {
     "objectID": "slides/22.html#set-breakpoints-in-rstudio-for-virtual-browser",
@@ -814,11 +849,18 @@
     "text": "Print debugging can help if nothing else works"
   },
   {
+    "objectID": "slides/22.html#debugging-withing-packages",
+    "href": "slides/22.html#debugging-withing-packages",
+    "title": "Debugging",
+    "section": "Debugging withing packages",
+    "text": "Debugging withing packages\nRecall Chapter 8 on classed conditions:\n\nyou can create richer structured objects with\n\nrlang::abort(\n  message = \"cli-formatted-message\",\n  class   = \"your-special-class-to-distinguish-from-other-errors\",\n  ...\n)\n\nyou can pass your situation report in ... so that error handlers and/or reporters can more effectively peek into your environment that errored\nyou can capture the class with testthat::expect_s3_class()"
+  },
+  {
     "objectID": "slides/22.html#debugging-rmarkdownquarto-has-challenges",
     "href": "slides/22.html#debugging-rmarkdownquarto-has-challenges",
     "title": "Debugging",
     "section": "Debugging Rmarkdown/Quarto has challenges",
-    "text": "Debugging Rmarkdown/Quarto has challenges\n\nCall rmarkdown::render(\"path/to/file.Rmd\") instead of IDE knitting\nUse sink() for tricksy error handling"
+    "text": "Debugging Rmarkdown/Quarto has challenges\n\nCall rmarkdown::render(\"path/to/file.Rmd\") instead of IDE knitting.\n\ndownside: the content of your current environment propagates into the markdown code\n\nUse sink() for tricksy error handling\n\n\nSee also “Markdown test drive” in Jenny Bryan’s Happy Git With R book."
   },
   {
     "objectID": "slides/22.html#functions-can-fail-without-errors",
@@ -832,7 +874,7 @@
     "href": "slides/22.html#some-useful-resources-on-debugging",
     "title": "Debugging",
     "section": "Some useful resources on debugging",
-    "text": "Some useful resources on debugging\n\n“Object of type closure is not subsettable” (Jenny Bryan, rstudio::conf(2020))\n“What They Forgot to Teach You About R” Chapter 12 (by Jenny Bryan and Jim Hester)\nMinimal reprex for a shiny app (video by Hadley)"
+    "text": "Some useful resources on debugging\n\n“Object of type closure is not subsettable” (Jenny Bryan, rstudio::conf(2020))\n“What They Forgot to Teach You About R” Chapter 12 (by Jenny Bryan and Jim Hester)\nMinimal reprex for a shiny app (video by Hadley)\nDebugging in RStudio, by Posit\nIf you have access to “Code Complete”, it provides generic debugging principles that are meant to be applicable across programming languages"
   },
   {
     "objectID": "slides/20.html#learning-objectives",
@@ -5009,7 +5051,7 @@
     "href": "slides/23.html#learning-objectives",
     "title": "Measuring performance",
     "section": "Learning objectives:",
-    "text": "Learning objectives:\n\nUnderstand how to improve your code for making it faster\nLearn what are the tools for improving your code\nTest how to profile your code"
+    "text": "Learning objectives:\n\nUnderstand how to figure out where R is spending time executing your code\nLearn about the tools for benchmarking your code\nImplement code profiling"
   },
   {
     "objectID": "slides/23.html#introduction",
@@ -5019,18 +5061,88 @@
     "text": "Introduction\n\n“Before you can make your code faster, you first need to figure out what’s making it slow.”\n\n\nSLOW DOWN TO LEARN HOW TO CODE FASTER | credits: packtpub.com\nprofile your code: measure the run-time of each line of code using realistic inputs\nexperiment with alternatives to find faster code\nmicrobenchmark to measure the difference in performance."
   },
   {
+    "objectID": "slides/23.html#packages-introduced",
+    "href": "slides/23.html#packages-introduced",
+    "title": "Measuring performance",
+    "section": "Packages introduced",
+    "text": "Packages introduced\n\nlibrary(profvis)\nlibrary(bench)\nlibrary(microbenchmark)"
+  },
+  {
     "objectID": "slides/23.html#profiling",
     "href": "slides/23.html#profiling",
     "title": "Measuring performance",
     "section": "Profiling",
-    "text": "Profiling\n\nlibrary(profvis)\nlibrary(bench)\n\nThe tool to use is a profiler, it allows for sampling the code performance through stopping the execution of code every few milliseconds and recording all the steps.\nExample:\n\nf &lt;- function() {\n  pause(0.1)\n  g()\n  h()\n}\ng &lt;- function() {\n  pause(0.1)\n  h()\n}\nh &lt;- function() {\n  pause(0.1)\n}\n\nProfile the execution of f():\nprofvis::pause() is used instead of Sys.sleep()\nprofile f(), with utils::Rprof()\n\ntmp &lt;- tempfile()\nRprof(tmp, interval = 0.1)\nf()\n\n#&gt; NULL\n\nRprof(NULL)\nwriteLines(readLines(tmp))\n\n#&gt; sample.interval=100000\n#&gt; \"pause\" \"f\" \"eval\" \"eval\" \"withVisible\" \"withCallingHandlers\" \"eval\" \"eval\" \"with_handlers\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"withRestarts\" \"evaluate::evaluate\" \"evaluate\" \"in_dir\" \"in_input_dir\" \"eng_r\" \"block_exec\" \"call_block\" \"process_group\" \"withCallingHandlers\" \"xfun:::handle_error\" \"process_file\" \"knitr::knit\" \"rmarkdown::render\" \"execute\" \".main\" \n#&gt; \"pause\" \"g\" \"f\" \"eval\" \"eval\" \"withVisible\" \"withCallingHandlers\" \"eval\" \"eval\" \"with_handlers\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"withRestarts\" \"evaluate::evaluate\" \"evaluate\" \"in_dir\" \"in_input_dir\" \"eng_r\" \"block_exec\" \"call_block\" \"process_group\" \"withCallingHandlers\" \"xfun:::handle_error\" \"process_file\" \"knitr::knit\" \"rmarkdown::render\" \"execute\" \".main\" \n#&gt; \"pause\" \"h\" \"g\" \"f\" \"eval\" \"eval\" \"withVisible\" \"withCallingHandlers\" \"eval\" \"eval\" \"with_handlers\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"withRestarts\" \"evaluate::evaluate\" \"evaluate\" \"in_dir\" \"in_input_dir\" \"eng_r\" \"block_exec\" \"call_block\" \"process_group\" \"withCallingHandlers\" \"xfun:::handle_error\" \"process_file\" \"knitr::knit\" \"rmarkdown::render\" \"execute\" \".main\" \n#&gt; \"pause\" \"h\" \"f\" \"eval\" \"eval\" \"withVisible\" \"withCallingHandlers\" \"eval\" \"eval\" \"with_handlers\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"withRestarts\" \"evaluate::evaluate\" \"evaluate\" \"in_dir\" \"in_input_dir\" \"eng_r\" \"block_exec\" \"call_block\" \"process_group\" \"withCallingHandlers\" \"xfun:::handle_error\" \"process_file\" \"knitr::knit\" \"rmarkdown::render\" \"execute\" \".main\"\n\n\nVisualising profiles\nMakes easier to build up a mental model of what you need to change:\nprofvis::profvis()\nutils::summaryRprof()\n\nsource(\"scripts/profiling-example.R\")\nprofvis(f())\n\n\n\n\n\nMemory profiling and the garbage collector\nProfiling a loop that modifies an existing variable:\n\nprofvis::profvis({\n  x &lt;- integer()\nfor (i in 1:1e4) {\n  x &lt;- c(x, i)\n}\n})\n\n\n\n\n\nYou can figure out what is the source of the problem by looking at the memory column. In this case, copy-on-modify acts in each iteration of the loop creating another copy of x.\nLimitations\n\nProfiling does not extend to C code\nAnonymous functions are hard to figure out\nArguments are evaluated inside another function\n\nExercise\n\nprofvis::profvis({\n  f &lt;- function(n = 1e5) {\n  x &lt;- rep(1, n)\n  rm(x)\n}\n},torture = TRUE)\n\n?rm()\nsolution"
+    "text": "Profiling\nProfiling the code is the process of gathering information about the resource requirements of the individual calls in your code.\nProfilers sample the code performance by stopping the execution of code every few milliseconds, gauging which process is being engaged, and recording the resource utilization.\nExample:\n\nf &lt;- function() {\n  pause(0.1)\n  g()\n  h()\n}\ng &lt;- function() {\n  pause(0.1)\n  h()\n}\nh &lt;- function() {\n  pause(0.1)\n}"
+  },
+  {
+    "objectID": "slides/23.html#profiling-1",
+    "href": "slides/23.html#profiling-1",
+    "title": "Measuring performance",
+    "section": "Profiling",
+    "text": "Profiling\nProfile the execution of f():\n- `profvis::pause()` is used instead of `Sys.sleep()` \n  as the latter makes R use no resources\n- profile `f()`, with `utils::Rprof()`\n\ntmp &lt;- tempfile()\nRprof(tmp, interval = 0.1)\nf()\n\n#&gt; NULL\n\nRprof(NULL)\nwriteLines(readLines(tmp))\n\n#&gt; sample.interval=100000\n#&gt; \"pause\" \"g\" \"f\" \"eval\" \"eval\" \"withVisible\" \"withCallingHandlers\" \"eval\" \"eval\" \"with_handlers\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"withRestarts\" \"evaluate::evaluate\" \"evaluate\" \"in_dir\" \"in_input_dir\" \"eng_r\" \"block_exec\" \"call_block\" \"process_group\" \"withCallingHandlers\" \"with_options\" \"xfun:::handle_error\" \"process_file\" \"knitr::knit\" \"rmarkdown::render\" \"execute\" \".main\" \n#&gt; \"pause\" \"h\" \"g\" \"f\" \"eval\" \"eval\" \"withVisible\" \"withCallingHandlers\" \"eval\" \"eval\" \"with_handlers\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"withRestarts\" \"evaluate::evaluate\" \"evaluate\" \"in_dir\" \"in_input_dir\" \"eng_r\" \"block_exec\" \"call_block\" \"process_group\" \"withCallingHandlers\" \"with_options\" \"xfun:::handle_error\" \"process_file\" \"knitr::knit\" \"rmarkdown::render\" \"execute\" \".main\" \n#&gt; \"c\" \"frameTypes\" \"structure\" \"makeCenv\" \"structure\" \"make.toplevelContext\" \"cmpfun\" \"doTryCatch\" \"tryCatchOne\" \"tryCatchList\" \"tryCatch\" \"compiler:::tryCmpfun\" \"h\" \"f\" \"eval\" \"eval\" \"withVisible\" \"withCallingHandlers\" \"eval\" \"eval\" \"with_handlers\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"withRestarts\" \"evaluate::evaluate\" \"evaluate\" \"in_dir\" \"in_input_dir\" \"eng_r\" \"block_exec\" \"call_block\" \"process_group\" \"withCallingHandlers\" \"with_options\" \"xfun:::handle_error\" \"process_file\" \"knitr::knit\" \"rmarkdown::render\" \"execute\" \".main\" \n#&gt; \"pause\" \"h\" \"f\" \"eval\" \"eval\" \"withVisible\" \"withCallingHandlers\" \"eval\" \"eval\" \"with_handlers\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"doWithOneRestart\" \"withOneRestart\" \"withRestartList\" \"withRestarts\" \"evaluate::evaluate\" \"evaluate\" \"in_dir\" \"in_input_dir\" \"eng_r\" \"block_exec\" \"call_block\" \"process_group\" \"withCallingHandlers\" \"with_options\" \"xfun:::handle_error\" \"process_file\" \"knitr::knit\" \"rmarkdown::render\" \"execute\" \".main\""
+  },
+  {
+    "objectID": "slides/23.html#visualising-profiles",
+    "href": "slides/23.html#visualising-profiles",
+    "title": "Measuring performance",
+    "section": "Visualising profiles",
+    "text": "Visualising profiles\nMakes easier to build up a mental model of what you need to change:\n- `profvis::profvis(expr)`\n- `utils::summaryRprof()`\n\nsource(\"scripts/profiling-example.R\")\nprofvis(f())"
+  },
+  {
+    "objectID": "slides/23.html#mini-case-study-poor-practice-of-copy-on-modify",
+    "href": "slides/23.html#mini-case-study-poor-practice-of-copy-on-modify",
+    "title": "Measuring performance",
+    "section": "Mini-case study: poor practice of copy-on-modify",
+    "text": "Mini-case study: poor practice of copy-on-modify\nProfiling a loop that modifies an existing variable: most of the time is spent in garbage collection (i.e. releasing and reclaiming memory that is no longer needed).\n\nprofvis::profvis({\n  x &lt;- integer()\nfor (i in 1:1e4) {\n  x &lt;- c(x, i)\n}\n})\n\n\n\n\n\nYou can figure out what is the source of the problem by looking at the memory column. In this case, copy-on-modify acts in each iteration of the loop creating another copy of x.\n\nAll the time is being spent in the concatenation operation.\nNearly the same amount of memory is being asked for and is being released."
+  },
+  {
+    "objectID": "slides/23.html#limitations",
+    "href": "slides/23.html#limitations",
+    "title": "Measuring performance",
+    "section": "Limitations",
+    "text": "Limitations\n\nProfiling does not extend to C code.\n\nC code can be profiled with its own tools in C IDEs.\n\nAnonymous functions do not show up properly.\nLazy evaluation of function arguments makes things complicated.\n\nAre things evaluated inside another function, and whose line is it anyway?\n\n\nExercise\nWhere is the time being spent in this function?\n\nprofvis::profvis({\n  f &lt;- function(n = 1e5) {\n  x &lt;- rep(1, n)\n  rm(x)\n}\n}, torture = 10)\n\n?rm()\nSolution"
   },
   {
     "objectID": "slides/23.html#microbenchmarking",
     "href": "slides/23.html#microbenchmarking",
     "title": "Measuring performance",
     "section": "Microbenchmarking",
-    "text": "Microbenchmarking\nMeasurement of the performance of a very small piece of code is useful for comparing small snippets of code for specific tasks.\n\n\n\n\n\nCredits: Google search-engine\n\n\n\n\nThe {bench} package uses a high precision time.\nbench::mark()\n\nlibrary(bench)\nx &lt;- runif(100)\n(lb &lt;- bench::mark(\n  sqrt(x),\n  x ^ 0.5\n))\n\n#&gt; # A tibble: 2 × 6\n#&gt;   expression      min   median `itr/sec` mem_alloc `gc/sec`\n#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;\n#&gt; 1 sqrt(x)       300ns    400ns  1977692.      848B        0\n#&gt; 2 x^0.5         2.9µs      3µs   321570.      848B        0\n\n\n\nheavily right-skewed distribution\n\n\nrequire(ggbeeswarm)\n\n#&gt; Loading required package: ggbeeswarm\n\n\n#&gt; Loading required package: ggplot2\n\nplot(lb)"
+    "text": "Microbenchmarking\nIn software development, microbenchmarking is understood as measuring time or other aspects of performance of a very small piece of code. You expect the code to run microseconds, but you know that in your larger project, you will run this thousands or millions of times. It is particularly useful when you are considering different implementations of that very frequently repeated step, and want to maximize performance.\n\nCredits: Google search-engine"
+  },
+  {
+    "objectID": "slides/23.html#microbenchmarking-1",
+    "href": "slides/23.html#microbenchmarking-1",
+    "title": "Measuring performance",
+    "section": "Microbenchmarking",
+    "text": "Microbenchmarking\n\nx &lt;- runif(100)\nuniroot_sqrt &lt;- function(x) {\n  solution &lt;- x\n  for(i in seq_along(x)) {\n    solution[i] &lt;- uniroot( \n      f = function(z, a) { z*z - a }, \n      interval = c(0,1), \n      tol = 5 * .Machine$double.eps,\n      a = x[i]) |&gt; \n      purrr::pluck('root')\n  }\n  solution\n}"
+  },
+  {
+    "objectID": "slides/23.html#microbenchmarking-2",
+    "href": "slides/23.html#microbenchmarking-2",
+    "title": "Measuring performance",
+    "section": "Microbenchmarking",
+    "text": "Microbenchmarking\n\nmb1 &lt;- microbenchmark(\n  sqrt(x),\n  x ^ 0.5,\n  exp( 0.5 * log(x)),\n  uniroot_sqrt(x)\n)\nmb1\n\n#&gt; Unit: nanoseconds\n#&gt;               expr     min        lq       mean  median        uq      max\n#&gt;            sqrt(x)     481     671.5    2212.02     871    1247.5   118501\n#&gt;              x^0.5    2023    2153.5    4236.51    2504    5184.5    57827\n#&gt;  exp(0.5 * log(x))    1483    1663.0    3027.53    1973    4193.0    13475\n#&gt;    uniroot_sqrt(x) 4226495 4354688.5 4902392.52 4417842 4585509.0 24339710\n#&gt;  neval\n#&gt;    100\n#&gt;    100\n#&gt;    100\n#&gt;    100\n\n\nThe underlying data.frame()-ish object is only expr and time. What you see above is the summary() method applied to it. (Output of plain mb1 differs between rendering systems; interactively it is passed through the print() method.)"
+  },
+  {
+    "objectID": "slides/23.html#microbenchmarking-3",
+    "href": "slides/23.html#microbenchmarking-3",
+    "title": "Measuring performance",
+    "section": "Microbenchmarking",
+    "text": "Microbenchmarking\nMuch greater detail is provided by the {bench} package: bench::mark().\n\nlb &lt;- bench::mark(\n  sqrt(x),\n  x ^ 0.5,\n  exp( 0.5 * log(x)),\n  uniroot_sqrt(x)\n)\nlb\n\n#&gt; # A tibble: 4 × 6\n#&gt;   expression             min   median `itr/sec` mem_alloc `gc/sec`\n#&gt;   &lt;bch:expr&gt;        &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;\n#&gt; 1 sqrt(x)           371.02ns 391.15ns  2432761.      848B      0  \n#&gt; 2 x^0.5               1.93µs   1.97µs   494115.      848B      0  \n#&gt; 3 exp(0.5 * log(x))   1.38µs   1.42µs   681674.      848B      0  \n#&gt; 4 uniroot_sqrt(x)     4.33ms   4.51ms      221.      848B     23.1\n\n\nAgain, what you see above is summary(lb). Timing for each run is inside the S3 class components. (Output of plain lb differs between rendering systems; interactively it is passed through the print() method.)"
+  },
+  {
+    "objectID": "slides/23.html#microbenchmarking-distributions",
+    "href": "slides/23.html#microbenchmarking-distributions",
+    "title": "Measuring performance",
+    "section": "Microbenchmarking distributions",
+    "text": "Microbenchmarking distributions\n\nplot(lb)\n\n\nResults are typically heavily skewed: some calculations may have hit “unfortunate” moments with the system was busy with something else. Pay more attention to medians rather than means. The uniroot-based calculation was so slow that bench::mark() decided to stop after a few hundred runs rather than the default 10000 runs, so as to fit the total simulation budget of 0.5 sec."
+  },
+  {
+    "objectID": "slides/23.html#other-considerations",
+    "href": "slides/23.html#other-considerations",
+    "title": "Measuring performance",
+    "section": "Other considerations",
+    "text": "Other considerations\n\nShould this go to the next chapter “Performance” instead maybe?\n\nThings that can/will affect performance, some are hard to measure:\n\nScaling\n\nbubble sort: \\(O(n^2)\\), actual sort: \\(O(n \\log n)\\)\nmatrix inversion: \\(O(n^3)\\) in linear algebra classes, \\(O(n^{-2.3})\\) with the best algorithms\n\nI/O bottlenecks\n\nCPU cache \\(\\approx\\) 1000x faster than RAM which is \\(\\approx\\) 1000 faster than local HDD which is \\(\\approx\\) 10–100 faster than network/cloud\n\nLaziness and prudence: when things get evaluated and put into memory\nUnderstand how parallel processing (future, mirai) passes objects between instances, depend on each others’ completions, and wait for one another otherwise"
   },
   {
     "objectID": "slides/23.html#resources",

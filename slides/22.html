@@ -27,6 +27,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
   </style>
   <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-5079db4132f0eaf0a29ac93fceccb8c9.css">
   <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -140,8 +206,30 @@
 <li>Locate exactly where an error occurred with the <code>traceback()</code> function.</li>
 <li>Pause the execution of a function and launch an environment to interactively explore what’s happening.</li>
 <li>Debug non-interactively executed code.</li>
-<li>Recognize other (non-error) problems that occasionally also need debugging</li>
+<li>Recognize other (non-error) problems that occasionally also need debugging.</li>
 </ul>
+</section>
+<section id="types-of-errors" class="slide level2">
+<h2>Types of errors</h2>
+<ul>
+<li>Parsing errors: you are missing a closing <code>)</code>, <code>}</code> or <code>"</code> so the code AST cannot even be formed
+<ul>
+<li>Usually captured by IDEs such as RStudio and Positron with red flashing pointers</li>
+</ul></li>
+<li>Syntax errors:
+<ul>
+<li>Parentheses are matched but one of them closes at wrong time</li>
+<li>The name of a function input is misspelled</li>
+<li>Passing more inputs to a function than it expects</li>
+</ul></li>
+<li>Runtime errors: the code is syntactically correct, but it does a weird thing in your actual environment with your actual data</li>
+</ul>
+</section>
+<section id="we-want-to-subset-our-closures" class="slide level2">
+<h2>We want to subset our closures!!!</h2>
+<p>And then of course there’s this classic:</p>
+
+<img data-src="images/22-closure-not-subsettable.png" class="r-stretch"><p>Explanation: <code>df</code> is a closure, in this case, the function <code>stats::df()</code>, the density of F-distribution. (It is not a data frame, as you thought it was, ha!) It does not have elements that you could subset.</p>
 </section>
 <section>
 <section id="strategies-for-finding-and-fixing-errors" class="title-slide slide level1 center">
@@ -163,7 +251,7 @@
 <ul>
 <li><a href="https://r-pkg.thecoatlessprofessor.com/errorist/">{errorist}</a></li>
 <li><a href="https://r-pkg.thecoatlessprofessor.com/searcher/">{searcher}</a></li>
-<li>Probably AI agents now</li>
+<li>Probably AI agents after 2026</li>
 </ul></li>
 </ul>
 </section>
@@ -178,7 +266,7 @@
 <h2>Use the scientific method to find bugs</h2>
 <ul>
 <li>Generate a hypothesis.</li>
-<li>Design experiments to test that hypothesis/</li>
+<li>Design experiments to test that hypothesis.</li>
 <li>Record your results.</li>
 </ul>
 <p>Being systematic often saves time in the end.</p>
@@ -190,6 +278,38 @@
 <li>Add tests for specific broken cases.</li>
 <li>Add tests for hypotheses.</li>
 </ul>
+<p>Concepts of unit tests are generally associated with R package development, see <a href="https://r-pkgs.org/testing-basics.html">chapters on testing in “Writing R Packages”</a>.</p>
+<div style="font-size: 75%;">
+<p>Automated testing sometimes brings a dilemma: you add something to a working function, and the stuff that you added does work according to the new tests, but an old test gets broken. This is may not be an error per se, but it shows a gap in your knowledge of and assumptions about the code (see Norm Matloff’s quote above) and you have to deal with that one way or another.</p>
+</div>
+</section>
+<section id="common-syntax-errors" class="slide level2">
+<h2>Common syntax errors</h2>
+<p><a href="https://computing.stat.berkeley.edu/tutorial-R-debugging/#4-some-common-causes-of-bugs">Longer list here</a></p>
+<ul>
+<li><p>Parenthesis mismatches</p></li>
+<li><p><code>[[...]]</code> vs.&nbsp;<code>[...]</code></p></li>
+<li><p><code>==</code> vs.&nbsp;<code>=</code></p></li>
+<li><p>Comparing real numbers exactly using <code>==</code> after calculations that result in non-integers</p></li>
+<li><p>You expect a single value but your code gives you a vector</p>
+<ul>
+<li>You may need <code>identical()</code> or <code>all()</code>, or form the condition more thoroughly</li>
+</ul></li>
+</ul>
+
+<img data-src="images/22-cond-gt1.png" class="r-stretch"><ul>
+<li>Type coercion and dropping dimensions</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">inherits</span>(mtcars[,<span class="dv">1</span>], <span class="st">"data.frame"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] FALSE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">inherits</span>(mtcars[,<span class="dv">1</span>, <span class="at">drop=</span><span class="cn">FALSE</span>], <span class="st">"data.frame"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; [1] TRUE</code></pre>
+</div>
+</div>
 </section></section>
 <section>
 <section id="use-traceback-to-locate-the-error" class="title-slide slide level1 center">
@@ -243,6 +363,16 @@
           display:block!important;
       }</style></aside>
 </section>
+<section id="traceback-limits" class="slide level2">
+<h2><code>traceback()</code> limits</h2>
+<p>In real world, traceback may look like <a href="https://stbl.wrangle.zone/dev/reference/expect_pkg_error_classes.html">25 layers</a></p>
+<ul>
+<li>Your code is the first 2-3 layers.</li>
+<li>The last 5 layers are very clearly formatting the error and making a safe return of appropriate objects.</li>
+<li>The middle 15 layers are classes and methods of <code>dplyr</code>, <code>rlang</code>, <code>purrr</code> and <code>base</code> and maybe packages you have never heard of, passing very opaque things to one another, your informatively named objects are abstracted somewhere in <code>...</code>, <code>.x</code> and <code>envir</code>…</li>
+<li>… and you are still left wondering what’s going on.</li>
+</ul>
+</section>
 <section id="rlangglobal_handle-in-.rprofile-makes-traceback-better" class="slide level2">
 <h2><code>rlang::global_handle()</code> in <code>.Rprofile</code> makes traceback better</h2>
 
@@ -282,9 +412,12 @@
 <section id="browser-can-be-conditional" class="slide level2">
 <h2><code>browser()</code> can be conditional</h2>
 
-<img data-src="images/browser2.png" class="r-stretch"></section>
+<img data-src="images/browser2.png" class="r-stretch"><p>A better practice would be to define your own debugging flags that would be turned off or disappear in production code</p>
+<pre><code>if (exists("my_debugging_flag")) browser()</code></pre>
+</section>
 <section id="browser-provides-special-commands" class="slide level2">
 <h2><code>browser()</code> provides special commands</h2>
+<p>These commands work in the Console; RStudio also makes the toolbar buttons available.</p>
 
 <img data-src="images/debug-toolbar.png" class="r-stretch"><ul>
 <li>Next (<code>n</code>): Execute the next step</li>
@@ -292,6 +425,21 @@
 <li>Finish (<code>f</code>): Finish execution of the current loop/function</li>
 <li>Continue (<code>c</code>): Continue regular execution of the function (leave interactive)</li>
 <li>Stop (<code>Q</code>): Stop debugging, terminate the function, and return to the global workspace</li>
+</ul>
+</section>
+<section id="browser-practical-tips" class="slide level2">
+<h2><code>browser()</code> practical tips</h2>
+<ul>
+<li>RStudio runs its best attempt to show the code that is being executed in the “Source” pane
+<ul>
+<li>parsed AST for external functions (no comments, no indents);</li>
+<li>actual source files within your packages when you are in the package project.</li>
+</ul></li>
+<li>That means you can select the code and <code>Ctrl+Enter</code> to execute it
+<ul>
+<li>if in doubt about the source of the error, do that rather than hitting <code>n</code> “Next”</li>
+<li>especially if the computations leading to this point in your code are costly in terms of time</li>
+</ul></li>
 </ul>
 </section>
 <section id="set-breakpoints-in-rstudio-for-virtual-browser" class="slide level2">
@@ -371,13 +519,33 @@
 <h2>Print debugging can help if nothing else works</h2>
 
 <img data-src="images/print-debugging.png" class="r-stretch"></section>
+<section id="debugging-withing-packages" class="slide level2">
+<h2>Debugging withing packages</h2>
+<p>Recall <a href="08.html">Chapter 8</a> on classed conditions:</p>
+<ul>
+<li>you can create richer structured objects with</li>
+</ul>
+<pre><code>rlang::abort(
+  message = "cli-formatted-message",
+  class   = "your-special-class-to-distinguish-from-other-errors",
+  ...
+)</code></pre>
+<ul>
+<li>you can pass your situation report in <code>...</code> so that error handlers and/or reporters can more effectively peek into your environment that errored</li>
+<li>you can capture the class with <code>testthat::expect_s3_class()</code></li>
+</ul>
+</section>
 <section id="debugging-rmarkdownquarto-has-challenges" class="slide level2">
 <h2>Debugging Rmarkdown/Quarto has challenges</h2>
 <ul>
-<li>Call <code>rmarkdown::render("path/to/file.Rmd")</code> instead of IDE knitting</li>
+<li>Call <code>rmarkdown::render("path/to/file.Rmd")</code> instead of IDE knitting.
+<ul>
+<li>downside: the content of your current environment propagates into the markdown code</li>
+</ul></li>
 <li>Use <code>sink()</code> for tricksy error handling</li>
 </ul>
 <p><img data-src="images/print-recover.png" height="110"></p>
+<p>See also <a href="https://happygitwithr.com/rmd-test-drive.html?q=knit_exit#rmd-troubleshooting">“Markdown test drive”</a> in Jenny Bryan’s <em>Happy Git With R</em> book.</p>
 </section>
 <section id="functions-can-fail-without-errors" class="slide level2">
 <h2>Functions can fail without errors</h2>
@@ -391,9 +559,11 @@
 <section id="some-useful-resources-on-debugging" class="slide level2">
 <h2>Some useful resources on debugging</h2>
 <ul>
-<li><a href="https://github.com/jennybc/debugging#readme">“Object of type closure is not subsettable”</a> (Jenny Bryan, <code>rstudio::conf(2020)</code>)</li>
-<li><a href="https://rstats.wtf/debugging-r">“What They Forgot to Teach You About R” Chapter 12</a> (by Jenny Bryan and Jim Hester)</li>
-<li><a href="https://www.youtube.com/watch?v=9w8ANOAlWy4">Minimal reprex for a shiny app</a> (video by Hadley)</li>
+<li><p><a href="https://github.com/jennybc/debugging#readme">“Object of type closure is not subsettable”</a> (Jenny Bryan, <code>rstudio::conf(2020)</code>)</p></li>
+<li><p><a href="https://rstats.wtf/debugging-r">“What They Forgot to Teach You About R” Chapter 12</a> (by Jenny Bryan and Jim Hester)</p></li>
+<li><p><a href="https://www.youtube.com/watch?v=9w8ANOAlWy4">Minimal reprex for a shiny app</a> (video by Hadley)</p></li>
+<li><p><a href="https://support.posit.co/hc/en-us/articles/205612627-Debugging-with-the-RStudio-IDE">Debugging in RStudio, by Posit</a></p></li>
+<li><p>If you have access to “Code Complete”, it provides <a href="https://www.oreilly.com/library/view/code-complete-2nd/0735619670/ch08.html">generic debugging principles</a> that are meant to be applicable across programming languages</p></li>
 </ul>
 
 
