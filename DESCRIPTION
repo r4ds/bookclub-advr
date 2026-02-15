@@ -36,6 +36,7 @@ Imports:
     Rcpp,
     readr,
     reshape2,
+    rextendr,
     rlang,
     rmarkdown,
     scales,
