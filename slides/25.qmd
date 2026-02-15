@@ -1,19 +1,20 @@
 ---
 engine: knitr
-title: Rewriting R code in C++
+title: Rewriting R code in C++/Rust
 ---
 
 ## Learning objectives:
 
--   Connect R and C/C++
+-   Why rewrite R code
+-   Bridge R with C/C++/Rust
 -   Run C++ in R
+-   Run Rust in R
 -   Create and call C++ functions in R
--   Learn to improve performance by rewriting bottlenecks in C++
-
--   Introduction to the [{Rcpp} package](https://www.rcpp.org/)
+-   Create and call Rust functions in R
 
 ```{r}
 library(Rcpp)
+library(rextendr)
 ```
 
 ## Introduction
@@ -26,11 +27,6 @@ In this chapter we'll learn how to rewrite **R** code in **C++** to make it fast
 
 -   Problems that require advanced data structures and algorithms that R doesn't provide. Through the **standard template library (STL)**, C++ has efficient implementations of many important data structures, from ordered maps to double-ended queue
 
-<center>Like how?</center>
-
-<center> </center>
-
-<center>![](https://media.giphy.com/media/vLyZk5CJo12Wk/giphy.gif)</center>
 
  
 
