@@ -139,7 +139,7 @@ bench::mark(
 -   The help documentation can lead you to a vectorised solution
 -   Performing operations at the scale of your problem shows actual versus expected optimizations
 
-## Preallocate vectors to avoid copying and increase performance
+## Preallocating vectors avoids copying and improves performance
 
 ```{r}
 random_string <- function() {
