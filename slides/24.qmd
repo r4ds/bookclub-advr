@@ -132,7 +132,9 @@ bench::mark(
 
 ## Using vectorised code often leads to optimized code
 
--   Vectorisation: Using an R function implemented in C
+-   Vectorisation:
+  - Act on entire vector, not element-by-element
+  - Use an R function implemented in C
 -   Matrix algebra functions are a great example of vectorisation
 -   The help documentation can lead you to a vectorised solution
 -   Performing operations at the scale of your problem shows actual versus expected optimizations
