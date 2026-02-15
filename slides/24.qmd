@@ -19,11 +19,11 @@ library(bench)
 
 # Determine when to optimize code
 
-## Code that works, is correct, and is reproducible should be the first priority
+## Code that works, generates expected outputs, and is reproducible should be the first priority
 
 ::: incremental
--   Correct code generates a *good product*
--   Incorrect code generates a *bad product*
+-   Correct code generates a *good product* i.e. expected outputs
+-   Incorrect code generates a *bad product* i.e. incorrect outputs
 -   A good product is *more valuable* than a bad product
 -   People will use and wait for valuable products
 -   People will not use incorrect products
@@ -48,7 +48,7 @@ library(bench)
 mean1 <- function(x) mean(x)
 mean2 <- function(x) sum(x) / length(x)
 x <- runif(1e5)
-bench::mark(
+bench::mark( #verifies outputs to be the same
   mean1(x),
   mean2(x)
 )[c("expression", "min", "median", "mem_alloc")]
@@ -72,7 +72,7 @@ bench::mark(
 
 -   After exhausting options at hand, online resources can provide new approaches not thought of.
 
--   Alternatively, reframe the problem to find solutions
+-   Alternatively, reframe the problem to find solutions e.g. new paradigm
 
 -   Talking to peers helps brainstorm solutions and reframe the problem
 
@@ -96,32 +96,34 @@ bench::mark(
 
 ### Prespecify outputs
 
--   Note: specifying `double` versus `numeric` in vapply regulates speed.
+-   Note: same speed but `vapply` allocates less memory
 
 ```{r}
 X <- rep(list(1:1e4),1e4)
 bench::mark(
-  vapply(X,mean,double(1)),
+  vapply(X,mean,numeric(1)),
   sapply(X,mean)
 )[c("expression", "min", "median", "mem_alloc")]
 ```
 
 ### Test equally versus set inclusion
 
--   Note: `any` becomes faster than  `%in%` if `length(X)>1e7`
+-   Note: `any` is faster and allocates less memory than  `%in%`
 
 ```{r}
 X <- 1:1e8
 bench::mark(
-  any(X == 1450),
+  any(X == 1450), # .Internal
   1450 %in% X
 )[c("expression", "min", "median", "mem_alloc")]
 ```
 
 ### Avoid method dispatch
 
+Note: marginal optimization
+
 ```{r}
-x <- runif(1e2)
+x <- runif(1e4)
 
 bench::mark(
   mean(x),
@@ -133,8 +135,8 @@ bench::mark(
 ## Using vectorised code often leads to optimized code
 
 -   Vectorisation:
-  - Act on entire vector, not element-by-element
-  - Use an R function implemented in C
+    - Act on entire vector, not element-by-element
+    - Use an R function implemented in C
 -   Matrix algebra functions are a great example of vectorisation
 -   The help documentation can lead you to a vectorised solution
 -   Performing operations at the scale of your problem shows actual versus expected optimizations
@@ -260,10 +262,10 @@ ttest_vectorise <- function(x, groups) {
   m2 <- Matrix::colMeans(x2)
   v1 <- Matrix::colSums(
     (x1 - matrix(m1, n1, ncol(x), byrow = TRUE)
-  )^2) / (n1 - 1)
+  )^2) / (nrow(x1) - 1)
   v2 <- Matrix::colSums(
     (x2 - matrix(m2, n2, ncol(x), byrow = TRUE)
-  )^2) / (n2 - 1)
+  )^2) / (nrow(x2) - 1)
   se_total <- sqrt(v1 / n1 + v2 / n2)
   (m1 - m2) / se_total
 }
