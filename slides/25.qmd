@@ -10,7 +10,7 @@ title: Rewriting R code in C++/Rust
 ## Learning objectives:
 
 -   Why rewrite R code
--   Bridge R with C/C++/Rust
+-   Bridge R with C++/Rust
 -   Run C++ in R
 -   Run Rust in R
 -   Create and call C++ functions in R
