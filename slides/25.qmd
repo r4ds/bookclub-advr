@@ -3,6 +3,10 @@ engine: knitr
 title: Rewriting R code in C++/Rust
 ---
 
+# _Interfaces to other software are part of R_  
+
+--- Chambers JM (2016). Extending R.
+
 ## Learning objectives:
 
 -   Why rewrite R code
@@ -17,74 +21,123 @@ library(Rcpp)
 library(rextendr)
 ```
 
-## Introduction
-
-In this chapter we'll learn how to rewrite **R** code in **C++** to make it faster using the **Rcpp package**. The **Rcpp**  package makes it simple to connect C++ to R! With C++ you can fix:
-
--   Loops that can't be easily vectorised because subsequent iterations depend on previous ones.
-
--   Recursive functions, or problems which involve calling functions millions of times. The overhead of calling a function in C++ is much lower than in R.
-
--   Problems that require advanced data structures and algorithms that R doesn't provide. Through the **standard template library (STL)**, C++ has efficient implementations of many important data structures, from ordered maps to double-ended queue
-
-
- 
-
-## `evalCpp` evaluates C++ code from R
+## Even after optimizing R code, it still might not be optimized enough
 
 ::: panel-tabset
 
-### No need to leave R!
+### C++
 
--   Unlike R, C++ is not vectorized
--   `Rcpp` provides vectorization.
+-   R's for loops are much slower compared to C++
 
-```{r}
-set.seed(123)
-Rcpp::evalCpp("Rcpp::rnorm(3)")
-```
+    - Can't vectorize in R when loops depend on subsequent iterations
 
-### A lot is done behind the scenes
+-   R function calls are much slower compared to C++
 
--   Note: R and C environments share random seed settings
-```{r}
-set.seed(123)
-Rcpp::evalCpp("Rcpp::rnorm(3)",verbose = TRUE,rebuild = TRUE)
-```
+    - Recursive functions involving millions of function calls
+
+-   R does not include many data structures compared to C++
+
+    - C++ Standard Template Library (STL) for efficiency, correctness, and maintainability
+
+### Rust
+
+-   R cannot exploit parallelism as effectively as Rust
+
+    - Rust memory is safer (ownership model with borrow checking) and so lacks GIL or run time locks
+
+-   R object memory is borrowed via C/C++ unlike Rust
+
+    - Rust owns objects and code compiles directly to machine code
+
+-   R or C code debugging is more challenging than Rust
+
+    - Rust has no GC so lacks memory bugs and has great error messages surpassing(?) the {tidyverse}
 
 :::
 
+## Using C++ is easier and flexible, while Rust requires {rextendr}
 
-### First example {-}
+::: panel-tabset
 
-Rcpp compiling the C++ code:
+### C++
+
+::: panel-tabset
+
+#### `Rcpp::evalCpp`
 
 ```{r}
-cppFunction('int add(int x, int y, int z) {
+Rcpp::evalCpp('NA_INTEGER + 1')
+```
+
+#### `Rcpp::cppFunction`
+
+```{r}
+Rcpp::cppFunction('int add(int x, int y, int z) {
   int sum = x + y + z;
   return sum;
 }')
-# add works like a regular R function
 add
-
-add(1, 2, 3)
+add(1,2,3)
 ```
 
-Some things to note:
+#### `Rcpp::sourceCpp`
 
+```c
+#include <Rcpp.h>
+using namespace Rcpp;
 
--   The syntax to create a function is different.
--   Types of inputs and outputs must be explicitly declared
--   Use = for assignment, not `<-`.
--   Every statement is terminated by a ;
--   C++ has it's own name for the types we are used to:
-    -   scalar types are `int`, `double`, `bool` and `String`
-    -   vector types (for Rcpp) are `IntegerVector`, `NumericVector`, `LogicalVector` and `CharacterVector`
-    -   Other R types are available in C++: `List`, `Function`, `DataFrame`, and more.
-    
--   Explicitly use a `return` statement to return a value from a function.
+// [[Rcpp::export]]
+double meanC(NumericVector x) {
+  int n = x.size();
+  double total = 0;
 
- 
+  for(int i = 0; i < n; ++i) {
+    total += x[i];
+  }
+  return total / n;
+}
+```
+
+#### `usethis::use_rcpp`
+
+-   Creates infrastructure for using C++ within R packages
+
+:::
+
+### Rust
+
+::: panel-tabset
+
+#### `rextendr::rust_function`
+
+```{r}
+rextendr::rust_function("fn add(a:f64, b:f64) -> f64 { a + b }")
+add(2.5, 4.7)
+```
+
+#### `rextendr::use_extendr`
+
+```r
+# create a new R package
+usethis::create_package("helloextendr")
+
+# Use extendr
+rextendr::use_extendr()
+
+# Document and build the package
+rextendr::document()
+
+# run hello_world()
+hello_world()
+#> [1] "Hello, world!"
+```
+
+-   Newer Rust toolchain and R version is required
+-   Using VSCode/Positron is strongly recommended with `rust-analyzer` extension
+
+:::
+
+:::
 
 ## Example with scalar input and output {-}
 
