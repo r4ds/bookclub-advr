@@ -139,7 +139,15 @@ hello_world()
 
 :::
 
-## Example with scalar input and output {-}
+## Reading C++ and Rust code is similar to reading R code
+
+:::panel-tabset
+
+### Scalar Versions
+
+::: panel-tabset
+
+#### R
 
 ```{r}
 signR <- function(x) {
@@ -151,17 +159,12 @@ signR <- function(x) {
     -1
   }
 }
-
-a <- -0.5
-b <- 0.5
-c <- 0
-signR(c)
 ```
 
-Translation:
+#### C++
 
 ```{r}
-cppFunction('int signC(int x) {
+Rcpp::cppFunction('int signC(double x) {
   if (x > 0) {
     return 1;
   } else if (x == 0) {
@@ -169,60 +172,96 @@ cppFunction('int signC(int x) {
   } else {
     return -1;
   }
-}')
+}') |> system.time()
 ```
 
-* Note that the `if` syntax is identical! Not everything is different!
-
-## Vector Input, Scalar output:{-}
+#### Rust
 
 ```{r}
-sumR <- function(x) {
-  total <- 0
-  for (i in seq_along(x)) {
-    total <- total + x[i]
-  }
-  total
+rextendr::rust_function("
+fn signRust(x: f64) -> i32 {
+    if x > 0.0 {
+        1
+    } else if x == 0.0 {
+        0
+    } else {
+        -1
+    }
 }
-
-x<- runif(100)
-sumR(x)
+") |> system.time()
 ```
 
-Translation:
+:::
+
+### Vector Versions
+
+::: panel-tabset
+
+#### R
 
 ```{r}
-cppFunction('double sumC(NumericVector x) {
+sign
+```
+
+#### C++
+
+```{r}
+Rcpp::cppFunction("
+IntegerVector signC(NumericVector x) {
   int n = x.size();
-  double total = 0;
-  for(int i = 0; i < n; ++i) {
-    total += x[i];
+  IntegerVector out(n);
+
+  for (int i = 0; i < n; i++) {
+    if (NumericVector::is_na(x[i])) {
+      out[i] = NA_INTEGER;
+    } else if (x[i] > 0.0) {
+      out[i] = 1;
+    } else if (x[i] == 0.0) {
+      out[i] = 0;
+    } else {
+      out[i] = -1;
+    }
   }
-  return total;
-}')
+
+  return out;
+}
+") |> system.time()
 ```
 
-Some observations:
-
--   vector indices *start at 0*
--   The for statement has a different syntax: for(init; check; increment)
--   Methods are called with `.`
--   `total += x[i]` is equivalent to `total = total + x[i]`.
--   other in-place operators are `-=`, `*=`, `and /=`
-
-
-To check for the fastest way we can use:
-
-```{r eval=FALSE}
-?bench::mark
-```
+#### Rust
 
 ```{r}
-x <- runif(1e3)
+rextendr::rust_function("
+fn signRust(x: Vec<f64>) -> Vec<Rint> {
+    x.into_iter()
+        .map(|v| {
+            if v.is_nan() {
+                Rint::na()
+            } else if v > 0.0 {
+                Rint::from(1)
+            } else if v == 0.0 {
+                Rint::from(0)
+            } else {
+                Rint::from(-1)
+            }
+        })
+        .collect()
+}
+") |> system.time()
+```
+
+:::
+
+:::
+
+## Comparing inline function performance from R between R, C++ and Rust can be misleading!
+
+```{r}
+vec <- rnorm(1e6,sd = 50)
 bench::mark(
-  sum(x),
-  sumC(x),
-  sumR(x)
+  sign(vec),
+  signC(vec),
+  signRust(vec)
 )
 ```
 
