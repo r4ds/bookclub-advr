@@ -1,0 +1,286 @@
+---
+engine: knitr
+title: Improving performance
+---
+
+## Learning Objectives
+
+0.  Determine when to optimize code
+1.  Organize code for optimization
+2.  Check for existing solutions
+3.  Create simple solutions
+4.  Vectorise code
+5.  Avoid code copying
+6.  Evaluate optimization for `t.test`
+
+```{r}
+library(bench)
+```
+
+# Determine when to optimize code
+
+## Code that works, generates expected outputs, and is reproducible should be the first priority
+
+::: incremental
+-   Correct code generates a *good product* i.e. expected outputs
+-   Incorrect code generates a *bad product* i.e. incorrect outputs
+-   A good product is *more valuable* than a bad product
+-   People will use and wait for valuable products
+-   People will not use incorrect products
+-   Do not optimize code that doesn't yet generate a good product
+:::
+
+## Optimizing *correct* code should be the second priority
+
+-   Time and space constraints should set optimization goals and priorities
+-   We all strive to be efficient, whether doing something in less time or with less space
+-   But we must first prioritize to meet our various constraints
+
+# Organize code for introducing optimizations
+
+## Create functions to evaluate approaches and quantify optimization
+
+-   Goal: Modular, repeatable units of code
+-   Keep old functions that you've tried, even the failures
+-   Create examples with `{roxygen}` and tests with `{testthat}`
+
+```{r}
+mean1 <- function(x) mean(x)
+mean2 <- function(x) sum(x) / length(x)
+x <- runif(1e5)
+bench::mark( #verifies outputs to be the same
+  mean1(x),
+  mean2(x)
+)[c("expression", "min", "median", "mem_alloc")]
+```
+
+## Utilize `{usethis}` and `{devtools}` for developing and testing functions
+
+::: {layout-ncol=2}
+
+![](images/usethis_hex_logo.png){width="160px" height="190px" fig-align="center"}
+![](images/devtools_hex_logo.png){width="160px" height="190px" fig-align="center"}
+
+:::
+
+1. Create a project/package directory manually or with `usetihs::create_package()`
+2. Revise functions within R scripts in an R folder
+3. Use `devtools::load_all()` to load and use functions
+4. Repeat #2-4
+
+## Online resources and communities can provide existing solutions or new coding approaches
+
+-   After exhausting options at hand, online resources can provide new approaches not thought of.
+
+-   Alternatively, reframe the problem to find solutions e.g. new paradigm
+
+-   Talking to peers helps brainstorm solutions and reframe the problem
+
+-   Learning broadly improves your ability to dissect problems and develop solutions
+
+# Strategies for code optimization
+
+## Functions, arguments, and data types should factor into code optimization for the problem at hand.
+
+::: panel-tabset
+
+### Use vectorisation
+
+```{r}
+X <- matrix(1:1e6,nrow=100)
+bench::mark(
+  colMeans(X),
+  apply(X,2,function(x)sum(x) / length(x))
+)[c("expression", "min", "median", "mem_alloc")]
+```
+
+### Prespecify outputs
+
+-   Note: same speed but `vapply` allocates less memory
+
+```{r}
+X <- rep(list(1:1e4),1e4)
+bench::mark(
+  vapply(X,mean,numeric(1)),
+  sapply(X,mean)
+)[c("expression", "min", "median", "mem_alloc")]
+```
+
+### Test equally versus set inclusion
+
+-   Note: `any` is faster and allocates less memory than  `%in%`
+
+```{r}
+X <- 1:1e8
+bench::mark(
+  any(X == 1450), # .Internal
+  1450 %in% X
+)[c("expression", "min", "median", "mem_alloc")]
+```
+
+### Avoid method dispatch
+
+Note: marginal optimization
+
+```{r}
+x <- runif(1e4)
+
+bench::mark(
+  mean(x),
+  mean.default(x)
+)[c("expression", "min", "median", "mem_alloc")]
+```
+:::
+
+## Using vectorised code often leads to optimized code
+
+-   Vectorisation:
+    - Act on entire vector, not element-by-element
+    - Use an R function implemented in C
+-   Matrix algebra functions are a great example of vectorisation
+-   The help documentation can lead you to a vectorised solution
+-   Performing operations at the scale of your problem shows actual versus expected optimizations
+
+## Preallocating vectors avoids copying and improves performance
+
+```{r}
+random_string <- function() {
+  paste(sample(letters, 50, replace = TRUE), collapse = "")
+}
+strings10 <- replicate(10, random_string())
+strings100 <- replicate(100, random_string())
+collapse <- function(xs) {
+  out <- ""
+  for (x in xs) { out <- paste0(out, x) }
+  out
+}
+bench::mark(
+  loop10  = collapse(strings10),
+  loop100 = collapse(strings100),
+  vec10   = paste(strings10, collapse = ""),
+  vec100  = paste(strings100, collapse = ""),
+  check = FALSE
+)[c("expression", "min", "median", "mem_alloc", "n_gc")]
+```
+
+# Evaluating optimizations to `t.test`
+
+## Most data analysis projects ask to compare the means between two groups
+
+::: panel-tabset
+
+### Problem Statement
+
+-   Though better statistics exist, Student's t test is often asked for
+-   Many tests need to be performed, often in the thousands or more
+-   Speed can take precedent over safety given the dozens of projects with this problem
+-   Correctness is a key requirement
+
+### Data
+
+```{r}
+m <- 100
+n <- 1000
+X <- matrix(rnorm(m * n, mean = 10, sd = 3), nrow = m)
+grp <- rep(1:2, each = m / 2)
+```
+
+:::
+
+## We can leverage our strategies to compute many t-tests
+
+::: panel-tabset
+
+### Base Case
+
+```{r}
+ttest_base <- function(x,groups) {
+  vec <- double()
+  for(i in 1:ncol(x)) {
+    veci <- t.test(x[groups == 1, i], x[groups == 2, i])[['statistic']]
+    vec <- c(vec,veci)
+  }
+  unname(vec)
+}
+```
+
+### No copying
+
+```{r}
+ttest_nocopy <- function(x,groups) {
+  purrr::map_dbl(
+    1:ncol(x),
+    function(i) {
+      t.test(x[groups == 1, i], x[groups == 2, i])[['statistic']]
+    }
+  )
+}
+```
+
+### No dispatching
+
+```{r}
+ttest_nodispatch <- function(x,groups) {
+  purrr::map_dbl(
+    1:ncol(x),
+    function(i) {
+      stats:::t.test.default(x[groups == 1, i], x[groups == 2, i])[['statistic']]
+    }
+  )
+}
+```
+
+### Matrix algebra
+
+```{r}
+ttest_malgebra <- function(x, groups) {
+  t_stat <- function(x) {
+    m <- mean(x); n <- length(x)
+    var <- sum((x - m) ^ 2) / (n - 1)
+    list(m = m, n = n, var = var)
+  }
+  purrr::map_dbl(
+    1:ncol(x),
+    function(i) {
+      g1 <- t_stat(x[groups == 1,i]); g2 <- t_stat(x[groups == 2,i])
+      se_total <- sqrt(g1$var / g1$n + g2$var / g2$n)
+      (g1$m - g2$m) / se_total
+    }
+  )
+}
+```
+
+### Vectorise
+
+```{r}
+ttest_vectorise <- function(x, groups) {
+  x1 <- x[groups == 1, , drop = FALSE]
+  x2 <- x[groups == 2, , drop = FALSE]
+  n1 <- nrow(x1)
+  n2 <- nrow(x2)
+  m1 <- Matrix::colMeans(x1)
+  m2 <- Matrix::colMeans(x2)
+  v1 <- Matrix::colSums(
+    (x1 - matrix(m1, n1, ncol(x), byrow = TRUE)
+  )^2) / (nrow(x1) - 1)
+  v2 <- Matrix::colSums(
+    (x2 - matrix(m2, n2, ncol(x), byrow = TRUE)
+  )^2) / (nrow(x2) - 1)
+  se_total <- sqrt(v1 / n1 + v2 / n2)
+  (m1 - m2) / se_total
+}
+```
+
+:::
+
+## We can identify optimal code by evaluating different t-test strategies
+
+```{r}
+bench::mark(
+  ttest_base(X,grp),
+  ttest_nocopy(X,grp),
+  ttest_nodispatch(X,grp),
+  ttest_malgebra(X,grp),
+  ttest_vectorise(X,grp)
+)[c("expression", "min", "median", "mem_alloc", "n_gc")]
+```
