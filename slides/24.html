@@ -199,313 +199,364 @@
 </div>
 
 </section>
-<section id="overview" class="slide level2 scrollable">
-<h2>Overview</h2>
-<ol type="1">
-<li>Code organization</li>
+<section id="learning-objectives" class="slide level2 scrollable">
+<h2>Learning Objectives</h2>
+<ol start="0" type="1">
+<li>Determine when to optimize code</li>
+<li>Organize code for optimization</li>
 <li>Check for existing solutions</li>
-<li>Do as little as possible</li>
-<li>Vectorise</li>
-<li>Avoid Copies</li>
+<li>Create simple solutions</li>
+<li>Vectorise code</li>
+<li>Avoid code copying</li>
+<li>Evaluate optimization for <code>t.test</code></li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(bench)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section>
+<section id="determine-when-to-optimize-code" class="title-slide slide level1 center">
+<h1>Determine when to optimize code</h1>
+
+</section>
+<section id="code-that-works-generates-expected-outputs-and-is-reproducible-should-be-the-first-priority" class="slide level2">
+<h2>Code that works, generates expected outputs, and is reproducible should be the first priority</h2>
+<ul>
+<li class="fragment">Correct code generates a <em>good product</em> i.e.&nbsp;expected outputs</li>
+<li class="fragment">Incorrect code generates a <em>bad product</em> i.e.&nbsp;incorrect outputs</li>
+<li class="fragment">A good product is <em>more valuable</em> than a bad product</li>
+<li class="fragment">People will use and wait for valuable products</li>
+<li class="fragment">People will not use incorrect products</li>
+<li class="fragment">Do not optimize code that doesn’t yet generate a good product</li>
+</ul>
+</section>
+<section id="optimizing-correct-code-should-be-the-second-priority" class="slide level2">
+<h2>Optimizing <em>correct</em> code should be the second priority</h2>
+<ul>
+<li>Time and space constraints should set optimization goals and priorities</li>
+<li>We all strive to be efficient, whether doing something in less time or with less space</li>
+<li>But we must first prioritize to meet our various constraints</li>
+</ul>
+</section></section>
+<section>
+<section id="organize-code-for-introducing-optimizations" class="title-slide slide level1 center">
+<h1>Organize code for introducing optimizations</h1>
+
+</section>
+<section id="create-functions-to-evaluate-approaches-and-quantify-optimization" class="slide level2">
+<h2>Create functions to evaluate approaches and quantify optimization</h2>
+<ul>
+<li>Goal: Modular, repeatable units of code</li>
+<li>Keep old functions that you’ve tried, even the failures</li>
+<li>Create examples with <code>{roxygen}</code> and tests with <code>{testthat}</code></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>mean1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">mean</span>(x)</span>
+<span id="cb2-2"><a></a>mean2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sum</span>(x) <span class="sc">/</span> <span class="fu">length</span>(x)</span>
+<span id="cb2-3"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e5</span>)</span>
+<span id="cb2-4"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>( <span class="co">#verifies outputs to be the same</span></span>
+<span id="cb2-5"><a></a>  <span class="fu">mean1</span>(x),</span>
+<span id="cb2-6"><a></a>  <span class="fu">mean2</span>(x)</span>
+<span id="cb2-7"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"mem_alloc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 2 × 4
+#&gt;   expression      min   median mem_alloc
+#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
+#&gt; 1 mean1(x)      423µs    440µs    23.3KB
+#&gt; 2 mean2(x)      186µs    187µs        0B</code></pre>
+</div>
+</div>
+</section>
+<section id="utilize-usethis-and-devtools-for-developing-and-testing-functions" class="slide level2 scrollable">
+<h2>Utilize <code>{usethis}</code> and <code>{devtools}</code> for developing and testing functions</h2>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p><img data-src="images/usethis_hex_logo.png" class="quarto-figure quarto-figure-center" width="160" height="190"> <img data-src="images/devtools_hex_logo.png" class="quarto-figure quarto-figure-center" width="160" height="190"></p>
+</div>
+</div>
+</div>
+<ol type="1">
+<li>Create a project/package directory manually or with <code>usetihs::create_package()</code></li>
+<li>Revise functions within R scripts in an R folder</li>
+<li>Use <code>devtools::load_all()</code> to load and use functions</li>
+<li>Repeat #2-4</li>
 </ol>
 </section>
-<section id="organizing-code" class="slide level2">
-<h2>Organizing code</h2>
+<section id="online-resources-and-communities-can-provide-existing-solutions-or-new-coding-approaches" class="slide level2">
+<h2>Online resources and communities can provide existing solutions or new coding approaches</h2>
 <ul>
-<li>Write a function for each approach</li>
+<li><p>After exhausting options at hand, online resources can provide new approaches not thought of.</p></li>
+<li><p>Alternatively, reframe the problem to find solutions e.g.&nbsp;new paradigm</p></li>
+<li><p>Talking to peers helps brainstorm solutions and reframe the problem</p></li>
+<li><p>Learning broadly improves your ability to dissect problems and develop solutions</p></li>
 </ul>
+</section></section>
+<section>
+<section id="strategies-for-code-optimization" class="title-slide slide level1 center">
+<h1>Strategies for code optimization</h1>
+
+</section>
+<section id="functions-arguments-and-data-types-should-factor-into-code-optimization-for-the-problem-at-hand." class="slide level2">
+<h2>Functions, arguments, and data types should factor into code optimization for the problem at hand.</h2>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Use vectorisation</a></li><li><a href="#tabset-1-2">Prespecify outputs</a></li><li><a href="#tabset-1-3">Test equally versus set inclusion</a></li><li><a href="#tabset-1-4">Avoid method dispatch</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>mean1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">mean</span>(x)</span>
-<span id="cb1-2"><a></a>mean2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sum</span>(x) <span class="sc">/</span> <span class="fu">length</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<ul>
-<li>Keep old functions that you’ve tried, even the failures</li>
-<li>Generate a representative test case</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<ul>
-<li>Use <code>bench::mark</code> to compare the different versions (and include unit tests)</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb3-2"><a></a>  <span class="fu">mean1</span>(x),</span>
-<span id="cb3-3"><a></a>  <span class="fu">mean2</span>(x)</span>
-<span id="cb3-4"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="fl">1e6</span>,<span class="at">nrow=</span><span class="dv">100</span>)</span>
+<span id="cb4-2"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb4-3"><a></a>  <span class="fu">colMeans</span>(X),</span>
+<span id="cb4-4"><a></a>  <span class="fu">apply</span>(X,<span class="dv">2</span>,<span class="cf">function</span>(x)<span class="fu">sum</span>(x) <span class="sc">/</span> <span class="fu">length</span>(x))</span>
+<span id="cb4-5"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"mem_alloc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 2 × 4
-#&gt;   expression      min   median `itr/sec`
-#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean1(x)    146.4µs  166.8µs     5839.
-#&gt; 2 mean2(x)     67.1µs   75.7µs    12950.</code></pre>
+#&gt;   expression                                     min   median mem_alloc
+#&gt;   &lt;bch:expr&gt;                                &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
+#&gt; 1 colMeans(X)                                 1.71ms   1.76ms    99.4KB
+#&gt; 2 apply(X, 2, function(x) sum(x)/length(x))  20.69ms  21.21ms    12.6MB</code></pre>
 </div>
 </div>
-</section>
-<section id="check-for-existing-solution" class="slide level2">
-<h2>Check for Existing Solution</h2>
+</div>
+<div id="tabset-1-2">
 <ul>
-<li>CRAN task views (http://cran.rstudio.com/web/views/)</li>
-<li>Reverse dependencies of Rcpp (https://cran.r-project.org/web/packages/Rcpp/)</li>
-<li>Talk to others!
-<ul>
-<li>Google (rseek)</li>
-<li>Stackoverflow ([R])</li>
-<li>https://community.rstudio.com/</li>
-<li>DSLC community</li>
-</ul></li>
+<li>Note: same speed but <code>vapply</code> allocates less memory</li>
 </ul>
-</section>
-<section id="do-as-little-as-possible" class="slide level2">
-<h2>Do as little as possible</h2>
-<ul>
-<li>use a function tailored to a more specific type of input or output, or to a more specific problem
-<ul>
-<li><code>rowSums()</code>, <code>colSums()</code>, <code>rowMeans()</code>, and <code>colMeans()</code> are faster than equivalent invocations that use <code>apply()</code> because they are vectorised</li>
-<li><code>vapply()</code> is faster than <code>sapply()</code> because it pre-specifies the output type</li>
-<li><code>any(x == 10)</code> is much faster than <code>10 %in% x</code> because testing equality is simpler than testing set inclusion</li>
-</ul></li>
-<li>Some functions coerce their inputs into a specific type. If your input is not the right type, the function has to do extra work
-<ul>
-<li>e.g.&nbsp;<code>apply()</code> will always turn a dataframe into a matrix</li>
-</ul></li>
-<li>Other examples
-<ul>
-<li><p><code>read.csv()</code>: specify known column types with <code>colClasses</code>. (Also consider switching to <code>readr::read_csv()</code> or <code>data.table::fread()</code> which are considerably faster than <code>read.csv()</code>.)</p></li>
-<li><p><code>factor()</code>: specify known levels with <code>levels</code>.</p></li>
-<li><p><code>cut()</code>: don’t generate labels with <code>labels = FALSE</code> if you don’t need them, or, even better, use <code>findInterval()</code> as mentioned in the “see also” section of the documentation.</p></li>
-<li><p><code>unlist(x, use.names = FALSE)</code> is much faster than <code>unlist(x)</code>.</p></li>
-<li><p><code>interaction()</code>: if you only need combinations that exist in the data, use <code>drop = TRUE</code>.</p></li>
-</ul></li>
-</ul>
-</section>
-<section id="avoiding-method-dispatch" class="slide level2">
-<h2>Avoiding Method Dispatch</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e2</span>)</span>
-<span id="cb5-2"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb5-3"><a></a>  <span class="fu">mean</span>(x),</span>
-<span id="cb5-4"><a></a>  <span class="fu">mean.default</span>(x)</span>
-<span id="cb5-5"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>X <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="fl">1e4</span>),<span class="fl">1e4</span>)</span>
+<span id="cb6-2"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb6-3"><a></a>  <span class="fu">vapply</span>(X,mean,<span class="fu">numeric</span>(<span class="dv">1</span>)),</span>
+<span id="cb6-4"><a></a>  <span class="fu">sapply</span>(X,mean)</span>
+<span id="cb6-5"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"mem_alloc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 2 × 4
-#&gt;   expression           min   median `itr/sec`
-#&gt;   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)            2.8µs    3.1µs   295383.
-#&gt; 2 mean.default(x)    900ns    1.1µs   839532.</code></pre>
+#&gt;   expression                       min   median mem_alloc
+#&gt;   &lt;bch:expr&gt;                  &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
+#&gt; 1 vapply(X, mean, numeric(1))    732ms    732ms    78.2KB
+#&gt; 2 sapply(X, mean)                745ms    745ms   362.6KB</code></pre>
 </div>
 </div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e2</span>)</span>
-<span id="cb7-2"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb7-3"><a></a>  <span class="fu">mean</span>(x),</span>
-<span id="cb7-4"><a></a>  <span class="fu">mean.default</span>(x),</span>
-<span id="cb7-5"><a></a>  <span class="fu">.Internal</span>(<span class="fu">mean</span>(x))</span>
-<span id="cb7-6"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 3 × 4
-#&gt;   expression              min   median `itr/sec`
-#&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)               2.7µs    2.9µs   310733.
-#&gt; 2 mean.default(x)       900ns    1.1µs   849192.
-#&gt; 3 .Internal(mean(x))    100ns    200ns  4495392.</code></pre>
 </div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e4</span>)</span>
-<span id="cb9-2"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb9-3"><a></a>  <span class="fu">mean</span>(x),</span>
-<span id="cb9-4"><a></a>  <span class="fu">mean.default</span>(x),</span>
-<span id="cb9-5"><a></a>  <span class="fu">.Internal</span>(<span class="fu">mean</span>(x))</span>
-<span id="cb9-6"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt; # A tibble: 3 × 4
-#&gt;   expression              min   median `itr/sec`
-#&gt;   &lt;bch:expr&gt;         &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 mean(x)              16.6µs   17.3µs    55604.
-#&gt; 2 mean.default(x)      14.4µs   14.9µs    64958.
-#&gt; 3 .Internal(mean(x))   13.6µs   13.7µs    70368.</code></pre>
-</div>
-</div>
-</section>
-<section id="avoiding-input-coercion" class="slide level2">
-<h2>Avoiding Input Coercion</h2>
+<div id="tabset-1-3">
 <ul>
-<li><code>as.data.frame()</code> is quite slow because it coerces each element into a data frame and then <code>rbind()</code>s them together</li>
-<li>instead, if you have a named list with vectors of equal length, you can directly transform it into a data frame</li>
+<li>Note: <code>any</code> is faster and allocates less memory than <code>%in%</code></li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>quickdf <span class="ot">&lt;-</span> <span class="cf">function</span>(l) {</span>
-<span id="cb11-2"><a></a>  <span class="fu">class</span>(l) <span class="ot">&lt;-</span> <span class="st">"data.frame"</span></span>
-<span id="cb11-3"><a></a>  <span class="fu">attr</span>(l, <span class="st">"row.names"</span>) <span class="ot">&lt;-</span> <span class="fu">.set_row_names</span>(<span class="fu">length</span>(l[[<span class="dv">1</span>]]))</span>
-<span id="cb11-4"><a></a>  l</span>
-<span id="cb11-5"><a></a>}</span>
-<span id="cb11-6"><a></a>l <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">26</span>, <span class="cf">function</span>(i) <span class="fu">runif</span>(<span class="fl">1e3</span>))</span>
-<span id="cb11-7"><a></a><span class="fu">names</span>(l) <span class="ot">&lt;-</span> letters</span>
-<span id="cb11-8"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb11-9"><a></a>  <span class="at">as.data.frame =</span> <span class="fu">as.data.frame</span>(l),</span>
-<span id="cb11-10"><a></a>  <span class="at">quick_df      =</span> <span class="fu">quickdf</span>(l)</span>
-<span id="cb11-11"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a>X <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fl">1e8</span></span>
+<span id="cb8-2"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb8-3"><a></a>  <span class="fu">any</span>(X <span class="sc">==</span> <span class="dv">1450</span>), <span class="co"># .Internal</span></span>
+<span id="cb8-4"><a></a>  <span class="dv">1450</span> <span class="sc">%in%</span> X</span>
+<span id="cb8-5"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"mem_alloc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 2 × 4
-#&gt;   expression         min   median `itr/sec`
-#&gt;   &lt;bch:expr&gt;    &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 as.data.frame  589.5µs  656.2µs     1447.
-#&gt; 2 quick_df         3.7µs    4.3µs   207929.</code></pre>
+#&gt;   expression          min   median mem_alloc
+#&gt;   &lt;bch:expr&gt;     &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
+#&gt; 1 any(X == 1450)    179ms    185ms  762.94MB
+#&gt; 2 1450 %in% X       173ms    174ms    1.12GB</code></pre>
 </div>
 </div>
-<p><em>Caveat!</em> This method is fast because it’s dangerous!</p>
-</section>
-<section id="vectorise" class="slide level2">
-<h2>Vectorise</h2>
-<ul>
-<li>vectorisation means finding the existing R function that is implemented in C and most closely applies to your problem</li>
-<li>Vectorised functions that apply to many scenarios
-<ul>
-<li><code>rowSums()</code>, <code>colSums()</code>, <code>rowMeans()</code>, and <code>colMeans()</code></li>
-<li>Vectorised subsetting can lead to big improvements in speed</li>
-<li><code>cut()</code> and <code>findInterval()</code> for converting continuous variables to categorical</li>
-<li>Be aware of vectorised functions like <code>cumsum()</code> and <code>diff()</code></li>
-<li>Matrix algebra is a general example of vectorisation</li>
-</ul></li>
-</ul>
-</section>
-<section id="avoiding-copies" class="slide level2">
-<h2>Avoiding copies</h2>
-<ul>
-<li>Whenever you use c(), append(), cbind(), rbind(), or paste() to create a bigger object, R must first allocate space for the new object and then copy the old object to its new home.</li>
-</ul>
+</div>
+<div id="tabset-1-4">
+<p>Note: marginal optimization</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>random_string <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
-<span id="cb13-2"><a></a>  <span class="fu">paste</span>(<span class="fu">sample</span>(letters, <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>), <span class="at">collapse =</span> <span class="st">""</span>)</span>
-<span id="cb13-3"><a></a>}</span>
-<span id="cb13-4"><a></a>strings10 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">10</span>, <span class="fu">random_string</span>())</span>
-<span id="cb13-5"><a></a>strings100 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">100</span>, <span class="fu">random_string</span>())</span>
-<span id="cb13-6"><a></a>collapse <span class="ot">&lt;-</span> <span class="cf">function</span>(xs) {</span>
-<span id="cb13-7"><a></a>  out <span class="ot">&lt;-</span> <span class="st">""</span></span>
-<span id="cb13-8"><a></a>  <span class="cf">for</span> (x <span class="cf">in</span> xs) {</span>
-<span id="cb13-9"><a></a>    out <span class="ot">&lt;-</span> <span class="fu">paste0</span>(out, x)</span>
-<span id="cb13-10"><a></a>  }</span>
-<span id="cb13-11"><a></a>  out</span>
-<span id="cb13-12"><a></a>}</span>
-<span id="cb13-13"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb13-14"><a></a>  <span class="at">loop10  =</span> <span class="fu">collapse</span>(strings10),</span>
-<span id="cb13-15"><a></a>  <span class="at">loop100 =</span> <span class="fu">collapse</span>(strings100),</span>
-<span id="cb13-16"><a></a>  <span class="at">vec10   =</span> <span class="fu">paste</span>(strings10, <span class="at">collapse =</span> <span class="st">""</span>),</span>
-<span id="cb13-17"><a></a>  <span class="at">vec100  =</span> <span class="fu">paste</span>(strings100, <span class="at">collapse =</span> <span class="st">""</span>),</span>
-<span id="cb13-18"><a></a>  <span class="at">check =</span> <span class="cn">FALSE</span></span>
-<span id="cb13-19"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"itr/sec"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fl">1e4</span>)</span>
+<span id="cb10-2"><a></a></span>
+<span id="cb10-3"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb10-4"><a></a>  <span class="fu">mean</span>(x),</span>
+<span id="cb10-5"><a></a>  <span class="fu">mean.default</span>(x)</span>
+<span id="cb10-6"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"mem_alloc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 2 × 4
+#&gt;   expression           min   median mem_alloc
+#&gt;   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
+#&gt; 1 mean(x)           43.3µs   46.4µs        0B
+#&gt; 2 mean.default(x)   40.8µs     45µs        0B</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="using-vectorised-code-often-leads-to-optimized-code" class="slide level2">
+<h2>Using vectorised code often leads to optimized code</h2>
+<ul>
+<li>Vectorisation:
+<ul>
+<li>Act on entire vector, not element-by-element</li>
+<li>Use an R function implemented in C</li>
+</ul></li>
+<li>Matrix algebra functions are a great example of vectorisation</li>
+<li>The help documentation can lead you to a vectorised solution</li>
+<li>Performing operations at the scale of your problem shows actual versus expected optimizations</li>
+</ul>
+</section>
+<section id="preallocating-vectors-avoids-copying-and-improves-performance" class="slide level2">
+<h2>Preallocating vectors avoids copying and improves performance</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>random_string <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb12-2"><a></a>  <span class="fu">paste</span>(<span class="fu">sample</span>(letters, <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>), <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb12-3"><a></a>}</span>
+<span id="cb12-4"><a></a>strings10 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">10</span>, <span class="fu">random_string</span>())</span>
+<span id="cb12-5"><a></a>strings100 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">100</span>, <span class="fu">random_string</span>())</span>
+<span id="cb12-6"><a></a>collapse <span class="ot">&lt;-</span> <span class="cf">function</span>(xs) {</span>
+<span id="cb12-7"><a></a>  out <span class="ot">&lt;-</span> <span class="st">""</span></span>
+<span id="cb12-8"><a></a>  <span class="cf">for</span> (x <span class="cf">in</span> xs) { out <span class="ot">&lt;-</span> <span class="fu">paste0</span>(out, x) }</span>
+<span id="cb12-9"><a></a>  out</span>
+<span id="cb12-10"><a></a>}</span>
+<span id="cb12-11"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb12-12"><a></a>  <span class="at">loop10  =</span> <span class="fu">collapse</span>(strings10),</span>
+<span id="cb12-13"><a></a>  <span class="at">loop100 =</span> <span class="fu">collapse</span>(strings100),</span>
+<span id="cb12-14"><a></a>  <span class="at">vec10   =</span> <span class="fu">paste</span>(strings10, <span class="at">collapse =</span> <span class="st">""</span>),</span>
+<span id="cb12-15"><a></a>  <span class="at">vec100  =</span> <span class="fu">paste</span>(strings100, <span class="at">collapse =</span> <span class="st">""</span>),</span>
+<span id="cb12-16"><a></a>  <span class="at">check =</span> <span class="cn">FALSE</span></span>
+<span id="cb12-17"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"mem_alloc"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; # A tibble: 4 × 4
-#&gt;   expression      min   median `itr/sec`
-#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt;
-#&gt; 1 loop10       17.1µs     18µs    52743.
-#&gt; 2 loop100     460.3µs  491.5µs     1959.
-#&gt; 3 vec10         2.7µs    2.9µs   317912.
-#&gt; 4 vec100       16.3µs   18.5µs    51297.</code></pre>
+#&gt;   expression      min   median mem_alloc
+#&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
+#&gt; 1 loop10      19.96µs  20.92µs    15.5KB
+#&gt; 2 loop100     529.3µs 543.89µs   251.5KB
+#&gt; 3 vec10        3.51µs   3.69µs        0B
+#&gt; 4 vec100      21.98µs  22.85µs      848B</code></pre>
 </div>
 </div>
+</section></section>
+<section>
+<section id="evaluating-optimizations-to-t.test" class="title-slide slide level1 center">
+<h1>Evaluating optimizations to <code>t.test</code></h1>
+
 </section>
-<section id="case-study-t-test" class="slide level2">
-<h2>Case study: t-test</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>m <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb15-2"><a></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
-<span id="cb15-3"><a></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(m <span class="sc">*</span> n, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="dv">3</span>), <span class="at">nrow =</span> m)</span>
-<span id="cb15-4"><a></a>grp <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">each =</span> n <span class="sc">/</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="co"># formula interface</span></span>
-<span id="cb16-2"><a></a><span class="fu">system.time</span>(</span>
-<span id="cb16-3"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>m) {</span>
-<span id="cb16-4"><a></a>    <span class="fu">t.test</span>(X[i, ] <span class="sc">~</span> grp)<span class="sc">$</span>statistic</span>
-<span id="cb16-5"><a></a>  }</span>
-<span id="cb16-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;    user  system elapsed 
-#&gt;    0.28    0.00    0.33</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="co"># provide two vectors</span></span>
-<span id="cb18-2"><a></a><span class="fu">system.time</span>(</span>
-<span id="cb18-3"><a></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>m) {</span>
-<span id="cb18-4"><a></a>    <span class="fu">t.test</span>(X[i, grp <span class="sc">==</span> <span class="dv">1</span>], X[i, grp <span class="sc">==</span> <span class="dv">2</span>])<span class="sc">$</span>statistic</span>
-<span id="cb18-5"><a></a>  }</span>
-<span id="cb18-6"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;    user  system elapsed 
-#&gt;    0.08    0.00    0.08</code></pre>
-</div>
-</div>
-<p>Add functionality to save values</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>compT <span class="ot">&lt;-</span> <span class="cf">function</span>(i){</span>
-<span id="cb20-2"><a></a>  <span class="fu">t.test</span>(X[i, grp <span class="sc">==</span> <span class="dv">1</span>], X[i, grp <span class="sc">==</span> <span class="dv">2</span>])<span class="sc">$</span>statistic</span>
-<span id="cb20-3"><a></a>}</span>
-<span id="cb20-4"><a></a><span class="fu">system.time</span>(t1 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, compT))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;    user  system elapsed 
-#&gt;    0.09    0.00    0.09</code></pre>
-</div>
-</div>
-<p>If you look at the source code of <code>stats:::t.test.default()</code>, you’ll see that it does a lot more than just compute the t-statistic.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="co"># Do less work</span></span>
-<span id="cb22-2"><a></a>my_t <span class="ot">&lt;-</span> <span class="cf">function</span>(x, grp) {</span>
-<span id="cb22-3"><a></a>  t_stat <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb22-4"><a></a>    m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
-<span id="cb22-5"><a></a>    n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
-<span id="cb22-6"><a></a>    var <span class="ot">&lt;-</span> <span class="fu">sum</span>((x <span class="sc">-</span> m) <span class="sc">^</span> <span class="dv">2</span>) <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb22-7"><a></a>    <span class="fu">list</span>(<span class="at">m =</span> m, <span class="at">n =</span> n, <span class="at">var =</span> var)</span>
-<span id="cb22-8"><a></a>  }</span>
-<span id="cb22-9"><a></a>  g1 <span class="ot">&lt;-</span> <span class="fu">t_stat</span>(x[grp <span class="sc">==</span> <span class="dv">1</span>])</span>
-<span id="cb22-10"><a></a>  g2 <span class="ot">&lt;-</span> <span class="fu">t_stat</span>(x[grp <span class="sc">==</span> <span class="dv">2</span>])</span>
-<span id="cb22-11"><a></a>  se_total <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(g1<span class="sc">$</span>var <span class="sc">/</span> g1<span class="sc">$</span>n <span class="sc">+</span> g2<span class="sc">$</span>var <span class="sc">/</span> g2<span class="sc">$</span>n)</span>
-<span id="cb22-12"><a></a>  (g1<span class="sc">$</span>m <span class="sc">-</span> g2<span class="sc">$</span>m) <span class="sc">/</span> se_total</span>
-<span id="cb22-13"><a></a>}</span>
-<span id="cb22-14"><a></a><span class="fu">system.time</span>(t2 <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>m, <span class="sc">~</span> <span class="fu">my_t</span>(X[.,], grp)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;    user  system elapsed 
-#&gt;    0.02    0.00    0.01</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t2))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>This gives us a six-fold speed improvement!</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a><span class="co"># Vectorise it</span></span>
-<span id="cb25-2"><a></a>rowtstat <span class="ot">&lt;-</span> <span class="cf">function</span>(X, grp){</span>
-<span id="cb25-3"><a></a>  t_stat <span class="ot">&lt;-</span> <span class="cf">function</span>(X) {</span>
-<span id="cb25-4"><a></a>    m <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(X)</span>
-<span id="cb25-5"><a></a>    n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(X)</span>
-<span id="cb25-6"><a></a>    var <span class="ot">&lt;-</span> <span class="fu">rowSums</span>((X <span class="sc">-</span> m) <span class="sc">^</span> <span class="dv">2</span>) <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb25-7"><a></a>    <span class="fu">list</span>(<span class="at">m =</span> m, <span class="at">n =</span> n, <span class="at">var =</span> var)</span>
-<span id="cb25-8"><a></a>  }</span>
-<span id="cb25-9"><a></a>  g1 <span class="ot">&lt;-</span> <span class="fu">t_stat</span>(X[, grp <span class="sc">==</span> <span class="dv">1</span>])</span>
-<span id="cb25-10"><a></a>  g2 <span class="ot">&lt;-</span> <span class="fu">t_stat</span>(X[, grp <span class="sc">==</span> <span class="dv">2</span>])</span>
-<span id="cb25-11"><a></a>  se_total <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(g1<span class="sc">$</span>var <span class="sc">/</span> g1<span class="sc">$</span>n <span class="sc">+</span> g2<span class="sc">$</span>var <span class="sc">/</span> g2<span class="sc">$</span>n)</span>
-<span id="cb25-12"><a></a>  (g1<span class="sc">$</span>m <span class="sc">-</span> g2<span class="sc">$</span>m) <span class="sc">/</span> se_total</span>
-<span id="cb25-13"><a></a>}</span>
-<span id="cb25-14"><a></a><span class="fu">system.time</span>(t3 <span class="ot">&lt;-</span> <span class="fu">rowtstat</span>(X, grp))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>#&gt;    user  system elapsed 
-#&gt;    0.02    0.00    0.02</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a><span class="fu">stopifnot</span>(<span class="fu">all.equal</span>(t1, t3))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>1000 times faster than when we started!</p>
-</section>
-<section id="other-techniques" class="slide level2">
-<h2>Other techniques</h2>
+<section id="most-data-analysis-projects-ask-to-compare-the-means-between-two-groups" class="slide level2">
+<h2>Most data analysis projects ask to compare the means between two groups</h2>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">Problem Statement</a></li><li><a href="#tabset-2-2">Data</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
 <ul>
-<li><p><a href="http://www.r-bloggers.com/">Read R blogs</a> to see what performance problems other people have struggled with, and how they have made their code faster.</p></li>
-<li><p>Read other R programming books, like The Art of R Programming or Patrick Burns’ <a href="http://www.burns-stat.com/documents/books/the-r-inferno/"><em>R Inferno</em></a> to learn about common traps.</p></li>
-<li><p>Take an algorithms and data structure course to learn some well known ways of tackling certain classes of problems. I have heard good things about Princeton’s <a href="https://www.coursera.org/course/algs4partI">Algorithms course</a> offered on Coursera.</p></li>
-<li><p>Learn how to parallelise your code. Two places to start are Parallel R and Parallel Computing for Data Science</p></li>
-<li><p>Read general books about optimisation like Mature optimisation or the Pragmatic Programmer</p></li>
-<li><p>Read more R code. StackOverflow, R Mailing List, DSLC, GitHub, etc.</p></li>
+<li>Though better statistics exist, Student’s t test is often asked for</li>
+<li>Many tests need to be performed, often in the thousands or more</li>
+<li>Speed can take precedent over safety given the dozens of projects with this problem</li>
+<li>Correctness is a key requirement</li>
 </ul>
-
-
+</div>
+<div id="tabset-2-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a>m <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb14-2"><a></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb14-3"><a></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(m <span class="sc">*</span> n, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="dv">3</span>), <span class="at">nrow =</span> m)</span>
+<span id="cb14-4"><a></a>grp <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">each =</span> m <span class="sc">/</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
 </section>
+<section id="we-can-leverage-our-strategies-to-compute-many-t-tests" class="slide level2">
+<h2>We can leverage our strategies to compute many t-tests</h2>
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">Base Case</a></li><li><a href="#tabset-3-2">No copying</a></li><li><a href="#tabset-3-3">No dispatching</a></li><li><a href="#tabset-3-4">Matrix algebra</a></li><li><a href="#tabset-3-5">Vectorise</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>ttest_base <span class="ot">&lt;-</span> <span class="cf">function</span>(x,groups) {</span>
+<span id="cb15-2"><a></a>  vec <span class="ot">&lt;-</span> <span class="fu">double</span>()</span>
+<span id="cb15-3"><a></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) {</span>
+<span id="cb15-4"><a></a>    veci <span class="ot">&lt;-</span> <span class="fu">t.test</span>(x[groups <span class="sc">==</span> <span class="dv">1</span>, i], x[groups <span class="sc">==</span> <span class="dv">2</span>, i])[[<span class="st">'statistic'</span>]]</span>
+<span id="cb15-5"><a></a>    vec <span class="ot">&lt;-</span> <span class="fu">c</span>(vec,veci)</span>
+<span id="cb15-6"><a></a>  }</span>
+<span id="cb15-7"><a></a>  <span class="fu">unname</span>(vec)</span>
+<span id="cb15-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-3-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>ttest_nocopy <span class="ot">&lt;-</span> <span class="cf">function</span>(x,groups) {</span>
+<span id="cb16-2"><a></a>  purrr<span class="sc">::</span><span class="fu">map_dbl</span>(</span>
+<span id="cb16-3"><a></a>    <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x),</span>
+<span id="cb16-4"><a></a>    <span class="cf">function</span>(i) {</span>
+<span id="cb16-5"><a></a>      <span class="fu">t.test</span>(x[groups <span class="sc">==</span> <span class="dv">1</span>, i], x[groups <span class="sc">==</span> <span class="dv">2</span>, i])[[<span class="st">'statistic'</span>]]</span>
+<span id="cb16-6"><a></a>    }</span>
+<span id="cb16-7"><a></a>  )</span>
+<span id="cb16-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-3-3">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a>ttest_nodispatch <span class="ot">&lt;-</span> <span class="cf">function</span>(x,groups) {</span>
+<span id="cb17-2"><a></a>  purrr<span class="sc">::</span><span class="fu">map_dbl</span>(</span>
+<span id="cb17-3"><a></a>    <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x),</span>
+<span id="cb17-4"><a></a>    <span class="cf">function</span>(i) {</span>
+<span id="cb17-5"><a></a>      stats<span class="sc">:::</span><span class="fu">t.test.default</span>(x[groups <span class="sc">==</span> <span class="dv">1</span>, i], x[groups <span class="sc">==</span> <span class="dv">2</span>, i])[[<span class="st">'statistic'</span>]]</span>
+<span id="cb17-6"><a></a>    }</span>
+<span id="cb17-7"><a></a>  )</span>
+<span id="cb17-8"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-3-4">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>ttest_malgebra <span class="ot">&lt;-</span> <span class="cf">function</span>(x, groups) {</span>
+<span id="cb18-2"><a></a>  t_stat <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb18-3"><a></a>    m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x); n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb18-4"><a></a>    var <span class="ot">&lt;-</span> <span class="fu">sum</span>((x <span class="sc">-</span> m) <span class="sc">^</span> <span class="dv">2</span>) <span class="sc">/</span> (n <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb18-5"><a></a>    <span class="fu">list</span>(<span class="at">m =</span> m, <span class="at">n =</span> n, <span class="at">var =</span> var)</span>
+<span id="cb18-6"><a></a>  }</span>
+<span id="cb18-7"><a></a>  purrr<span class="sc">::</span><span class="fu">map_dbl</span>(</span>
+<span id="cb18-8"><a></a>    <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x),</span>
+<span id="cb18-9"><a></a>    <span class="cf">function</span>(i) {</span>
+<span id="cb18-10"><a></a>      g1 <span class="ot">&lt;-</span> <span class="fu">t_stat</span>(x[groups <span class="sc">==</span> <span class="dv">1</span>,i]); g2 <span class="ot">&lt;-</span> <span class="fu">t_stat</span>(x[groups <span class="sc">==</span> <span class="dv">2</span>,i])</span>
+<span id="cb18-11"><a></a>      se_total <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(g1<span class="sc">$</span>var <span class="sc">/</span> g1<span class="sc">$</span>n <span class="sc">+</span> g2<span class="sc">$</span>var <span class="sc">/</span> g2<span class="sc">$</span>n)</span>
+<span id="cb18-12"><a></a>      (g1<span class="sc">$</span>m <span class="sc">-</span> g2<span class="sc">$</span>m) <span class="sc">/</span> se_total</span>
+<span id="cb18-13"><a></a>    }</span>
+<span id="cb18-14"><a></a>  )</span>
+<span id="cb18-15"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-3-5">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>ttest_vectorise <span class="ot">&lt;-</span> <span class="cf">function</span>(x, groups) {</span>
+<span id="cb19-2"><a></a>  x1 <span class="ot">&lt;-</span> x[groups <span class="sc">==</span> <span class="dv">1</span>, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb19-3"><a></a>  x2 <span class="ot">&lt;-</span> x[groups <span class="sc">==</span> <span class="dv">2</span>, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb19-4"><a></a>  n1 <span class="ot">&lt;-</span> <span class="fu">nrow</span>(x1)</span>
+<span id="cb19-5"><a></a>  n2 <span class="ot">&lt;-</span> <span class="fu">nrow</span>(x2)</span>
+<span id="cb19-6"><a></a>  m1 <span class="ot">&lt;-</span> Matrix<span class="sc">::</span><span class="fu">colMeans</span>(x1)</span>
+<span id="cb19-7"><a></a>  m2 <span class="ot">&lt;-</span> Matrix<span class="sc">::</span><span class="fu">colMeans</span>(x2)</span>
+<span id="cb19-8"><a></a>  v1 <span class="ot">&lt;-</span> Matrix<span class="sc">::</span><span class="fu">colSums</span>(</span>
+<span id="cb19-9"><a></a>    (x1 <span class="sc">-</span> <span class="fu">matrix</span>(m1, n1, <span class="fu">ncol</span>(x), <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-10"><a></a>  )<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="fu">nrow</span>(x1) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb19-11"><a></a>  v2 <span class="ot">&lt;-</span> Matrix<span class="sc">::</span><span class="fu">colSums</span>(</span>
+<span id="cb19-12"><a></a>    (x2 <span class="sc">-</span> <span class="fu">matrix</span>(m2, n2, <span class="fu">ncol</span>(x), <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-13"><a></a>  )<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="fu">nrow</span>(x2) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb19-14"><a></a>  se_total <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(v1 <span class="sc">/</span> n1 <span class="sc">+</span> v2 <span class="sc">/</span> n2)</span>
+<span id="cb19-15"><a></a>  (m1 <span class="sc">-</span> m2) <span class="sc">/</span> se_total</span>
+<span id="cb19-16"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="we-can-identify-optimal-code-by-evaluating-different-t-test-strategies" class="slide level2">
+<h2>We can identify optimal code by evaluating different t-test strategies</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb20-2"><a></a>  <span class="fu">ttest_base</span>(X,grp),</span>
+<span id="cb20-3"><a></a>  <span class="fu">ttest_nocopy</span>(X,grp),</span>
+<span id="cb20-4"><a></a>  <span class="fu">ttest_nodispatch</span>(X,grp),</span>
+<span id="cb20-5"><a></a>  <span class="fu">ttest_malgebra</span>(X,grp),</span>
+<span id="cb20-6"><a></a>  <span class="fu">ttest_vectorise</span>(X,grp)</span>
+<span id="cb20-7"><a></a>)[<span class="fu">c</span>(<span class="st">"expression"</span>, <span class="st">"min"</span>, <span class="st">"median"</span>, <span class="st">"mem_alloc"</span>, <span class="st">"n_gc"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 5 × 4
+#&gt;   expression                    min   median mem_alloc
+#&gt;   &lt;bch:expr&gt;               &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
+#&gt; 1 ttest_base(X, grp)        126.3ms 126.31ms    13.7MB
+#&gt; 2 ttest_nocopy(X, grp)      121.5ms 121.52ms    6.47MB
+#&gt; 3 ttest_nodispatch(X, grp)  118.3ms  118.3ms    5.82MB
+#&gt; 4 ttest_malgebra(X, grp)     13.9ms  14.28ms    4.02MB
+#&gt; 5 ttest_vectorise(X, grp)   736.2µs   1.42ms    67.4MB</code></pre>
+</div>
+</div>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
@@ -721,6 +772,44 @@
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
