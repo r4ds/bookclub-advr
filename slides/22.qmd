@@ -1,0 +1,313 @@
+---
+engine: knitr
+title: Debugging
+---
+
+## Learning objectives:
+
+- Overall: Find and fix errors.
+- Locate exactly where an error occurred with the `traceback()` function.
+- Pause the execution of a function and launch an environment to interactively explore what's happening.
+- Debug non-interactively executed code.
+- Recognize other (non-error) problems that occasionally also need debugging.
+
+## Types of errors
+
+- Parsing errors: you are missing a closing `)`, `}` or `"` 
+  so the code AST cannot even be formed
+     * Usually captured by IDEs such as RStudio and Positron with red flashing pointers
+- Syntax errors: 
+     * Parentheses are matched but one of them closes at wrong time
+     * The name of a function input is misspelled
+     * Passing more inputs to a function than it expects
+- Runtime errors: the code is syntactically correct, but it does a weird thing
+  in your actual environment with your actual data
+
+## We want to subset our closures!!!
+
+And then of course there's this classic:
+
+![](images/22-closure-not-subsettable.png)
+
+Explanation: `df` is a closure, in this case, the function `stats::df()`, the density of F-distribution.
+(It is not a data frame, as you thought it was, ha!)
+It does not have elements that you could subset. 
+
+# Strategies for finding and fixing errors
+
+| Finding your bug is a process of confirming the many things that you *believe* are true — until you find one which is *not* true.
+
+::: {style="text-align: right;"}
+**—Norm Matloff** (emphasis added)
+:::
+
+| Debugging is like being the detective in a crime movie where you're also the murderer. 
+
+::: {style="text-align: right;"}
+**-Filipe Fortes**
+:::
+
+## Google first!
+
+- Google new error messages to help translate
+- Packages that help:
+  - [{errorist}](https://r-pkg.thecoatlessprofessor.com/errorist/)
+  - [{searcher}](https://r-pkg.thecoatlessprofessor.com/searcher/)
+  - Probably AI agents after 2026
+
+## Repeatable bugs are more debuggable
+
+- May need to execute many times
+- Up-front investment to make a minimal [{reprex}](https://reprex.tidyverse.org/) pays off
+
+## Use the scientific method to find bugs
+
+- Generate a hypothesis.
+- Design experiments to test that hypothesis.
+- Record your results.
+
+Being systematic often saves time in the end.
+
+## Automated tests help
+
+- Add tests for nearby working code to avoid new bugs.
+- Add tests for specific broken cases.
+- Add tests for hypotheses.
+
+Concepts of unit tests are generally associated with R package development,
+see [chapters on testing in "Writing R Packages"](https://r-pkgs.org/testing-basics.html).
+
+::: {style="font-size: 75%;"}
+Automated testing sometimes brings a dilemma: you add something to a working function, 
+and the stuff that you added does work according to the new tests, but an old test gets broken. 
+This is may not be an error per se, but it shows a gap in your knowledge of 
+and assumptions about the code (see Norm Matloff's quote above) 
+and you have to deal with that one way or another.
+:::
+
+## Common syntax errors
+
+[Longer list here](https://computing.stat.berkeley.edu/tutorial-R-debugging/#4-some-common-causes-of-bugs)
+
+- Parenthesis mismatches
+
+- `[[...]]` vs. `[...]`
+
+- `==` vs. `=`
+
+- Comparing real numbers exactly using `==` after calculations that result in non-integers
+
+- You expect a single value but your code gives you a vector 
+    * You may need `identical()` or `all()`, or form the condition more thoroughly
+
+![](images/22-cond-gt1.png)
+
+- Type coercion and dropping dimensions
+
+```{r drop_class}
+inherits(mtcars[,1], "data.frame")
+inherits(mtcars[,1, drop=FALSE], "data.frame")
+```
+
+
+# Use `traceback()` to locate the error
+
+## Example: Chained functions
+
+![](images/locating-errors.png)
+
+![](images/fa.png)
+
+## `traceback()` shows the call stack that lead to the error 
+
+Click **"Show traceback":**:
+![](images/options.png)
+
+Read bottom to top.
+
+::: notes
+- `f()` calls `g()` calls `h()` calls `i()`
+- `rlang::global_handle()` for better traceback.
+:::
+
+##  `traceback()` is confusing with lazy evaluation
+
+![](images/lazy-evaluation.png)
+
+![](images/traceback.png)
+
+::: notes
+- `j()` isn't evaluated until it gets to `i()`.
+- I honestly don't find this example all that confusing.
+:::
+
+## `traceback()` limits
+
+In real world, traceback may look like [25 layers](https://stbl.wrangle.zone/dev/reference/expect_pkg_error_classes.html)
+
+- Your code is the first 2-3 layers.
+- The last 5 layers are very clearly formatting the error and making a safe return of appropriate objects.
+- The middle 15 layers are classes and methods of `dplyr`, `rlang`, `purrr` and `base` 
+  and maybe packages you have never heard of,
+  passing very opaque things to one another, 
+  your informatively named objects are abstracted somewhere
+  in `...`, `.x` and `envir`...
+- ... and you are still left wondering what's going on.
+
+## `rlang::global_handle()` in `.Rprofile` makes traceback better
+
+![](images/global_handle.png)
+
+::: notes
+- `rlang::with_abort()` from book no longer exists
+- I'm now experimenting with turning this off, because it breaks "rerun with debug"!
+:::
+
+# Interactive debugger
+
+## RStudio has tools for debugging
+
+- Click "Rerun with Debug" in error message
+- Enable `Debug > On Error > Break in Code` to always jump to error
+
+## Use `browser()` to set a break point in code
+
+![](images/browser.png)
+
+## `browser()` can be conditional
+
+![](images/browser2.png)
+
+A better practice would be to define your own debugging flags 
+that would be turned off or disappear in production code
+
+```
+if (exists("my_debugging_flag")) browser()
+```
+
+## `browser()` provides special commands
+
+These commands work in the Console; RStudio also makes the toolbar buttons available.
+
+![](images/debug-toolbar.png)
+
+- Next (`n`): Execute the next step
+- Step into (`s`): Dive into function (or `n`)
+- Finish (`f`): Finish execution of the current loop/function
+- Continue (`c`): Continue regular execution of the function (leave interactive) 
+- Stop (`Q`): Stop debugging, terminate the function, and return to the global workspace 
+
+## `browser()` practical tips
+
+- RStudio runs its best attempt to show the code that is being executed in the "Source" pane
+    * parsed AST for external functions (no comments, no indents);
+    * actual source files within your packages when you are in the package project.
+- That means you can select the code and `Ctrl+Enter` to execute it
+    * if in doubt about the source of the error, do that rather than hitting `n` "Next"
+    * especially if the computations leading to this point in your code are costly in terms of time
+    
+
+## Set breakpoints in RStudio for virtual `browser()`
+
+Activate:
+
+- Click to left of line number, or
+- Press **Shift + F9**
+
+Downsides:
+
+- Fail in [unusual situations](https://support.posit.co/hc/en-us/articles/200534337-Breakpoint-Troubleshooting)
+- Can't be conditional
+
+## Use `options(error = recover)` for interactive debugging prompt
+
+![](images/recover.png)
+
+Turn off with `options(error = NULL)`
+
+## `debug(fn_name)` to insert `browser()` in first line of `fn_name()`
+
+- `undebug(fn_name)` to remove it
+- `debugonce(fn_name)` to do it once (similar to rerun with debug) 
+- `utils::setBreakpoint("file_name", line_number)`
+
+::: notes
+- Pronounce `debugonce()` [like "Beyonce"](https://www.youtube.com/watch?v=JThd3YYQXGg)
+:::
+
+## Call stacks printed by `traceback()`, `browser()` & `where`, and `recover()` are not consistent
+
+![](images/print-debug.png)
+
+- RStudio displays calls in the same order as `traceback()`
+- {rlang} functions use the same ordering & numbering as `recover()`
+  - Also indent to reinforce hierarchy
+
+# Non-interactive debugging
+
+## Use `callr::r()` or fresh start to look for differences
+
+`callr::r(f, list(1, 2))` calls `f(1, 2)` in a fresh session
+
+- Global env 
+- Packages
+- Object
+- Working directory
+- `PATH` environment variable
+- `R_LIBS` environment variable
+
+## `dump.frames()` is the equivalent to `recover()` for non-interactive code.
+
+![](images/non-interractive-debugging.png)
+
+## Print debugging can help if nothing else works
+
+![](images/print-debugging.png)
+
+## Debugging withing packages
+
+Recall [Chapter 8](08.html) on classed conditions:
+
+- you can create richer structured objects with 
+
+```
+rlang::abort(
+  message = "cli-formatted-message",
+  class   = "your-special-class-to-distinguish-from-other-errors",
+  ...
+)
+```
+
+- you can pass your situation report in `...` so that error handlers
+  and/or reporters can more effectively peek into your environment that errored
+- you can capture the class with `testthat::expect_s3_class()`
+
+## Debugging Rmarkdown/Quarto has challenges
+
+- Call `rmarkdown::render("path/to/file.Rmd")` instead of IDE knitting.
+    * downside: the content of your current environment propagates into the markdown code
+- Use `sink()` for tricksy error handling 
+
+![](images/print-recover.png){height="110"}
+
+See also ["Markdown test drive"](https://happygitwithr.com/rmd-test-drive.html?q=knit_exit#rmd-troubleshooting)
+in Jenny Bryan's _Happy Git With R_ book.
+
+## Functions can fail without errors
+
+- Unexpected warning: `options(warn = 2)` turns warnings into errors.
+- Unexpected message: Proposed solution in book no longer available.
+- Function might never return. Terminate & `traceback()`.
+- Crashed R = bug in compiled (C, C++, etc) code. 
+
+## Some useful resources on debugging
+
+- ["Object of type closure is not subsettable"](https://github.com/jennybc/debugging#readme) (Jenny Bryan, `rstudio::conf(2020)`)
+- ["What They Forgot to Teach You About R" Chapter 12](https://rstats.wtf/debugging-r) (by Jenny Bryan and Jim Hester)
+- [Minimal reprex for a shiny app](https://www.youtube.com/watch?v=9w8ANOAlWy4) (video by Hadley)
+- [Debugging in RStudio, by Posit](https://support.posit.co/hc/en-us/articles/205612627-Debugging-with-the-RStudio-IDE)
+
+
+- If you have access to "Code Complete", it provides 
+  [generic debugging principles](https://www.oreilly.com/library/view/code-complete-2nd/0735619670/ch08.html)
+  that are meant to be applicable across programming languages
