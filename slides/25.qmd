@@ -395,4 +395,5 @@ fn signRustSlice(x: Robj) -> Robj {
 ## References
 
 -   [`{rextendr}`](https://extendr.rs/rextendr/index.html)
+-   [Rust for Developers](https://extendr.rs/intro-rust/)
 -   [`{Rcpp}` on CRAN](https://cran.r-project.org/web/packages/Rcpp/index.html)
