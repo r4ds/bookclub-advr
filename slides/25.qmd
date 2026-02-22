@@ -310,21 +310,12 @@ rextendr::rust_source(
 
 :::
 
-## The C optimized `sign` establishes the baseline performance to compare against
+## The C optimized `sign` is most performant, then C++ re-implementation is faster but Rust uses less memory
 
 ```{r}
 vec <- rnorm(1e7,sd = 50)
 bench::mark(
   signR(vec),
-  sign(vec),
-  relative = TRUE
-)
-```
-
-## C++ re-implementation is faster but uses more memory than Rust
-
-```{r}
-bench::mark(
   sign(vec),
   signCfaster(vec),
   signC(vec),
