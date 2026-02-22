@@ -9,12 +9,10 @@ title: Rewriting R code in C++/Rust
 
 ## Learning objectives:
 
--   Why rewrite R code
--   Bridge R with C++/Rust
--   Run C++ in R
--   Run Rust in R
--   Create and call C++ functions in R
--   Create and call Rust functions in R
+-   Why rewrite R code in C++/Rust
+-   Compare C++/Rust function and package development
+-   Run C++/Rust in R
+-   Create and call C++/Rust functions in R
 -   Evaluate function performance for R/C/C++/Rust
 -   Compare compiler error messages between C++ and Rust
 
@@ -53,7 +51,7 @@ library(rextendr)
 
 -   R or C code debugging is more challenging than Rust
 
-    - Rust has no GC so lacks memory bugs and has great error messages surpassing(?) the {tidyverse}
+    - Rust has no GC so lacks memory bugs and has great error messages comparable with the `{tidyverse}`
 
 :::
 
@@ -162,7 +160,7 @@ hello_world()
 
 :::panel-tabset
 
-### Scalar Versions
+### Scalar functions
 
 ::: panel-tabset
 
@@ -212,7 +210,7 @@ fn signRust(x: f64) -> i32 {
 
 :::
 
-### Vector Versions
+### Vector functions
 
 ::: panel-tabset
 
@@ -312,7 +310,7 @@ rextendr::rust_source(
 
 :::
 
-## The C optimized `sign` estsablishes the baseline performance to compare against
+## The C optimized `sign` establishes the baseline performance to compare against
 
 ```{r}
 vec <- rnorm(1e7,sd = 50)
@@ -326,7 +324,6 @@ bench::mark(
 ## C++ re-implementation is faster but uses more memory than Rust
 
 ```{r}
-vec <- rnorm(1e7,sd = 50)
 bench::mark(
   sign(vec),
   signCfaster(vec),
