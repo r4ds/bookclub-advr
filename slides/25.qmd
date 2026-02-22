@@ -15,6 +15,7 @@ title: Rewriting R code in C++/Rust
 -   Create and call C++/Rust functions in R
 -   Evaluate function performance for R/C/C++/Rust
 -   Compare compiler error messages between C++ and Rust
+-   Identify advanced tooling for C++/Rust
 
 ```{r}
 library(Rcpp)
@@ -380,6 +381,31 @@ fn signRustSlice(x: Robj) -> Robj {
 
 :::
 
+## C++ and Rust have optimized and robust standard libraries
+
+::: panel-tabset
+
+### C++
+
+-   [Standard Template Library](https://learn.microsoft.com/en-us/cpp/standard-library/cpp-standard-library-reference?view=msvc-170) for complex algorithms and [data structures](https://en.cppreference.com/w/cpp/container.html)
+-   Use different headers, like `<algorithm>`, in C++ files to invoke the desired extension
+-   If functionality is not in the STL, check the [boost](https://www.boost.org/libraries/latest/grid/) library.
+
+### Rust
+
+-   [Rust Standard Library](https://doc.rust-lang.org/std/) for algorithms and data structures
+-   Primitives, modules, macros and keywords included in Rust
+-   For example, [multithreading](https://doc.rust-lang.org/std/thread/index.html) using native OS threads with their own memory:
+
+```rust
+use std::thread;
+
+thread::spawn(move || {
+    // some work here
+});
+```
+
+:::
 ## References
 
 -   Rust
