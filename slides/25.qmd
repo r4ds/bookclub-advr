@@ -382,6 +382,13 @@ fn signRustSlice(x: Robj) -> Robj {
 
 ## References
 
--   [`{rextendr}`](https://extendr.rs/rextendr/index.html)
--   [Rust for Developers](https://extendr.rs/intro-rust/)
--   [`{Rcpp}` on CRAN](https://cran.r-project.org/web/packages/Rcpp/index.html)
+-   Rust
+    -   [crates.io: Rust package manager](https://crates.io)
+    -   [`{cargo}` book](https://doc.rust-lang.org/cargo/)
+    -   [`{rextendr} on CRAN`](https://cran.r-project.org/web/packages/rextendr/index.html)
+    -   [extendr_api crate documentation](https://docs.rs/extendr-api/latest/extendr_api/)
+-   C++
+    -   [vcpkg C++ package manager](https://vcpkg.io/en/)
+    -   [`{Rcpp}` on CRAN](https://cran.r-project.org/web/packages/Rcpp/index.html)
+    -   [Rcpp for everyone](https://doc.rust-lang.org/cargo/)
+-   [Rust and C++ comparison gitbook](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/)
