@@ -1,6 +1,6 @@
 ---
 engine: knitr
-title: Rewriting R code in C++/Rust
+title: Rewriting R code in C++ (and Rust)
 ---
 
 # _Interfaces to other software are part of R_  
