@@ -286,7 +286,7 @@
 <span id="cb4-5"><a></a>add</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt; function (x, y, z) 
-#&gt; .Call(&lt;pointer: 0x00007fff8e1d1434&gt;, x, y, z)</code></pre>
+#&gt; .Call(&lt;pointer: 0x7f60860b8530&gt;, x, y, z)</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">add</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -404,7 +404,7 @@
 <span id="cb13-9"><a></a><span class="st">}'</span>) <span class="sc">|&gt;</span> <span class="fu">system.time</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.02    0.00    2.81</code></pre>
+#&gt;   1.908   0.408   1.987</code></pre>
 </div>
 </div>
 </div>
@@ -462,7 +462,7 @@
 <span id="cb19-17"><a></a><span class="st">}"</span>) <span class="sc">|&gt;</span> <span class="fu">system.time</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.02    0.00    2.80</code></pre>
+#&gt;   1.969   0.422   2.063</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>Rcpp<span class="sc">::</span><span class="fu">cppFunction</span>(<span class="st">"</span></span>
 <span id="cb21-2"><a></a><span class="st">NumericVector signCfaster(NumericVector x) {</span></span>
@@ -479,7 +479,7 @@
 <span id="cb21-13"><a></a><span class="st">}"</span>) <span class="sc">|&gt;</span> <span class="fu">system.time</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>#&gt;    user  system elapsed 
-#&gt;    0.03    0.02    2.90</code></pre>
+#&gt;   1.937   0.370   2.062</code></pre>
 </div>
 </div>
 </div>
@@ -577,12 +577,13 @@
 <span id="cb25-11"><a></a></span>
 <span id="cb25-12"><a></a><span class="st">}"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>#&gt; using C++ compiler: 'G__~1.EXE (GCC) 14.2.0'
-#&gt; [01m[Kfile64341b421e3a.cpp:[m[K In function '[01m[KRcpp::NumericVector[01;32m[K signCfaster[m[K(Rcpp::NumericVector)[m[K':
-#&gt; [01m[Kfile64341b421e3a.cpp:12:15:[m[K [01;31m[Kerror: [m[K'[01m[Kv[m[K' was not declared in this scope
-#&gt;    12 |     out[i] = ([01;31m[Kv[m[K &gt; 0) ? 1.0 : (v == 0 ? 0.0 : -1.0);
-#&gt;       |               [01;31m[K^[m[K
-#&gt; make: *** [C:/PROGRA~1/R/R-45~1.2/etc/x64/Makeconf:296: file64341b421e3a.o] Error 1</code></pre>
+<pre><code>#&gt; using C++ compiler: ‘g++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0’
+#&gt; g++ -std=gnu++17 -I"/opt/R/4.5.2/lib/R/include" -DNDEBUG   -I"/home/runner/work/_temp/Library/Rcpp/include" -I"/tmp/RtmpqdbWeh/sourceCpp-x86_64-pc-linux-gnu-1.1.1" -I/usr/local/include    -fpic  -g -O2   -c file1de4260813f2.cpp -o file1de4260813f2.o
+#&gt; file1de4260813f2.cpp: In function ‘Rcpp::NumericVector signCfaster(Rcpp::NumericVector)’:
+#&gt; file1de4260813f2.cpp:12:15: error: ‘v’ was not declared in this scope
+#&gt;    12 |     out[i] = (v &gt; 0) ? 1.0 : (v == 0 ? 0.0 : -1.0);
+#&gt;       |               ^
+#&gt; make: *** [/opt/R/4.5.2/lib/R/etc/Makeconf:211: file1de4260813f2.o] Error 1</code></pre>
 </div>
 <div class="cell-output cell-output-error">
 <pre><code>#&gt; Error in `sourceCpp()`:
@@ -666,7 +667,7 @@
 <ul>
 <li><a href="https://vcpkg.io/en/">vcpkg C++ package manager</a></li>
 <li><a href="https://cran.r-project.org/web/packages/Rcpp/index.html"><code>{Rcpp}</code> on CRAN</a></li>
-<li><a href="https://doc.rust-lang.org/cargo/">Rcpp for everyone</a></li>
+<li><a href="https://teuder.github.io/rcpp4everyone_en/">Rcpp for everyone</a></li>
 </ul></li>
 <li><a href="https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/">Rust and C++ comparison gitbook</a></li>
 </ul>
