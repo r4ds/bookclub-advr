@@ -262,8 +262,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression      min   median mem_alloc
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
-#&gt; 1 mean1(x)      423µs    440µs    23.3KB
-#&gt; 2 mean2(x)      186µs    187µs        0B</code></pre>
+#&gt; 1 mean1(x)    143.7µs  181.8µs    23.3KB
+#&gt; 2 mean2(x)     68.9µs   86.8µs        0B</code></pre>
 </div>
 </div>
 </section>
@@ -313,8 +313,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression                                     min   median mem_alloc
 #&gt;   &lt;bch:expr&gt;                                &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
-#&gt; 1 colMeans(X)                                 1.71ms   1.76ms    99.4KB
-#&gt; 2 apply(X, 2, function(x) sum(x)/length(x))  20.69ms  21.21ms    12.6MB</code></pre>
+#&gt; 1 colMeans(X)                                559.6µs  711.7µs    99.3KB
+#&gt; 2 apply(X, 2, function(x) sum(x)/length(x))   15.1ms   17.3ms    12.6MB</code></pre>
 </div>
 </div>
 </div>
@@ -332,8 +332,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression                       min   median mem_alloc
 #&gt;   &lt;bch:expr&gt;                  &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
-#&gt; 1 vapply(X, mean, numeric(1))    732ms    732ms    78.2KB
-#&gt; 2 sapply(X, mean)                745ms    745ms   362.6KB</code></pre>
+#&gt; 1 vapply(X, mean, numeric(1))    498ms    500ms    78.2KB
+#&gt; 2 sapply(X, mean)                510ms    510ms   362.6KB</code></pre>
 </div>
 </div>
 </div>
@@ -351,8 +351,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression          min   median mem_alloc
 #&gt;   &lt;bch:expr&gt;     &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
-#&gt; 1 any(X == 1450)    179ms    185ms  762.94MB
-#&gt; 2 1450 %in% X       173ms    174ms    1.12GB</code></pre>
+#&gt; 1 any(X == 1450)    262ms    291ms  762.94MB
+#&gt; 2 1450 %in% X       446ms    459ms    1.12GB</code></pre>
 </div>
 </div>
 </div>
@@ -369,8 +369,8 @@
 <pre><code>#&gt; # A tibble: 2 × 4
 #&gt;   expression           min   median mem_alloc
 #&gt;   &lt;bch:expr&gt;      &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
-#&gt; 1 mean(x)           43.3µs   46.4µs        0B
-#&gt; 2 mean.default(x)   40.8µs     45µs        0B</code></pre>
+#&gt; 1 mean(x)           17.4µs   21.7µs        0B
+#&gt; 2 mean.default(x)   14.8µs   18.8µs        0B</code></pre>
 </div>
 </div>
 </div>
@@ -414,10 +414,10 @@
 <pre><code>#&gt; # A tibble: 4 × 4
 #&gt;   expression      min   median mem_alloc
 #&gt;   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
-#&gt; 1 loop10      19.96µs  20.92µs    15.5KB
-#&gt; 2 loop100     529.3µs 543.89µs   251.5KB
-#&gt; 3 vec10        3.51µs   3.69µs        0B
-#&gt; 4 vec100      21.98µs  22.85µs      848B</code></pre>
+#&gt; 1 loop10       15.8µs   20.7µs    15.5KB
+#&gt; 2 loop100     438.1µs  530.1µs   251.5KB
+#&gt; 3 vec10           3µs    3.6µs        0B
+#&gt; 4 vec100       16.4µs     20µs      848B</code></pre>
 </div>
 </div>
 </section></section>
@@ -547,11 +547,11 @@
 <pre><code>#&gt; # A tibble: 5 × 4
 #&gt;   expression                    min   median mem_alloc
 #&gt;   &lt;bch:expr&gt;               &lt;bch:tm&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
-#&gt; 1 ttest_base(X, grp)        126.3ms 126.31ms    13.7MB
-#&gt; 2 ttest_nocopy(X, grp)      121.5ms 121.52ms    6.47MB
-#&gt; 3 ttest_nodispatch(X, grp)  118.3ms  118.3ms    5.82MB
-#&gt; 4 ttest_malgebra(X, grp)     13.9ms  14.28ms    4.02MB
-#&gt; 5 ttest_vectorise(X, grp)   736.2µs   1.42ms    67.4MB</code></pre>
+#&gt; 1 ttest_base(X, grp)         89.9ms     93ms    13.7MB
+#&gt; 2 ttest_nocopy(X, grp)         84ms   85.3ms    6.48MB
+#&gt; 3 ttest_nodispatch(X, grp)   76.4ms   76.7ms    5.82MB
+#&gt; 4 ttest_malgebra(X, grp)     10.8ms   13.6ms    4.02MB
+#&gt; 5 ttest_vectorise(X, grp)   490.8µs    785µs   99.38MB</code></pre>
 </div>
 </div>
 
