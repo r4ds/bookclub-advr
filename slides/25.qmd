@@ -428,5 +428,5 @@ thread::spawn(move || {
 -   C++
     -   [vcpkg C++ package manager](https://vcpkg.io/en/)
     -   [`{Rcpp}` on CRAN](https://cran.r-project.org/web/packages/Rcpp/index.html)
-    -   [Rcpp for everyone](https://doc.rust-lang.org/cargo/)
+    -   [Rcpp for everyone](https://teuder.github.io/rcpp4everyone_en/)
 -   [Rust and C++ comparison gitbook](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/)
