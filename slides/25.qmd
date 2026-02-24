@@ -1,0 +1,432 @@
+---
+engine: knitr
+title: Rewriting R code in C++ (and Rust)
+---
+
+# _Interfaces to other software are part of R_  
+
+--- Chambers JM (2016). Extending R.
+
+## Learning objectives:
+
+-   Why rewrite R code in C++/Rust
+-   Compare C++/Rust function and package development
+-   Run C++/Rust in R
+-   Create and call C++/Rust functions in R
+-   Evaluate function performance for R/C/C++/Rust
+-   Compare compiler error messages between C++ and Rust
+-   Identify advanced tooling for C++/Rust
+
+```{r}
+library(Rcpp)
+#library(rextendr) # rust performance shown below on MacOS 16.7.3 Intel i7
+```
+
+## Even after optimizing R code, it still might not be optimized enough
+
+::: panel-tabset
+
+### C++
+
+-   R's for loops are much slower compared to C++
+
+    - Can't vectorize in R when loops depend on subsequent iterations
+
+-   R function calls are much slower compared to C++
+
+    - Recursive functions involving millions of function calls
+
+-   R does not include many data structures compared to C++
+
+    - C++ Standard Template Library (STL) for efficiency, correctness, and maintainability
+
+### Rust
+
+-   R cannot exploit parallelism as effectively as Rust
+
+    - Rust memory is safer (ownership model with borrow checking) and so lacks GIL or run time locks
+
+-   R object memory is borrowed via C/C++ unlike Rust
+
+    - Rust owns objects and code compiles directly to machine code
+
+-   R or C code debugging is more challenging than Rust
+
+    - Rust has no GC so lacks memory bugs and has great error messages comparable with the `{tidyverse}`
+
+:::
+
+## C++ and Rust code are used via packages and offer similar implementation approaches
+
+::: panel-tabset
+
+### C++
+
+::: panel-tabset
+
+#### `Rcpp::evalCpp`
+
+```{r}
+Rcpp::evalCpp('NA_INTEGER + 1')
+```
+
+#### `Rcpp::cppFunction`
+
+```{r}
+Rcpp::cppFunction('int add(int x, int y, int z) {
+  int sum = x + y + z;
+  return sum;
+}')
+add
+add(1,2,3)
+```
+
+#### `Rcpp::sourceCpp`
+
+```c
+#include <Rcpp.h>
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+double meanC(NumericVector x) {
+  int n = x.size();
+  double total = 0;
+
+  for(int i = 0; i < n; ++i) {
+    total += x[i];
+  }
+  return total / n;
+}
+```
+
+#### `usethis::use_rcpp`
+
+-   Creates infrastructure for using C++ within R packages
+
+:::
+
+### Rust
+
+::: panel-tabset
+
+#### `rextendr::rust_function`
+
+```{r, eval=FALSE}
+rextendr::rust_function("fn add(a:f64, b:f64) -> f64 { a + b }")
+add(2.5, 4.7)
+# 7.2
+```
+
+#### `rextendr::rust_source`
+
+```{r, eval=FALSE}
+code <- '
+#[extendr]
+fn main() {
+  println!("Hello, world!");
+}
+'
+
+rextendr::rust_source(
+  code = code
+)
+
+main()
+# Hello, world!
+```
+
+#### `rextendr::use_extendr`
+
+```r
+# create a new R package
+usethis::create_package("helloextendr")
+
+# Use extendr
+rextendr::use_extendr()
+
+# Document and build the package
+rextendr::document()
+
+# run hello_world()
+hello_world()
+#> [1] "Hello, world!"
+```
+
+-   Newer Rust toolchain and R version is required
+-   Using VSCode/Positron is strongly recommended with `rust-analyzer` extension
+
+:::
+
+:::
+
+## Reading C++ and Rust code is similar to reading R code
+
+:::panel-tabset
+
+### Scalar functions
+
+::: panel-tabset
+
+#### R
+
+```{r}
+signR <- function(x) {
+  if (x > 0) {
+    1
+  } else if (x == 0) {
+    0
+  } else {
+    -1
+  }
+}
+```
+
+#### C++
+
+```{r}
+Rcpp::cppFunction('int signC(double x) {
+  if (x > 0) {
+    return 1;
+  } else if (x == 0) {
+    return 0;
+  } else {
+    return -1;
+  }
+}') |> system.time()
+```
+
+#### Rust
+
+```{r, eval=FALSE}
+rextendr::rust_function("
+fn signRust(x: f64) -> i32 {
+    if x > 0.0 {
+        1
+    } else if x == 0.0 {
+        0
+    } else {
+        -1
+    }
+}
+")
+```
+
+:::
+
+### Vector functions
+
+::: panel-tabset
+
+#### R
+
+```{r}
+sign
+
+signR <- function(x) {
+  as.integer(vapply(x,sign,double(1)))
+}
+```
+
+#### C++
+
+```{r}
+Rcpp::cppFunction("
+NumericVector signC(NumericVector x) {
+  int n = x.size();
+  NumericVector out(n);
+
+  for (int i = 0; i < n; i++) {
+    if (x[i] > 0.0) {
+      out[i] = 1;
+    } else if (x[i] == 0.0) {
+      out[i] = 0;
+    } else {
+      out[i] = -1;
+    }
+  }
+
+  return out;
+}") |> system.time()
+
+Rcpp::cppFunction("
+NumericVector signCfaster(NumericVector x) {
+  int n = x.size();
+  NumericVector out(n);
+
+  for (int i = 0; i < n; ++i) {
+    double v = x[i];
+    out[i] = (v > 0) ? 1.0 : (v == 0 ? 0.0 : -1.0);
+  }
+
+  return out;
+
+}") |> system.time()
+```
+
+#### Rust
+
+```{r,eval=FALSE}
+rextendr::rust_function("
+fn signRust(x: Vec<f64>) -> Vec<Rint> {
+    x.into_iter()
+        .map(|v| {
+            if v > 0.0 {
+                Rint::from(1)
+            } else if v == 0.0 {
+                Rint::from(0)
+            } else {
+                Rint::from(-1)
+            }
+        })
+        .collect()
+}
+")
+
+code <- '
+
+use rayon::prelude::*;
+
+#[extendr]
+fn signRustPar(x: Vec<f64>) -> Vec<Rint> {
+    x.into_par_iter()
+        .map(|v| {
+            if v > 0.0 {
+                Rint::from(1)
+            } else if v == 0.0 {
+                Rint::from(0)
+            } else {
+                Rint::from(-1)
+            }
+        })
+        .collect()
+}
+'
+
+rextendr::rust_source(
+  code = code,
+  dependencies = list(rayon = "1")
+)
+```
+
+:::
+
+:::
+
+## The C optimized `sign` is most performant, then C++ re-implementation is faster but Rust uses less memory
+
+```{r, eval=FALSE}
+vec <- rnorm(1e7,sd = 50)
+bench::mark(
+  signR(vec),
+  sign(vec),
+  signCfaster(vec),
+  signC(vec),
+  signRustPar(vec),
+  signRust(vec),
+  relative = TRUE
+)
+## A tibble: 6 × 13
+# expression         min median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time
+# <bch:expr>       <dbl>  <dbl>     <dbl>     <dbl>    <dbl> <int> <dbl>   <bch:tm>      
+#1 signR(vec)       98.3   83.6       1         3.00      Inf     1    34      3.84s
+#2 sign(vec)         1      1        58.0       2.00      Inf     8     3    529.3ms
+#3 signCfaster(vec)  1.70   1.86     44.7       2.00      Inf     6     1   514.77ms
+#4 signC(vec)        3.48   2.97     26.5       2.00      Inf     4     1   578.39ms
+#5 signRustPar(vec) 10.1    8.62      9.70      1         NaN     2     0   791.64ms
+#6 signRust(vec)    12.7   13.3       6.29      1         NaN     2     0      1.22s
+```
+
+## Rust has more readable error messages than C++
+
+::: panel-tabset
+
+### C++
+
+```{r, error = TRUE}
+Rcpp::cppFunction("
+NumericVector signCfaster(NumericVector x) {
+  int n = x.size();
+  NumericVector out(n);
+
+  for (int i = 0; i < n; ++i) {
+    out[i] = (v > 0) ? 1.0 : (v == 0 ? 0.0 : -1.0);
+  }
+
+  return out;
+
+}")
+```
+
+### Rust
+
+```{r,eval=FALSE}
+rextendr::rust_function('
+fn signRustSlice(x: Robj) -> Robj {
+    // Borrow numeric slice from R (no copy)
+    let slice = x.as_real_slice().expect("Expected numeric vector");
+
+    let n = slice.len();
+    let mut out = Doubles::new(n);
+
+    // Unsafe block gives direct mutable slice (no bounds checks)
+    let out_slice = unsafe { out.as_mut_slice() };
+
+    for i in 0..n {
+        let v = slice[i];
+        out_slice[i] = if v.is_nan() {
+            f64::NAN
+        } else if v > 0.0 {
+            1.0
+        } else if v == 0.0 {
+            0.0
+        } else {
+            -1.0
+        };
+    }
+
+    out.into()
+}
+')
+```
+
+![](images/25_rust_error_message.png)
+
+:::
+
+## C++ and Rust have optimized and robust standard libraries
+
+::: panel-tabset
+
+### C++
+
+-   [Standard Template Library](https://learn.microsoft.com/en-us/cpp/standard-library/cpp-standard-library-reference?view=msvc-170) for complex algorithms and [data structures](https://en.cppreference.com/w/cpp/container.html)
+-   Use different headers, like `<algorithm>`, in C++ files to invoke the desired extension
+-   If functionality is not in the STL, check the [boost](https://www.boost.org/libraries/latest/grid/) library.
+
+### Rust
+
+-   [Rust Standard Library](https://doc.rust-lang.org/std/) for algorithms and data structures
+-   Primitives, modules, macros and keywords included in Rust
+-   For example, [multithreading](https://doc.rust-lang.org/std/thread/index.html) using native OS threads with their own memory:
+
+```rust
+use std::thread;
+
+thread::spawn(move || {
+    // some work here
+});
+```
+
+:::
+## References
+
+-   Rust
+    -   [crates.io: Rust package manager](https://crates.io)
+    -   [`{cargo}` book](https://doc.rust-lang.org/cargo/)
+    -   [`{rextendr} on CRAN`](https://cran.r-project.org/web/packages/rextendr/index.html)
+    -   [extendr_api crate documentation](https://docs.rs/extendr-api/latest/extendr_api/)
+-   C++
+    -   [vcpkg C++ package manager](https://vcpkg.io/en/)
+    -   [`{Rcpp}` on CRAN](https://cran.r-project.org/web/packages/Rcpp/index.html)
+    -   [Rcpp for everyone](https://doc.rust-lang.org/cargo/)
+-   [Rust and C++ comparison gitbook](https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/)

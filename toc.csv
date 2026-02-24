@@ -24,6 +24,5 @@ Metaprogramming,21,Translating R code,21
 Techniques,22,Debugging,22
 Techniques,23,Measuring performance,23
 Techniques,24,Improving performance,24
-Techniques,25,Rewriting R code in C++,25
-Techniques,25b,Rust for R,25b
+Techniques,25,Rewriting R code in C++ (and Rust),25
 Techniques,25c,C for R,25c
